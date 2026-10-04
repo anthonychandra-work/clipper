@@ -1,0 +1,104 @@
+<title>Clipper Prototype</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Sans:wght@400..700&display=swap">
+<style>
+  /* Layout: project workbench with a candidate rail, a 9:16 preview and an inspector; on phones it becomes a list, then a detail screen. */
+  :root {
+    --ground: #ECEEF3;
+    --surface: #FFFFFF;
+    --surface-sunk: #F1F3F7;
+    --ink: #12151D;
+    --ink-soft: #566074;
+    --line: #D4D9E3;
+    --accent: #2440E6;
+    --accent-ink: #FFFFFF;
+    --accent-soft: #E2E7FF;
+    --marker: #FFD60A;
+    --marker-ink: #1B1700;
+    --keep: #10774A;
+    --keep-soft: #DAF2E4;
+    --reject: #B9382F;
+    --reject-soft: #FBE2DF;
+    --warn: #8A5D00;
+    --warn-soft: #FFF0C7;
+
+    --frame: #0B0D12;
+    --stage-far: #303B5E;
+    --stage-near: #131827;
+    --stage-alt: #3D2F45;
+    --figure-skin: #D8C2A7;
+    --figure-cloth: #5568A8;
+    --figure-cloth-alt: #9A5B6E;
+    --overlay-paper: #FFFFFF;
+    --overlay-ink: #111318;
+    --caption-ink: #FFFFFF;
+    --caption-shadow: #000000;
+    --guide: #FFFFFFB3;
+    --guide-fill: #FFFFFF26;
+
+    --font-display: "Archivo", "Arial Narrow", Arial, sans-serif;
+    --font-body: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+
+    --radius-control: 6px;
+    --radius-panel: 10px;
+    --gutter: 16px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0D1016;
+      --surface: #161A23;
+      --surface-sunk: #10131A;
+      --ink: #E9ECF3;
+      --ink-soft: #9CA5B8;
+      --line: #2A3140;
+      --accent: #8FA2FF;
+      --accent-ink: #0A1033;
+      --accent-soft: #1F2850;
+      --keep: #4FC58D;
+      --keep-soft: #12362A;
+      --reject: #FF8376;
+      --reject-soft: #43201D;
+      --warn: #F2B93B;
+      --warn-soft: #3B2F10;
+      color-scheme: dark;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #0D1016;
+    --surface: #161A23;
+    --surface-sunk: #10131A;
+    --ink: #E9ECF3;
+    --ink-soft: #9CA5B8;
+    --line: #2A3140;
+    --accent: #8FA2FF;
+    --accent-ink: #0A1033;
+    --accent-soft: #1F2850;
+    --keep: #4FC58D;
+    --keep-soft: #12362A;
+    --reject: #FF8376;
+    --reject-soft: #43201D;
+    --warn: #F2B93B;
+    --warn-soft: #3B2F10;
+    color-scheme: dark;
+  }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    line-height: 1.45;
+  }
+</style>
+<link rel="stylesheet" href="styles/controls.css">
+<link rel="stylesheet" href="styles/shell.css">
+<link rel="stylesheet" href="styles/review.css">
+
+<div id="app" class="page">
+  <p class="loading">Loading the Clipper prototype…</p>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<script type="module" src="src/main.js"></script>
