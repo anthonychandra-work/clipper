@@ -602,6 +602,23 @@ From `intent.md`. Base `82df5ce`.
   starts. Two more scenarios of recorded replies, `window-twice` and `unknown-window`, score the
   talk's windows with one named twice and with one that was not asked about. The plan fixes what
   the part and the questions hold and leaves these forms open. (executor, m3)
+- A79 — The coding standards advise against more than twelve source files flat in one folder, and
+  ask for a themed group of three or more to get a folder of its own. This milestone leaves that
+  advice open in two folders: `service/clipper/selection`, which holds fifteen after pass two and
+  about twenty-two once the plan's remaining files are in, and `scripts`, which holds fifteen with
+  the stand-in's three. The plan names every one of these files at its flat path, the service's
+  recorded layout is one flat package for each capability, and the stand-in's command is fixed as
+  a program directly in `scripts`. Moving them is a change of layout for a plan to make, not a
+  choice this milestone's tasks leave open. The hooks report it when a file is written and the
+  review of changed files does not print it, so it is recorded here. (executor, m3)
+- A80 — The forms of a cut reply sit in a file of their own beside the cut question, because
+  together they pass the limit of ten top-level classes and functions. A clip's fields are named
+  `openingWords`, `closingWords`, `scores`, `reason`, `title`, `hookTitle`, `hookType`, `flag`
+  with `kind` and `note`, and `platforms`. The number a cut task names, `clipCount`, is read by
+  the model as the least the whole video should yield, for Auto and for a fixed target alike; the
+  tool does the keeping. Quoted words are compared as letters and digits only, a quote of no such
+  word places nothing, and of closing words said more than once the first after the opening
+  words is taken. A64 and A67 fix the rules and leave these forms open. (executor, m3)
 
 ## Milestones
 

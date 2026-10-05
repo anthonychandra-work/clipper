@@ -1,0 +1,93 @@
+{
+  "task": "cut",
+  "window": "w03",
+  "reply": {
+    "type": "message",
+    "role": "assistant",
+    "content": [
+      {
+        "type": "text",
+        "text": {
+          "clips": [
+            {
+              "openingWords": "People often ask me how to know when it is time to grow.",
+              "closingWords": "you have only built a job for yourself.",
+              "scores": { "hook": 19, "arc": 18, "value": 20, "share": 18 },
+              "reason": "Answers a question owners ask with a test they can run, and ends on a contrast worth repeating.",
+              "title": "How to know when it is time to grow",
+              "hookTitle": "Growth should feel boring",
+              "hookType": "hot-take",
+              "flag": null,
+              "platforms": {
+                "tiktok": {
+                  "title": "Growth should feel boring",
+                  "description": "Take a real holiday and turn off your phone. #smallbusiness #growth #bakery"
+                },
+                "reels": {
+                  "title": "Are you ready for a second shop",
+                  "description": "The one month test for any owner who wants to grow. #shopowner #growth"
+                },
+                "shorts": {
+                  "title": "How to know when it is time to grow",
+                  "description": "If you come back to a fire, you have only built a job for yourself."
+                }
+              }
+            },
+            {
+              "openingWords": "Let me finish with the smallest lesson,",
+              "closingWords": "it has saved us more times than I can count.",
+              "scores": { "hook": 12, "arc": 14, "value": 17, "share": 12 },
+              "reason": "Useful advice told plainly, with a weak opening and no story to carry it.",
+              "title": "The smallest lesson is to write things down",
+              "hookTitle": "Write things down",
+              "hookType": "none",
+              "flag": {
+                "kind": "not-recommended",
+                "note": "Common advice with no story behind it, and its one long sentence runs seventeen seconds."
+              },
+              "platforms": {
+                "tiktok": {
+                  "title": "Write things down",
+                  "description": "Every recipe, every supplier, every little trick. #smallbusiness #bakery"
+                },
+                "reels": {
+                  "title": "The notebook that keeps a shop open",
+                  "description": "What happens to the shop on the day you get sick. #shopowner"
+                },
+                "shorts": {
+                  "title": "The smallest lesson is to write things down",
+                  "description": "I wrote ours on a rainy afternoon."
+                }
+              }
+            },
+            {
+              "openingWords": "People often ask me how to know when it is time to grow.",
+              "closingWords": "more times than I can count.",
+              "scores": { "hook": 19, "arc": 20, "value": 20, "share": 19 },
+              "reason": "Joins the growth test to the notebook lesson in one longer piece.",
+              "title": "When to grow, and what to write down first",
+              "hookTitle": "Two tests before you open a second shop",
+              "hookType": "number",
+              "flag": null,
+              "platforms": {
+                "tiktok": {
+                  "title": "Two tests before a second shop",
+                  "description": "Does it run without you, and is it written down. #smallbusiness #growth"
+                },
+                "reels": {
+                  "title": "Before you open another shop",
+                  "description": "A month away and a notebook. #shopowner #growth"
+                },
+                "shorts": {
+                  "title": "When to grow, and what to write down first",
+                  "description": "Growth should feel boring."
+                }
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}

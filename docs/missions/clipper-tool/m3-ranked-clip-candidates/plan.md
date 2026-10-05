@@ -287,9 +287,10 @@ What the spec's file list leaves out
   scenario, one request scores the four windows and three are shortlisted. A recorded reply that
   leaves a window out, names one twice or names an unknown one is unreadable.
 
-- [ ] T6 — Pass two: ask for clips in a window and place each quote
+- [x] T6 — Pass two: ask for clips in a window and place each quote
   Files: `service/clipper/selection/clip_limits.py`,
-  `service/clipper/selection/test_clip_limits.py`, `service/clipper/selection/cut_clips.py`,
+  `service/clipper/selection/test_clip_limits.py`,
+  `service/clipper/selection/clip_proposal.py`, `service/clipper/selection/cut_clips.py`,
   `service/clipper/selection/test_cut_clips.py`, `service/clipper/selection/place_quote.py`,
   `service/clipper/selection/test_place_quote.py`, `service/clipper/selection/__init__.py`,
   `fixtures/claude/talk/cut-w01.json`, `fixtures/claude/talk/cut-w02.json`,

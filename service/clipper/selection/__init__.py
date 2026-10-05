@@ -9,8 +9,12 @@ from .claude_errors import (
     RefusedKeyError,
     UnreadableReplyError,
 )
+from .clip_limits import ClipCounts, count_clips, find_clip_limits
+from .clip_proposal import ProposedClip, ProposedClips
+from .cut_clips import cut_clips, write_cut_question
 from .form_shortlist import count_shortlist, form_shortlist
 from .model_traits import FALLBACK_BETA, ModelTraits, describe_model
+from .place_quote import Placement, place_quote
 from .score_windows import score_windows, write_score_questions
 from .selection_records import (
     Candidate,
@@ -37,6 +41,7 @@ __all__ = [
     "ClaudeAskError",
     "ClaudeQuestion",
     "ClaudeRequestError",
+    "ClipCounts",
     "ClipFlag",
     "ClipSeconds",
     "DeclinedReplyError",
@@ -45,8 +50,11 @@ __all__ = [
     "ModelTraits",
     "NoAnswerError",
     "PassContext",
+    "Placement",
     "PlatformText",
     "PlatformTexts",
+    "ProposedClip",
+    "ProposedClips",
     "RefusedKeyError",
     "ReplayPeak",
     "SelectionStore",
@@ -56,12 +64,17 @@ __all__ = [
     "Window",
     "WindowRecord",
     "ask_claude",
+    "count_clips",
     "count_shortlist",
+    "cut_clips",
     "describe_model",
+    "find_clip_limits",
     "form_shortlist",
+    "place_quote",
     "score_windows",
     "split_sentences",
     "split_windows",
+    "write_cut_question",
     "write_score_questions",
     "write_transcript_part",
 ]
