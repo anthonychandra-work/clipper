@@ -9,8 +9,8 @@ import yt_dlp
 from yt_dlp.utils import DownloadCancelled, DownloadError
 
 from ..media import MediaTools
+from ..storage import SOURCE_STEM
 
-SOURCE_STEM = "source"
 NO_VIDEO_ABOVE_1080 = "bv*[height<=?1080]+ba/b[height<=?1080]"
 NODE_AS_JAVASCRIPT_RUNTIME: dict[str, dict[str, str]] = {"node": {}}
 FIRST_OF_A_PLAYLIST = "1"

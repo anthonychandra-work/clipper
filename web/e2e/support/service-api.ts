@@ -1,6 +1,10 @@
+import { setTimeout as delay } from 'node:timers/promises';
+
 import type { APIRequestContext, APIResponse } from '@playwright/test';
 
 const ALL_PLATFORMS = ['tiktok', 'reels', 'shorts'];
+const STATUS_TIMEOUT_MS = 90_000;
+const STATUS_POLL_MS = 200;
 
 export interface StepJson {
   kind: string;
@@ -60,6 +64,28 @@ export function sendPart(request: APIRequestContext, part: UploadedPart): Promis
 
 export function deleteProject(request: APIRequestContext, projectId: string): Promise<APIResponse> {
   return request.delete(`/api/projects/${projectId}`);
+}
+
+export async function deleteAllProjects(request: APIRequestContext): Promise<void> {
+  for (const project of await listProjects(request)) {
+    await deleteProject(request, project.id);
+  }
+}
+
+export async function waitForStatus(
+  request: APIRequestContext,
+  projectId: string,
+  status: string,
+): Promise<ProjectJson> {
+  const deadline = Date.now() + STATUS_TIMEOUT_MS;
+  for (;;) {
+    const project = await readProject(request, projectId);
+    if (project.status === status) return project;
+    if (Date.now() > deadline) {
+      throw new Error(`The project did not become ${status}: ${JSON.stringify(project)}`);
+    }
+    await delay(STATUS_POLL_MS);
+  }
 }
 
 async function readCreated(response: APIResponse): Promise<ProjectJson> {

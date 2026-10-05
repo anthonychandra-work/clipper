@@ -3,6 +3,7 @@ from pathlib import Path
 
 DATABASE_NAME = "clipper.sqlite3"
 PROJECTS_DIR_NAME = "projects"
+SOURCE_STEM = "source"
 
 
 @dataclass(frozen=True)
@@ -13,6 +14,10 @@ class DataFolder:
 
     def project_dir(self, project_id: str) -> Path:
         return self.projects_dir / project_id
+
+    def find_source_file(self, project_id: str) -> Path | None:
+        stored = sorted(self.project_dir(project_id).glob(f"{SOURCE_STEM}.*"))
+        return stored[0] if stored else None
 
 
 def open_data_folder(root: Path) -> DataFolder:

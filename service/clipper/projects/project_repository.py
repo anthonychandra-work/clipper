@@ -40,6 +40,8 @@ WHERE project_id = ? AND kind = 'fetch'
 """
 QUEUE_UPLOADED = "UPDATE projects SET status = ? WHERE id = ? AND status = 'uploading'"
 SET_FETCH_STATE = "UPDATE project_steps SET state = ? WHERE project_id = ? AND kind = 'fetch'"
+RECORD_DURATION = "UPDATE projects SET duration_seconds = ? WHERE id = ?"
+RENAME = "UPDATE projects SET title = ? WHERE id = ?"
 
 
 class ProjectNotFoundError(NotFoundError):
@@ -90,6 +92,14 @@ class ProjectRepository:
         with self._database.transaction() as connection:
             connection.execute(QUEUE_UPLOADED, [ProjectStatus.QUEUED, project_id])
             connection.execute(SET_FETCH_STATE, [StepState.PENDING, project_id])
+
+    def record_duration(self, project_id: str, duration_seconds: float) -> None:
+        with self._database.transaction() as connection:
+            connection.execute(RECORD_DURATION, [duration_seconds, project_id])
+
+    def rename(self, project_id: str, title: str) -> None:
+        with self._database.transaction() as connection:
+            connection.execute(RENAME, [title, project_id])
 
 
 def describe_project_row(project: Project) -> dict[str, str | int | float | None]:

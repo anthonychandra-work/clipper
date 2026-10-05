@@ -1,4 +1,3 @@
-from collections.abc import Iterator
 from pathlib import Path
 
 import pytest
@@ -23,7 +22,7 @@ FILE_DRAFT = {
 }
 
 
-def start_client(tmp_path: Path, reported_free_gb: float) -> TestClient:
+def open_client_without_the_queue(tmp_path: Path, reported_free_gb: float) -> TestClient:
     settings = StartupSettings(
         data_dir=tmp_path / "data", reported_free_bytes=int(reported_free_gb * BYTES_PER_GB)
     )
@@ -31,9 +30,8 @@ def start_client(tmp_path: Path, reported_free_gb: float) -> TestClient:
 
 
 @pytest.fixture
-def client(tmp_path: Path) -> Iterator[TestClient]:
-    with start_client(tmp_path, reported_free_gb=50) as test_client:
-        yield test_client
+def client(tmp_path: Path) -> TestClient:
+    return open_client_without_the_queue(tmp_path, reported_free_gb=50)
 
 
 def test_an_empty_library_lists_no_projects_and_the_free_space(client: TestClient) -> None:
@@ -132,9 +130,10 @@ def test_a_file_over_4_gb_is_refused(client: TestClient) -> None:
 def test_a_new_project_is_refused_when_the_reported_free_space_is_under_5_gb(
     tmp_path: Path,
 ) -> None:
-    with start_client(tmp_path, reported_free_gb=3.2) as low_disk_client:
-        response = low_disk_client.post("/api/projects", json=LINK_DRAFT)
-        listed = low_disk_client.get("/api/projects").json()
+    low_disk_client = open_client_without_the_queue(tmp_path, reported_free_gb=3.2)
+
+    response = low_disk_client.post("/api/projects", json=LINK_DRAFT)
+    listed = low_disk_client.get("/api/projects").json()
 
     assert response.status_code == 422
     assert response.json()["problem"] == {

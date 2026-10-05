@@ -321,8 +321,13 @@ The prototype
   was not found. A stop signal ends the download within two seconds, and a rerun starts from an
   empty folder.
 
-- [ ] T9 — Run the queue with one worker and the fetch stage
-  Files: `service/clipper/main.py`, `service/clipper/pipeline/__init__.py`,
+- [x] T9 — Run the queue with one worker and the fetch stage
+  Files: `service/clipper/main.py`, `service/clipper/test_main.py`, `service/clipper/conftest.py`,
+  `service/clipper/projects/__init__.py`, `service/clipper/projects/project_queue.py`,
+  `service/clipper/projects/test_project_queue.py`, `service/clipper/projects/receive_upload.py`,
+  `service/clipper/projects/test_router.py`, `service/clipper/storage/__init__.py`,
+  `service/clipper/storage/data_folder.py`, `service/clipper/fetching/download_link.py`,
+  `web/e2e/support/index.ts`, `service/clipper/pipeline/__init__.py`,
   `service/clipper/pipeline/pipeline_stage.py`, `service/clipper/pipeline/run_queue.py`,
   `service/clipper/pipeline/test_run_queue.py`,
   `service/clipper/pipeline/recover_interrupted.py`,

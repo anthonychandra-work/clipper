@@ -1,13 +1,30 @@
-from collections.abc import Iterator
+import time
+from collections.abc import Callable, Iterator
 from pathlib import Path
 
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
+from .conftest import VideoRecipe
 from .main import create_app
 from .media import MediaToolsMissingError
+from .projects import (
+    CreateProjectRequest,
+    Platform,
+    ProjectQueue,
+    ProjectRepository,
+    SourceKind,
+    StepKind,
+    UploadPart,
+    create_project,
+    receive_upload_part,
+)
 from .settings import StartupSettings
+from .storage import BYTES_PER_GB, DiskSpace, open_data_folder, open_database
+
+PLENTY = DiskSpace(free_bytes=50 * BYTES_PER_GB, total_bytes=460 * BYTES_PER_GB)
+WAIT_SECONDS = 30
 
 
 @pytest.fixture
@@ -48,6 +65,60 @@ def test_starting_without_the_media_tools_fails_before_anything_is_created(tmp_p
         create_app(settings)
 
     assert not settings.data_dir.exists()
+
+
+def leave_a_project_processing(settings: StartupSettings, video: Path) -> str:
+    data_folder = open_data_folder(settings.data_dir)
+    database = open_database(data_folder.database_file)
+    draft = CreateProjectRequest(
+        source_kind=SourceKind.FILE,
+        file_name=video.name,
+        file_size_bytes=video.stat().st_size,
+        platforms=[Platform.REELS],
+    )
+    project = create_project(draft, ProjectRepository(database), PLENTY)
+    receive_upload_part(
+        UploadPart(project.id, 0, video.read_bytes()), ProjectRepository(database), data_folder
+    )
+    ProjectQueue(database).take_oldest_queued()
+    ProjectQueue(database).start_step(project.id, StepKind.FETCH)
+    ProjectQueue(database).raise_step_percent(project.id, StepKind.FETCH, 85)
+    return project.id
+
+
+def wait_for_status(client: TestClient, project_id: str, status: str) -> dict[str, object]:
+    deadline = time.monotonic() + WAIT_SECONDS
+    while True:
+        project: dict[str, object] = client.get(f"/api/projects/{project_id}").json()
+        if project["status"] == status:
+            return project
+        assert time.monotonic() < deadline, f"The project did not become {status}: {project}"
+        time.sleep(0.05)
+
+
+def test_a_project_interrupted_by_a_restart_is_finished_after_the_start(
+    tmp_path: Path, build_video: Callable[[VideoRecipe], Path]
+) -> None:
+    settings = StartupSettings(data_dir=tmp_path / "data")
+    interrupted = leave_a_project_processing(settings, build_video(VideoRecipe(name="upload.mp4")))
+
+    with TestClient(create_app(settings)) as restarted:
+        fetched = wait_for_status(restarted, interrupted, "fetched")
+
+    assert fetched["durationSeconds"] == pytest.approx(2, abs=0.2)
+    assert (settings.data_dir / "projects" / interrupted / "preview.mp4").is_file()
+
+
+def test_the_queue_does_not_run_before_the_service_has_started(
+    tmp_path: Path, build_video: Callable[[VideoRecipe], Path]
+) -> None:
+    settings = StartupSettings(data_dir=tmp_path / "data")
+    interrupted = leave_a_project_processing(settings, build_video(VideoRecipe(name="upload.mp4")))
+
+    not_started = TestClient(create_app(settings))
+    time.sleep(0.5)
+
+    assert not_started.get(f"/api/projects/{interrupted}").json()["status"] == "processing"
 
 
 @pytest.mark.parametrize("address", ["/docs", "/redoc", "/openapi.json"])

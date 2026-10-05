@@ -85,6 +85,12 @@ class Project:
     def percent(self) -> float:
         return sum(step.percent for step in self.steps) / len(self.steps)
 
+    def first_unfinished_step(self) -> Step | None:
+        return next((step for step in self.steps if step.state is not StepState.DONE), None)
+
+    def label_of_kind(self, kind: StepKind) -> str:
+        return self.label_of(next(step for step in self.steps if step.kind is kind))
+
     def label_of(self, step: Step) -> str:
         if step.kind is not StepKind.FETCH:
             return LATER_STEP_LABELS[step.kind]

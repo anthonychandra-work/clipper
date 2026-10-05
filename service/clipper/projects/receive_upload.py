@@ -5,12 +5,11 @@ from http import HTTPStatus
 from pathlib import Path
 
 from ..problems import AppError, ConflictError, ProblemBody
-from ..storage import DataFolder
+from ..storage import SOURCE_STEM, DataFolder
 from .project import Project, ProjectStatus, Upload
 from .project_repository import ProjectRepository
 
 MAX_PART_BYTES = 8 * 1024 * 1024
-SOURCE_STEM = "source"
 PLAIN_SUFFIX = re.compile(r"\.[a-z0-9]{1,8}")
 UNKNOWN_SUFFIX = ".video"
 
