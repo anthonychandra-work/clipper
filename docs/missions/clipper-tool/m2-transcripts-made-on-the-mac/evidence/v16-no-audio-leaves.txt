@@ -1,0 +1,77 @@
+[exit code of the command before: 0] + grep -rnE '--include=*.py' '^[[:space:]]*(import|from)[[:space:]]+(urllib\.request|urllib[[:space:]]+import|urllib3|http\.client|socket|httpx2|requests|huggingface_hub)' service/clipper/transcription service/clipper/media
+[exit code of the command before: 0] + grep -v /test_
+service/clipper/transcription/download_model.py:1:import http.client
+service/clipper/transcription/download_model.py:3:import urllib.request
+[exit code of the command before: 0] + grep -rn '--include=*.py' HF_HUB_OFFLINE service/clipper/transcription
+[exit code of the command before: 0] + grep -v /test_
+service/clipper/transcription/transcribe_audio.py:131:    os.environ["HF_HUB_OFFLINE"] = "1"
+[exit code of the command before: 0] + cd service
+[exit code of the command before: 0] + .venv/bin/python -c 'import sys, clipper; print('\''loaded by the service:'\'', [name for name in ('\''mlx'\'', '\''mlx_whisper'\'', '\''numpy'\'', '\''scipy'\'', '\''numba'\'') if name in sys.modules])'
+loaded by the service: []
+[exit code of the command before: 0] + cd service
+[exit code of the command before: 0] + .venv/bin/python -m pytest clipper/transcription -v
+============================= test session starts ==============================
+platform darwin -- Python 3.12.13, pytest-9.1.1, pluggy-1.6.0 -- /Users/Work/Documents/_my-projects/clipper/.worktrees/clipper-tool/service/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /Users/Work/Documents/_my-projects/clipper/.worktrees/clipper-tool/service
+configfile: pyproject.toml
+plugins: anyio-4.15.1
+collecting ... collected 54 items
+
+clipper/transcription/test_built_fixtures.py::test_the_silent_fixture_is_twenty_seconds_of_h264_with_an_aac_sound_track PASSED [  1%]
+clipper/transcription/test_built_fixtures.py::test_the_long_fixture_is_between_19_and_20_minutes_of_h264_with_an_aac_sound_track PASSED [  3%]
+clipper/transcription/test_built_fixtures.py::test_the_long_fixture_is_the_talk_five_times_over PASSED [  5%]
+clipper/transcription/test_download_model.py::test_a_whole_download_lands_under_the_final_name_with_the_sizes_the_server_declared PASSED [  7%]
+clipper/transcription/test_download_model.py::test_a_download_stopped_at_the_slow_address_is_carried_on_from_the_bytes_it_holds PASSED [  9%]
+clipper/transcription/test_download_model.py::test_a_file_the_source_does_not_hold_raises_a_download_error_and_leaves_no_model PASSED [ 11%]
+clipper/transcription/test_download_model.py::test_a_closed_port_raises_a_download_error PASSED [ 12%]
+clipper/transcription/test_download_model.py::test_a_file_that_ends_short_raises_a_download_error PASSED [ 14%]
+clipper/transcription/test_model_stage.py::test_with_small_chosen_and_not_on_the_mac_the_first_project_gains_the_download_step PASSED [ 16%]
+clipper/transcription/test_model_stage.py::test_with_the_model_source_closed_the_download_fails_with_its_reason PASSED [ 18%]
+clipper/transcription/test_model_stage.py::test_the_download_step_is_done_at_once_when_the_model_is_already_there PASSED [ 20%]
+clipper/transcription/test_model_stage.py::test_the_check_adds_nothing_when_the_chosen_model_is_on_the_mac PASSED [ 22%]
+clipper/transcription/test_model_stage.py::test_a_changed_choice_gives_the_waiting_download_step_the_name_of_the_new_model PASSED [ 24%]
+clipper/transcription/test_model_stage.py::test_the_check_stands_before_the_download_and_before_the_transcription PASSED [ 25%]
+clipper/transcription/test_run_transcriber.py::test_the_talk_comes_back_as_its_language_and_its_words PASSED [ 27%]
+clipper/transcription/test_run_transcriber.py::test_the_percent_of_the_sound_never_falls_and_ends_at_100 PASSED [ 29%]
+clipper/transcription/test_run_transcriber.py::test_a_stop_signal_ends_the_transcriber_within_two_seconds_and_leaves_no_process PASSED [ 31%]
+clipper/transcription/test_run_transcriber.py::test_a_model_folder_that_does_not_exist_raises_an_error_with_what_the_program_printed PASSED [ 33%]
+clipper/transcription/test_transcribe_audio.py::test_the_sound_of_the_talk_becomes_words_within_15_in_100_of_the_script PASSED [ 35%]
+clipper/transcription/test_transcribe_audio.py::test_every_word_has_a_start_and_an_end_in_order_and_inside_the_sound PASSED [ 37%]
+clipper/transcription/test_transcribe_audio.py::test_the_talk_in_parts_of_sixty_seconds_is_within_15_in_100_with_times_in_order PASSED [ 38%]
+clipper/transcription/test_transcribe_audio.py::test_the_printed_seconds_rise_and_end_at_the_length_of_the_sound[whole_talk] PASSED [ 40%]
+clipper/transcription/test_transcribe_audio.py::test_the_printed_seconds_rise_and_end_at_the_length_of_the_sound[talk_in_parts] PASSED [ 42%]
+clipper/transcription/test_transcribe_audio.py::test_twenty_seconds_of_silence_give_no_word PASSED [ 44%]
+clipper/transcription/test_transcribe_audio.py::test_silence_gives_no_word_without_a_model PASSED [ 46%]
+clipper/transcription/test_transcribe_audio.py::test_sound_without_a_model_ends_with_an_error_that_names_the_folder PASSED [ 48%]
+clipper/transcription/test_transcribe_audio.py::test_a_part_is_cut_in_the_quietest_half_second_of_the_thirty_seconds_before_its_mark PASSED [ 50%]
+clipper/transcription/test_transcribe_audio.py::test_a_part_is_never_longer_than_its_mark_and_the_last_one_ends_with_the_sound PASSED [ 51%]
+clipper/transcription/test_transcribe_stage.py::test_the_talk_rests_transcribed_with_a_stored_transcript PASSED [ 53%]
+clipper/transcription/test_transcribe_stage.py::test_with_the_model_in_place_and_the_model_source_closed_transcription_still_finishes PASSED [ 55%]
+clipper/transcription/test_transcribe_stage.py::test_the_silent_fixture_fails_for_want_of_speech_and_retry_runs_that_step_alone PASSED [ 57%]
+clipper/transcription/test_transcribe_stage.py::test_a_source_with_no_sound_track_fails_for_want_of_speech PASSED [ 59%]
+clipper/transcription/test_transcribe_stage.py::test_a_stop_ends_the_transcription_within_two_seconds_with_no_transcript_and_no_samples PASSED [ 61%]
+clipper/transcription/test_transcript.py::test_the_transcript_holds_the_language_the_model_and_the_words_in_order PASSED [ 62%]
+clipper/transcription/test_transcript.py::test_the_text_of_a_word_is_kept_as_the_model_gave_it PASSED [ 64%]
+clipper/transcription/test_transcript.py::test_times_are_rounded_to_hundredths_of_a_second PASSED [ 66%]
+clipper/transcription/test_transcript.py::test_a_word_that_starts_before_the_word_before_it_ends_starts_where_that_one_ends PASSED [ 68%]
+clipper/transcription/test_transcript.py::test_a_word_that_ends_before_it_starts_ends_where_it_starts PASSED [ 70%]
+clipper/transcription/test_transcript.py::test_every_time_is_brought_inside_the_length_of_the_video PASSED [ 72%]
+clipper/transcription/test_transcript.py::test_a_length_between_two_hundredths_keeps_every_time_under_it PASSED [ 74%]
+clipper/transcription/test_transcript.py::test_no_word_at_all_raises_no_speech PASSED [ 75%]
+clipper/transcription/test_transcript.py::test_sound_that_never_reached_the_model_raises_no_speech PASSED [ 77%]
+clipper/transcription/test_transcript_store.py::test_a_transcript_read_back_equals_what_was_written PASSED [ 79%]
+clipper/transcription/test_transcript_store.py::test_the_transcript_is_one_file_named_transcript_json PASSED [ 81%]
+clipper/transcription/test_transcript_store.py::test_the_file_holds_the_language_the_model_and_each_word_with_its_times PASSED [ 83%]
+clipper/transcription/test_transcript_store.py::test_writing_again_replaces_the_transcript PASSED [ 85%]
+clipper/transcription/test_whisper_models.py::test_every_choice_in_settings_is_a_published_model PASSED [ 87%]
+clipper/transcription/test_whisper_models.py::test_a_model_is_known_by_its_name_its_repository_its_revision_and_its_two_files[large-v3-turbo-Whisper large-v3-turbo-mlx-community/whisper-large-v3-turbo/resolve/a4aaeec0636e6fef84abdcbe3544cb2bf7e9f6fb-weights.safetensors] PASSED [ 88%]
+clipper/transcription/test_whisper_models.py::test_a_model_is_known_by_its_name_its_repository_its_revision_and_its_two_files[medium-Whisper medium-mlx-community/whisper-medium-mlx/resolve/7fc08c4eac4c316526498f147dfdee6f6303f975-weights.npz] PASSED [ 90%]
+clipper/transcription/test_whisper_models.py::test_a_model_is_known_by_its_name_its_repository_its_revision_and_its_two_files[small-Whisper small-mlx-community/whisper-small-mlx/resolve/45f3915923c7a79a5a5b5a7d909d39aeb0e5630e-weights.npz] PASSED [ 92%]
+clipper/transcription/test_whisper_models.py::test_another_source_replaces_hugging_face_in_every_address PASSED [ 94%]
+clipper/transcription/test_whole_app.py::test_an_uploaded_talk_goes_through_the_whole_app_and_rests_transcribed PASSED [ 96%]
+clipper/transcription/test_whole_app.py::test_a_project_that_rested_fetched_under_an_earlier_version_is_transcribed_after_the_start PASSED [ 98%]
+clipper/transcription/test_whole_app.py::test_the_model_chosen_in_settings_is_downloaded_and_used_for_the_next_project PASSED [100%]
+
+======================== 54 passed in 93.35s (0:01:33) =========================
+[exit code of the block: 0]
