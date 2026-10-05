@@ -1,4 +1,4 @@
-const TOAST_VISIBLE_MS = 2600;
+const TOAST_VISIBLE_MS = 3500;
 
 let hideTimer = null;
 

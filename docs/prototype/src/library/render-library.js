@@ -1,75 +1,58 @@
-import { escapeHtml } from '../escape-html.js';
-import { formatLength } from '../format-timecode.js';
-import { renderNewProjectForm } from './render-new-project-form.js';
-import { STAGES } from './simulate-processing.js';
+import { renderIcon, renderPage } from '../controls/index.js';
+import { renderProjectRow } from './render-project-row.js';
 
-const STATUS_LABELS = {
-  processing: 'Processing',
-  ready: 'Ready to review',
-  exported: 'Exported',
-};
+const PROTOTYPE_NOTICE = 'Prototype with sample data. Nothing is downloaded, transcribed or rendered, '
+  + 'and every project opens the same sample clips.';
 
-export function renderLibrary(state) {
-  return `
-    <div class="library">
-      <section class="panel" aria-labelledby="new-project-heading">${renderNewProjectForm(state.draft)}</section>
-      <section aria-labelledby="projects-heading">
-        <h2 id="projects-heading" class="section-title">Projects</h2>
-        <ul class="project-list">${state.projects.map((project) => renderProjectRow(project, state)).join('')}</ul>
-      </section>
-    </div>`;
+const NEW_PROJECT_ICON_BUTTON = `
+  <button type="button" class="bar-button bar-button--icon bar-button--tinted" id="new-project"
+    data-action="open-sheet" data-sheet="new-project" aria-label="New Project">${renderIcon('plus')}</button>`;
+
+export function renderLibraryScreen(state) {
+  return {
+    key: 'library',
+    depth: 0,
+    title: 'Library',
+    hasLargeTitle: true,
+    actions: NEW_PROJECT_ICON_BUTTON,
+    body: renderPage('library', `
+      <section class="group-section" aria-labelledby="projects-heading">
+        <h2 class="list-header" id="projects-heading">Projects</h2>
+        <ul class="group divided project-rows">${renderRows(state)}</ul>
+        <p class="list-footer">${PROTOTYPE_NOTICE}</p>
+        <p class="list-footer numeric">${describeDisk(state)}</p>
+      </section>`),
+  };
 }
 
-function renderProjectRow(project, state) {
-  const isProcessing = project.status === 'processing';
+export function renderSidebar(state) {
+  const settingsCurrent = state.view === 'settings' ? 'page' : 'false';
   return `
-    <li class="project">
-      <div class="project__main">
-        <h3 class="project__title">${escapeHtml(project.title)}</h3>
-        <p class="project__meta">
-          <span>${project.source}</span>
-          <span class="timecode">${formatLength(project.durationSeconds)}</span>
-        </p>
-        ${isProcessing ? renderStages(project) : `<p class="project__summary">${describeProgress(project, state)}</p>`}
+    <aside class="sidebar" id="sidebar" aria-label="Library">
+      <header class="sidebar__head">
+        <span class="sidebar__app">Clipper</span>
+        <button type="button" class="bar-button bar-button--icon" id="sidebar-toggle" data-action="toggle-sidebar"
+          aria-label="Hide sidebar">${renderIcon('sidebar')}</button>
+      </header>
+      <div class="sidebar__scroll" data-keep-scroll="sidebar">
+        <button type="button" class="sidebar__new" id="new-project" data-action="open-sheet"
+          data-sheet="new-project">${renderIcon('plus')}New Project</button>
+        <h2 class="list-header">Projects</h2>
+        <ul class="project-rows">${renderRows(state)}</ul>
+        <p class="list-footer">${PROTOTYPE_NOTICE}</p>
       </div>
-      <div class="project__side">
-        <span class="pill pill--${project.status}">${STATUS_LABELS[project.status]}</span>
-        ${isProcessing ? '' : renderOpenButton(project)}
-      </div>
-    </li>`;
+      <footer class="sidebar__foot">
+        <button type="button" class="sidebar__link" id="sidebar-settings" data-action="navigate"
+          data-view="settings" aria-current="${settingsCurrent}">${renderIcon('settings')}Settings</button>
+        <p class="sidebar__disk numeric">${describeDisk(state)}</p>
+      </footer>
+    </aside>`;
 }
 
-function renderOpenButton(project) {
-  return `
-    <button type="button" class="button" data-action="open-project" data-project-id="${project.id}">
-      Open
-    </button>`;
+function renderRows(state) {
+  return state.projects.map((project) => renderProjectRow(project, state)).join('');
 }
 
-function describeProgress(project, state) {
-  if (project.summary) return escapeHtml(project.summary);
-  const decisions = Object.values(state.reviews).map((review) => review.decision);
-  const kept = decisions.filter((decision) => decision === 'keep').length;
-  const rejected = decisions.filter((decision) => decision === 'reject').length;
-  return `${decisions.length} candidates, ${kept} kept, ${rejected} rejected`;
-}
-
-function renderStages(project) {
-  const stages = STAGES.map((stage, index) => renderStage(stage, index, project)).join('');
-  return `<ol class="stages">${stages}</ol>`;
-}
-
-function renderStage(stage, index, project) {
-  const status = stageStatus(index, project.stageIndex);
-  const bar = `<span class="meter"><span id="stage-bar-${project.id}" style="width:${project.stagePercent}%"></span></span>`;
-  return `
-    <li class="stage stage--${status}">
-      <span>${stage.label}</span>
-      ${status === 'current' ? bar : ''}
-    </li>`;
-}
-
-function stageStatus(index, currentIndex) {
-  if (index < currentIndex) return 'done';
-  return index === currentIndex ? 'current' : 'pending';
+function describeDisk(state) {
+  return `${state.settings.freeDiskGb} GB free on this Mac`;
 }

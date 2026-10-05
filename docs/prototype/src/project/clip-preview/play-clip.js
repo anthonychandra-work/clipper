@@ -29,9 +29,15 @@ export function paintPlayhead() {
   const seconds = state.playback.seconds;
   const chunks = buildCaptionChunks(spokenWords(clip, review), state.look.captions);
   caption.innerHTML = captionAt(chunks, seconds)?.html ?? '';
-  document.getElementById('preview-scrubber').value = seconds.toFixed(1);
   document.getElementById('preview-clock').textContent = `${formatClock(seconds)} / ${formatClock(duration)}`;
+  paintScrubber(seconds, duration);
   paintHookTitle(seconds);
+}
+
+function paintScrubber(seconds, duration) {
+  const scrubber = document.getElementById('preview-scrubber');
+  scrubber.value = seconds.toFixed(1);
+  scrubber.style.setProperty('--value', `${((seconds / duration) * 100).toFixed(2)}%`);
 }
 
 function paintHookTitle(seconds) {

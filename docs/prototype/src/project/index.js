@@ -6,9 +6,10 @@ import { resultsInputs } from './render-results.js';
 import { reviewActions, reviewInputs } from './review/index.js';
 import { sampleClips } from './sample-clips.js';
 
-export { REJECT_REASONS } from './clip-inspector/index.js';
-export { paintPlayhead } from './clip-preview/index.js';
-export { renderProject } from './render-project.js';
+export { REJECT_REASONS, renderRejectMenu } from './clip-inspector/index.js';
+export { paintPlayhead, paintPreviewDock } from './clip-preview/index.js';
+export { trimDrags as projectDrags } from './clip-trim/index.js';
+export { renderProjectScreen } from './render-project.js';
 
 export const projectActions = {
   ...tabActions,

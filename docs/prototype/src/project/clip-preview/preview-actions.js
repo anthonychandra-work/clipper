@@ -9,8 +9,8 @@ export const previewActions = {
   'set-layout': ({ value }) => update((state) => {
     state.look.layout = value;
   }),
-  'toggle-look': ({ option }) => update((state) => {
-    state.look[option] = !state.look[option];
+  'toggle-look': ({ value }) => update((state) => {
+    state.look[value] = !state.look[value];
   }),
 };
 

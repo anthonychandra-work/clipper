@@ -1,28 +1,35 @@
 import { escapeHtml } from '../../escape-html.js';
 import { formatDuration, formatTimecode } from '../../format-timecode.js';
-import { renderSegmented } from '../../render-segmented.js';
+import { renderIcon, renderSegmented } from '../../controls/index.js';
 import { isFlagOpen, rankOf, totalScore, visibleClips } from '../clip-review.js';
 import { clipRange } from '../clip-timing.js';
 
 const FILTERS = [
   { value: 'all', label: 'All' },
-  { value: 'undecided', label: 'To review' },
+  { value: 'undecided', label: 'To Do' },
   { value: 'keep', label: 'Kept' },
   { value: 'reject', label: 'Rejected' },
 ];
 
-const DECISION_CHIPS = {
+const DECISION_TAGS = {
   undecided: '',
-  keep: '<span class="chip chip--keep">Kept</span>',
-  reject: '<span class="chip chip--reject">Rejected</span>',
+  keep: `<span class="tag tag--keep">${renderIcon('checkmark')}Kept</span>`,
+  reject: `<span class="tag tag--reject">${renderIcon('xmark')}Rejected</span>`,
 };
+
+const REPLAY_TAG = `<span class="tag">${renderIcon('replay')}Replay peak</span>`;
+const EMPTY_ROW = '<li class="candidate-list__empty">No clips in this group.</li>';
 
 export function renderCandidateList(state) {
   const rows = visibleClips(state).map((clip) => renderCandidate(clip, state)).join('');
+  const filter = renderSegmented({
+    name: 'filter', label: 'Show', action: 'set-filter', selected: state.filter, options: countFilters(state),
+  });
   return `
-    <section class="candidates panel" aria-label="Candidate clips">
-      ${renderSegmented({ label: 'Show', action: 'set-filter', selected: state.filter, options: countFilters(state) })}
-      <ol class="candidate-list">${rows || '<li class="empty">No clips in this group.</li>'}</ol>
+    <section class="group-section" aria-labelledby="candidates-heading">
+      <h2 class="list-header" id="candidates-heading">Candidates</h2>
+      ${filter}
+      <ol class="group divided">${rows || EMPTY_ROW}</ol>
     </section>`;
 }
 
@@ -30,7 +37,7 @@ function countFilters(state) {
   const decisions = Object.values(state.reviews).map((review) => review.decision);
   return FILTERS.map((filter) => {
     const matching = decisions.filter((decision) => filter.value === 'all' || decision === filter.value);
-    return { value: filter.value, label: `${filter.label} ${matching.length}` };
+    return { ...filter, count: matching.length };
   });
 }
 
@@ -42,19 +49,22 @@ function renderCandidate(clip, state) {
     <li class="candidate candidate--${review.decision}${isSelected ? ' is-selected' : ''}">
       <button type="button" class="candidate__open" id="candidate-${clip.id}"
         data-action="select-clip" data-clip-id="${clip.id}" aria-current="${isSelected}">
-        <span class="candidate__rank timecode">${String(rankOf(clip, state.clips)).padStart(2, '0')}</span>
+        <span class="candidate__rank numeric">${String(rankOf(clip, state.clips)).padStart(2, '0')}</span>
         <span class="candidate__body">
           <span class="candidate__title">${escapeHtml(review.title)}</span>
-          <span class="candidate__meta timecode">${formatTimecode(range.start)} · ${formatDuration(range.duration)}</span>
-          <span class="candidate__chips">${renderChips(clip, review)}</span>
+          <span class="candidate__meta numeric">${formatTimecode(range.start)} · ${formatDuration(range.duration)}</span>
+          <span class="candidate__tags">${renderTags(clip, review)}</span>
         </span>
-        <span class="candidate__score timecode">${totalScore(clip)}</span>
+        <span class="candidate__score numeric"><span class="visually-hidden">Score </span>${totalScore(clip)}</span>
+        ${renderIcon('chevron-right')}
       </button>
     </li>`;
 }
 
-function renderChips(clip, review) {
-  const replay = clip.signals.includes('replay') ? '<span class="chip chip--replay">Replay peak</span>' : '';
-  const flag = isFlagOpen(clip, review) ? `<span class="chip chip--warn">${clip.flag.label}</span>` : '';
-  return `<span class="chip">${clip.hookType}</span>${replay}${flag}${DECISION_CHIPS[review.decision]}`;
+function renderTags(clip, review) {
+  const replay = clip.signals.includes('replay') ? REPLAY_TAG : '';
+  const flag = isFlagOpen(clip, review)
+    ? `<span class="tag tag--warn">${renderIcon('warning')}${clip.flag.label}</span>`
+    : '';
+  return `<span class="tag">${clip.hookType}</span>${replay}${flag}${DECISION_TAGS[review.decision]}`;
 }

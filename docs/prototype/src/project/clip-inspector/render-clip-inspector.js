@@ -1,7 +1,8 @@
 import { escapeHtml } from '../../escape-html.js';
+import { renderIcon } from '../../controls/index.js';
 import { isFlagOpen, rankOf, selectedClip, totalScore } from '../clip-review.js';
-import { renderBoundaryEditor } from './render-boundary-editor.js';
-import { renderDecision } from './render-decision.js';
+import { renderLookControls } from '../clip-preview/index.js';
+import { renderBoundaryEditor, renderTranscriptSection } from '../clip-trim/index.js';
 
 const SCORE_PART_MAX = 25;
 
@@ -13,51 +14,64 @@ const SCORE_PARTS = [
 ];
 
 const REPLAY_NOTE = `
-  <p class="why__replay">
-    <span class="chip chip--replay">Replay peak</span>
-    <span class="hint">Viewers of the source video rewatched this part more than the rest.</span>
+  <p class="replay-note">
+    ${renderIcon('replay')}
+    <span><strong>Replay peak.</strong> Viewers of the source video rewatched this part more than the rest.</span>
   </p>`;
+
+const FLAG_FIX = `
+  <button type="button" class="button" id="flag-fix" data-action="apply-flag-fix">
+    Start One Sentence Earlier
+  </button>`;
 
 export function renderClipInspector(state) {
   const clip = selectedClip(state);
   const review = state.reviews[clip.id];
   return `
-    <section class="inspector panel" aria-label="Clip details">
-      <label class="field" for="clip-title">
-        <span class="label">Title</span>
-        <input id="clip-title" type="text" value="${escapeHtml(review.title)}" data-input="edit-title">
-      </label>
+    <section class="inspector" aria-label="Clip details">
+      ${renderTitleField(review)}
       ${isFlagOpen(clip, review) ? renderFlag(clip.flag) : ''}
       ${renderWhy(clip, state.clips)}
       ${renderBoundaryEditor(clip, review)}
-      ${renderDecision(review)}
+      ${renderLookControls(state.look)}
+      ${renderTranscriptSection(clip, review)}
     </section>`;
 }
 
-function renderFlag(flag) {
-  const fix = `
-    <button type="button" class="button button--small" id="flag-fix" data-action="apply-flag-fix">
-      Start one sentence earlier
-    </button>`;
+function renderTitleField(review) {
   return `
-    <div class="flag" role="note">
-      <p>${escapeHtml(flag.message)}</p>
-      ${flag.kind === 'context' ? fix : ''}
+    <div class="group-section">
+      <label class="list-header" for="clip-title">Title</label>
+      <div class="group">
+        <input class="text-field" id="clip-title" type="text" value="${escapeHtml(review.title)}"
+          data-input="edit-title">
+      </div>
+    </div>`;
+}
+
+function renderFlag(flag) {
+  return `
+    <div class="group flag" role="note">
+      ${renderIcon('warning')}
+      <p class="flag__message">${escapeHtml(flag.message)}</p>
+      ${flag.kind === 'context' ? FLAG_FIX : ''}
     </div>`;
 }
 
 function renderWhy(clip, rankedClips) {
   const bars = SCORE_PARTS.map((part) => renderScoreBar(part, clip.scores[part.key])).join('');
   return `
-    <div class="inspector__section">
-      <h2 class="label">Why this clip</h2>
-      <p>${escapeHtml(clip.reason)}</p>
-      <div class="scores">${bars}</div>
-      <p class="hint">
-        <span class="timecode">${totalScore(clip)}</span> of 100, rank ${rankOf(clip, rankedClips)}
+    <div class="group-section">
+      <h2 class="list-header">Why This Clip</h2>
+      <div class="group group--padded">
+        <p>${escapeHtml(clip.reason)}</p>
+        <div class="scores">${bars}</div>
+        ${clip.signals.includes('replay') ? REPLAY_NOTE : ''}
+      </div>
+      <p class="list-footer">
+        <span class="numeric">${totalScore(clip)}</span> of 100, rank ${rankOf(clip, rankedClips)}
         of ${rankedClips.length}. The score orders clips inside this video. It does not forecast views.
       </p>
-      ${clip.signals.includes('replay') ? REPLAY_NOTE : ''}
     </div>`;
 }
 
@@ -67,6 +81,6 @@ function renderScoreBar(part, points) {
     <div class="score">
       <span>${part.label}</span>
       <span class="score__track"><span class="score__fill" style="width:${width}%"></span></span>
-      <span class="score__value timecode">${points}/${SCORE_PART_MAX}</span>
+      <span class="score__value numeric">${points}/${SCORE_PART_MAX}</span>
     </div>`;
 }

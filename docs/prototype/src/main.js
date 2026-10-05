@@ -1,31 +1,44 @@
-import { state, subscribe } from './app-state.js';
+import { state, subscribe, update } from './app-state.js';
 import { rememberFocus, restoreFocus } from './keep-focus.js';
+import { rememberScroll, restoreScroll } from './keep-scroll.js';
 import {
-  createLibraryState, libraryActions, libraryInputs, renderLibrary, resumeProcessing,
+  createLibraryState, libraryActions, libraryInputs, renderLibraryScreen, renderNewProjectSheet, resumeProcessing,
 } from './library/index.js';
-import { navigationActions, readViewFromHash } from './navigate.js';
+import { followHashChanges, navigationActions, readViewFromHash } from './navigate.js';
 import {
-  createProjectState, paintPlayhead, projectActions, projectInputs, renderProject,
+  createProjectState, paintPlayhead, paintPreviewDock, projectActions, projectDrags, projectInputs,
+  renderProjectScreen, renderRejectMenu,
 } from './project/index.js';
+import { isCompact, isSidebarDocked, onLayoutChange } from './read-layout.js';
+import { routeEvents } from './route-events.js';
 import {
-  createSettingsState, renderSettings, settingsActions, settingsInputs,
-} from './render-settings.js';
-import { renderShell } from './render-shell.js';
+  createSettingsState, renderSettingsScreen, settingsActions, settingsInputs,
+} from './settings/index.js';
+import {
+  createShellState, describeShell, presentMenu, presentSheet, renderShell, shellActions, shellDrags,
+  watchLargeTitle, watchSheet,
+} from './shell/index.js';
 
-const VIEWS = { library: renderLibrary, project: renderProject, settings: renderSettings };
-const actions = { ...navigationActions, ...libraryActions, ...projectActions, ...settingsActions };
+const SCREENS = { library: renderLibraryScreen, project: renderProjectScreen, settings: renderSettingsScreen };
+const SHEETS = { 'new-project': renderNewProjectSheet };
+const MENUS = { reject: renderRejectMenu };
+
+const actions = { ...navigationActions, ...shellActions, ...libraryActions, ...projectActions, ...settingsActions };
 const inputs = { ...libraryInputs, ...projectInputs, ...settingsInputs };
+const drags = { ...shellDrags, ...projectDrags };
 
 start();
 
 function start() {
-  Object.assign(state, createLibraryState(), createProjectState(), {
+  Object.assign(state, createShellState(), createLibraryState(), createProjectState(), {
     view: readViewFromHash(),
     settings: createSettingsState(),
   });
-  document.addEventListener('click', runAction);
-  document.addEventListener('input', runInput);
-  document.addEventListener('submit', runSubmit);
+  routeEvents({ actions, inputs, drags });
+  window.addEventListener('scroll', paintPreviewDock, { passive: true });
+  watchSheet(actions['close-sheet']);
+  onLayoutChange(adaptToLayout);
+  followHashChanges();
   subscribe(render);
   render();
   resumeProcessing();
@@ -33,22 +46,34 @@ function start() {
 
 function render() {
   const focused = rememberFocus();
-  document.getElementById('app').innerHTML = renderShell(state, VIEWS[state.view](state));
+  const scrolled = rememberScroll();
+  const screen = SCREENS[visibleView()](state);
+  const shell = describeShell(state, screen);
+  const app = document.getElementById('app');
+  Object.assign(app.dataset, shell);
+  app.innerHTML = renderShell(state, screen);
+  presentSheet(state.sheet ? SHEETS[state.sheet](state) : '', focused);
+  restoreScroll(scrolled);
   restoreFocus(focused);
+  presentMenu(state.menu ? MENUS[state.menu](state) : '');
+  if (shell.enter !== 'none') focusScreenIfFocusWasLost();
   paintPlayhead();
+  paintPreviewDock();
+  watchLargeTitle();
 }
 
-function runAction(event) {
-  const trigger = event.target.closest('[data-action]');
-  if (trigger && !trigger.disabled) actions[trigger.dataset.action](trigger.dataset);
+function visibleView() {
+  const isLibraryInSidebar = !isCompact() && state.view === 'library';
+  return isLibraryInSidebar ? 'project' : state.view;
 }
 
-function runInput(event) {
-  const field = event.target.closest('[data-input]');
-  if (field) inputs[field.dataset.input](field);
+function focusScreenIfFocusWasLost() {
+  if (document.activeElement === document.body) document.getElementById('screen').focus({ preventScroll: true });
 }
 
-function runSubmit(event) {
-  event.preventDefault();
-  actions[event.target.dataset.submit](event.target.dataset);
+function adaptToLayout() {
+  update((current) => {
+    current.isSidebarOpen = isSidebarDocked();
+    current.menu = null;
+  });
 }

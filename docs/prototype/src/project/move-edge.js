@@ -16,7 +16,11 @@ export function edgeLimits(edge, review, sentenceCount) {
 }
 
 export function moveEdge(review, edge, step) {
-  review[`${edge}Index`] += step;
+  moveEdgeTo(review, edge, review[`${edge}Index`] + step);
+}
+
+export function moveEdgeTo(review, edge, sentenceIndex) {
+  review[`${edge}Index`] = sentenceIndex;
   review[`${edge}Nudge`] = 0;
 }
 

@@ -1,35 +1,48 @@
-import { update } from '../../app-state.js';
+import { state, update } from '../../app-state.js';
+import { isCompact } from '../../read-layout.js';
 import { visibleClips } from '../clip-review.js';
 import { createPlayback } from '../clip-preview/index.js';
 
-const PHONE_LAYOUT = '(max-width: 720px)';
+let listScrollY = 0;
 
 export const selectionActions = {
   'select-clip': ({ clipId }) => showClip(clipId),
-  'select-next': () => update((state) => openClip(state, nextClipId(state))),
-  'close-detail': () => update((state) => {
-    state.isDetailOpen = false;
-    state.playback = createPlayback();
-  }),
-  'set-filter': ({ value }) => update((state) => {
-    state.filter = value;
+  'select-next': () => showNextClip(),
+  'close-detail': () => closeDetail(),
+  'set-filter': ({ value }) => update((current) => {
+    current.filter = value;
   }),
 };
 
 function showClip(clipId) {
-  update((state) => openClip(state, clipId));
-  if (window.matchMedia(PHONE_LAYOUT).matches) window.scrollTo(0, 0);
+  if (isCompact() && !state.isDetailOpen) listScrollY = window.scrollY;
+  update((current) => openClip(current, clipId));
+  if (isCompact()) window.scrollTo(0, 0);
 }
 
-function openClip(state, clipId) {
-  state.selectedClipId = clipId;
-  state.isDetailOpen = true;
-  state.playback = createPlayback();
+function showNextClip() {
+  update((current) => openClip(current, nextClipId(current)));
+  if (isCompact()) return window.scrollTo(0, 0);
+  document.getElementById(`candidate-${state.selectedClipId}`)?.scrollIntoView({ block: 'nearest' });
 }
 
-function nextClipId(state) {
-  const visible = visibleClips(state);
-  const pool = visible.length > 0 ? visible : state.clips;
-  const position = pool.findIndex((clip) => clip.id === state.selectedClipId);
+function closeDetail() {
+  update((current) => {
+    current.isDetailOpen = false;
+    current.playback = createPlayback();
+  });
+  window.scrollTo(0, listScrollY);
+}
+
+function openClip(current, clipId) {
+  current.selectedClipId = clipId;
+  current.isDetailOpen = true;
+  current.playback = createPlayback();
+}
+
+function nextClipId(current) {
+  const visible = visibleClips(current);
+  const pool = visible.length > 0 ? visible : current.clips;
+  const position = pool.findIndex((clip) => clip.id === current.selectedClipId);
   return pool[(position + 1) % pool.length].id;
 }

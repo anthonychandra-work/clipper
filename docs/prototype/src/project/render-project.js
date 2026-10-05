@@ -1,6 +1,7 @@
 import { update } from '../app-state.js';
-import { escapeHtml } from '../escape-html.js';
 import { formatTimecode } from '../format-timecode.js';
+import { renderSegmented } from '../controls/index.js';
+import { findOpenProject, isInPipeline, renderProcessingScreen } from '../library/index.js';
 import { keptClips } from './clip-review.js';
 import { renderExport } from './export/index.js';
 import { renderResults } from './render-results.js';
@@ -18,30 +19,28 @@ export const tabActions = {
   }),
 };
 
-export function renderProject(state) {
-  const project = state.projects.find((candidate) => candidate.id === state.openProjectId);
-  const openTab = TABS.find((tab) => tab.value === state.tab);
-  return `
-    <div class="project-head">
-      <button type="button" class="button button--quiet" data-action="navigate" data-view="library">
-        ‹ Library
-      </button>
-      <div class="project-head__title">
-        <h1>${escapeHtml(project.title)}</h1>
-        <p class="project__meta">
-          <span>${project.source}</span>
-          <span class="timecode">${formatTimecode(project.durationSeconds)}</span>
-          <span>${state.clips.length} candidates</span>
-        </p>
-      </div>
-    </div>
-    <nav class="tabs" aria-label="Project steps">${TABS.map((tab) => renderTab(tab, state)).join('')}</nav>
-    ${openTab.render(state)}`;
+export function renderProjectScreen(state) {
+  const project = findOpenProject(state);
+  if (isInPipeline(project)) return renderProcessingScreen(project, state);
+  const length = formatTimecode(project.durationSeconds);
+  return {
+    key: 'project',
+    depth: 1,
+    title: project.title,
+    subtitle: `${project.source} · ${length} · ${state.clips.length} candidates`,
+    titleStyle: 'title',
+    hasLargeTitle: true,
+    back: { label: 'Library', action: 'navigate', view: 'library' },
+    centre: renderTabs(state),
+    ...TABS.find((tab) => tab.value === state.tab).render(state),
+  };
 }
 
-function renderTab(tab, state) {
-  const keptCount = tab.value === 'export' ? ` (${keptClips(state).length})` : '';
-  return `
-    <button type="button" class="tab" id="tab-${tab.value}" data-action="set-tab" data-value="${tab.value}"
-      aria-current="${tab.value === state.tab ? 'page' : 'false'}">${tab.label}${keptCount}</button>`;
+function renderTabs(state) {
+  const options = TABS.map((tab) => ({
+    value: tab.value,
+    label: tab.label,
+    count: tab.value === 'export' ? keptClips(state).length : undefined,
+  }));
+  return renderSegmented({ name: 'tab', label: 'Project steps', action: 'set-tab', selected: state.tab, options });
 }

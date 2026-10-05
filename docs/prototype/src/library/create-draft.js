@@ -6,6 +6,6 @@ export function createDraft() {
     length: 'standard',
     platforms: ['tiktok', 'reels', 'shorts'],
     brief: '',
-    error: '',
+    problem: null,
   };
 }

@@ -2,9 +2,8 @@ import { state, update } from '../../app-state.js';
 
 export const decisionActions = {
   decide: ({ decision }) => update((current) => applyDecision(selectedReview(current), decision)),
-  'set-reject-reason': ({ reason }) => update((current) => {
-    selectedReview(current).rejectReason = reason;
-  }),
+  'reject-clip': ({ reason }) => update((current) => rejectClip(current, reason)),
+  'clear-decision': () => update((current) => clearDecision(current)),
 };
 
 export const decisionInputs = {
@@ -20,4 +19,18 @@ function selectedReview(current) {
 function applyDecision(review, decision) {
   review.decision = review.decision === decision ? 'undecided' : decision;
   if (review.decision !== 'reject') review.rejectReason = null;
+}
+
+function rejectClip(current, reason) {
+  const review = selectedReview(current);
+  review.decision = 'reject';
+  review.rejectReason = reason || null;
+  current.menu = null;
+}
+
+function clearDecision(current) {
+  const review = selectedReview(current);
+  review.decision = 'undecided';
+  review.rejectReason = null;
+  current.menu = null;
 }

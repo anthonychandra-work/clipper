@@ -1,24 +1,8 @@
 import { escapeHtml } from '../../escape-html.js';
-import { renderSegmented } from '../../render-segmented.js';
+import { renderIcon } from '../../controls/index.js';
+import { findOpenProject } from '../../library/index.js';
 import { selectedClip } from '../clip-review.js';
 import { clipRange } from '../clip-timing.js';
-
-const CAPTION_STYLES = [
-  { value: 'keyword', label: 'Keyword' },
-  { value: 'pop', label: 'Word by word' },
-  { value: 'clean', label: 'Plain' },
-];
-
-const LAYOUTS = [
-  { value: 'follow', label: 'Follow speaker' },
-  { value: 'stacked', label: 'Stack two' },
-  { value: 'fit', label: 'Whole frame' },
-];
-
-const LOOK_TOGGLES = [
-  { option: 'showHookTitle', label: 'Hook title' },
-  { option: 'showSafeZones', label: 'Platform safe zones' },
-];
 
 const SCENES = {
   follow: `<div class="scene">${renderFigure('guest')}</div>`,
@@ -37,25 +21,41 @@ const SAFE_ZONES = `
   <span class="safe-zone safe-zone--rail">Platform buttons</span>
   <span class="safe-zone safe-zone--footer">Caption and sound</span>`;
 
+const PLAY_SURFACE = `
+  <button type="button" class="player__surface" data-action="toggle-playback" tabindex="-1"
+    aria-hidden="true"></button>
+  <span class="player__dim"></span>`;
+
+const SOURCE_DELETED_PREVIEW = `
+  <section class="preview preview--gone" aria-label="Clip preview">
+    <div class="player player--gone">
+      ${renderIcon('film')}
+      <p>Preview unavailable. The source video was deleted to free space.</p>
+    </div>
+  </section>`;
+
 export function renderClipPreview(state) {
+  if (findOpenProject(state).isSourceDeleted) return SOURCE_DELETED_PREVIEW;
   const clip = selectedClip(state);
   const { duration } = clipRange(clip, state.reviews[clip.id]);
   return `
     <section class="preview" aria-label="Clip preview">
-      ${renderPhone(clip, state.look)}
-      ${renderTransport(state.playback, duration)}
-      ${renderLookControls(state.look)}
+      <div class="player-shell${state.playback.isPlaying ? ' is-playing' : ''}">
+        ${renderPicture(clip, state.look)}
+        ${renderTransport(state.playback, duration)}
+      </div>
     </section>`;
 }
 
-function renderPhone(clip, look) {
-  const hook = `<p class="phone__hook" id="preview-hook">${escapeHtml(clip.hookTitle)}</p>`;
+function renderPicture(clip, look) {
+  const hook = `<p class="player__hook" id="preview-hook">${escapeHtml(clip.hookTitle)}</p>`;
   return `
-    <div class="phone phone--${look.layout}">
+    <div class="player player--${look.layout}">
       ${SCENES[look.layout]}
       ${look.showSafeZones ? SAFE_ZONES : ''}
       ${look.showHookTitle ? hook : ''}
-      <p class="phone__caption caption--${look.captions}" id="preview-caption"></p>
+      <p class="player__caption caption--${look.captions}" id="preview-caption"></p>
+      ${PLAY_SURFACE}
     </div>`;
 }
 
@@ -69,40 +69,11 @@ function renderFigure(role) {
 
 function renderTransport(playback, duration) {
   return `
-    <div class="transport">
-      <button type="button" class="button button--primary" id="preview-play" data-action="toggle-playback">
-        ${playback.isPlaying ? 'Pause' : 'Play'}
-      </button>
-      <input type="range" class="transport__scrubber" id="preview-scrubber" min="0"
-        max="${duration.toFixed(1)}" step="0.1" value="${playback.seconds.toFixed(1)}"
-        data-input="seek" aria-label="Position in clip">
-      <span class="timecode" id="preview-clock"></span>
+    <div class="player__controls">
+      <button type="button" class="player__play" id="preview-play" data-action="toggle-playback"
+        aria-label="${playback.isPlaying ? 'Pause' : 'Play'}">${renderIcon(playback.isPlaying ? 'pause' : 'play')}</button>
+      <input type="range" class="slider" id="preview-scrubber" min="0" max="${duration.toFixed(1)}" step="0.1"
+        value="${playback.seconds.toFixed(1)}" data-input="seek" aria-label="Position in clip">
+      <span class="player__clock numeric" id="preview-clock"></span>
     </div>`;
-}
-
-function renderLookControls(look) {
-  return `
-    <div class="look">
-      <span class="label">Captions</span>
-      ${renderSegmented({ label: 'Caption style', action: 'set-caption-style', selected: look.captions, options: CAPTION_STYLES })}
-      <span class="label">Framing</span>
-      ${renderSegmented({ label: 'Framing', action: 'set-layout', selected: look.layout, options: LAYOUTS })}
-      <div class="look__toggles">${LOOK_TOGGLES.map((toggle) => renderLookToggle(toggle, look)).join('')}</div>
-    </div>`;
-}
-
-function renderLookToggle(toggle, look) {
-  return `
-    <label class="check" for="look-${toggle.option}">
-      <input type="checkbox" id="look-${toggle.option}" data-action="toggle-look"
-        data-option="${toggle.option}" ${look[toggle.option] ? 'checked' : ''}>
-      ${toggle.label}
-    </label>`;
-}
-
-export function describeLook(look) {
-  const captions = CAPTION_STYLES.find((style) => style.value === look.captions).label;
-  const layout = LAYOUTS.find((option) => option.value === look.layout).label;
-  const hook = look.showHookTitle ? 'hook title on' : 'hook title off';
-  return `Captions: ${captions}. Framing: ${layout}. ${hook[0].toUpperCase()}${hook.slice(1)}.`;
 }
