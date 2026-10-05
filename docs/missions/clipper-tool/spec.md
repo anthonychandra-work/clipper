@@ -596,6 +596,12 @@ From `intent.md`. Base `82df5ce`.
   sends in its task. A replay peak is stored by its start, and a project's peaks are read back in
   the order of their starts. A71 lists what the selection address gives and leaves the stored
   form open. (executor, m3)
+- A78 — A line of the transcript part holds the sentence's number, its start to a hundredth of a
+  second in square brackets, and its text, as in `12 [42.56] What they do not forgive is
+  silence.` The windows of a longer video are asked about sixty at a time, in the order of their
+  starts. Two more scenarios of recorded replies, `window-twice` and `unknown-window`, score the
+  talk's windows with one named twice and with one that was not asked about. The plan fixes what
+  the part and the questions hold and leaves these forms open. (executor, m3)
 
 ## Milestones
 

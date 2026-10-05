@@ -262,14 +262,16 @@ What the spec's file list leaves out
   order of their ranks. Deleting the project leaves no row of the three tables. A project's JSON
   carries `candidateCount`.
 
-- [ ] T5 — Pass one: score every window once and form the shortlist
+- [x] T5 — Pass one: score every window once and form the shortlist
   Files: `service/clipper/selection/transcript_part.py`,
   `service/clipper/selection/test_transcript_part.py`,
+  `service/clipper/selection/selection_task.py`,
   `service/clipper/selection/score_windows.py`,
   `service/clipper/selection/test_score_windows.py`,
   `service/clipper/selection/form_shortlist.py`,
   `service/clipper/selection/test_form_shortlist.py`, `service/clipper/selection/__init__.py`,
-  `fixtures/claude/talk/score.json`
+  `fixtures/claude/talk/score.json`, `fixtures/claude/window-twice/score.json`,
+  `fixtures/claude/unknown-window/score.json`
   Done: the transcript part is one line for each sentence with its number, its start in seconds
   and its text, and is the same text every time for the same transcript. Pass one turns a
   project's windows into questions of at most 60 windows each, every window in one of them. The
