@@ -1,5 +1,6 @@
 export { expect } from '@playwright/test';
 export { newProjectSheet, projectRow, readRow, type RowText } from './library-page';
+export { presentAsReady } from './present-as-ready';
 export {
   type EnvironmentChanges,
   isPortOpen,

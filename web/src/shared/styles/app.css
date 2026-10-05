@@ -4,11 +4,26 @@ a.button,
 a.tab-bar__tab,
 a.sidebar__new,
 a.sidebar__link,
-a.project-row {
+a.project-row,
+a.segmented__option {
   text-decoration: none;
 }
 
 a.sidebar__link,
 a.project-row {
   color: inherit;
+}
+
+a.segmented__option {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+a.segmented__option[aria-current="page"],
+a.segmented__option[aria-current="page"]:hover,
+a.segmented__option[aria-current="page"]:active {
+  background: var(--segment);
+  box-shadow: 0 0 0 0.5px var(--glass-rim), 0 1px 4px var(--shadow);
+  font-weight: 600;
 }

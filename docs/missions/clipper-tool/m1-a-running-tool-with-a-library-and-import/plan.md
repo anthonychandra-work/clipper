@@ -501,8 +501,10 @@ The prototype
   link the server answers with "not found" shows the reason and Retry, and Retry after
   `/repair` finishes it.
 
-- [ ] T14 — Build the project view's frame: tabs at their own addresses, More and Delete Project
-  Files: `web/src/project/index.ts`, `web/src/project/open-project/index.ts`,
+- [x] T14 — Build the project view's frame: tabs at their own addresses, More and Delete Project
+  Files: `web/src/shared/styles/app.css`,
+  `web/src/project/open-project/components/NewestProject.tsx`,
+  `web/src/project/index.ts`, `web/src/project/open-project/index.ts`,
   `web/src/project/open-project/components/ProjectScreen.tsx`,
   `web/src/project/open-project/components/ProjectTabs.tsx`,
   `web/src/project/open-project/components/ProjectMoreButton.tsx`,
