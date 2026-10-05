@@ -13,6 +13,7 @@ export {
   readShownProblem,
 } from './new-project-sheet';
 export { presentAsReady } from './present-as-ready';
+export { readSelection, type Selection } from './read-selection';
 export { countWordsWrongInHundred, readTranscript, type StoredTranscript } from './read-transcript';
 export {
   type EnvironmentChanges,
@@ -22,8 +23,10 @@ export {
   type StartCommand,
   type ToolRun,
 } from './run-tool';
+export { removeSavedKey, saveTestKey, TEST_KEY } from './saved-key';
 export { seedEveryState, type SeededProjects } from './seed-projects';
 export type { FixtureServer } from './serve-fixtures';
+export type { KeptRequest, RecordedClaude } from './serve-recorded-claude';
 export {
   createFileProject,
   createLinkProject,

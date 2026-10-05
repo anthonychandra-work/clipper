@@ -69,6 +69,7 @@ export class ToolRun {
   constructor(
     readonly settings: TestRunSettings,
     readonly modelSource: string,
+    readonly anthropicSource: string,
   ) {}
 
   async start(changes: EnvironmentChanges = {}): Promise<void> {
@@ -76,6 +77,7 @@ export class ToolRun {
       ...process.env,
       CLIPPER_REPORTED_FREE_BYTES: FIFTY_GB_IN_BYTES,
       CLIPPER_MODEL_SOURCE: this.modelSource,
+      CLIPPER_ANTHROPIC_SOURCE: this.anthropicSource,
       ...changes,
     };
     this.command = launchStartCommand(environment);

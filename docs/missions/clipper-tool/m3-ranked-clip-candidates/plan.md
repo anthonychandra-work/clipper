@@ -505,8 +505,9 @@ What the spec's file list leaves out
   and the warning; the first two steps done; and `preview.mp4`, `source.mp4` and
   `transcript.json` in the folder. `pnpm test` exits 0.
 
-- [ ] T16 — Browser tests: with a key the talk reaches Ready, and the evidence is saved
-  Files: `web/e2e/support/serve-recorded-claude.ts`, `web/e2e/support/saved-key.ts`,
+- [x] T16 — Browser tests: with a key the talk reaches Ready, and the evidence is saved
+  Files: `docs/missions/clipper-tool/spec.md`,
+  `web/e2e/support/serve-recorded-claude.ts`, `web/e2e/support/saved-key.ts`,
   `web/e2e/support/tool-test.ts`, `web/e2e/support/run-tool.ts`,
   `web/e2e/support/read-selection.ts`, `web/e2e/support/index.ts`, `web/e2e/selection.spec.ts`,
   `docs/missions/clipper-tool/m3-ranked-clip-candidates/evidence/talk-selection.json`,

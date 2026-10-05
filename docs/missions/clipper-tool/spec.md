@@ -664,6 +664,12 @@ From `intent.md`. Base `82df5ce`.
   transcribed words with the committed ones by their text. One more test starts the app on a
   project that rested transcribed, with no key saved, and finds it failed for the missing key.
   The plan fixes what is handed over and what is tested and leaves these open. (executor, m3)
+- A87 — In a browser test run the tool is started with the stand-in's `talk` scenario every
+  time, so any browser test that saves a key gets the talk's candidates. The selection test
+  forgets what the stand-in kept before it starts and saves what it kept once its project is
+  ready, so the saved requests are that project's alone. It names the missing-key sentence and
+  the two controls of the card itself, beside the shared description of that end. The plan says
+  what the test shows and saves and leaves these open. (executor, m3)
 
 ## Milestones
 
