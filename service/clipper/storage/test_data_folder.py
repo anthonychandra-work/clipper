@@ -18,6 +18,13 @@ def test_the_database_file_sits_inside_the_folder(tmp_path: Path) -> None:
     assert data_folder.database_file == tmp_path / "data" / "clipper.sqlite3"
 
 
+def test_each_project_has_a_folder_of_its_own_under_projects(tmp_path: Path) -> None:
+    data_folder = open_data_folder(tmp_path / "data")
+
+    assert data_folder.projects_dir.is_dir()
+    assert data_folder.project_dir("a1b2c3") == tmp_path / "data" / "projects" / "a1b2c3"
+
+
 def test_opening_an_existing_folder_keeps_what_it_holds(tmp_path: Path) -> None:
     kept = tmp_path / "kept.txt"
     kept.write_text("still here")

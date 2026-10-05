@@ -4,7 +4,36 @@ from contextlib import closing, contextmanager
 from pathlib import Path
 
 BUSY_TIMEOUT_SECONDS = 10.0
-MIGRATIONS: tuple[str, ...] = ()
+
+CREATE_PROJECTS = """
+CREATE TABLE projects (
+    created_order INTEGER PRIMARY KEY AUTOINCREMENT,
+    id TEXT NOT NULL UNIQUE,
+    title TEXT NOT NULL,
+    source_kind TEXT NOT NULL,
+    source_label TEXT NOT NULL,
+    link TEXT,
+    file_name TEXT,
+    file_size_bytes INTEGER,
+    received_bytes INTEGER NOT NULL DEFAULT 0,
+    clip_length TEXT NOT NULL,
+    platforms TEXT NOT NULL,
+    brief TEXT NOT NULL,
+    status TEXT NOT NULL,
+    duration_seconds REAL,
+    halt_reason TEXT
+);
+CREATE TABLE project_steps (
+    project_id TEXT NOT NULL REFERENCES projects (id) ON DELETE CASCADE,
+    position INTEGER NOT NULL,
+    kind TEXT NOT NULL,
+    state TEXT NOT NULL,
+    percent REAL NOT NULL,
+    PRIMARY KEY (project_id, position)
+);
+"""
+
+MIGRATIONS: tuple[str, ...] = (CREATE_PROJECTS,)
 
 
 class Database:

@@ -10,6 +10,7 @@ SETTING_VARIABLES = [
     "CLIPPER_KEY_FILE",
     "CLIPPER_WEB_PORT",
     "CLIPPER_SERVICE_PORT",
+    "CLIPPER_REPORTED_FREE_BYTES",
 ]
 
 
@@ -29,6 +30,16 @@ def test_defaults_are_the_values_the_tool_runs_with(clean_environment: pytest.Mo
     assert settings.key_file == application_support / "Clipper" / "anthropic-api-key"
     assert settings.web_port == 3000
     assert settings.service_port == 8765
+
+
+def test_the_free_disk_space_is_measured_unless_a_figure_is_reported(
+    clean_environment: pytest.MonkeyPatch,
+) -> None:
+    assert StartupSettings().reported_free_bytes is None
+
+    clean_environment.setenv("CLIPPER_REPORTED_FREE_BYTES", "3221225472")
+
+    assert StartupSettings().reported_free_bytes == 3 * 1024**3
 
 
 def test_the_repository_root_holds_the_service_folder() -> None:

@@ -17,3 +17,4 @@ class StartupSettings(BaseSettings):
     web_port: int = 3000
     service_port: int = 8765
     search_path: str = Field(default="", validation_alias="PATH")
+    reported_free_bytes: int | None = None

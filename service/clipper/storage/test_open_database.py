@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from .open_database import open_database, read_schema_version
+from .open_database import MIGRATIONS, open_database, read_schema_version
 
 CREATE_NOTES = "CREATE TABLE notes (body TEXT NOT NULL);"
 ADD_AUTHOR = "ALTER TABLE notes ADD COLUMN author TEXT;"
@@ -17,6 +17,15 @@ def test_opening_creates_the_database_file_in_wal_mode(tmp_path: Path) -> None:
     assert database_file.is_file()
     with database.transaction() as connection:
         assert connection.execute("PRAGMA journal_mode").fetchone()[0] == "wal"
+
+
+def test_a_new_database_holds_the_project_tables_at_the_current_version(tmp_path: Path) -> None:
+    database = open_database(tmp_path / "clipper.sqlite3")
+
+    with database.transaction() as connection:
+        tables = connection.execute("SELECT name FROM sqlite_master WHERE type = 'table'")
+        assert {"projects", "project_steps"} <= {table["name"] for table in tables}
+        assert read_schema_version(connection) == len(MIGRATIONS)
 
 
 def test_the_schema_version_counts_the_migrations_applied(tmp_path: Path) -> None:

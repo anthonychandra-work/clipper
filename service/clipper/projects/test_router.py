@@ -1,0 +1,170 @@
+from collections.abc import Iterator
+from pathlib import Path
+
+import pytest
+from fastapi.testclient import TestClient
+
+from ..main import create_app
+from ..settings import StartupSettings
+from ..storage import BYTES_PER_GB
+
+LINK_DRAFT = {
+    "sourceKind": "link",
+    "link": "https://www.youtube.com/watch?v=abc123",
+    "clipLength": "standard",
+    "platforms": ["tiktok", "reels", "shorts"],
+    "brief": "",
+}
+FILE_DRAFT = {
+    "sourceKind": "file",
+    "fileName": "talk.mp4",
+    "fileSizeBytes": 3_000_000,
+    "platforms": ["tiktok"],
+}
+
+
+def start_client(tmp_path: Path, reported_free_gb: float) -> TestClient:
+    settings = StartupSettings(
+        data_dir=tmp_path / "data", reported_free_bytes=int(reported_free_gb * BYTES_PER_GB)
+    )
+    return TestClient(create_app(settings))
+
+
+@pytest.fixture
+def client(tmp_path: Path) -> Iterator[TestClient]:
+    with start_client(tmp_path, reported_free_gb=50) as test_client:
+        yield test_client
+
+
+def test_an_empty_library_lists_no_projects_and_the_free_space(client: TestClient) -> None:
+    response = client.get("/api/projects")
+
+    assert response.status_code == 200
+    assert response.json() == {"projects": [], "freeDiskGb": 50.0}
+
+
+def test_a_created_link_project_is_returned_in_its_json_form(client: TestClient) -> None:
+    response = client.post("/api/projects", json=LINK_DRAFT)
+
+    assert response.status_code == 201
+    created = response.json()
+    assert created["steps"][0] == {
+        "kind": "fetch",
+        "label": "Fetching video",
+        "state": "pending",
+        "percent": 0.0,
+    }
+    assert [step["label"] for step in created["steps"][1:]] == [
+        "Transcribing on this Mac",
+        "Scoring windows",
+        "Cutting clips",
+    ]
+    del created["id"], created["steps"]
+    assert created == {
+        "title": "New video from link",
+        "sourceKind": "link",
+        "sourceLabel": "YouTube link",
+        "durationSeconds": None,
+        "status": "queued",
+        "percent": 0.0,
+        "halt": None,
+        "upload": None,
+    }
+
+
+def test_a_created_file_project_reports_its_upload(client: TestClient) -> None:
+    created = client.post("/api/projects", json=FILE_DRAFT).json()
+
+    assert created["status"] == "uploading"
+    assert created["title"] == "talk.mp4"
+    assert created["steps"][0]["label"] == "Uploading video"
+    assert created["upload"] == {"fileName": "talk.mp4", "sizeBytes": 3_000_000, "receivedBytes": 0}
+
+
+def test_projects_are_listed_newest_first(client: TestClient) -> None:
+    first = client.post("/api/projects", json=LINK_DRAFT).json()
+    second = client.post("/api/projects", json=FILE_DRAFT).json()
+
+    listed = client.get("/api/projects").json()["projects"]
+
+    assert [project["id"] for project in listed] == [second["id"], first["id"]]
+
+
+def test_one_project_is_read_by_its_id(client: TestClient) -> None:
+    created = client.post("/api/projects", json=LINK_DRAFT).json()
+
+    response = client.get(f"/api/projects/{created['id']}")
+
+    assert response.status_code == 200
+    assert response.json() == created
+
+
+@pytest.mark.parametrize(
+    ("change", "section", "message"),
+    [
+        ({"link": "not a link"}, "source", "Paste the full link, starting with https://"),
+        ({"sourceKind": "file"}, "source", "Choose a video file first."),
+        ({"platforms": []}, "platforms", "Turn on at least one platform."),
+    ],
+)
+def test_a_draft_with_a_problem_is_refused_with_its_section(
+    client: TestClient, change: dict[str, object], section: str, message: str
+) -> None:
+    response = client.post("/api/projects", json={**LINK_DRAFT, **change})
+
+    assert response.status_code == 422
+    assert response.json() == {"problem": {"section": section, "message": message}}
+    assert client.get("/api/projects").json()["projects"] == []
+
+
+def test_a_file_over_4_gb_is_refused(client: TestClient) -> None:
+    response = client.post(
+        "/api/projects", json={**FILE_DRAFT, "fileSizeBytes": 4 * BYTES_PER_GB + 1}
+    )
+
+    assert response.status_code == 422
+    assert response.json()["problem"] == {
+        "section": "source",
+        "message": "This file is larger than 4 GB. Choose a smaller one.",
+    }
+
+
+def test_a_new_project_is_refused_when_the_reported_free_space_is_under_5_gb(
+    tmp_path: Path,
+) -> None:
+    with start_client(tmp_path, reported_free_gb=3.2) as low_disk_client:
+        response = low_disk_client.post("/api/projects", json=LINK_DRAFT)
+        listed = low_disk_client.get("/api/projects").json()
+
+    assert response.status_code == 422
+    assert response.json()["problem"] == {
+        "section": "source",
+        "message": "Only 3.2 GB is free on this Mac, and a new project needs 5 GB. "
+        "Delete a project or free some space.",
+    }
+    assert listed == {"projects": [], "freeDiskGb": 3.2}
+
+
+def test_delete_removes_the_project_and_its_folder(client: TestClient, tmp_path: Path) -> None:
+    created = client.post("/api/projects", json=LINK_DRAFT).json()
+    project_dir = tmp_path / "data" / "projects" / created["id"]
+    project_dir.mkdir()
+    (project_dir / "source.mp4").write_bytes(b"video")
+
+    response = client.delete(f"/api/projects/{created['id']}")
+
+    assert response.status_code == 204
+    assert not project_dir.exists()
+    assert client.get("/api/projects").json()["projects"] == []
+
+
+@pytest.mark.parametrize("method", ["GET", "DELETE"])
+def test_an_unknown_id_answers_404_through_the_error_handler(
+    client: TestClient, method: str
+) -> None:
+    response = client.request(method, "/api/projects/missing")
+
+    assert response.status_code == 404
+    assert response.json() == {
+        "problem": {"section": None, "message": "This project does not exist."}
+    }

@@ -246,8 +246,9 @@ The prototype
   folder and hands the folder to pytest and Playwright; each runner builds its own when started
   alone. No video is committed.
 
-- [ ] T5 — Store projects: create, list, read and delete, with the refusals
-  Files: `service/clipper/main.py`, `service/clipper/problems/__init__.py`,
+- [x] T5 — Store projects: create, list, read and delete, with the refusals
+  Files: `service/clipper/main.py`, `service/clipper/conftest.py`,
+  `service/clipper/projects/describe_project.py`, `service/clipper/problems/__init__.py`,
   `service/clipper/problems/app_error.py`, `service/clipper/problems/handle_app_errors.py`,
   `service/clipper/problems/test_handle_app_errors.py`,
   `service/clipper/settings/startup_settings.py`,
