@@ -5,6 +5,7 @@ export interface StatusCardText {
   stage: string;
   footnote: string | null;
   buttons: string[];
+  links: string[];
   hasBar: boolean;
   hasWarning: boolean;
 }
@@ -21,6 +22,7 @@ export async function readStatusCard(page: Page): Promise<StatusCardText> {
     stage: await card.locator('.status-card__stage').innerText(),
     footnote: (await footnote.count()) > 0 ? await footnote.innerText() : null,
     buttons: await card.getByRole('button').allInnerTexts(),
+    links: await card.getByRole('link').allInnerTexts(),
     hasBar: (await card.getByRole('progressbar').count()) > 0,
     hasWarning: (await card.locator(':scope > svg.icon').count()) > 0,
   };

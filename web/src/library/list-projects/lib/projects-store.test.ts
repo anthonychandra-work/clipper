@@ -14,6 +14,7 @@ const TALK: Project = {
   percent: 25,
   halt: null,
   upload: null,
+  candidateCount: 0,
 };
 
 function buildStore(answers: () => Promise<ProjectList>) {

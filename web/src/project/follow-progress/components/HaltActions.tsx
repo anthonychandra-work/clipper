@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
 
 import { refreshProjects } from '@/library';
@@ -10,13 +11,15 @@ import { sendHaltAction } from '../api/halt-project';
 import type { HaltAction } from '../lib/describe-status';
 
 const RESTART_LABELS = { resume: 'Resume', retry: 'Retry' };
+const SETTINGS_ADDRESS = '/settings';
 
 interface HaltActionsProps {
   projectId: string;
   action: HaltAction;
+  opensSettings: boolean;
 }
 
-export function HaltActions({ projectId, action }: HaltActionsProps) {
+export function HaltActions({ projectId, action, opensSettings }: HaltActionsProps) {
   const [isSending, setIsSending] = useState(false);
 
   async function send() {
@@ -48,6 +51,11 @@ export function HaltActions({ projectId, action }: HaltActionsProps) {
       >
         {RESTART_LABELS[action]}
       </button>
+      {opensSettings ? (
+        <Link className="button" id="halt-settings" href={SETTINGS_ADDRESS}>
+          Open Settings
+        </Link>
+      ) : null}
     </div>
   );
 }

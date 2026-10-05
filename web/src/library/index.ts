@@ -1,6 +1,7 @@
 export { CLIP_LENGTHS, type ClipLength, NewProjectSheet } from './create-project';
 export type {
   Project,
+  ProjectHalt,
   ProjectList,
   ProjectStatus,
   ProjectStep,
@@ -9,6 +10,7 @@ export type {
   StepKind,
 } from './library.types';
 export {
+  describeCandidateCount,
   describeSource,
   EmptyLibrary,
   EmptyLibraryScreen,

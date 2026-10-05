@@ -78,14 +78,14 @@ export function presentTranscriptionStates(seeded: SeededProjects): Record<strin
       ...seeded.failed,
       status: 'failed',
       percent: 25,
-      halt: { reason: NO_SPEECH },
+      halt: { reason: NO_SPEECH, opensSettings: false },
       steps: [fetched, waiting, ...later],
     },
     'download-failed': {
       ...seeded.stopped,
       status: 'failed',
       percent: 25,
-      halt: { reason: MODEL_DOWNLOAD_FAILED },
+      halt: { reason: MODEL_DOWNLOAD_FAILED, opensSettings: false },
       steps: [fetched, LONGEST_DOWNLOAD, waiting, ...later],
     },
   };

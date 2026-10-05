@@ -29,10 +29,17 @@ test('a link that answers "not found" shows the reason and Retry, and Retry fini
     stage: DOWNLOAD_FAILED,
     footnote: null,
     buttons: ['Retry'],
+    links: [],
     hasBar: false,
     hasWarning: true,
   });
-  expect(await readStatusCard(page)).toEqual({ ...RESTING.card, buttons: [], hasBar: true, hasWarning: false });
+  expect(await readStatusCard(page)).toEqual({
+    ...RESTING.card,
+    buttons: [],
+    links: [],
+    hasBar: true,
+    hasWarning: false,
+  });
 });
 
 test('Stop during a fetch leaves the project stopped, and Resume finishes it', async ({ page, request, fixtureServer }) => {
@@ -53,6 +60,7 @@ test('Stop during a fetch leaves the project stopped, and Resume finishes it', a
     stage: 'Stopped at “Fetching video”. The stages before it are kept.',
     footnote: null,
     buttons: ['Resume'],
+    links: [],
     hasBar: false,
     hasWarning: true,
   });

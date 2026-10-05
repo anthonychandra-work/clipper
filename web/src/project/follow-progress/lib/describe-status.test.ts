@@ -23,7 +23,12 @@ function describeProject(status: ProjectStatus, fetch: Partial<ProjectStep> = {}
     percent: fetchStep.percent / 4,
     halt: null,
     upload: null,
+    candidateCount: 0,
   };
+}
+
+function describeFailedProject(reason: string, opensSettings: boolean): Project {
+  return { ...describeProject('failed', { state: 'pending', percent: 0 }), halt: { reason, opensSettings } };
 }
 
 const [TRANSCRIBE, ...NOT_TRANSCRIPTION] = LATER_STEPS;
@@ -50,6 +55,7 @@ describe('describeStatus', () => {
       stage: 'Uploading video',
       footnote: 'Step 1 of 4. Keep this page open until the upload finishes.',
       action: null,
+      opensSettings: false,
     });
   });
 
@@ -72,6 +78,7 @@ describe('describeStatus', () => {
       stage: 'Fetching video',
       footnote: 'Step 1 of 4.',
       action: 'stop',
+      opensSettings: false,
     });
   });
 
@@ -94,9 +101,9 @@ describe('describeStatus', () => {
     expect(describeStatus(waiting, among(waiting)).stage).toBe('It starts in a moment.');
   });
 
-  it('gives the reason of a failed project and offers Retry', () => {
+  it('gives the reason of a failed project and offers Retry alone', () => {
     const reason = 'The video could not be downloaded. Check the link and your connection, then retry.';
-    const failed = { ...describeProject('failed', { state: 'pending', percent: 0 }), halt: { reason } };
+    const failed = describeFailedProject(reason, false);
 
     expect(describeStatus(failed, among(failed))).toEqual({
       heading: 'Could Not Finish',
@@ -105,18 +112,36 @@ describe('describeStatus', () => {
       stage: reason,
       footnote: null,
       action: 'retry',
+      opensSettings: false,
     });
   });
 
-  it('gives the reason of a stopped project and offers Resume', () => {
+  it('offers Open Settings beside Retry on the card of a failure marked for Settings', () => {
+    const reason = 'No Anthropic API key is saved. Add one in Settings, then retry.';
+    const failed = describeFailedProject(reason, true);
+
+    expect(describeStatus(failed, among(failed))).toEqual({
+      heading: 'Could Not Finish',
+      hasWarning: true,
+      bar: null,
+      stage: reason,
+      footnote: null,
+      action: 'retry',
+      opensSettings: true,
+    });
+  });
+
+  it('gives the reason of a stopped project and offers Resume without Open Settings', () => {
     const reason = 'Stopped at “Fetching video”. The stages before it are kept.';
-    const stopped = { ...describeProject('stopped', { state: 'pending', percent: 0 }), halt: { reason } };
+    const halt = { reason, opensSettings: false };
+    const stopped = { ...describeProject('stopped', { state: 'pending', percent: 0 }), halt };
 
     expect(describeStatus(stopped, among(stopped))).toMatchObject({
       heading: 'Stopped',
       hasWarning: true,
       stage: reason,
       action: 'resume',
+      opensSettings: false,
     });
   });
 
@@ -130,6 +155,7 @@ describe('describeStatus', () => {
       stage: 'Step 1 of 4 is done.',
       footnote: 'Not started: Transcribing on this Mac, Scoring windows, Cutting clips.',
       action: null,
+      opensSettings: false,
     });
   });
 
@@ -144,6 +170,7 @@ describe('describeStatus', () => {
       stage: 'Step 2 of 4 is done.',
       footnote: 'Not started: Scoring windows, Cutting clips.',
       action: null,
+      opensSettings: false,
     });
   });
 
@@ -165,6 +192,7 @@ describe('describeStatus', () => {
       stage: 'Downloading Whisper small',
       footnote: 'Step 2 of 5.',
       action: 'stop',
+      opensSettings: false,
     });
   });
 

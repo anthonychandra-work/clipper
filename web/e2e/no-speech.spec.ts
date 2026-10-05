@@ -65,6 +65,7 @@ test('a silent video cannot finish for want of speech, and Retry runs the transc
     stage: NO_SPEECH,
     footnote: null,
     buttons: ['Retry'],
+    links: [],
     hasBar: false,
     hasWarning: true,
   });

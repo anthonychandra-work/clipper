@@ -16,6 +16,7 @@ function describeProject(status: ProjectStatus): Project {
     percent: 100,
     halt: null,
     upload: null,
+    candidateCount: 0,
   };
 }
 

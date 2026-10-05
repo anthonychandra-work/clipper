@@ -443,8 +443,11 @@ What the spec's file list leaves out
   enabled; the three messages; the saved row after a reload; and the key removed again when the
   test ends, whatever its result. A unit test covers the sentence of the saved row.
 
-- [ ] T13 — Show Open Settings on a failure and the candidates of a ready project
-  Files: `web/src/library/library.types.ts`,
+- [x] T13 — Show Open Settings on a failure and the candidates of a ready project
+  Files: `web/src/library/library.types.ts`, `web/src/library/index.ts`,
+  `web/src/library/list-projects/index.ts`,
+  `web/src/project/open-project/lib/project-addresses.test.ts`,
+  `web/e2e/support/seed-projects.ts`, `web/e2e/halt-project.spec.ts`, `web/e2e/no-speech.spec.ts`,
   `web/src/library/list-projects/lib/describe-row-status.ts`,
   `web/src/library/list-projects/lib/describe-row-status.test.ts`,
   `web/src/library/list-projects/lib/projects-store.test.ts`,

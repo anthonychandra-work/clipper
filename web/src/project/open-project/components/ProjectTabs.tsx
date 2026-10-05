@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
-import type { Project } from '@/library';
+import { describeCandidateCount, type Project } from '@/library';
 import { formatTimecode } from '@/shared/lib/format-timecode';
 import { ScreenFrame } from '@/shell';
 
@@ -11,7 +11,6 @@ import { EmptyResults } from './EmptyResults';
 import { EmptyReview } from './EmptyReview';
 
 const BACK_TO_LIBRARY = { label: 'Library', href: '/' };
-const CANDIDATE_COUNT = 0;
 const KEPT_COUNT = 0;
 
 interface ProjectTabsProps {
@@ -62,5 +61,5 @@ function TabLinks({ projectId, current }: { projectId: string; current: ProjectT
 
 function describeProject(project: Project): string {
   const length = project.durationSeconds === null ? '' : ` · ${formatTimecode(project.durationSeconds)}`;
-  return `${project.sourceLabel}${length} · ${CANDIDATE_COUNT} candidates`;
+  return `${project.sourceLabel}${length} · ${describeCandidateCount(project.candidateCount)}`;
 }

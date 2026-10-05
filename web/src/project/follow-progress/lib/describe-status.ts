@@ -9,6 +9,7 @@ export interface StatusCardText {
   stage: string;
   footnote: string | null;
   action: HaltAction | null;
+  opensSettings: boolean;
 }
 
 const KEEP_PAGE_OPEN = 'Keep this page open until the upload finishes.';
@@ -33,7 +34,8 @@ export function describeStatus(project: Project, view: StatusView): StatusCardTe
 
 function describeHalt(project: Project, heading: string, action: HaltAction): StatusCardText {
   const stage = project.halt?.reason ?? '';
-  return { heading, hasWarning: true, bar: null, stage, footnote: null, action };
+  const opensSettings = project.halt?.opensSettings ?? false;
+  return { heading, hasWarning: true, bar: null, stage, footnote: null, action, opensSettings };
 }
 
 function describeWait(projects: Project[]): StatusCardText {
@@ -45,6 +47,7 @@ function describeWait(projects: Project[]): StatusCardText {
     stage: active ? `It starts when “${active.title}” finishes.` : 'It starts in a moment.',
     footnote: 'One video is processed at a time.',
     action: null,
+    opensSettings: false,
   };
 }
 
@@ -60,6 +63,7 @@ function describeRun(project: Project, heading: string, advice: string): StatusC
     stage,
     footnote: advice ? `${position} ${advice}` : position,
     action: null,
+    opensSettings: false,
   };
 }
 
@@ -74,5 +78,6 @@ function describeRest(project: Project): StatusCardText {
     stage: `Step ${finished.length} of ${project.steps.length} is done.`,
     footnote: notStarted.length > 0 ? `Not started: ${notStarted.join(', ')}.` : null,
     action: null,
+    opensSettings: false,
   };
 }

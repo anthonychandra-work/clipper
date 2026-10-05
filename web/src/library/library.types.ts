@@ -26,6 +26,11 @@ export interface ProjectUpload {
   receivedBytes: number;
 }
 
+export interface ProjectHalt {
+  reason: string;
+  opensSettings: boolean;
+}
+
 export interface Project {
   id: string;
   title: string;
@@ -35,8 +40,9 @@ export interface Project {
   status: ProjectStatus;
   steps: ProjectStep[];
   percent: number;
-  halt: { reason: string } | null;
+  halt: ProjectHalt | null;
   upload: ProjectUpload | null;
+  candidateCount: number;
 }
 
 export interface ProjectList {

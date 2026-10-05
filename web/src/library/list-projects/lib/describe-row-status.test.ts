@@ -1,7 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
 import type { Project, ProjectStatus, ProjectStep } from '../../library.types';
-import { describeRowStatus, findCurrentStep, nameRestingState } from './describe-row-status';
+import {
+  describeCandidateCount,
+  describeRowStatus,
+  findCurrentStep,
+  nameRestingState,
+} from './describe-row-status';
 
 function planSteps(fetchState: ProjectStep['state'], fetchLabel: string): ProjectStep[] {
   return [
@@ -24,7 +29,13 @@ function describeProject(status: ProjectStatus, steps: ProjectStep[]): Project {
     percent: steps.reduce((sum, step) => sum + step.percent, 0) / steps.length,
     halt: null,
     upload: null,
+    candidateCount: 0,
   };
+}
+
+function describeReadyProject(candidateCount: number): Project {
+  const steps = planSteps('done', 'Fetching video').map((step) => ({ ...step, state: 'done' as const, percent: 100 }));
+  return { ...describeProject('ready', steps), candidateCount };
 }
 
 describe('describeRowStatus', () => {
@@ -73,6 +84,29 @@ describe('describeRowStatus', () => {
     const project = describeProject(status, planSteps('pending', 'Fetching video'));
 
     expect(describeRowStatus(project)).toEqual({ kind: 'note', status, text, hasWarning });
+  });
+
+  it.each([
+    [0, 'Ready to review · 0 candidates'],
+    [1, 'Ready to review · 1 candidate'],
+    [6, 'Ready to review · 6 candidates'],
+  ])('reads the row of a ready project with %i candidates as a note with their number', (candidateCount, text) => {
+    expect(describeRowStatus(describeReadyProject(candidateCount))).toEqual({
+      kind: 'note',
+      status: 'ready',
+      text,
+      hasWarning: false,
+    });
+  });
+});
+
+describe('describeCandidateCount', () => {
+  it.each([
+    [0, '0 candidates'],
+    [1, '1 candidate'],
+    [12, '12 candidates'],
+  ])('words %i as “%s”', (candidateCount, words) => {
+    expect(describeCandidateCount(candidateCount)).toBe(words);
   });
 });
 

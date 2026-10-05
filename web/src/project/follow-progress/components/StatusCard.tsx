@@ -22,7 +22,9 @@ export function StatusCard({ project, projects }: StatusCardProps) {
       {status.bar ? <StepProgress projectId={project.id} bar={status.bar} /> : null}
       <p className="status-card__stage">{status.stage}</p>
       {status.footnote ? <p className="list-footer">{status.footnote}</p> : null}
-      {status.action ? <HaltActions projectId={project.id} action={status.action} /> : null}
+      {status.action ? (
+        <HaltActions projectId={project.id} action={status.action} opensSettings={status.opensSettings} />
+      ) : null}
     </section>
   );
 }
