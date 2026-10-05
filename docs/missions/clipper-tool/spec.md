@@ -409,6 +409,9 @@ From `intent.md`. Base `82df5ce`.
   When sound has to reach the model and the model folder holds none, it ends with an error that
   names the folder. The plan fixes what the transcriber does and leaves these forms open.
   (executor, m2)
+- A49 — The latest time a transcript holds is the video's length rounded down to a hundredth of a
+  second. The plan rounds every time to a hundredth, A44 keeps every time inside the video, and a
+  video's length is rarely a whole hundredth. (executor, m2)
 
 ## Milestones
 

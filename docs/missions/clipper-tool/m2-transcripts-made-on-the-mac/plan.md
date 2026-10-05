@@ -221,7 +221,7 @@ What the spec's file list leaves out
   with an error raises an error that carries the end of what it printed. Tests run it on the
   talk, stop it on the long talk, and start it on a model folder that does not exist.
 
-- [ ] T4 — Put the words in order and keep the transcript with the project
+- [x] T4 — Put the words in order and keep the transcript with the project
   Files: `service/clipper/transcription/__init__.py`,
   `service/clipper/transcription/transcript.py`,
   `service/clipper/transcription/test_transcript.py`,
