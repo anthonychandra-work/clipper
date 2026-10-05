@@ -7,4 +7,5 @@ export {
   type StartCommand,
   type ToolRun,
 } from './run-tool';
+export type { FixtureServer } from './serve-fixtures';
 export { test } from './tool-test';

@@ -228,9 +228,10 @@ The prototype
   start command with an empty tools folder and a PATH without ffmpeg and reads `ffmpeg` and
   `ffprobe` in the message.
 
-- [ ] T4 — Build the fixture video and the local server for link checks
+- [x] T4 — Build the fixture video and the local server for link checks
   Files: `fixtures/talk-script.txt`, `fixtures/README.md`, `scripts/build-fixtures.mjs`,
   `scripts/serve-fixtures.mjs`, `scripts/run-tests.mjs`, `scripts/run-browser-tests.mjs`,
+  `service/pyproject.toml`,
   `service/clipper/conftest.py`, `service/clipper/test_fixture_server.py`,
   `web/e2e/support/index.ts`, `web/e2e/support/build-fixtures.ts`,
   `web/e2e/support/serve-fixtures.ts`, `web/e2e/support/tool-test.ts`

@@ -3,13 +3,15 @@ import process from 'node:process';
 
 import { buildWebApp } from './build-web-app.mjs';
 import { describeWebTool, enterTestRun, finishTestRun } from './prepare-test-run.mjs';
-import { SERVICE_DIR, readRunSettings } from './read-run-settings.mjs';
+import { ROOT_DIR, SERVICE_DIR, readRunSettings } from './read-run-settings.mjs';
 import { runProgram } from './run-program.mjs';
 
 const SERVICE_PYTHON = join(SERVICE_DIR, '.venv', 'bin', 'python');
+const FIXTURE_BUILD_PROGRAM = join(ROOT_DIR, 'scripts', 'build-fixtures.mjs');
 const INTERRUPTS = ['SIGINT', 'SIGTERM'];
 
 const GATES = [
+  { name: 'Fixtures', run: (testRun) => buildFixturesOnce(testRun) },
   { name: 'Ruff', run: () => runProgram(describeServiceTool(['ruff', 'check', 'clipper'])) },
   { name: 'mypy', run: () => runProgram(describeServiceTool(['mypy', '--strict', 'clipper'])) },
   { name: 'pytest', run: () => runProgram(describeServiceTool(['pytest', 'clipper'])) },
@@ -29,7 +31,7 @@ async function runTests() {
   INTERRUPTS.forEach((signal) => process.on(signal, skipRemainingGates));
   const results = [];
   for (const gate of GATES) {
-    results.push({ name: gate.name, hasPassed: await runGate(gate) });
+    results.push({ name: gate.name, hasPassed: await runGate(gate, testRun) });
   }
   process.stdout.write('\n--- Results\n');
   results.forEach(reportGate);
@@ -37,10 +39,17 @@ async function runTests() {
   process.exit(results.every((result) => result.hasPassed) ? 0 : 1);
 }
 
-async function runGate(gate) {
+async function runGate(gate, testRun) {
   if (wasInterrupted) return false;
   process.stdout.write(`\n--- ${gate.name}\n`);
-  return (await gate.run()) === 0;
+  return (await gate.run(testRun)) === 0;
+}
+
+async function buildFixturesOnce(testRun) {
+  const folder = join(testRun.folder, 'fixtures');
+  const exitCode = await runProgram({ command: process.execPath, args: [FIXTURE_BUILD_PROGRAM, folder] });
+  if (exitCode === 0) process.env.CLIPPER_FIXTURES_DIR = folder;
+  return exitCode;
 }
 
 function describeServiceTool(args) {
