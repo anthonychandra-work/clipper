@@ -10,6 +10,7 @@ from yt_dlp.utils import DownloadCancelled, DownloadError
 
 from ..media import MediaTools
 from ..storage import SOURCE_STEM
+from .read_replay_graph import ReplayPoint, read_replay_graph
 
 NO_VIDEO_ABOVE_1080 = "bv*[height<=?1080]+ba/b[height<=?1080]"
 NODE_AS_JAVASCRIPT_RUNTIME: dict[str, dict[str, str]] = {"node": {}}
@@ -30,6 +31,7 @@ class LinkDownload:
 class DownloadedVideo:
     file: Path
     title: str
+    replay_graph: list[ReplayPoint] | None
 
 
 class LinkDownloadError(Exception):
@@ -79,7 +81,9 @@ def download_link(
         raise explain_failure(failure) from failure
     video = found["entries"][0] if "entries" in found else found
     stored = Path(str(video["requested_downloads"][0]["filepath"]))
-    return DownloadedVideo(file=stored, title=str(video.get("title") or ""))
+    return DownloadedVideo(
+        file=stored, title=str(video.get("title") or ""), replay_graph=read_replay_graph(video)
+    )
 
 
 def clear_earlier_attempt(folder: Path) -> None:

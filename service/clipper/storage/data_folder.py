@@ -5,6 +5,7 @@ DATABASE_NAME = "clipper.sqlite3"
 PROJECTS_DIR_NAME = "projects"
 MODELS_DIR_NAME = "models"
 SOURCE_STEM = "source"
+REPLAY_GRAPH_NAME = "replay-graph.json"
 
 
 @dataclass(frozen=True)
@@ -20,6 +21,9 @@ class DataFolder:
     def find_source_file(self, project_id: str) -> Path | None:
         stored = sorted(self.project_dir(project_id).glob(f"{SOURCE_STEM}.*"))
         return stored[0] if stored else None
+
+    def replay_graph_file(self, project_id: str) -> Path:
+        return self.project_dir(project_id) / REPLAY_GRAPH_NAME
 
     def model_dir(self, choice: str) -> Path:
         return self.models_dir / choice

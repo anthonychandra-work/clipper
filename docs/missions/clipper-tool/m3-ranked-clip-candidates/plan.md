@@ -331,7 +331,7 @@ What the spec's file list leaves out
   fixed target of 4 that keeps the best four, and no clip that gives no candidate. With the
   placed clips of the three recorded replies the candidates are the talk's six parts.
 
-- [ ] T8 — Keep the replay graph, find its peaks and mark the candidates
+- [x] T8 — Keep the replay graph, find its peaks and mark the candidates
   Files: `service/clipper/storage/data_folder.py`, `service/clipper/storage/test_data_folder.py`,
   `service/clipper/fetching/read_replay_graph.py`,
   `service/clipper/fetching/test_read_replay_graph.py`,

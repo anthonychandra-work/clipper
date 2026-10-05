@@ -63,6 +63,16 @@ def test_the_fixture_is_stored_at_its_full_size_with_the_title_yt_dlp_read(
     assert downloaded.title == "talk"
 
 
+def test_a_plain_file_from_the_fixture_server_comes_with_no_replay_graph(
+    fixture_server: str, media_tools: MediaTools, tmp_path: Path
+) -> None:
+    download = LinkDownload(f"{fixture_server}/talk.mp4", tmp_path / "project")
+
+    downloaded = download_link(download, media_tools, threading.Event(), ignore_percent)
+
+    assert downloaded.replay_graph is None
+
+
 def test_the_caller_receives_a_rising_percent_that_ends_at_100(
     fixture_server: str, media_tools: MediaTools, tmp_path: Path
 ) -> None:

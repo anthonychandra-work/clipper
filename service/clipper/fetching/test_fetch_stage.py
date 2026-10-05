@@ -1,5 +1,7 @@
+import json
 import os
 import shutil
+import sys
 import threading
 from collections.abc import Callable
 from pathlib import Path
@@ -18,10 +20,16 @@ from ..projects import (
     create_project,
 )
 from ..storage import BYTES_PER_GB, DataFolder, DiskSpace
+from .download_link import DownloadedVideo, LinkDownload
 from .fetch_stage import FetchStage, SourceMissingError
+from .read_replay_graph import ReplayPoint
 
 PLENTY = DiskSpace(free_bytes=50 * BYTES_PER_GB, total_bytes=460 * BYTES_PER_GB)
 THREE_HOURS_IN_SECONDS = 10_800
+GRAPH: list[ReplayPoint] = [
+    {"start_time": 0.0, "end_time": 2.36, "value": 1.0},
+    {"start_time": 2.36, "end_time": 4.71, "value": 0.12},
+]
 
 
 @pytest.fixture
@@ -154,6 +162,75 @@ def test_a_rerun_starts_from_clean_files(
 
     assert sorted(left.name for left in project_dir.iterdir()) == ["preview.mp4", "source.mp4"]
     assert (project_dir / "preview.mp4").stat().st_size > 1000
+
+
+def hand_over_with_graph(
+    talk_video: Path, graph: list[ReplayPoint] | None
+) -> Callable[..., DownloadedVideo]:
+    def download(download: LinkDownload, *rest: object) -> DownloadedVideo:
+        del rest
+        download.folder.mkdir(parents=True, exist_ok=True)
+        stored = Path(shutil.copy(talk_video, download.folder / "source.mp4"))
+        return DownloadedVideo(file=stored, title="A talk", replay_graph=graph)
+
+    return download
+
+
+def test_the_graph_a_download_hands_over_is_kept_in_the_form_it_came_in(
+    stage: FetchStage,
+    add_link_project: Callable[[str], Project],
+    data_folder: DataFolder,
+    talk_video: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    project = add_link_project("https://video.example/talk")
+    stand_in = hand_over_with_graph(talk_video, GRAPH)
+    monkeypatch.setattr(sys.modules[FetchStage.__module__], "download_link", stand_in)
+
+    run_stage(stage, project)
+
+    project_dir = data_folder.project_dir(project.id)
+    assert json.loads(data_folder.replay_graph_file(project.id).read_text()) == GRAPH
+    assert sorted(left.name for left in project_dir.iterdir()) == [
+        "preview.mp4",
+        "replay-graph.json",
+        "source.mp4",
+    ]
+
+
+def test_no_graph_file_is_written_for_a_link_whose_metadata_has_none(
+    stage: FetchStage,
+    add_link_project: Callable[[str], Project],
+    fixture_server: str,
+    data_folder: DataFolder,
+) -> None:
+    project = add_link_project(f"{fixture_server}/talk.mp4")
+
+    run_stage(stage, project)
+
+    stored = sorted(left.name for left in data_folder.project_dir(project.id).iterdir())
+    assert not data_folder.replay_graph_file(project.id).exists()
+    assert stored == ["preview.mp4", "source.mp4"]
+
+
+def test_a_fetch_that_is_run_again_removes_the_graph_an_earlier_attempt_left(
+    stage: FetchStage,
+    add_link_project: Callable[[str], Project],
+    data_folder: DataFolder,
+    talk_video: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    project = add_link_project("https://video.example/talk")
+    project_dir = data_folder.project_dir(project.id)
+    project_dir.mkdir()
+    data_folder.replay_graph_file(project.id).write_text(json.dumps(GRAPH))
+    (project_dir / "replay-graph.partial.json").write_text("left by an interrupted run")
+    stand_in = hand_over_with_graph(talk_video, None)
+    monkeypatch.setattr(sys.modules[FetchStage.__module__], "download_link", stand_in)
+
+    run_stage(stage, project)
+
+    assert sorted(left.name for left in project_dir.iterdir()) == ["preview.mp4", "source.mp4"]
 
 
 def test_a_link_that_cannot_be_downloaded_fails_with_a_plain_reason(

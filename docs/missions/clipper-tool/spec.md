@@ -625,6 +625,15 @@ From `intent.md`. Base `82df5ce`.
   in, so a clip of exactly 25 or 60 seconds counts as on the edge whatever its start. A clip
   dropped for its overlap takes none of the places among those kept. A69 and A71 leave the name
   and the unit open. (executor, m3)
+- A82 — The first twentieth of a replay graph is measured against the graph's own length. The
+  tenth of the remaining points is rounded up, and of equal values the earlier point is taken. The
+  median is that of the remaining points, and a point is part of a peak only when it also lies
+  above that median: a graph that is flat at nothing has no peak, and a single rise over nothing is
+  one. A point at exactly one and a half medians reaches it, whatever the rounding of the numbers.
+  Points are side by side when no other point lies between them. The second a candidate shares
+  with a peak is measured in hundredths, so a clip that shares 0.99 seconds carries no marker. A
+  graph with a point that cannot be read counts as no graph. A70 gives the rule and leaves these
+  edges open. (executor, m3)
 
 ## Milestones
 

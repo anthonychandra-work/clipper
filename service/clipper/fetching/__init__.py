@@ -6,6 +6,7 @@ from .download_link import (
     download_link,
 )
 from .fetch_stage import FetchStage, SourceMissingError
+from .read_replay_graph import ReplayPoint, read_replay_graph
 
 __all__ = [
     "DownloadStoppedError",
@@ -13,6 +14,8 @@ __all__ = [
     "FetchStage",
     "LinkDownload",
     "LinkDownloadError",
+    "ReplayPoint",
     "SourceMissingError",
     "download_link",
+    "read_replay_graph",
 ]

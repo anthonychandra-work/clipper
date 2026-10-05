@@ -16,6 +16,7 @@ from .cut_clips import cut_clips, write_cut_question
 from .form_shortlist import count_shortlist, form_shortlist
 from .model_traits import FALLBACK_BETA, ModelTraits, describe_model
 from .place_quote import Placement, place_quote
+from .replay_peaks import find_replay_peaks, read_replay_peaks
 from .score_windows import score_windows, write_score_questions
 from .selection_records import (
     Candidate,
@@ -72,8 +73,10 @@ __all__ = [
     "cut_clips",
     "describe_model",
     "find_clip_limits",
+    "find_replay_peaks",
     "form_shortlist",
     "place_quote",
+    "read_replay_peaks",
     "score_windows",
     "split_sentences",
     "split_windows",

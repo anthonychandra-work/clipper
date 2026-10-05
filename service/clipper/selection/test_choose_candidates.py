@@ -8,16 +8,18 @@ from .ask_claude import ClaudeAccess
 from .choose_candidates import PlacedClip, choose_candidates
 from .clip_limits import count_clips
 from .clip_proposal import ProposedClip
-from .conftest import TEST_KEY, RecordedClaude
+from .conftest import COMMITTED_FIXTURES_DIR, TEST_KEY, RecordedClaude
 from .cut_clips import cut_clips
 from .place_quote import Placement, place_quote
-from .selection_records import ClipFlag, HookType, PlatformText, Subscores
+from .replay_peaks import read_replay_peaks
+from .selection_records import ClipFlag, HookType, PlatformText, ReplayPeak, Subscores
 from .selection_task import ClipSeconds, PassContext
 from .split_sentences import split_sentences
 from .split_windows import split_windows
 from .transcript_part import write_transcript_part
 
 STANDARD = ClipSeconds(min=25, max=60)
+TALK_REPLAY_GRAPH_FILE = COMMITTED_FIXTURES_DIR / "talk-replay-graph.json"
 MOST_OF_A_SUBSCORE = 25
 TEXT = {"title": "The oven broke", "description": "What a bad morning taught a baker."}
 SIX_PARTS_BEST_FIRST = [
@@ -199,9 +201,79 @@ def test_a_candidate_without_a_flag_carries_none() -> None:
     assert (candidate.flag, candidate.flag_note) == (None, None)
 
 
-def test_the_placed_clips_of_the_three_recorded_replies_give_the_six_parts_of_the_talk(
+def test_a_candidate_that_shares_at_least_one_second_with_a_peak_carries_the_marker() -> None:
+    peaks = [ReplayPeak(129.0, 150.0)]
+    clips = [make_clip(100, 130), make_clip(200, 230), make_clip(300, 330)]
+
+    candidates = choose_candidates(clips, STANDARD, 12, peaks)
+
+    assert [(c.start_seconds, c.is_replay_peak) for c in candidates] == [
+        (100, True),
+        (200, False),
+        (300, False),
+    ]
+
+
+def test_a_clip_that_only_touches_a_peak_carries_no_marker() -> None:
+    peaks = [ReplayPeak(130.0, 150.0), ReplayPeak(60.0, 100.0)]
+
+    (candidate,) = choose_candidates([make_clip(100, 130)], STANDARD, 12, peaks)
+
+    assert candidate.is_replay_peak is False
+
+
+def test_a_clip_that_shares_less_than_a_second_with_a_peak_carries_no_marker() -> None:
+    under_a_second = [ReplayPeak(129.01, 150.0)]
+    one_second = [ReplayPeak(129.0, 150.0)]
+
+    (unmarked,) = choose_candidates([make_clip(100, 130)], STANDARD, 12, under_a_second)
+    (marked,) = choose_candidates([make_clip(100, 130)], STANDARD, 12, one_second)
+
+    assert (unmarked.is_replay_peak, marked.is_replay_peak) == (False, True)
+
+
+def test_a_clip_that_holds_a_whole_peak_carries_the_marker() -> None:
+    (candidate,) = choose_candidates(
+        [make_clip(100, 150)], STANDARD, 12, [ReplayPeak(120.0, 124.0)]
+    )
+
+    assert candidate.is_replay_peak is True
+
+
+def test_the_marker_breaks_a_tie_of_totals_without_changing_a_total() -> None:
+    earlier, under_the_peak = make_clip(100, 130, total=82), make_clip(300, 330, total=82)
+
+    candidates = choose_candidates([earlier, under_the_peak], STANDARD, 12, [ReplayPeak(310, 320)])
+
+    assert [(c.rank, c.start_seconds, c.total, c.is_replay_peak) for c in candidates] == [
+        (1, 300, 82, True),
+        (2, 100, 82, False),
+    ]
+
+
+def test_the_marker_does_not_lift_a_clip_over_one_with_a_higher_total() -> None:
+    higher, under_the_peak = make_clip(100, 130, total=83), make_clip(300, 330, total=82)
+
+    candidates = choose_candidates([under_the_peak, higher], STANDARD, 12, [ReplayPeak(310, 320)])
+
+    assert [(c.rank, c.total, c.is_replay_peak) for c in candidates] == [
+        (1, 83, False),
+        (2, 82, True),
+    ]
+
+
+def test_of_two_marked_clips_with_equal_totals_the_earlier_one_ranks_first() -> None:
+    peaks = [ReplayPeak(110, 120), ReplayPeak(310, 320)]
+    clips = [make_clip(300, 330, total=82), make_clip(100, 130, total=82)]
+
+    candidates = choose_candidates(clips, STANDARD, 12, peaks)
+
+    assert [(c.start_seconds, c.is_replay_peak) for c in candidates] == [(100, True), (300, True)]
+
+
+def place_recorded_clips(
     recorded_claude: RecordedClaude, talk_transcript: Transcript
-) -> None:
+) -> list[PlacedClip]:
     sentences = split_sentences(talk_transcript.words)
     context = PassContext(
         access=ClaudeAccess(key=TEST_KEY, address=recorded_claude.at("talk")),
@@ -218,6 +290,46 @@ def test_the_placed_clips_of_the_three_recorded_replies_give_the_six_parts_of_th
             placement = place_quote(clip.opening_words, clip.closing_words, window, sentences)
             if placement is not None:
                 placed_clips.append(PlacedClip(clip, placement))
+    return placed_clips
+
+
+def test_with_the_recorded_graph_the_clip_under_the_peak_carries_the_marker_and_ranks_first(
+    recorded_claude: RecordedClaude, talk_transcript: Transcript
+) -> None:
+    placed_clips = place_recorded_clips(recorded_claude, talk_transcript)
+    peaks = read_replay_peaks(TALK_REPLAY_GRAPH_FILE)
+
+    candidates = choose_candidates(placed_clips, STANDARD, 12, peaks)
+
+    assert peaks == [ReplayPeak(131.992, 150.848)]
+    assert [(c.rank, c.start_seconds, c.total, c.is_replay_peak) for c in candidates] == [
+        (1, 11.94, 88, False),
+        (2, 86.54, 84, False),
+        (3, 120.16, 82, True),
+        (4, 45.22, 82, False),
+        (5, 161.8, 75, False),
+        (6, 193.4, 55, False),
+    ]
+
+
+def test_without_the_graph_the_earlier_of_the_two_clips_with_equal_totals_ranks_first(
+    recorded_claude: RecordedClaude, talk_transcript: Transcript
+) -> None:
+    placed_clips = place_recorded_clips(recorded_claude, talk_transcript)
+
+    candidates = choose_candidates(placed_clips, STANDARD, 12, [])
+
+    assert [(c.rank, c.start_seconds, c.total) for c in candidates][2:4] == [
+        (3, 45.22, 82),
+        (4, 120.16, 82),
+    ]
+    assert [c.is_replay_peak for c in candidates] == [False] * 6
+
+
+def test_the_placed_clips_of_the_three_recorded_replies_give_the_six_parts_of_the_talk(
+    recorded_claude: RecordedClaude, talk_transcript: Transcript
+) -> None:
+    placed_clips = place_recorded_clips(recorded_claude, talk_transcript)
 
     candidates = choose_candidates(placed_clips, STANDARD, most_kept=12)
 
