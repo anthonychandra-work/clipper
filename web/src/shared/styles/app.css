@@ -1,4 +1,9 @@
-/* The rules the real app needs beyond the prototype's stylesheets: links that wear the classes of its buttons. */
+/* The rules the real app needs beyond the prototype's stylesheets: links that wear the classes of its buttons, and buttons that are switched off. */
+.button:disabled {
+  color: var(--label-3);
+  cursor: default;
+}
+
 a.bar-button,
 a.button,
 a.tab-bar__tab,

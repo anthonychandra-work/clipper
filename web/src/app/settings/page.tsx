@@ -1,10 +1,5 @@
-import { PagePane } from '@/shared/ui';
-import { ScreenFrame } from '@/shell';
+import { SettingsScreen } from '@/settings';
 
 export default function SettingsPage() {
-  return (
-    <ScreenFrame screenKey="settings" depth={0} section="settings" title="Settings" hasLargeTitle>
-      <PagePane name="settings">{null}</PagePane>
-    </ScreenFrame>
-  );
+  return <SettingsScreen />;
 }

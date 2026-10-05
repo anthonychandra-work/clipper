@@ -599,8 +599,9 @@ The prototype
   the test, whose bar is seen between its ends and whose stored file matches in size and
   checksum; and both projects listed in the same state after the tool is stopped and started.
 
-- [ ] T17 — Lay out Settings and store each choice
-  Files: `service/clipper/main.py`, `service/clipper/storage/open_database.py`,
+- [x] T17 — Lay out Settings and store each choice
+  Files: `web/src/shared/styles/app.css`, `service/clipper/main.py`,
+  `service/clipper/storage/open_database.py`,
   `service/clipper/storage/test_open_database.py`, `service/clipper/settings/__init__.py`,
   `service/clipper/settings/preferences.py`, `service/clipper/settings/preference_store.py`,
   `service/clipper/settings/test_preference_store.py`,

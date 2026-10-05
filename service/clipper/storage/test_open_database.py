@@ -24,7 +24,8 @@ def test_a_new_database_holds_the_project_tables_at_the_current_version(tmp_path
 
     with database.transaction() as connection:
         tables = connection.execute("SELECT name FROM sqlite_master WHERE type = 'table'")
-        assert {"projects", "project_steps"} <= {table["name"] for table in tables}
+        names = {table["name"] for table in tables}
+        assert {"projects", "project_steps", "preferences"} <= names
         assert read_schema_version(connection) == len(MIGRATIONS)
 
 

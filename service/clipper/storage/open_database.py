@@ -33,7 +33,14 @@ CREATE TABLE project_steps (
 );
 """
 
-MIGRATIONS: tuple[str, ...] = (CREATE_PROJECTS,)
+CREATE_PREFERENCES = """
+CREATE TABLE preferences (
+    name TEXT PRIMARY KEY,
+    choice TEXT NOT NULL
+);
+"""
+
+MIGRATIONS: tuple[str, ...] = (CREATE_PROJECTS, CREATE_PREFERENCES)
 
 
 class Database:

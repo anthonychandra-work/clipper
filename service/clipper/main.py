@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.concurrency import run_in_threadpool
 from fastapi.telemetry import TelemetryConfig
 
-from . import pipeline, projects
+from . import pipeline, projects, settings
 from .fetching import FetchStage
 from .media import locate_media_tools
 from .problems import handle_app_errors
@@ -21,10 +21,11 @@ TELEMETRY_OFF: TelemetryConfig = {
 }
 
 
-def create_app(settings: StartupSettings) -> FastAPI:
-    media_tools = locate_media_tools(settings.ffmpeg_dir, settings.search_path)
-    data_folder = open_data_folder(settings.data_dir)
+def create_app(startup: StartupSettings) -> FastAPI:
+    media_tools = locate_media_tools(startup.ffmpeg_dir, startup.search_path)
+    data_folder = open_data_folder(startup.data_dir)
     database = open_database(data_folder.database_file)
+    measure_disk = partial(read_disk_space, data_folder.root, startup.reported_free_bytes)
     repository = projects.ProjectRepository(database)
     queue = projects.ProjectQueue(database)
     fetch_stage = FetchStage(repository, data_folder, media_tools)
@@ -34,12 +35,17 @@ def create_app(settings: StartupSettings) -> FastAPI:
     app.state.projects = projects.ProjectsDependencies(
         repository=repository,
         data_folder=data_folder,
-        read_disk_space=partial(read_disk_space, data_folder.root, settings.reported_free_bytes),
+        read_disk_space=measure_disk,
         stop_processing=worker.stop_project,
     )
+    app.state.settings = settings.SettingsDependencies(
+        store=settings.PreferenceStore(database),
+        read_disk_space=measure_disk,
+        web_port=startup.web_port,
+    )
     handle_app_errors(app)
-    app.include_router(projects.router)
-    app.include_router(pipeline.router)
+    for feature in (projects, pipeline, settings):
+        app.include_router(feature.router)
     app.add_api_route("/api/health", report_health, methods=["GET"])
     return app
 
