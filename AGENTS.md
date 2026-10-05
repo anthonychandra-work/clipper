@@ -9,8 +9,9 @@ Run every command from the repository root.
 
 - `pnpm install` installs the web app's packages.
 - `pnpm bootstrap` creates the Python environment in `service/.venv` with
-  `/opt/homebrew/bin/python3.12`, installs the pinned Python packages, and installs the browser
-  the tests drive into `.cache/playwright`.
+  `/opt/homebrew/bin/python3.12`, installs the pinned Python packages without following their
+  declared dependencies, installs the browser the tests drive into `.cache/playwright`, and
+  fetches the test model into `.cache/whisper`.
 - `pnpm start` starts the service on `127.0.0.1:8765` and the web app on port 3000, then prints
   the address to open. It builds the web app when the build is missing or older than the sources.
   Ctrl-C stops both parts: the service first, and the web app once the service's process has
@@ -29,14 +30,31 @@ A test run starts its own copy of the tool on ports 3100 and 8865, builds the we
 not touch a running tool or the `data` folder. Browser tests take the tool from the `tool`
 fixture in `web/e2e/support`, which can stop it and start it again inside a test.
 
-Five environment variables change where a run keeps its files and which ports it uses:
-`CLIPPER_DATA_DIR`, `CLIPPER_FFMPEG_DIR`, `CLIPPER_KEY_FILE`, `CLIPPER_WEB_PORT` and
-`CLIPPER_SERVICE_PORT`. Three more serve test runs: `CLIPPER_WEB_BUILD_DIR` names the folder the
-web app is built into, `CLIPPER_REPORTED_FREE_BYTES` replaces the measured free disk space, and
-`CLIPPER_EVIDENCE_DIR` names the folder the capture test saves into. `README.md` gives what each
-is without the variable.
+Six environment variables change where a run keeps its files, which ports it uses and where it
+downloads models from: `CLIPPER_DATA_DIR`, `CLIPPER_FFMPEG_DIR`, `CLIPPER_KEY_FILE`,
+`CLIPPER_WEB_PORT`, `CLIPPER_SERVICE_PORT` and `CLIPPER_MODEL_SOURCE`. Three more serve test
+runs: `CLIPPER_WEB_BUILD_DIR` names the folder the web app is built into,
+`CLIPPER_REPORTED_FREE_BYTES` replaces the measured free disk space, and `CLIPPER_EVIDENCE_DIR`
+names the folder the tests save their evidence into. `README.md` gives what each is without the
+variable.
 
 Commit messages read `<type>(<scope>): <summary>`.
+
+## Transcription in tests
+
+- Tests transcribe with the smallest Whisper model, `mlx-community/whisper-tiny`, 74 MB.
+  `node scripts/fetch-test-model.mjs` fetches it into `.cache/whisper/tiny` and prints that
+  folder. Once the folder is complete the program fetches nothing.
+- A browser test run copies the test model into its data folder under the default model's name,
+  so a transcript made in a test run names `large-v3-turbo`. It serves the model's folder on a
+  local port for the life of the worker and hands that address to the tool as
+  `CLIPPER_MODEL_SOURCE` at every start. A test that downloads a model gets the test model's
+  files under the name it asked for.
+- The service's tests set `CLIPPER_MODEL_SOURCE` to a closed local port unless a test names a
+  source, and `pnpm test` does the same for everything it starts. No test reaches Hugging Face.
+- `service/clipper/conftest.py` holds ten top-level functions and classes, the most the hooks
+  allow. A new fixture goes into a `conftest.py` inside its package. What every test needs is a
+  statement at the top of the root one.
 
 ## Layout
 
@@ -55,10 +73,20 @@ folders.
   otherwise import each other.
 - `web/e2e/` holds the browser tests, with their shared code in `support/`.
 - `service/clipper/` holds one package per capability: `problems`, `settings`, `storage`,
-  `media`, `projects`, `pipeline` and `fetching`. Each exports through its `__init__.py` and has
-  at most one router. `main.py` joins them.
-- Service imports run one way: `fetching` imports `pipeline`; both import `projects`, `media` and
-  `storage`; `projects` imports neither. `main.py` hands `projects` what it needs from `pipeline`.
+  `media`, `projects`, `pipeline`, `fetching` and `transcription`. Each exports through its
+  `__init__.py` and has at most one router. `main.py` joins them.
+- Service imports run one way: `fetching` and `transcription` import `pipeline`, `projects`,
+  `media` and `storage`, and `transcription` also imports `settings`; `pipeline` imports
+  `projects` and `media`; `projects` imports none of them. Nothing but `main.py` imports
+  `fetching` or `transcription`. `main.py` hands `projects` what it needs from `pipeline`.
+- The transcriber, `service/clipper/transcription/transcribe_audio.py`, is a program of its own.
+  The service starts it by its file path once for each transcription and imports nothing from
+  it, and it imports nothing from the service. MLX and the model are loaded in that program
+  alone, and their memory returns to the Mac when it ends. It is one file, so the limit of ten
+  top-level functions and classes applies to all of it.
+- The service starts ffmpeg and the transcriber through the program runner of `media`. Each runs
+  in a process group of its own and ends on the stop signal, so a signal sent to the service's
+  group does not end it behind the queue's back.
 - A unit test sits beside the file it tests.
 - `docs/missions/` holds the mission's intent, spec and plans. `docs/prototype/` holds the design
   reference.
@@ -139,6 +167,14 @@ transitive packages included. The service starts FastAPI with its tracing, metri
 exporter setup switched off, and without its documentation pages. `sharp` is left out of the web
 app and `yt-dlp` is installed without its optional packages, because each would bring in a
 library under the LGPL or the GPL.
+
+Bootstrap installs the two requirements files without following dependencies, so a package is
+installed only when a file names it. To add one, add every package it needs at an exact version.
+Two packages that mlx-whisper declares are left out because transcription never loads them:
+`torch`, which only its model converter uses, and `requests`, which would bring in `certifi`
+under the MPL. `pip check` names both as missing, and that is intended. `tqdm` is the one
+installed package under the MPL, "MPL-2.0 AND MIT". mlx-whisper cannot be imported without it;
+it is used unchanged and nothing of it is copied into the app.
 
 ## Boundaries
 

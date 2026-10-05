@@ -407,7 +407,7 @@ What the spec's file list leaves out
   row. A rule that a state needs goes into `app.css`, and the copied stylesheets stay as they
   are. `own-origin.spec.ts` walks the same screens.
 
-- [ ] T14 — Bring the README and the instructions for coding agents up to date
+- [x] T14 — Bring the README and the instructions for coding agents up to date
   Files: `README.md`, `AGENTS.md`
   Done: `README.md` says that bootstrap also fetches the test model, 74 MB, into
   `.cache/whisper`; that the data folder also holds `models` and each project's transcript; that
