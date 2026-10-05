@@ -1,0 +1,155 @@
+.pane {
+  display: grid;
+  align-content: start;
+  gap: 28px;
+  min-width: 0;
+}
+
+.app[data-layout="compact"] .pane {
+  padding: 4px var(--gutter) 24px;
+}
+
+.app[data-layout="regular"] .pane {
+  height: 100%;
+  padding: calc(var(--bar-height) + 12px) var(--gutter) 40px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.page-column {
+  display: grid;
+  gap: 28px;
+  width: 100%;
+  max-width: 680px;
+  min-width: 0;
+  margin-inline: auto;
+}
+
+.group-section {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.list-header {
+  padding-inline: 16px;
+  font-size: var(--text-subhead);
+  font-weight: 600;
+}
+
+.list-footer {
+  padding-inline: 16px;
+  font-size: var(--text-footnote);
+  color: var(--label-2);
+}
+
+.group {
+  min-width: 0;
+  border-radius: var(--radius-group);
+  background: var(--group);
+  overflow: hidden;
+}
+
+.sheet .group {
+  background: var(--sheet-group);
+}
+
+.group--padded {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+}
+
+.divided > * {
+  position: relative;
+}
+
+.divided > * + *::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 16px;
+  right: 16px;
+  border-top: 1px solid var(--separator);
+  pointer-events: none;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 12px;
+  min-height: var(--row);
+  padding: 8px 16px;
+}
+
+.row--stack {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  padding-block: 12px;
+}
+
+.row__label {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.row__value {
+  min-width: 0;
+  color: var(--label-2);
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.row__action {
+  width: 100%;
+  min-height: var(--row);
+  padding: 8px 16px;
+  border: 0;
+  background: none;
+  color: var(--accent-text);
+  text-align: left;
+  cursor: pointer;
+  outline-offset: -3px;
+}
+
+.row__action--destructive {
+  color: var(--red-text);
+}
+
+.empty {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 64px 24px;
+  color: var(--label-2);
+  text-align: center;
+}
+
+.empty .icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 6px;
+  color: var(--label-3);
+  stroke-width: 1.5;
+}
+
+.empty__title {
+  color: var(--label);
+  font-size: var(--text-title);
+  font-weight: 700;
+}
+
+.empty p {
+  max-width: 36ch;
+}
+
+.form-error {
+  padding: 10px 16px;
+  border-radius: var(--radius-group);
+  background: var(--red-soft);
+  color: var(--red-text);
+  font-size: var(--text-subhead);
+  font-weight: 600;
+}
