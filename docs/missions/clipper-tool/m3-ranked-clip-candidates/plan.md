@@ -637,7 +637,7 @@ What attempt 1 got wrong
   selection requests go through the async client so a stop can cancel them. Each command in the
   three files was run as written.
 
-- [ ] T20 — End each fixture video where its sound ends
+- [x] T20 — End each fixture video where its sound ends
   Files: `service/clipper/transcription/test_built_fixtures.py`, `scripts/build-fixtures.mjs`,
   `fixtures/README.md`, `AGENTS.md`
   Done: the tests of the built fixtures gain two: in the talk, and in the long talk, the picture

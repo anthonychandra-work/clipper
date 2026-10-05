@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { mkdirSync, rmSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import process from 'node:process';
@@ -9,12 +10,13 @@ const HOMEBREW_FFMPEG_DIR = '/opt/homebrew/opt/ffmpeg-full/bin';
 const TALK_SCRIPT = join(ROOT_DIR, 'fixtures', 'talk-script.txt');
 const VOICE = 'Samantha';
 const WORDS_PER_MINUTE = '120';
+const ASK_FOR_LENGTH = ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0'];
 const PICTURE = ['-f', 'lavfi', '-i', 'smptebars=size=1280x720:rate=30'];
 const SMALL_PICTURE = ['-f', 'lavfi', '-i', 'smptebars=size=320x180:rate=10'];
 const SILENCE = ['-f', 'lavfi', '-i', 'anullsrc=channel_layout=mono:sample_rate=44100'];
 const FOUR_MORE_TIMES = ['-stream_loop', '4'];
-const UNTIL_THE_SOUND_ENDS = ['-shortest'];
-const FOR_TWENTY_SECONDS = ['-t', '20'];
+const FIVE_TIMES_OVER = 5;
+const TWENTY_SECONDS = 20;
 const ENCODING = ['-c:v', 'libx264', '-preset', 'veryfast', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '128k'];
 const EXIT_USAGE = 2;
 
@@ -26,7 +28,8 @@ async function buildFixtures(givenFolder) {
   mkdirSync(folder, { recursive: true });
   const speech = join(folder, 'talk.aiff');
   await runStep(describeSpeech(speech));
-  await Promise.all(listVideos(speech).map((video) => buildVideo(video, folder)));
+  const videos = listVideos(speech, measureSpeech(speech));
+  await Promise.all(videos.map((video) => buildVideo(video, folder)));
   rmSync(speech);
 }
 
@@ -44,17 +47,28 @@ function describeSpeech(speech) {
   return { command: 'say', args: ['-v', VOICE, '-r', WORDS_PER_MINUTE, '-o', speech, '-f', TALK_SCRIPT] };
 }
 
-function listVideos(speech) {
+function measureSpeech(speech) {
+  const ffprobe = join(findFfmpegDir(), 'ffprobe');
+  const answer = execFileSync(ffprobe, [...ASK_FOR_LENGTH, speech], { encoding: 'utf8' });
+  return Number(answer.trim());
+}
+
+function listVideos(speech, speechSeconds) {
   return [
-    { name: 'talk.mp4', inputs: [...PICTURE, '-i', speech], length: UNTIL_THE_SOUND_ENDS },
-    { name: 'long-talk.mp4', inputs: [...SMALL_PICTURE, ...FOUR_MORE_TIMES, '-i', speech], length: UNTIL_THE_SOUND_ENDS },
-    { name: 'silence.mp4', inputs: [...PICTURE, ...SILENCE], length: FOR_TWENTY_SECONDS },
+    { name: 'talk.mp4', inputs: [...PICTURE, '-i', speech], seconds: speechSeconds },
+    {
+      name: 'long-talk.mp4',
+      inputs: [...SMALL_PICTURE, ...FOUR_MORE_TIMES, '-i', speech],
+      seconds: FIVE_TIMES_OVER * speechSeconds,
+    },
+    { name: 'silence.mp4', inputs: [...PICTURE, ...SILENCE], seconds: TWENTY_SECONDS },
   ];
 }
 
+// A video's length is stated: ffmpeg's -shortest leaves a different tail of picture in each run.
 async function buildVideo(video, folder) {
   const file = join(folder, video.name);
-  const output = [...ENCODING, ...video.length, '-movflags', '+faststart', file];
+  const output = [...ENCODING, '-t', String(video.seconds), '-movflags', '+faststart', file];
   await runStep({
     command: join(findFfmpegDir(), 'ffmpeg'),
     args: ['-hide_banner', '-loglevel', 'error', '-y', ...video.inputs, ...output],

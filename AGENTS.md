@@ -198,6 +198,18 @@ Measured on Next.js 16.3.8:
 - Next.js sends usage data during a build unless `NEXT_TELEMETRY_DISABLED=1` is set. Every script
   that runs `next` sets it.
 
+## ffmpeg
+
+Measured on ffmpeg 8.1.2:
+
+- `-shortest` over a picture that never ends does not end the video where its sound ends. It
+  leaves from half a second to almost five seconds of picture after the sound, a different amount
+  in each run: the picture source runs ahead of the sound, and how far is a race between two
+  threads.
+- A command that must end a video at a known moment states the length with `-t`. The fixture
+  builder measures the speech with ffprobe and gives each video its length that way, and every
+  build of a video then has the same picture length and the same sound length.
+
 ## Dependencies
 
 Every version is exact: in both `package.json` files, and with `==` in both requirements files,

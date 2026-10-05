@@ -11,8 +11,9 @@ short story or one piece of advice, between a housekeeping opening and a closing
 compared with it word for word.
 
 `node scripts/build-fixtures.mjs <folder>` speaks the script with the macOS voice Samantha and
-writes three videos into the folder, each H.264 with AAC sound. The build takes about fifteen
-seconds.
+writes three videos into the folder, each H.264 with AAC sound. Each video lasts as long as its
+sound. To know that length, the builder measures the speech it has just written: the talk gets
+the speech's length and the long talk five times it. The build takes about fifteen seconds.
 
 | Video | What it holds |
 | ----- | ------------- |
