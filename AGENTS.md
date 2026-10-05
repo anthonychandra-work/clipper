@@ -30,9 +30,10 @@ A test run starts its own copy of the tool on ports 3100 and 8865, builds the we
 not touch a running tool or the `data` folder. Browser tests take the tool from the `tool`
 fixture in `web/e2e/support`, which can stop it and start it again inside a test.
 
-Six environment variables change where a run keeps its files, which ports it uses and where it
-downloads models from: `CLIPPER_DATA_DIR`, `CLIPPER_FFMPEG_DIR`, `CLIPPER_KEY_FILE`,
-`CLIPPER_WEB_PORT`, `CLIPPER_SERVICE_PORT` and `CLIPPER_MODEL_SOURCE`. Three more serve test
+Seven environment variables change where a run keeps its files, which ports it uses, where it
+downloads models from and where it sends its requests for clips: `CLIPPER_DATA_DIR`,
+`CLIPPER_FFMPEG_DIR`, `CLIPPER_KEY_FILE`, `CLIPPER_WEB_PORT`, `CLIPPER_SERVICE_PORT`,
+`CLIPPER_MODEL_SOURCE` and `CLIPPER_ANTHROPIC_SOURCE`. Three more serve test
 runs: `CLIPPER_WEB_BUILD_DIR` names the folder the web app is built into,
 `CLIPPER_REPORTED_FREE_BYTES` replaces the measured free disk space, and `CLIPPER_EVIDENCE_DIR`
 names the folder the tests save their evidence into. `README.md` gives what each is without the
@@ -55,6 +56,41 @@ Commit messages read `<type>(<scope>): <summary>`.
 - `service/clipper/conftest.py` holds ten top-level functions and classes, the most the hooks
   allow. A new fixture goes into a `conftest.py` inside its package. What every test needs is a
   statement at the top of the root one.
+
+## Selection in tests
+
+- No test reaches the Anthropic API. `node scripts/serve-recorded-claude.mjs fixtures/claude` is
+  a stand-in for it: it serves the recorded replies of `fixtures/claude`, one folder for each
+  scenario, on a free loopback port and prints its address. A request to
+  `/<scenario>/v1/messages` gets the scenario's reply to the task it carries, `/slow/` in front
+  makes the answer six seconds late, and scenarios joined by `+` are tried in that order.
+  `GET /requests` gives what it was asked, never a key, and `DELETE /requests` forgets it.
+  `fixtures/README.md` lists the scenarios and the form of a recorded reply.
+- A service test takes the stand-in from the `recorded_claude` fixture in
+  `service/clipper/selection/conftest.py`, which starts it once a session, and hands its address
+  to what it tests. A browser test run starts it for the life of the worker and hands the tool
+  its `talk` scenario as `CLIPPER_ANTHROPIC_SOURCE` at every start. A browser test reads and
+  clears its requests through the `recordedClaude` fixture.
+- Everything else a test run starts gets a closed local port as `CLIPPER_ANTHROPIC_SOURCE`:
+  `pnpm test` sets it, and `service/clipper/conftest.py` sets it whatever the shell says. The tool
+  hands the SDK the saved key and that address itself, so a key, a token or an address for
+  Anthropic in the shell is never used.
+- A test run starts with no key saved, so a project in a test ends failed at the score step with
+  "No Anthropic API key is saved. Add one in Settings, then retry." The browser tests describe
+  that end once, in `web/e2e/support/keyless-end.ts`. A test that needs candidates saves the key
+  `sk-ant-test-4f2a` first and removes it when it ends: a browser test through the `savedKey`
+  fixture or on the Settings screen, a service test into a key file in its temporary folder.
+- The test key is short on purpose. The hook that scans every write for secrets refuses `sk-`
+  followed by twenty or more key characters, and a test key under that length passes it.
+- `service/clipper/conftest.py` sets `CLIPPER_KEY_FILE` to a path under `/dev/null`, where no file
+  can be read or made. A service test that saves a key names a key file of its own, and none
+  opens the key file in the user's home.
+- Selection asks Claude through the SDK's async client, run to its end in the queue's thread and
+  cancelled when the stop signal is set. Keep it that way: a stream closed from another thread
+  does not end the thread that reads it, so a stop would not end the step.
+- A browser test that checks what a page received fetches each answer itself, by routing the
+  page's requests through the test. Asked afterwards, the browser no longer holds the body of an
+  answer to a page it has left, or of a link the framework fetched ahead of a tap.
 
 ## Layout
 

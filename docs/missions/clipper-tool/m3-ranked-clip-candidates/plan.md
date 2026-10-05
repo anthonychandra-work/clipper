@@ -561,7 +561,7 @@ What the spec's file list leaves out
   label. A rule that a state needs goes into `app.css`, and the copied stylesheets stay as they
   are. `own-origin.spec.ts` walks the same screens.
 
-- [ ] T19 — Bring the README, the fixtures' notes and the agents' instructions up to date
+- [x] T19 — Bring the README, the fixtures' notes and the agents' instructions up to date
   Files: `README.md`, `AGENTS.md`, `fixtures/README.md`
   Done: `README.md` says how to save the API key in Settings and where it is kept; that
   selection sends the transcript, and no audio or video, to Anthropic and is the tool's one
