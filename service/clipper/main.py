@@ -48,6 +48,7 @@ def create_app(startup: StartupSettings) -> FastAPI:
     )
     app.state.settings = settings.SettingsDependencies(
         store=preferences,
+        api_key_store=settings.ApiKeyStore(startup.key_file),
         read_disk_space=measure_disk,
         web_port=startup.web_port,
     )

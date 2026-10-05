@@ -581,6 +581,12 @@ From `intent.md`. Base `82df5ce`.
   any other refusal of the API fails the step with the queue's own sentence. A request looks at
   the stop signal every 50 ms. The plan fixes the stand-in's addresses and the request rules and
   leaves these forms open. (executor, m3)
+- A75 — A change to Settings that the service cannot read, a key in a body of the wrong shape
+  among them, is refused with "Clipper could not read this change to Settings. Reload the page and
+  try again." Blanks around a pasted key are left out before it is checked and saved. The key is
+  written under another name first and then moved into place. The ending is shown only for a key
+  longer than four characters, so the browser never receives a whole key. A60 words two refusals
+  and leaves these open. (executor, m3)
 
 ## Milestones
 

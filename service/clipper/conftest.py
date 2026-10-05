@@ -15,11 +15,14 @@ from .storage import Database, DataFolder, open_data_folder, open_database
 SCRIPTS_DIR = Path(__file__).resolve().parents[2] / "scripts"
 SERVER_START_TIMEOUT_SECONDS = 10
 CLOSED_LOCAL_PORT = "http://127.0.0.1:9"
+UNREACHABLE_KEY_FILE = "/dev/null/anthropic-api-key"
 
 # No test reaches Hugging Face: a model is fetched only from a source the test names.
 os.environ.setdefault("CLIPPER_MODEL_SOURCE", CLOSED_LOCAL_PORT)
 # No test reaches Anthropic, whatever the shell says: a request goes only where a test sends it.
 os.environ["CLIPPER_ANTHROPIC_SOURCE"] = CLOSED_LOCAL_PORT
+# No test opens the key file in the user's home: under /dev/null no file can be read or made.
+os.environ["CLIPPER_KEY_FILE"] = UNREACHABLE_KEY_FILE
 
 
 @dataclass(frozen=True)

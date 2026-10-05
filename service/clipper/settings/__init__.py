@@ -1,3 +1,4 @@
+from .api_key_store import ApiKeyStore
 from .preference_store import PreferenceStore
 from .preferences import (
     ClaudeModel,
@@ -11,6 +12,7 @@ from .router import SettingsDependencies, router
 from .startup_settings import StartupSettings
 
 __all__ = [
+    "ApiKeyStore",
     "ClaudeModel",
     "ClipsPerVideo",
     "PreferenceChanges",

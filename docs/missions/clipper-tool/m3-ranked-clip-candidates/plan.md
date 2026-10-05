@@ -202,7 +202,7 @@ What the spec's file list leaves out
   not used; with every logger at DEBUG no log record and no error's text holds the key; the
   stand-in's answers and its kept requests hold no key. `pnpm bootstrap` and `pnpm test` exit 0.
 
-- [ ] T2 — Keep the API key in its file and out of every answer
+- [x] T2 — Keep the API key in its file and out of every answer
   Files: `service/clipper/settings/api_key_store.py`,
   `service/clipper/settings/test_api_key_store.py`, `service/clipper/settings/router.py`,
   `service/clipper/settings/test_router.py`, `service/clipper/settings/__init__.py`,
