@@ -414,7 +414,7 @@ What the spec's file list leaves out
   project leaves no window and no candidate. With every logger at DEBUG no record of a whole run
   holds the key.
 
-- [ ] T11 — Serve a project's selection
+- [x] T11 — Serve a project's selection
   Files: `service/clipper/selection/selection_schemas.py`, `service/clipper/selection/router.py`,
   `service/clipper/selection/test_router.py`, `service/clipper/selection/__init__.py`,
   `service/clipper/main.py`

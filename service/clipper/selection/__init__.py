@@ -19,6 +19,7 @@ from .model_traits import FALLBACK_BETA, ModelTraits, describe_model
 from .place_quote import Placement, place_quote
 from .prepare_pass import PreparedPass, StageDependencies, prepare_pass
 from .replay_peaks import find_replay_peaks, read_replay_peaks
+from .router import SelectionDependencies, router
 from .score_stage import ScoreStage
 from .score_windows import score_windows, write_score_questions
 from .selection_records import (
@@ -31,6 +32,7 @@ from .selection_records import (
     Subscores,
     WindowRecord,
 )
+from .selection_schemas import SelectionResponse
 from .selection_store import SelectionStore
 from .selection_task import ClipSeconds, PassContext
 from .split_sentences import Sentence, split_sentences
@@ -66,6 +68,8 @@ __all__ = [
     "RefusedKeyError",
     "ReplayPeak",
     "ScoreStage",
+    "SelectionDependencies",
+    "SelectionResponse",
     "SelectionStore",
     "Sentence",
     "StageDependencies",
@@ -85,6 +89,7 @@ __all__ = [
     "place_quote",
     "prepare_pass",
     "read_replay_peaks",
+    "router",
     "score_windows",
     "split_sentences",
     "split_windows",
