@@ -338,6 +338,11 @@ From `intent.md`. Base `82df5ce`.
   capture is taken with the window made as tall as the screen, at the same width. On a phone the
   tab bar floats over a screen that scrolls, as in the prototype, so a capture of the first
   window alone shows the bar over text and leaves out what is below it. (planner, m1)
+- A38 — The capture check counts the tab bar as the strip it occupies across the bottom of the
+  phone window, from edge to edge, and not only the pill drawn in the middle of that strip. A
+  line of text beside the pill counts as lying under the bar. A phone screen keeps more room than
+  the strip free under its content, so a screen shown whole leaves the strip empty. The plan says
+  "under the tab bar" and names no box. (executor, m1)
 
 ## Milestones
 

@@ -114,7 +114,10 @@ progress, the app does the real thing.
 - The phone layout ends at 719 px and the sidebar docks from 1000 px. Text stays usable at 200%:
   no screen scrolls sideways and no label is cut. `web/e2e/layout.spec.ts` and
   `web/e2e/text-size.spec.ts` measure both, and `web/e2e/captures.spec.ts` saves the screens a
-  milestone commits as evidence.
+  milestone commits as evidence. A capture holds its whole screen: for a screen longer than the
+  window, the test makes the window as tall as the screen, at the same width, before it takes the
+  picture. It fails when part of a screen stays out of view, or when text lies under the phone's
+  tab bar.
 
 ## Forwarding from the web app to the service
 

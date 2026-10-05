@@ -738,9 +738,9 @@ What attempt 1 got wrong
   `pnpm start`. The standards review of the task's source files prints no finding without
   `[advisory]`.
 
-- [ ] T21 — Capture each screen whole
+- [x] T21 — Capture each screen whole
   Files: `web/e2e/support/capture-screens.ts`, `web/e2e/support/show-whole-screen.ts`,
-  `web/e2e/captures.spec.ts`, `AGENTS.md`,
+  `web/e2e/captures.spec.ts`, `AGENTS.md`, `docs/missions/clipper-tool/spec.md`,
   `docs/missions/clipper-tool/m1-a-running-tool-with-a-library-and-import/evidence/`
   Done: before each capture the test makes the window taller, at the same width, until the
   document and every element that scrolls downward have nothing left out of view. It takes the

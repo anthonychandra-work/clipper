@@ -1,7 +1,8 @@
-import { join } from 'node:path';
+import { basename, join } from 'node:path';
 
 import type { Page } from '@playwright/test';
 
+import { showWholeScreen } from './show-whole-screen';
 import { visitScreens, type Walk } from './walk-screens';
 
 const CAPTURE_SIZES = [
@@ -18,6 +19,8 @@ const CAPTURED_AS = new Map([
   ['settings', 'settings'],
 ]);
 
+type WindowSize = (typeof CAPTURE_SIZES)[number];
+
 export async function captureScreens(page: Page, walk: Walk, folder: string): Promise<string[]> {
   const captured = { ...walk, screens: walk.screens.filter((screen) => CAPTURED_AS.has(screen.name)) };
   const saved: string[] = [];
@@ -27,10 +30,16 @@ export async function captureScreens(page: Page, walk: Walk, folder: string): Pr
       await page.emulateMedia({ colorScheme: theme });
       await visitScreens(page, captured, async (screenName) => {
         const file = `${CAPTURED_AS.get(screenName)}-${size.width}-${theme}.png`;
-        await page.screenshot({ path: join(folder, file), animations: 'disabled' });
+        await saveWholeScreen(page, size, join(folder, file));
         saved.push(file);
       });
     }
   }
   return saved;
+}
+
+async function saveWholeScreen(page: Page, size: WindowSize, path: string): Promise<void> {
+  await showWholeScreen(page, basename(path));
+  await page.screenshot({ path, animations: 'disabled' });
+  await page.setViewportSize(size);
 }
