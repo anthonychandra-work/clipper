@@ -421,8 +421,16 @@ The prototype
   other capability. `/` and `/settings` show their titles. Browser tests cover 390, 860 and
   1360 px.
 
-- [ ] T12 — Build the Library: project rows, the sidebar list and the empty state
-  Files: `web/src/library/index.ts`, `web/src/library/library.types.ts`,
+- [x] T12 — Build the Library: project rows, the sidebar list and the empty state
+  Files: `web/src/shared/styles/app.css`, `web/e2e/support/seed-projects.ts`,
+  `web/e2e/support/service-api.ts`, `web/src/shell/frame-screens/components/AppShell.tsx`,
+  `web/src/shell/frame-screens/components/SidebarFrame.tsx`,
+  `web/src/shell/frame-screens/lib/shell-context.ts`,
+  `web/src/shell/frame-screens/hooks/use-opener-memory.ts`,
+  `web/src/shell/frame-screens/hooks/use-previous-address.ts`,
+  `web/src/shell/present-sheet/components/Sheet.tsx`,
+  `web/src/shell/present-sheet/hooks/use-modal-dialog.ts`,
+  `web/src/library/index.ts`, `web/src/library/library.types.ts`,
   `web/src/library/list-projects/index.ts`,
   `web/src/library/list-projects/api/fetch-projects.ts`,
   `web/src/library/list-projects/lib/projects-store.ts`,

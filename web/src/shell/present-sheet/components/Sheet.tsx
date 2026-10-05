@@ -14,8 +14,8 @@ interface SheetProps {
 const DismissSheetContext = createContext<(() => void) | null>(null);
 
 export function Sheet({ onDismiss, children }: SheetProps) {
-  const { sheetElement } = useShell();
-  const dismiss = useModalDialog(sheetElement, onDismiss);
+  const { sheetElement, readOpenerId } = useShell();
+  const dismiss = useModalDialog({ element: sheetElement, readOpenerId }, onDismiss);
   if (sheetElement === null) return null;
   return createPortal(<DismissSheetContext value={dismiss}>{children}</DismissSheetContext>, sheetElement);
 }

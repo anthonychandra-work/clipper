@@ -1,4 +1,5 @@
 export { expect } from '@playwright/test';
+export { newProjectSheet, projectRow, readRow, type RowText } from './library-page';
 export {
   type EnvironmentChanges,
   isPortOpen,
@@ -7,6 +8,7 @@ export {
   type StartCommand,
   type ToolRun,
 } from './run-tool';
+export { seedEveryState, type SeededProjects } from './seed-projects';
 export type { FixtureServer } from './serve-fixtures';
 export {
   createFileProject,
@@ -14,9 +16,9 @@ export {
   deleteAllProjects,
   deleteProject,
   listProjects,
-  type ProjectJson,
   readProject,
   sendPart,
+  stopProject,
   waitForStatus,
 } from './service-api';
 export { test } from './tool-test';

@@ -9,6 +9,7 @@ import '@/shared/styles/app.css';
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 
+import { SidebarDiskLine, SidebarProjects } from '@/library';
 import { AppShell } from '@/shell';
 
 export const metadata: Metadata = { title: 'Clipper' };
@@ -19,7 +20,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <AppShell sidebar={null} sidebarFoot={null}>
+        <AppShell sidebar={<SidebarProjects />} sidebarFoot={<SidebarDiskLine />}>
           {children}
         </AppShell>
       </body>

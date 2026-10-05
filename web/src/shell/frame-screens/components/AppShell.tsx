@@ -5,6 +5,8 @@ import { type ReactNode, useState } from 'react';
 
 import { ToastHost } from '../../show-toast';
 import { useLayout } from '../hooks/use-layout';
+import { useOpenerMemory } from '../hooks/use-opener-memory';
+import { usePreviousAddress } from '../hooks/use-previous-address';
 import { useScreenTransition } from '../hooks/use-screen-transition';
 import { useSidebar } from '../hooks/use-sidebar';
 import { type LargeTitleState, type Shell, ShellContext, type ShellLayout } from '../lib/shell-context';
@@ -19,10 +21,12 @@ interface AppShellProps {
 interface Overlays {
   sheetElement: HTMLDialogElement | null;
   menuLayer: HTMLDivElement | null;
+  readOpenerId: () => string | null;
 }
 
 export function AppShell(props: AppShellProps) {
   const layout = useLayout();
+  const readOpenerId = useOpenerMemory();
   const [sheetElement, setSheetElement] = useState<HTMLDialogElement | null>(null);
   const [menuLayer, setMenuLayer] = useState<HTMLDivElement | null>(null);
   return (
@@ -30,7 +34,7 @@ export function AppShell(props: AppShellProps) {
       {layout === null ? (
         <LoadingApp />
       ) : (
-        <FramedApp layout={layout} overlays={{ sheetElement, menuLayer }} {...props} />
+        <FramedApp layout={layout} overlays={{ sheetElement, menuLayer, readOpenerId }} {...props} />
       )}
       <dialog id="sheet" className="sheet" aria-labelledby="sheet-title" ref={setSheetElement} />
       <div id="menu" className="menu-layer" hidden ref={setMenuLayer} />
@@ -49,11 +53,14 @@ function LoadingApp() {
 
 function FramedApp(props: AppShellProps & { layout: ShellLayout; overlays: Overlays }) {
   const { layout, overlays, sidebar, sidebarFoot, children } = props;
-  const { isOpen, isOverlaid, toggle } = useSidebar(layout, usePathname());
+  const pathname = usePathname();
+  const previousAddress = usePreviousAddress(pathname);
+  const { isOpen, isOverlaid, toggle } = useSidebar(layout, pathname);
   const { enter, announceScreen } = useScreenTransition();
   const [largeTitle, reportLargeTitle] = useState<LargeTitleState>('none');
   const shell: Shell = {
     layout,
+    previousAddress,
     isSidebarOpen: isOpen,
     toggleSidebar: toggle,
     announceScreen,

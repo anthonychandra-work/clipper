@@ -1,10 +1,5 @@
-import { PagePane } from '@/shared/ui';
-import { ScreenFrame } from '@/shell';
+import { EmptyLibraryScreen, LibraryScreen } from '@/library';
 
 export default function LibraryPage() {
-  return (
-    <ScreenFrame screenKey="library" depth={0} section="library" title="Library" hasLargeTitle>
-      <PagePane name="library">{null}</PagePane>
-    </ScreenFrame>
-  );
+  return <LibraryScreen whenRegular={<EmptyLibraryScreen />} />;
 }

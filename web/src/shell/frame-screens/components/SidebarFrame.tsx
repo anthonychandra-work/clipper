@@ -25,7 +25,7 @@ export function SidebarFrame({ foot, children }: SidebarFrameProps) {
         <SidebarToggle label="Hide sidebar" />
       </header>
       <div className="sidebar__scroll" data-keep-scroll="sidebar">
-        <Link className="sidebar__new" id="new-project" href={NEW_PROJECT_ADDRESS}>
+        <Link className="sidebar__new" id="new-project" href={NEW_PROJECT_ADDRESS} scroll={false}>
           <Icon name="plus" />
           New Project
         </Link>

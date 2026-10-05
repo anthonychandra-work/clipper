@@ -2,29 +2,11 @@ import { setTimeout as delay } from 'node:timers/promises';
 
 import type { APIRequestContext, APIResponse } from '@playwright/test';
 
+import type { Project, ProjectStatus } from '@/library';
+
 const ALL_PLATFORMS = ['tiktok', 'reels', 'shorts'];
 const STATUS_TIMEOUT_MS = 90_000;
 const STATUS_POLL_MS = 200;
-
-export interface StepJson {
-  kind: string;
-  label: string;
-  state: string;
-  percent: number;
-}
-
-export interface ProjectJson {
-  id: string;
-  title: string;
-  sourceKind: 'link' | 'file';
-  sourceLabel: string;
-  durationSeconds: number | null;
-  status: string;
-  steps: StepJson[];
-  percent: number;
-  halt: { reason: string } | null;
-  upload: { fileName: string; sizeBytes: number; receivedBytes: number } | null;
-}
 
 export interface UploadedPart {
   projectId: string;
@@ -32,7 +14,7 @@ export interface UploadedPart {
   bytes: Buffer;
 }
 
-export async function createLinkProject(request: APIRequestContext, link: string): Promise<ProjectJson> {
+export async function createLinkProject(request: APIRequestContext, link: string): Promise<Project> {
   const draft = { sourceKind: 'link', link, platforms: ALL_PLATFORMS };
   return readCreated(await request.post('/api/projects', { data: draft }));
 }
@@ -40,17 +22,17 @@ export async function createLinkProject(request: APIRequestContext, link: string
 export async function createFileProject(
   request: APIRequestContext,
   file: { name: string; sizeBytes: number },
-): Promise<ProjectJson> {
+): Promise<Project> {
   const draft = { sourceKind: 'file', fileName: file.name, fileSizeBytes: file.sizeBytes, platforms: ALL_PLATFORMS };
   return readCreated(await request.post('/api/projects', { data: draft }));
 }
 
-export async function readProject(request: APIRequestContext, projectId: string): Promise<ProjectJson> {
+export async function readProject(request: APIRequestContext, projectId: string): Promise<Project> {
   const response = await request.get(`/api/projects/${projectId}`);
   return response.json();
 }
 
-export async function listProjects(request: APIRequestContext): Promise<ProjectJson[]> {
+export async function listProjects(request: APIRequestContext): Promise<Project[]> {
   const response = await request.get('/api/projects');
   return (await response.json()).projects;
 }
@@ -60,6 +42,10 @@ export function sendPart(request: APIRequestContext, part: UploadedPart): Promis
     data: part.bytes,
     headers: { 'Content-Type': 'application/octet-stream' },
   });
+}
+
+export function stopProject(request: APIRequestContext, projectId: string): Promise<APIResponse> {
+  return request.post(`/api/projects/${projectId}/stop`);
 }
 
 export function deleteProject(request: APIRequestContext, projectId: string): Promise<APIResponse> {
@@ -75,8 +61,8 @@ export async function deleteAllProjects(request: APIRequestContext): Promise<voi
 export async function waitForStatus(
   request: APIRequestContext,
   projectId: string,
-  status: string,
-): Promise<ProjectJson> {
+  status: ProjectStatus,
+): Promise<Project> {
   const deadline = Date.now() + STATUS_TIMEOUT_MS;
   for (;;) {
     const project = await readProject(request, projectId);
@@ -88,7 +74,7 @@ export async function waitForStatus(
   }
 }
 
-async function readCreated(response: APIResponse): Promise<ProjectJson> {
+async function readCreated(response: APIResponse): Promise<Project> {
   if (response.status() !== 201) {
     throw new Error(`The project was not created: ${response.status()} ${await response.text()}`);
   }

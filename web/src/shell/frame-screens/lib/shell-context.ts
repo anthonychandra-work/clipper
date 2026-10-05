@@ -9,12 +9,14 @@ export type LargeTitleState = 'visible' | 'scrolled' | 'none';
 
 export interface Shell {
   layout: ShellLayout;
+  previousAddress: string | null;
   isSidebarOpen: boolean;
   toggleSidebar: () => void;
   announceScreen: (screen: ScreenPlace) => void;
   reportLargeTitle: (state: LargeTitleState) => void;
   sheetElement: HTMLDialogElement | null;
   menuLayer: HTMLDivElement | null;
+  readOpenerId: () => string | null;
 }
 
 export const ShellContext = createContext<Shell | null>(null);

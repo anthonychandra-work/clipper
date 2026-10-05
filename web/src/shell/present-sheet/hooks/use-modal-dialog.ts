@@ -5,7 +5,12 @@ import { useCallback, useEffect, useRef } from 'react';
 const EXIT_MS = 180;
 const CLOSING_CLASS = 'is-closing';
 
-export function useModalDialog(dialog: HTMLDialogElement | null, onDismiss: () => void): () => void {
+export interface ModalDialog {
+  element: HTMLDialogElement | null;
+  readOpenerId: () => string | null;
+}
+
+export function useModalDialog({ element, readOpenerId }: ModalDialog, onDismiss: () => void): () => void {
   const latestOnDismiss = useRef(onDismiss);
 
   useEffect(() => {
@@ -13,40 +18,38 @@ export function useModalDialog(dialog: HTMLDialogElement | null, onDismiss: () =
   }, [onDismiss]);
 
   const dismiss = useCallback(() => {
-    if (dialog === null || dialog.classList.contains(CLOSING_CLASS)) return;
-    dialog.classList.add(CLOSING_CLASS);
+    if (element === null || element.classList.contains(CLOSING_CLASS)) return;
+    element.classList.add(CLOSING_CLASS);
     window.setTimeout(() => latestOnDismiss.current(), EXIT_MS);
-  }, [dialog]);
+  }, [element]);
 
   useEffect(() => {
-    if (dialog === null) return undefined;
-    const opener = document.activeElement;
+    if (element === null) return undefined;
+    const openerId = readOpenerId();
     const dismissOnEscape = (event: Event) => {
       event.preventDefault();
       dismiss();
     };
     const dismissOnOutsideClick = (event: MouseEvent) => {
-      if (event.target === dialog) dismiss();
+      if (event.target === element) dismiss();
     };
-    dialog.classList.remove(CLOSING_CLASS);
-    dialog.showModal();
-    dialog.addEventListener('cancel', dismissOnEscape);
-    dialog.addEventListener('click', dismissOnOutsideClick);
+    element.classList.remove(CLOSING_CLASS);
+    element.showModal();
+    element.addEventListener('cancel', dismissOnEscape);
+    element.addEventListener('click', dismissOnOutsideClick);
     return () => {
-      dialog.removeEventListener('cancel', dismissOnEscape);
-      dialog.removeEventListener('click', dismissOnOutsideClick);
-      closeDialog(dialog, opener);
+      element.removeEventListener('cancel', dismissOnEscape);
+      element.removeEventListener('click', dismissOnOutsideClick);
+      closeDialog(element, openerId);
     };
-  }, [dialog, dismiss]);
+  }, [element, readOpenerId, dismiss]);
 
   return dismiss;
 }
 
-function closeDialog(dialog: HTMLDialogElement, opener: Element | null): void {
+function closeDialog(dialog: HTMLDialogElement, openerId: string | null): void {
   dialog.classList.remove(CLOSING_CLASS);
   dialog.removeAttribute('style');
   dialog.close();
-  const sameControlNow = opener?.id ? document.getElementById(opener.id) : null;
-  const returnTo = sameControlNow ?? opener;
-  if (returnTo instanceof HTMLElement) returnTo.focus();
+  if (openerId !== null) document.getElementById(openerId)?.focus();
 }
