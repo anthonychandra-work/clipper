@@ -657,7 +657,7 @@ What attempt 1 got wrong
   end a video at a known moment states the length with `-t`. `pnpm test` exits 0 with its nine
   gates passed.
 
-- [ ] T21 — Save the evidence again from the rebuilt talk
+- [x] T21 — Save the evidence again from the rebuilt talk
   Files: `docs/missions/clipper-tool/m3-ranked-clip-candidates/evidence/talk-selection.json`,
   `docs/missions/clipper-tool/m3-ranked-clip-candidates/evidence/selection-requests.json`
   Done: the two files of A73 are saved again with the command of validation block V4, on the

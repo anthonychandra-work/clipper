@@ -1,10 +1,10 @@
 {
   "project": {
-    "id": "ceeecdad90fc",
+    "id": "dd4a08544beb",
     "title": "talk.mp4",
     "sourceKind": "file",
     "sourceLabel": "Uploaded file",
-    "durationSeconds": 236.2,
+    "durationSeconds": 234.939002,
     "status": "ready",
     "steps": [
       {
@@ -36,8 +36,8 @@
     "halt": null,
     "upload": {
       "fileName": "talk.mp4",
-      "sizeBytes": 3495138,
-      "receivedBytes": 3495138
+      "sizeBytes": 3493179,
+      "receivedBytes": 3493179
     },
     "candidateCount": 6
   },
