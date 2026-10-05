@@ -1,0 +1,248 @@
+
+> clipper@0.1.0 test /Users/Work/Documents/_my-projects/clipper/.worktrees/clipper-tool
+> node scripts/run-tests.mjs
+
+
+--- Fixtures
+Built /var/folders/64/xznbj4n94qz_cxzl70mw82hr0000gp/T/clipper-test-Nfy8Qo/fixtures/silence.mp4
+Built /var/folders/64/xznbj4n94qz_cxzl70mw82hr0000gp/T/clipper-test-Nfy8Qo/fixtures/talk.mp4
+Built /var/folders/64/xznbj4n94qz_cxzl70mw82hr0000gp/T/clipper-test-Nfy8Qo/fixtures/long-talk.mp4
+/Users/Work/Documents/_my-projects/clipper/.worktrees/clipper-tool/.cache/whisper/tiny
+
+--- Ruff
+All checks passed!
+
+--- mypy
+Success: no issues found in 143 source files
+
+--- pytest
+============================= test session starts ==============================
+platform darwin -- Python 3.12.13, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/Work/Documents/_my-projects/clipper/.worktrees/clipper-tool/service
+configfile: pyproject.toml
+plugins: anyio-4.15.1
+collected 676 items
+
+clipper/fetching/test_download_link.py ...........                       [  1%]
+clipper/fetching/test_fetch_stage.py ...........                         [  3%]
+clipper/fetching/test_read_replay_graph.py ...........                   [  4%]
+clipper/media/test_extract_audio.py .....                                [  5%]
+clipper/media/test_locate_media_tools.py ........                        [  6%]
+clipper/media/test_make_preview_copy.py .......                          [  7%]
+clipper/media/test_probe_video.py ......                                 [  8%]
+clipper/media/test_run_media_tool.py ....                                [  9%]
+clipper/pipeline/test_explain_failure.py ..........                      [ 10%]
+clipper/pipeline/test_halt_project.py ......                             [ 11%]
+clipper/pipeline/test_recover_interrupted.py ....                        [ 12%]
+clipper/pipeline/test_requeue_rested.py ....                             [ 12%]
+clipper/pipeline/test_router.py ..........                               [ 14%]
+clipper/pipeline/test_run_queue.py ...............                       [ 16%]
+clipper/problems/test_handle_app_errors.py .....                         [ 17%]
+clipper/projects/test_create_project.py .......................          [ 20%]
+clipper/projects/test_delete_project.py .....                            [ 21%]
+clipper/projects/test_project.py ......                                  [ 22%]
+clipper/projects/test_project_queue.py ..................                [ 25%]
+clipper/projects/test_project_repository.py ...........                  [ 26%]
+clipper/projects/test_receive_upload.py ...............                  [ 28%]
+clipper/projects/test_router.py ......................                   [ 32%]
+clipper/selection/test_ask_claude.py ...................                 [ 34%]
+clipper/selection/test_choose_candidates.py ............................ [ 39%]
+                                                                         [ 39%]
+clipper/selection/test_clip_limits.py .............                      [ 40%]
+clipper/selection/test_cut_clips.py ..................................   [ 46%]
+clipper/selection/test_cut_stage.py ............                         [ 47%]
+clipper/selection/test_form_shortlist.py .................               [ 50%]
+clipper/selection/test_model_traits.py ......                            [ 51%]
+clipper/selection/test_place_quote.py ............                       [ 52%]
+clipper/selection/test_prepare_pass.py ......                            [ 53%]
+clipper/selection/test_recorded_claude.py ............                   [ 55%]
+clipper/selection/test_replay_peaks.py ................                  [ 57%]
+clipper/selection/test_router.py ...........                             [ 59%]
+clipper/selection/test_score_stage.py .............                      [ 61%]
+clipper/selection/test_score_windows.py ......................           [ 64%]
+clipper/selection/test_selection_reasons.py ..........                   [ 66%]
+clipper/selection/test_selection_store.py ...........                    [ 67%]
+clipper/selection/test_split_sentences.py ..........................     [ 71%]
+clipper/selection/test_split_windows.py ............                     [ 73%]
+clipper/selection/test_transcript_part.py .....                          [ 74%]
+clipper/selection/test_whole_app.py .......                              [ 75%]
+clipper/settings/test_api_key_store.py ...................               [ 78%]
+clipper/settings/test_describe_machine.py ...                            [ 78%]
+clipper/settings/test_preference_store.py ........                       [ 79%]
+clipper/settings/test_router.py .............................            [ 84%]
+clipper/settings/test_startup_settings.py .........                      [ 85%]
+clipper/storage/test_data_folder.py .......                              [ 86%]
+clipper/storage/test_open_database.py ..........                         [ 87%]
+clipper/storage/test_read_disk_space.py ....                             [ 88%]
+clipper/test_fixture_server.py ........                                  [ 89%]
+clipper/test_main.py ..............                                      [ 91%]
+clipper/transcription/test_built_fixtures.py .....                       [ 92%]
+clipper/transcription/test_download_model.py .....                       [ 93%]
+clipper/transcription/test_model_stage.py ......                         [ 94%]
+clipper/transcription/test_run_transcriber.py ....                       [ 94%]
+clipper/transcription/test_transcribe_audio.py ..........                [ 96%]
+clipper/transcription/test_transcribe_stage.py .....                     [ 96%]
+clipper/transcription/test_transcript.py .........                       [ 98%]
+clipper/transcription/test_transcript_store.py ....                      [ 98%]
+clipper/transcription/test_whisper_models.py .....                       [ 99%]
+clipper/transcription/test_whole_app.py ...                              [100%]
+
+======================= 676 passed in 223.14s (0:03:43) ========================
+
+--- ESLint
+
+--- Web build
+▲ Next.js 16.3.8 (Turbopack)
+✓ Running next.config.ts took 62ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 424ms
+  Running TypeScript ...
+  Finished TypeScript in 1189ms ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/5) ...
+  Generating static pages using 7 workers (1/5) 
+  Generating static pages using 7 workers (2/5) 
+  Generating static pages using 7 workers (3/5) 
+✓ Generating static pages using 7 workers (5/5) in 95ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /new
+├ ƒ /projects/[id]
+├ ƒ /projects/[id]/export
+├ ƒ /projects/[id]/results
+├ ƒ /projects/[id]/review
+└ ○ /settings
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+
+--- TypeScript check
+
+--- Vitest
+
+ RUN  v5.0.3 /Users/Work/Documents/_my-projects/clipper/.worktrees/clipper-tool/web
+
+
+ Test Files  15 passed (15)
+      Tests  139 passed (139)
+   Start at  05:32:30
+   Duration  460ms (transform 59%, import 25%, tests 12%, worker 4%)
+
+
+--- Playwright
+
+Running 91 tests using 1 worker
+
+  ✓   1 e2e/addresses.spec.ts:24:3 › at 390 px › a project opens at its own address, a reload shows it again, and Back returns to the Library (1.0s)
+  ✓   2 e2e/addresses.spec.ts:45:3 › at 390 px › a ready project opens on its Review tab, and each tab has an address that a reload keeps (11.2s)
+  ✓   3 e2e/addresses.spec.ts:70:3 › at 390 px › Back and Forward move between the tabs of a ready project (423ms)
+  ✓   4 e2e/addresses.spec.ts:93:3 › at 390 px › the tab address of a project that is not ready shows its status screen (630ms)
+  ✓   5 e2e/addresses.spec.ts:111:3 › at 1360 px › the tabs sit in the toolbar with the current one pressed (202ms)
+  ✓   6 e2e/api-key.spec.ts:106:1 › a key saved in Settings finds the clips of a link and is held by its file alone (15.0s)
+  ✓   7 e2e/captures.spec.ts:61:1 › six screens are captured whole at 390 and 1360 px, in light and in dark (15.9s)
+  ✓   8 e2e/delete-project.spec.ts:35:3 › at 390 px › the More menu offers Delete Project, and the confirmation names the project (552ms)
+  ✓   9 e2e/delete-project.spec.ts:60:3 › at 390 px › Cancel removes neither the row nor the folder, and Delete removes both (12.6s)
+  ✓  10 e2e/delete-project.spec.ts:88:3 › at 390 px › deleting a project while it is being fetched stops it and leaves no folder (5.0s)
+  ✓  11 e2e/delete-project.spec.ts:114:3 › at 1360 px › the menu opens under the More control, and deleting shows the next project (1.3s)
+  ✓  12 e2e/empty-library.spec.ts:13:3 › at 390 px › with no projects the Library shows the empty state, and its control opens the sheet (203ms)
+  ✓  13 e2e/empty-library.spec.ts:29:3 › at 390 px › Cancel closes the sheet, returns to the Library and gives focus back to the control (746ms)
+  ✓  14 e2e/empty-library.spec.ts:41:3 › at 390 px › Escape and a click outside the sheet both return to the Library (626ms)
+  ✓  15 e2e/empty-library.spec.ts:57:3 › at 390 px › the sheet opened at its own address returns to the Library (695ms)
+  ✓  16 e2e/empty-library.spec.ts:71:3 › at 1360 px › the empty state fills the main area, and the sidebar control opens the sheet (185ms)
+  ✓  17 e2e/empty-library.spec.ts:81:3 › at 1360 px › closing the sheet returns to the screen the user was on (800ms)
+  ✓  18 e2e/halt-project.spec.ts:21:1 › a link that answers "not found" shows the reason and Retry, and Retry finishes it once repaired (12.4s)
+  ✓  19 e2e/halt-project.spec.ts:49:1 › Stop during a fetch leaves the project stopped, and Resume finishes it (20.3s)
+  ✓  20 e2e/import-link.spec.ts:23:1 › a link to the fixture is fetched and transcribed: its bar never falls, then the row shows the real length (18.2s)
+  ✓  21 e2e/import-link.spec.ts:46:1 › Find Clips sends the link, the length, the platforms and the brief the user chose (637ms)
+  ✓  22 e2e/import-upload.spec.ts:30:1 › the uploaded fixture is prepared and transcribed: its bar never falls, then the row shows the real length (11.9s)
+  ✓  23 e2e/import-upload.spec.ts:53:1 › a browser that is not sending the file says so on the status screen (166ms)
+  ✓  24 e2e/layout.spec.ts:47:3 › at 390 px › the Library is a list above a tab bar at the bottom edge (660ms)
+  ✓  25 e2e/layout.spec.ts:65:3 › at 390 px › the new project sheet spans the width and rises from the bottom edge (461ms)
+  ✓  26 e2e/layout.spec.ts:78:3 › at 1360 px › the projects are in a sidebar beside the screen (411ms)
+  ✓  27 e2e/layout.spec.ts:94:3 › at 1360 px › the new project sheet is centred (473ms)
+  ✓  28 e2e/layout.spec.ts:105:1 › the phone layout ends at 719 px and the desktop layout begins at 720 px (863ms)
+  ✓  29 e2e/layout.spec.ts:123:1 › the sidebar lies over the content at 999 px and beside it at 1000 px (227ms)
+  ✓  30 e2e/library.spec.ts:26:3 › at 390 px › each row shows its title, its source and length, and its status (12.1s)
+  ✓  31 e2e/library.spec.ts:48:3 › at 390 px › the Library has a large title, the plus control, the Projects group and the free space (224ms)
+  ✓  32 e2e/library.spec.ts:68:3 › at 390 px › a row opens the screen of its project, and the back control returns to the Library (757ms)
+  ✓  33 e2e/library.spec.ts:89:3 › at 390 px › the address of a project that does not exist leads to the Library (130ms)
+  ✓  34 e2e/library.spec.ts:96:3 › at 390 px › a row follows the progress of its project without a reload (17.4s)
+  ✓  35 e2e/library.spec.ts:113:3 › at 1360 px › the projects are in the sidebar and the free space is in its foot (655ms)
+  ✓  36 e2e/library.spec.ts:127:3 › at 1360 px › the Library address shows the newest project beside the sidebar, marked in the list (1.6s)
+  ✓  37 e2e/low-disk.spec.ts:21:1 › with 3 GB reported free, Find Clips creates nothing and gives the reason under the source (4.0s)
+  ✓  38 e2e/missing-ffmpeg.spec.ts:20:1 › the start command stops with a sentence that names the missing media tools (994ms)
+  ✓  39 e2e/model-download.spec.ts:73:1 › the first project to need a model that is not on the Mac downloads it as a step of its own, and the next does not (39.0s)
+  ✓  40 e2e/new-project-errors.spec.ts:20:1 › the sheet has the sections, the wording and the defaults of the prototype (206ms)
+  ✓  41 e2e/new-project-errors.spec.ts:51:1 › the hint follows the chosen length, and the file field names the chosen file (610ms)
+  ✓  42 e2e/new-project-errors.spec.ts:67:1 › a link that is not a link shows its error under Source and moves focus to the link field (556ms)
+  ✓  43 e2e/new-project-errors.spec.ts:89:1 › a missing file shows its error under Source and moves focus to the file field (566ms)
+  ✓  44 e2e/new-project-errors.spec.ts:102:1 › no platform shows its error under Platforms and moves focus to the first switch (718ms)
+  ✓  45 e2e/no-speech.spec.ts:44:1 › a silent video cannot finish for want of speech, and Retry runs the transcription again and nothing else (3.2s)
+  ✓  46 e2e/own-origin.spec.ts:60:1 › with projects, every request of every screen is addressed to the tool (43.2s)
+  ✓  47 e2e/own-origin.spec.ts:80:1 › the empty Library asks nothing outside the tool (1.0s)
+  ✓  48 e2e/own-origin.spec.ts:97:3 › with 3 GB reported free › the low disk error asks nothing outside the tool (5.6s)
+  ✓  49 e2e/queue-through-tool.spec.ts:19:1 › a second link project waits for the first and then finishes (28.8s)
+  ✓  50 e2e/queue-through-tool.spec.ts:36:1 › a project whose fetch is cut off by a stop finishes after the start (19.2s)
+  ✓  51 e2e/queue.spec.ts:28:1 › a second project waits while the first is processed, names it, and starts when it finishes (28.9s)
+  ✓  52 e2e/queue.spec.ts:54:1 › a file sent while another project is processed arrives in full and then waits its turn (28.3s)
+  ✓  53 e2e/restart.spec.ts:25:1 › the uploaded project and the link project are listed in the same state after a stop and a start (23.4s)
+  ✓  54 e2e/selection-progress.spec.ts:57:1 › the row of a link reads its two selection steps over a bar that never falls and ends ready (39.9s)
+  ✓  55 e2e/selection-progress.spec.ts:77:1 › the status screen counts the two steps as 3 and 4, Stop names the score step, and Resume ends on the Review tab (41.4s)
+  ✓  56 e2e/selection-progress.spec.ts:99:1 › the tool stopped while clips are cut and started again lists one project, which reaches ready with its six candidates (43.8s)
+  ✓  57 e2e/selection.spec.ts:80:1 › with no key the uploaded talk points to Settings, and with the key saved there Retry ends on its Review tab (15.8s)
+  ✓  58 e2e/selection.spec.ts:109:1 › with a saved key a link to the talk reaches ready with six candidates and no replay peak (12.5s)
+  ✓  59 e2e/settings.spec.ts:59:3 › at 390 px › Settings has the five groups of the prototype with their rows and footers (221ms)
+  ✓  60 e2e/settings.spec.ts:94:3 › at 390 px › the choices start at the defaults, and each one is kept after a reload (302ms)
+  ✓  61 e2e/settings.spec.ts:120:3 › at 390 px › Save with nothing typed asks for the key and sends nothing (215ms)
+  ✓  62 e2e/settings.spec.ts:131:3 › at 390 px › a saved key is shown by its last four characters, also after a reload, and Remove brings the field back (384ms)
+  ✓  63 e2e/settings.spec.ts:157:3 › at 390 px › a key the service refuses is answered in the service’s words, and the field is emptied (249ms)
+  ✓  64 e2e/settings.spec.ts:168:3 › at 390 px › the storage row gives the free and the total space with a bar (185ms)
+  ✓  65 e2e/settings.spec.ts:180:3 › at 1360 px › the phone row gives the address of this Mac with the web port, and Copy copies it (259ms)
+  ✓  66 e2e/settings.spec.ts:193:3 › at 1360 px › the tool answers at the phone address (176ms)
+  ✓  67 e2e/shell.spec.ts:9:1 › the page is the loading line before the width of the window is known (7ms)
+  ✓  68 e2e/shell.spec.ts:19:3 › at 1360 px › the sidebar is docked with the app name, its toggle, New Project and Settings (125ms)
+  ✓  69 e2e/shell.spec.ts:31:3 › at 1360 px › the toolbar carries the title of the screen (207ms)
+  ✓  70 e2e/shell.spec.ts:43:3 › at 1360 px › the toggle hides the sidebar and the toolbar offers to show it again (192ms)
+  ✓  71 e2e/shell.spec.ts:53:3 › at 1360 px › the sheet, the menu layer and the toast follow the app as its later siblings (121ms)
+  ✓  72 e2e/shell.spec.ts:65:3 › at 860 px › the sidebar lies over the content with its scrim, and Escape closes it (174ms)
+  ✓  73 e2e/shell.spec.ts:80:3 › at 860 px › a click on the scrim closes the sidebar, and so does going to another screen (288ms)
+  ✓  74 e2e/shell.spec.ts:97:3 › at 390 px › the tab bar holds Library and Settings with the current one marked (204ms)
+  ✓  75 e2e/shell.spec.ts:111:3 › at 390 px › the large title moves into the bar when the screen is scrolled (443ms)
+  ✓  76 e2e/shell.spec.ts:127:1 › light and dark follow the system (116ms)
+  ✓  77 e2e/start-command.spec.ts:14:1 › the tool opens at the address the start command prints (122ms)
+  ✓  78 e2e/start-command.spec.ts:23:1 › the service answers through the web port (5ms)
+  ✓  79 e2e/start-command.spec.ts:30:1 › the web port is open on the network address and the service port is closed there (6ms)
+  ✓  80 e2e/start-command.spec.ts:40:1 › every request of the page goes to the address of the tool (2.1s)
+  ✓  81 e2e/stop-order.spec.ts:11:1 › the service stops listening before the web app when the tool is stopped (2.0s)
+  ✓  82 e2e/text-size.spec.ts:75:1 › the measure finds a block that is too wide, a cut label, a spilled label and a cut choice (215ms)
+  ✓  83 e2e/text-size.spec.ts:93:1 › with projects, every screen fits at the normal size and at 200% (26.4s)
+  ✓  84 e2e/text-size.spec.ts:111:1 › the empty Library fits at the normal size and at 200% (226ms)
+  ✓  85 e2e/text-size.spec.ts:126:3 › with 3 GB reported free › the low disk error fits at the normal size and at 200% (4.8s)
+  ✓  86 e2e/transcribe-restart.spec.ts:30:1 › the tool stopped during a transcription and started again lists one project, which is transcribed (57.2s)
+  ✓  87 e2e/transcribe.spec.ts:54:1 › the uploaded talk is transcribed, and its stored words are timed in order and match the script (12.7s)
+  ✓  88 e2e/transcribe.spec.ts:77:1 › the long talk shows its transcription in the Library with a rising bar, stops without a transcript, and resumes (39.6s)
+  ✓  89 e2e/upload-parts.spec.ts:14:1 › a 50 MiB file sent in 8 MiB parts through the web port is stored whole (215ms)
+  ✓  90 e2e/upload-parts.spec.ts:33:1 › a part sent at another offset is answered with the count the service holds (17ms)
+  ✓  91 e2e/upload-size.spec.ts:31:1 › a 50 MiB upload shows its progress and arrives at the size and checksum it was sent with (6.7s)
+
+  91 passed (11.8m)
+
+--- Results
+Fixtures: passed
+Ruff: passed
+mypy: passed
+pytest: passed
+ESLint: passed
+Web build: passed
+TypeScript check: passed
+Vitest: passed
+Playwright: passed
+Test data folder: /var/folders/64/xznbj4n94qz_cxzl70mw82hr0000gp/T/clipper-test-Nfy8Qo
+Test data size: 0.21 GB (210.3 MB)
+The test data folder was removed.
