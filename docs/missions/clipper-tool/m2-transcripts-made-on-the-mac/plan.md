@@ -328,7 +328,7 @@ What the spec's file list leaves out
   service sent. The word for a resting state is written once and used by the row and the card.
   Unit tests cover each sentence.
 
-- [ ] T9 — Describe the resting state once in the browser tests
+- [x] T9 — Describe the resting state once in the browser tests
   Files: `web/e2e/support/resting-state.ts`, `web/e2e/support/index.ts`,
   `web/e2e/support/seed-projects.ts`, `web/e2e/support/walk-screens.ts`,
   `web/e2e/import-link.spec.ts`, `web/e2e/import-upload.spec.ts`, `web/e2e/restart.spec.ts`,

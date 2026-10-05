@@ -52,7 +52,7 @@ export function listEmptyScreens(): ScreenVisit[] {
 }
 
 export function listProjectScreens(seeded: SeededProjects, shownList: ProjectList): ScreenVisit[] {
-  const readyList = presentAsFinished(shownList, seeded.fetched.id);
+  const readyList = presentAsFinished(shownList, seeded.rested.id);
   const statuses = Object.entries(seeded).map(([state, project]) => ({
     name: `status-${state}`,
     open: (page: Page) => showAddress(page, `/projects/${project.id}`, STATUS_HEADING),
@@ -61,11 +61,11 @@ export function listProjectScreens(seeded: SeededProjects, shownList: ProjectLis
     name: `project-${tab}`,
     open: async (page: Page) => {
       await holdProjectList(page, readyList);
-      await showAddress(page, `/projects/${seeded.fetched.id}/${tab}`, `#tab-${tab}[aria-current="page"]`);
+      await showAddress(page, `/projects/${seeded.rested.id}/${tab}`, `#tab-${tab}[aria-current="page"]`);
     },
   }));
   return [
-    { name: 'library', open: (page) => showAddress(page, '/', `#project-${seeded.fetched.id}`) },
+    { name: 'library', open: (page) => showAddress(page, '/', `#project-${seeded.rested.id}`) },
     ...statuses,
     ...tabs,
     { name: 'delete-alert', open: (page) => showDeleteAlert(page, seeded.failed.id) },

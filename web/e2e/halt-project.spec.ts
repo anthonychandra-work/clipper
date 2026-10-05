@@ -1,7 +1,7 @@
-import { createLinkProject, deleteAllProjects, expect, readStatusCard, statusCard, test } from './support';
+import { createLinkProject, deleteAllProjects, expect, readStatusCard, RESTING, statusCard, test } from './support';
 
 const PHONE = { width: 390, height: 844 };
-const FETCH_TIMEOUT_MS = 60_000;
+const REST_TIMEOUT_MS = 60_000;
 const DOWNLOAD_FAILED = 'The video could not be downloaded. Check the link and your connection, then retry.';
 
 test.use({ viewport: PHONE });
@@ -22,7 +22,7 @@ test('a link that answers "not found" shows the reason and Retry, and Retry fini
 
   await fixtureServer.repair();
   await page.getByRole('button', { name: 'Retry' }).click();
-  await expect(statusCard(page).locator('h2')).toHaveText('Fetched', { timeout: FETCH_TIMEOUT_MS });
+  await expect(statusCard(page).locator('h2')).toHaveText(RESTING.card.heading, { timeout: REST_TIMEOUT_MS });
 
   expect(failed).toEqual({
     heading: 'Could Not Finish',
@@ -32,7 +32,7 @@ test('a link that answers "not found" shows the reason and Retry, and Retry fini
     hasBar: false,
     hasWarning: true,
   });
-  expect(await readStatusCard(page)).toMatchObject({ stage: 'Step 1 of 4 is done.', buttons: [], hasWarning: false });
+  expect(await readStatusCard(page)).toEqual({ ...RESTING.card, buttons: [], hasBar: true, hasWarning: false });
 });
 
 test('Stop during a fetch leaves the project stopped, and Resume finishes it', async ({ page, request, fixtureServer }) => {
@@ -45,7 +45,7 @@ test('Stop during a fetch leaves the project stopped, and Resume finishes it', a
   await expect(statusCard(page).locator('h2')).toHaveText('Stopped');
   const stopped = await readStatusCard(page);
   await page.getByRole('button', { name: 'Resume' }).click();
-  await expect(statusCard(page).locator('h2')).toHaveText('Fetched', { timeout: FETCH_TIMEOUT_MS });
+  await expect(statusCard(page).locator('h2')).toHaveText(RESTING.card.heading, { timeout: REST_TIMEOUT_MS });
 
   expect(running).toMatchObject({ stage: 'Fetching video', footnote: 'Step 1 of 4.', buttons: ['Stop'], hasBar: true });
   expect(stopped).toEqual({

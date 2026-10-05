@@ -9,8 +9,10 @@ import {
   expect,
   listProjects,
   projectRow,
+  RESTING,
   statusCard,
   test,
+  waitForRest,
   waitForStatus,
 } from './support';
 
@@ -62,7 +64,7 @@ test.describe('at 390 px', () => {
     tool,
   }) => {
     const created = await createLinkProject(request, `${fixtureServer.address}/talk.mp4`);
-    await waitForStatus(request, created.id, 'fetched');
+    await waitForRest(request, created.id);
     const folder = join(tool.settings.dataDir, 'projects', created.id);
     await page.goto(`/projects/${created.id}`);
 
@@ -77,7 +79,7 @@ test.describe('at 390 px', () => {
     await expect(page.locator('#toast')).toHaveText('Project deleted');
     await expect(page).toHaveURL('/');
     await expect(projectRow(page, created.id)).toHaveCount(0);
-    expect(filesAfterCancel).toEqual(['preview.mp4', 'source.mp4']);
+    expect(filesAfterCancel).toEqual(RESTING.files);
     expect(projectsAfterCancel.map((project) => project.id)).toEqual([created.id]);
     expect(existsSync(folder)).toBe(false);
     expect(await listProjects(request)).toEqual([]);

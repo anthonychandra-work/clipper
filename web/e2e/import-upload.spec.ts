@@ -10,6 +10,7 @@ import {
   readProject,
   readRow,
   readStatusCard,
+  RESTING,
   statusCard,
   test,
 } from './support';
@@ -25,7 +26,7 @@ test.afterEach(async ({ request }) => {
   await deleteAllProjects(request);
 });
 
-test('the uploaded fixture is fetched: its bar rises, then the row reads Fetched with the real length', async ({
+test('the uploaded fixture is imported: its bar rises, then the row rests with the real length', async ({
   page,
   request,
   fixturesDir,
@@ -34,15 +35,16 @@ test('the uploaded fixture is fetched: its bar rises, then the row reads Fetched
   await expect(page.locator('h1.large-title')).toHaveText('talk.mp4');
   await page.getByRole('link', { name: 'Back to Library' }).click();
 
-  const barValues = await followBarUntil(page, projectId, 'Fetched');
+  const barValues = await followBarUntil(page, projectId, RESTING.word);
   const row = await readRow(page, projectId);
-  const fetched = await readProject(request, projectId);
+  const rested = await readProject(request, projectId);
+  const restingRow = { title: 'talk.mp4', meta: 'Uploaded file · 4 min', status: RESTING.word, barLabel: RESTING.word };
 
   expect(new Set(barValues).size).toBeGreaterThanOrEqual(2);
   expect(barValues).toEqual([...barValues].sort((lower, higher) => lower - higher));
-  expect(row).toEqual({ title: 'talk.mp4', meta: 'Uploaded file · 4 min', status: 'Fetched', barLabel: 'Fetched' });
-  expect(fetched.durationSeconds).toBe(probeTalkLength(fixturesDir));
-  expect(fetched.upload).toMatchObject({ fileName: 'talk.mp4', receivedBytes: fetched.upload?.sizeBytes });
+  expect(row).toEqual(restingRow);
+  expect(rested.durationSeconds).toBe(probeTalkLength(fixturesDir));
+  expect(rested.upload).toMatchObject({ fileName: 'talk.mp4', receivedBytes: rested.upload?.sizeBytes });
 });
 
 test('a browser that is not sending the file says so on the status screen', async ({ page, request }) => {

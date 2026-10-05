@@ -5,6 +5,7 @@ import {
   expect,
   projectRow,
   readRow,
+  RESTING,
   seedEveryState,
   statusCard,
   test,
@@ -13,7 +14,7 @@ import {
 
 const PHONE = { width: 390, height: 844 };
 const DESKTOP = { width: 1360, height: 900 };
-const FETCH_TIMEOUT_MS = 60_000;
+const REST_TIMEOUT_MS = 60_000;
 
 test.afterEach(async ({ request }) => {
   await deleteAllProjects(request);
@@ -27,21 +28,21 @@ test.describe('at 390 px', () => {
     await page.goto('/');
     await expect(projectRow(page, seeded.uploading.id)).toBeVisible();
 
-    const fetched = await readRow(page, seeded.fetched.id);
+    const rested = await readRow(page, seeded.rested.id);
     const failed = await readRow(page, seeded.failed.id);
     const stopped = await readRow(page, seeded.stopped.id);
     const processing = await readRow(page, seeded.processing.id);
     const queued = await readRow(page, seeded.queued.id);
     const uploading = await readRow(page, seeded.uploading.id);
 
-    expect(fetched).toEqual({ title: 'talk', meta: 'Video link · 4 min', status: 'Fetched', barLabel: 'Fetched' });
+    expect(rested).toEqual({ title: 'talk', meta: 'Video link · 4 min', status: RESTING.word, barLabel: RESTING.word });
     expect(failed).toMatchObject({ meta: 'Video link', status: 'Could not finish', barLabel: null });
     expect(stopped).toMatchObject({ status: 'Stopped', barLabel: null });
     expect(processing).toMatchObject({ status: 'Fetching video', barLabel: 'Fetching video' });
     expect(queued).toMatchObject({ title: 'New video from link', status: 'Waiting in queue', barLabel: null });
     expect(uploading).toMatchObject({ title: 'interview.mov', meta: 'Uploaded file', status: 'Uploading video' });
     await expect(projectRow(page, seeded.failed.id).locator('.project-row__status--failed svg.icon')).toHaveCount(1);
-    await expect(projectRow(page, seeded.fetched.id)).toHaveAttribute('href', `/projects/${seeded.fetched.id}`);
+    await expect(projectRow(page, seeded.rested.id)).toHaveAttribute('href', `/projects/${seeded.rested.id}`);
   });
 
   test('the Library has a large title, the plus control, the Projects group and the free space', async ({
@@ -99,7 +100,7 @@ test.describe('at 390 px', () => {
 
     await expect(row.locator('.project-row__status')).toHaveText('Fetching video');
     await expect(row.locator('.project-row__title')).toHaveText('New video from link');
-    await expect(row.locator('.project-row__status')).toHaveText('Fetched', { timeout: FETCH_TIMEOUT_MS });
+    await expect(row.locator('.project-row__status')).toHaveText(RESTING.word, { timeout: REST_TIMEOUT_MS });
 
     await expect(row.locator('.project-row__title')).toHaveText('talk');
     await expect(row.locator('.project-row__meta')).toHaveText('Video link · 4 min');

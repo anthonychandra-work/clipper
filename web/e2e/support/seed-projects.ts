@@ -2,6 +2,7 @@ import type { APIRequestContext } from '@playwright/test';
 
 import type { Project } from '@/library';
 
+import { waitForRest } from './resting-state';
 import type { FixtureServer } from './serve-fixtures';
 import {
   createFileProject,
@@ -16,7 +17,7 @@ const UPLOAD_BYTES = 2000;
 const UPLOADED_SO_FAR = Buffer.alloc(UPLOAD_BYTES / 2, 'x');
 
 export interface SeededProjects {
-  fetched: Project;
+  rested: Project;
   failed: Project;
   stopped: Project;
   processing: Project;
@@ -25,8 +26,8 @@ export interface SeededProjects {
 }
 
 export async function seedEveryState(request: APIRequestContext, server: FixtureServer): Promise<SeededProjects> {
-  const fetched = await createLinkProject(request, `${server.address}/talk.mp4`);
-  await waitForStatus(request, fetched.id, 'fetched');
+  const rested = await createLinkProject(request, `${server.address}/talk.mp4`);
+  await waitForRest(request, rested.id);
   const failed = await createLinkProject(request, `${server.address}/missing.mp4`);
   await waitForStatus(request, failed.id, 'failed');
   const stopped = await createLinkProject(request, `${server.address}/slow/talk.mp4`);
@@ -38,7 +39,7 @@ export async function seedEveryState(request: APIRequestContext, server: Fixture
   await sendPart(request, { projectId: uploading.id, offset: 0, bytes: UPLOADED_SO_FAR });
   await waitForStatus(request, processing.id, 'processing');
   return {
-    fetched: await readProject(request, fetched.id),
+    rested: await readProject(request, rested.id),
     failed: await readProject(request, failed.id),
     stopped: await readProject(request, stopped.id),
     processing: await readProject(request, processing.id),

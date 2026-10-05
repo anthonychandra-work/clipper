@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs';
+import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 import {
@@ -6,7 +6,9 @@ import {
   deleteAllProjects,
   expect,
   readProject,
+  RESTING,
   test,
+  waitForRest,
   waitForStatus,
 } from './support';
 
@@ -20,15 +22,15 @@ test('a second link project waits for the first and then finishes', async ({ req
 
   await waitForStatus(request, first.id, 'processing');
   const secondWhileFirstRuns = await readProject(request, second.id);
-  const firstFetched = await waitForStatus(request, first.id, 'fetched');
+  const firstRested = await waitForRest(request, first.id);
   const secondAfterFirst = await readProject(request, second.id);
-  const secondFetched = await waitForStatus(request, second.id, 'fetched');
+  const secondRested = await waitForRest(request, second.id);
 
   expect(secondWhileFirstRuns.status).toBe('queued');
   expect(['queued', 'processing']).toContain(secondAfterFirst.status);
-  expect(firstFetched.title).toBe('talk');
-  expect(firstFetched.steps.map((step) => step.state)).toEqual(['done', 'pending', 'pending', 'pending']);
-  expect(secondFetched.durationSeconds).toBe(firstFetched.durationSeconds);
+  expect(firstRested.title).toBe('talk');
+  expect(firstRested.steps.map((step) => step.state)).toEqual(RESTING.stepStates);
+  expect(secondRested.durationSeconds).toBe(firstRested.durationSeconds);
 });
 
 test('a project whose fetch is cut off by a stop finishes after the start', async ({ request, tool, fixtureServer }) => {
@@ -38,9 +40,9 @@ test('a project whose fetch is cut off by a stop finishes after the start', asyn
   await tool.stop();
   await tool.start();
   const afterRestart = await readProject(request, project.id);
-  const fetched = await waitForStatus(request, project.id, 'fetched');
+  const rested = await waitForRest(request, project.id);
 
   expect(['queued', 'processing']).toContain(afterRestart.status);
-  expect(fetched.durationSeconds).toBeGreaterThan(200);
-  expect(existsSync(join(tool.settings.dataDir, 'projects', project.id, 'preview.mp4'))).toBe(true);
+  expect(rested.durationSeconds).toBeGreaterThan(200);
+  expect(readdirSync(join(tool.settings.dataDir, 'projects', project.id)).sort()).toEqual(RESTING.files);
 });
