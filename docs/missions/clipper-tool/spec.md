@@ -263,6 +263,53 @@ From `intent.md`. Base `82df5ce`.
 - A21 — Each dependency is pinned at its latest stable release when the milestone that introduces
   it is planned, checked against the library's current documentation. The intent asks for pinned
   versions and names none. (scaffolding)
+- A22 — An upload travels in parts of 8 MiB, each its own request through the rewrites. The
+  service appends each part to the file on disk and answers with the bytes it holds, and the
+  project joins the queue when the last part lands. Measured on Next.js 16.3.8: the rewrites cut
+  every request body over 10 MiB, with or without a proxy file, so the route D64 chose cannot
+  carry a larger body in one request. (planner, m1)
+- A23 — The service's interface sits under `/api`, and `/api/health` answers once the service is
+  up. The environment variables of A4 are `CLIPPER_DATA_DIR`, `CLIPPER_FFMPEG_DIR`,
+  `CLIPPER_KEY_FILE`, `CLIPPER_WEB_PORT` and `CLIPPER_SERVICE_PORT`. Three more serve test runs:
+  `CLIPPER_WEB_BUILD_DIR`; `CLIPPER_REPORTED_FREE_BYTES`, which replaces the free disk space the
+  tool reports so the 5 GB rule can be checked on any disk; and `CLIPPER_EVIDENCE_DIR`, the
+  folder the capture test writes to. A test run uses web port 3100 and service port 8865. The
+  virtual environment is `service/.venv`. (planner, m1)
+- A24 — The address a rewrite forwards to is fixed when the web app is built (measured on Next.js
+  16.3.8). A normal start builds into `.next` and builds again when the service port has changed.
+  A test run builds into `.next-test`, a cache kept between runs like the model cache in A11.
+  (planner, m1)
+- A25 — `pnpm test:browser <file>` runs the named browser tests alone, building the fixtures and
+  starting the tool as the full run does. A check on one behaviour needs a command that runs that
+  behaviour's test by itself. (planner, m1)
+- A26 — Four choices depart from A21's newest release or its usual install. TypeScript is 6.0.3
+  and ESLint 9.39.5, because the lint configuration that ships with Next.js 16.3.8 accepts
+  neither TypeScript 7 nor ESLint 10. yt-dlp installs with its YouTube script package and without
+  its default extras, one of which carries the GPL. pnpm skips Next.js's optional image library,
+  whose binary carries the LGPL. The web app's unit tests run without a simulated page: the
+  current jsdom needs a newer Node than 22.13, and what needs a page is tested in a real browser
+  by the browser tests. (planner, m1)
+- A27 — Every project has four steps, as in the prototype. For an uploaded file the first step is
+  sending the file and then, in the queue, reading its length and making the preview copy; it
+  reads "Uploading video" and then "Preparing video". For both kinds of source the step's bar
+  counts the arrival of the bytes as its first 70% and the preparation as the rest. A project
+  resting after its last built step reads "Fetched" in its row and on its status screen, which
+  names the steps not yet started. (planner, m1)
+- A28 — An upload whose page was closed stays listed as uploading. Its status screen, opened in a
+  browser that is not sending the file, says so and tells the user to delete the project and
+  upload again. D54 requires the browser to stay open and names no recovery. (planner, m1)
+- A29 — At 720 px and wider, `/` shows the newest project beside the sidebar, as the prototype
+  does, or the empty state when there is none. `/projects/<id>` shows the status screen until the
+  project has candidates, and from then on leads to its Review tab. No project can have
+  candidates in M1, so M1's checks of the tabs present a fetched project to the page as ready; the
+  tabs show the prototype's empty states. (planner, m1)
+- A30 — In M1 the two Settings controls whose work a later milestone builds are shown disabled:
+  Save for the API key (M3) and "Forget All of It" (M6). The free disk space and the phone address
+  are real from M1, because the Library and the 5 GB rule already read the disk and a made-up
+  address would be a pretend value. (planner, m1)
+- A31 — The copied stylesheets stay identical to the prototype's files, and the design tokens keep
+  the prototype's names and values. A rule the real app needs beyond them goes into one further
+  stylesheet, so every departure from the prototype sits in one place. (planner, m1)
 
 ## Milestones
 
