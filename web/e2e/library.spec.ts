@@ -1,10 +1,12 @@
 import {
+  createFileProject,
   createLinkProject,
   deleteAllProjects,
   expect,
   projectRow,
   readRow,
   seedEveryState,
+  statusCard,
   test,
   waitForStatus,
 } from './support';
@@ -62,6 +64,34 @@ test.describe('at 390 px', () => {
     await expect(page.getByText('Prototype with sample data')).toHaveCount(0);
   });
 
+  test('a row opens the screen of its project, and the back control returns to the Library', async ({
+    page,
+    request,
+    fixtureServer,
+  }) => {
+    const project = await createLinkProject(request, `${fixtureServer.address}/missing.mp4`);
+    await waitForStatus(request, project.id, 'failed');
+    await page.goto('/');
+
+    await projectRow(page, project.id).click();
+    await expect(page).toHaveURL(`/projects/${project.id}`);
+    await expect(page.locator('h1.large-title.large-title--title')).toHaveText('New video from link');
+    await expect(page.locator('.screen-head__subtitle')).toHaveText('Video link');
+    await expect(statusCard(page).locator('h2')).toHaveText('Could Not Finish');
+    await expect(page.locator('#app')).toHaveAttribute('data-enter', 'push');
+    await page.getByRole('link', { name: 'Back to Library' }).click();
+
+    await expect(page).toHaveURL('/');
+    await expect(page.locator('h1.large-title')).toHaveText('Library');
+  });
+
+  test('the address of a project that does not exist leads to the Library', async ({ page }) => {
+    await page.goto('/projects/000000000000');
+
+    await expect(page).toHaveURL('/');
+    await expect(page.locator('h1.large-title')).toHaveText('Library');
+  });
+
   test('a row follows the progress of its project without a reload', async ({ page, request, fixtureServer }) => {
     const project = await createLinkProject(request, `${fixtureServer.address}/slow/talk.mp4`);
     await page.goto('/');
@@ -91,5 +121,27 @@ test.describe('at 1360 px', () => {
     await expect(sidebar.locator('.sidebar__foot .sidebar__disk')).toHaveText('50 GB free on this Mac');
     expect(await readRow(page, first.id)).toMatchObject({ meta: 'Video link', status: 'Could not finish' });
     await expect(page.locator('.screen .project-rows')).toHaveCount(0);
+  });
+
+  test('the Library address shows the newest project beside the sidebar, marked in the list', async ({
+    page,
+    request,
+    fixtureServer,
+  }) => {
+    const older = await createLinkProject(request, `${fixtureServer.address}/missing.mp4`);
+    const newest = await createFileProject(request, { name: 'interview.mov', sizeBytes: 2000 });
+    await page.goto('/');
+
+    await expect(page.locator('.toolbar h1.toolbar__title')).toHaveText('interview.mov');
+    await expect(page.locator('.toolbar .toolbar__subtitle')).toHaveText('Uploaded file');
+    await expect(statusCard(page).locator('h2')).toHaveText('Uploading Video');
+    await expect(projectRow(page, newest.id)).toHaveAttribute('aria-current', 'true');
+    await expect(projectRow(page, older.id)).toHaveAttribute('aria-current', 'false');
+    await projectRow(page, older.id).click();
+
+    await expect(page).toHaveURL(`/projects/${older.id}`);
+    await expect(statusCard(page).locator('h2')).toHaveText('Could Not Finish');
+    await expect(projectRow(page, older.id)).toHaveAttribute('aria-current', 'true');
+    await expect(page.locator('#app')).toHaveAttribute('data-enter', 'none');
   });
 });

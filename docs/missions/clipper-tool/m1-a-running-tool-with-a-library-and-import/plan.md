@@ -464,8 +464,10 @@ The prototype
   `/new`, which shows the Library with the sheet open: its bar with Cancel, the title and "Find
   Clips". Cancel, Escape and a click outside return to where the user was. T16 fills the sheet.
 
-- [ ] T13 — Build the status screen with Stop, Resume and Retry
-  Files: `web/src/project/index.ts`, `web/src/project/follow-progress/index.ts`,
+- [x] T13 — Build the status screen with Stop, Resume and Retry
+  Files: `web/src/shared/lib/read-problem.ts`, `web/src/shared/lib/read-problem.test.ts`,
+  `web/src/library/list-projects/components/ProjectRows.tsx`, `web/src/app/new/page.tsx`,
+  `web/src/project/index.ts`, `web/src/project/follow-progress/index.ts`,
   `web/src/project/follow-progress/components/StatusScreen.tsx`,
   `web/src/project/follow-progress/components/StatusCard.tsx`,
   `web/src/project/follow-progress/components/StepProgress.tsx`,

@@ -1,5 +1,6 @@
-import { EmptyLibraryScreen, LibraryScreen } from '@/library';
+import { LibraryScreen } from '@/library';
+import { NewestProject } from '@/project';
 
 export default function LibraryPage() {
-  return <LibraryScreen whenRegular={<EmptyLibraryScreen />} />;
+  return <LibraryScreen whenRegular={<NewestProject />} />;
 }

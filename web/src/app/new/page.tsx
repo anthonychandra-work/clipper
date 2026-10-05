@@ -1,9 +1,10 @@
-import { EmptyLibraryScreen, LibraryScreen, NewProjectSheet } from '@/library';
+import { LibraryScreen, NewProjectSheet } from '@/library';
+import { NewestProject } from '@/project';
 
 export default function NewProjectPage() {
   return (
     <>
-      <LibraryScreen whenRegular={<EmptyLibraryScreen />} />
+      <LibraryScreen whenRegular={<NewestProject />} />
       <NewProjectSheet />
     </>
   );

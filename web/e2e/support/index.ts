@@ -21,4 +21,5 @@ export {
   stopProject,
   waitForStatus,
 } from './service-api';
+export { readStatusCard, statusCard, type StatusCardText } from './status-screen';
 export { test } from './tool-test';
