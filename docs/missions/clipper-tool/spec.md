@@ -438,6 +438,10 @@ From `intent.md`. Base `82df5ce`.
   the transcribe step again, and reads the sentence from the screen. On the silent fixture the
   step lasts about a second and the web app asks for the projects once a second, so the screen
   does not show the running step every time. (executor, m2)
+- A55 — The walk of screens presents the download step under the longest name a model has,
+  "Downloading Whisper large-v3-turbo", and shows the four new states in the Library together on
+  one screen. All four fit at both text sizes under the rules the app already had, so the app's
+  stylesheet gained none. (executor, m2)
 
 ## Milestones
 

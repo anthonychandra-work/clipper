@@ -1,6 +1,6 @@
 import type { APIRequestContext } from '@playwright/test';
 
-import type { Project } from '@/library';
+import type { Project, ProjectStep } from '@/library';
 
 import { waitForRest } from './resting-state';
 import type { FixtureServer } from './serve-fixtures';
@@ -15,6 +15,14 @@ import {
 
 const UPLOAD_BYTES = 2000;
 const UPLOADED_SO_FAR = Buffer.alloc(UPLOAD_BYTES / 2, 'x');
+const NO_SPEECH = 'No speech was recognised in this video. Clipper needs spoken words to find clips.';
+const MODEL_DOWNLOAD_FAILED = 'The transcription model could not be downloaded. Check your connection, then retry.';
+const LONGEST_DOWNLOAD: ProjectStep = {
+  kind: 'model',
+  label: 'Downloading Whisper large-v3-turbo',
+  state: 'pending',
+  percent: 0,
+};
 
 export interface SeededProjects {
   rested: Project;
@@ -45,5 +53,40 @@ export async function seedEveryState(request: APIRequestContext, server: Fixture
     processing: await readProject(request, processing.id),
     queued: await readProject(request, queued.id),
     uploading: await readProject(request, uploading.id),
+  };
+}
+
+export function presentTranscriptionStates(seeded: SeededProjects): Record<string, Project> {
+  const [fetched, transcribe, ...later] = seeded.rested.steps;
+  const waiting: ProjectStep = { ...transcribe, state: 'pending', percent: 0 };
+  const downloading: ProjectStep = { ...LONGEST_DOWNLOAD, state: 'running', percent: 40 };
+  const transcribing: ProjectStep = { ...transcribe, state: 'running', percent: 60 };
+  return {
+    downloading: {
+      ...seeded.rested,
+      status: 'processing',
+      percent: 30,
+      steps: [fetched, downloading, waiting, ...later],
+    },
+    transcribing: {
+      ...seeded.processing,
+      status: 'processing',
+      percent: 40,
+      steps: [fetched, transcribing, ...later],
+    },
+    'no-speech': {
+      ...seeded.failed,
+      status: 'failed',
+      percent: 25,
+      halt: { reason: NO_SPEECH },
+      steps: [fetched, waiting, ...later],
+    },
+    'download-failed': {
+      ...seeded.stopped,
+      status: 'failed',
+      percent: 25,
+      halt: { reason: MODEL_DOWNLOAD_FAILED },
+      steps: [fetched, LONGEST_DOWNLOAD, waiting, ...later],
+    },
   };
 }

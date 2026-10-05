@@ -1,8 +1,8 @@
 import { type APIRequestContext, expect, type Page } from '@playwright/test';
 
-import type { ProjectList } from '@/library';
+import type { Project, ProjectList } from '@/library';
 
-import type { SeededProjects } from './seed-projects';
+import { presentTranscriptionStates, type SeededProjects } from './seed-projects';
 
 const PROJECT_LIST_ADDRESS = '**/api/projects';
 const PROJECT_TABS = ['review', 'export', 'results'];
@@ -67,10 +67,34 @@ export function listProjectScreens(seeded: SeededProjects, shownList: ProjectLis
   return [
     { name: 'library', open: (page) => showAddress(page, '/', `#project-${seeded.rested.id}`) },
     ...statuses,
+    ...listTranscriptionScreens(seeded, shownList),
     ...tabs,
     { name: 'delete-alert', open: (page) => showDeleteAlert(page, seeded.failed.id) },
     { name: 'settings', open: (page) => showAddress(page, '/settings', '#setting-scoringModel') },
   ];
+}
+
+function listTranscriptionScreens(seeded: SeededProjects, shownList: ProjectList): ScreenVisit[] {
+  const presented = presentTranscriptionStates(seeded);
+  const heldList = replaceProjects(shownList, Object.values(presented));
+  const showHeld = async (page: Page, address: string, landmark: string) => {
+    await holdProjectList(page, heldList);
+    await showAddress(page, address, landmark);
+  };
+  const statuses = Object.entries(presented).map(([state, project]) => {
+    const stage = project.halt?.reason ?? project.steps.find((step) => step.state === 'running')?.label;
+    const landmark = `.status-card__stage:text-is("${stage}")`;
+    return { name: `status-${state}`, open: (page: Page) => showHeld(page, `/projects/${project.id}`, landmark) };
+  });
+  const rowOfFailure = `#project-${presented['no-speech'].id} .project-row__status--failed`;
+  return [{ name: 'library-transcription', open: (page) => showHeld(page, '/', rowOfFailure) }, ...statuses];
+}
+
+function replaceProjects(list: ProjectList, replacements: Project[]): ProjectList {
+  const projects = list.projects.map(
+    (project) => replacements.find((replacement) => replacement.id === project.id) ?? project,
+  );
+  return { ...list, projects };
 }
 
 function presentAsFinished(list: ProjectList, projectId: string): ProjectList {

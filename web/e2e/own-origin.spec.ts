@@ -22,7 +22,7 @@ const SIZES = [
 ];
 const THREE_GB_IN_BYTES = String(3 * 1024 ** 3);
 const SETTLE_MS = 400;
-const SCREENS_WITH_PROJECTS = 18;
+const SCREENS_WITH_PROJECTS = 23;
 
 function listenForRequests(page: Page): string[] {
   const asked: string[] = [];

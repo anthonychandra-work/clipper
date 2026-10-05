@@ -397,7 +397,7 @@ What the spec's file list leaves out
   stored transcript names `small`. A second project has four steps and never shows the
   download. The test chooses the default model again and starts the tool as it found it.
 
-- [ ] T13 — Fit the new states on a phone at 200%
+- [x] T13 — Fit the new states on a phone at 200%
   Files: `web/e2e/support/walk-screens.ts`, `web/e2e/support/seed-projects.ts`,
   `web/e2e/text-size.spec.ts`, `web/e2e/own-origin.spec.ts`, `web/src/shared/styles/app.css`
   Done: the walk of screens shows four more states of a project, presented to the page from the
