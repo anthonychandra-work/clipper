@@ -152,11 +152,12 @@ The prototype
 
 ## Tasks
 
-- [ ] T1 — Start both parts with one command, the web app forwarding `/api` to the service
+- [x] T1 — Start both parts with one command, the web app forwarding `/api` to the service
   Files: `.gitignore`, `.coding-standards-structure`, `package.json`, `pnpm-workspace.yaml`,
   `pnpm-lock.yaml`, `AGENTS.md`, `CLAUDE.md`, `scripts/bootstrap-project.mjs`,
   `scripts/start-tool.mjs`, `scripts/read-run-settings.mjs`, `scripts/run-program.mjs`,
-  `scripts/build-web-app.mjs`, `service/.coding-standards-structure`, `service/pyproject.toml`,
+  `scripts/build-web-app.mjs`, `scripts/wait-until-answering.mjs`,
+  `docs/missions/clipper-tool/spec.md`, `service/.coding-standards-structure`, `service/pyproject.toml`,
   `service/requirements.txt`, `service/requirements-dev.txt`, `service/clipper/__init__.py`,
   `service/clipper/__main__.py`, `service/clipper/main.py`,
   `service/clipper/settings/__init__.py`, `service/clipper/settings/startup_settings.py`,

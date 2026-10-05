@@ -1,0 +1,25 @@
+follows: screaming-architecture
+layout: |
+  src/
+    app/                  routes only
+    shared/
+      styles/
+      ui/
+      lib/
+    shell/
+      frame-screens/
+      present-sheet/
+      present-menu/
+      show-toast/
+    library/
+      list-projects/
+      create-project/
+      upload-video/
+    project/
+      open-project/
+      follow-progress/
+      delete-project/
+    settings/
+      change-settings/
+  e2e/                    browser tests
+    support/

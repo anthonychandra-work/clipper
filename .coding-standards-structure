@@ -1,0 +1,6 @@
+layout: |
+  scripts/      the command programs, one program per file
+  fixtures/     committed test inputs
+  web/          the Next.js web app, with a structure file of its own
+  service/      the FastAPI processing service, with a structure file of its own
+  docs/         the mission documents and the prototype

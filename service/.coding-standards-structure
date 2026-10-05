@@ -1,0 +1,12 @@
+follows: fastapi
+layout: |
+  clipper/
+    main.py
+    __main__.py
+    problems/
+    settings/
+    storage/
+    media/
+    projects/
+    pipeline/
+    fetching/

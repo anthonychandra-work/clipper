@@ -310,6 +310,11 @@ From `intent.md`. Base `82df5ce`.
 - A31 — The copied stylesheets stay identical to the prototype's files, and the design tokens keep
   the prototype's names and values. A rule the real app needs beyond them goes into one further
   stylesheet, so every departure from the prototype sits in one place. (planner, m1)
+- A32 — FastAPI 0.142.2 requires the OpenTelemetry interface package and, left at its defaults,
+  traces requests and sends them to a collector when the environment names one. The service
+  starts FastAPI with its tracing, metrics, logs and exporter setup switched off, and without its
+  documentation pages, which load scripts from a public address. The boundaries allow no
+  telemetry and three outside contacts only. (executor, m1)
 
 ## Milestones
 
