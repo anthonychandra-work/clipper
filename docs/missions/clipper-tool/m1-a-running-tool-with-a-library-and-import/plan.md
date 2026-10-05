@@ -659,7 +659,7 @@ The prototype
   when it is set and into the test output otherwise. The 24 captures are committed in the
   evidence folder. Whatever these tests find wrong in a component is fixed in this task.
 
-- [ ] T19 — Write the README and finish the instructions for coding agents
+- [x] T19 — Write the README and finish the instructions for coding agents
   Files: `README.md`, `AGENTS.md`
   Done: `README.md` gives what Clipper is in two sentences; what must be on the Mac (Python
   3.12, Node 22, pnpm 10, the Homebrew ffmpeg at its path); setup with `pnpm install` and
