@@ -310,7 +310,7 @@ The prototype
   file. While it is made the caller receives a rising percent, and a stop signal ends ffmpeg
   within two seconds and removes the partial file.
 
-- [ ] T8 — Download a link through yt-dlp
+- [x] T8 — Download a link through yt-dlp
   Files: `service/pyproject.toml`, `service/clipper/fetching/__init__.py`,
   `service/clipper/fetching/download_link.py`, `service/clipper/fetching/test_download_link.py`
   Done: downloading the fixture server's `/talk.mp4` stores a file of the same size in the
