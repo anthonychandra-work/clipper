@@ -1,13 +1,11 @@
 import subprocess
+import threading
 from pathlib import Path
 
 import pytest
 
 from ..conftest import SCRIPTS_DIR
-from ..media import MediaTools
-
-QUIET_FFMPEG = ("-hide_banner", "-loglevel", "error", "-y")
-AS_16_KHZ_MONO_SAMPLES = ("-vn", "-ac", "1", "-ar", "16000", "-f", "s16le")
+from ..media import MediaTools, extract_audio
 
 
 @pytest.fixture(scope="session")
@@ -35,7 +33,15 @@ def long_talk_video(fixtures_dir: Path) -> Path:
 def talk_samples(
     talk_video: Path, media_tools: MediaTools, tmp_path_factory: pytest.TempPathFactory
 ) -> Path:
-    samples = tmp_path_factory.mktemp("sound") / "talk.pcm"
-    decoding = [str(media_tools.ffmpeg), *QUIET_FFMPEG, "-i", str(talk_video)]
-    subprocess.run([*decoding, *AS_16_KHZ_MONO_SAMPLES, str(samples)], check=True)
+    samples = tmp_path_factory.mktemp("talk-sound") / "audio.pcm"
+    extract_audio(talk_video, samples, media_tools, threading.Event())
+    return samples
+
+
+@pytest.fixture(scope="session")
+def long_talk_samples(
+    long_talk_video: Path, media_tools: MediaTools, tmp_path_factory: pytest.TempPathFactory
+) -> Path:
+    samples = tmp_path_factory.mktemp("long-talk-sound") / "audio.pcm"
+    extract_audio(long_talk_video, samples, media_tools, threading.Event())
     return samples

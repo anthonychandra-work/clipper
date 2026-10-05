@@ -204,7 +204,7 @@ What the spec's file list leaves out
   AAC sound track in each. `fixtures/README.md` describes the three videos and the test model.
   No video is committed.
 
-- [ ] T3 — Take the sound out of a source and run the transcriber with progress and a stop
+- [x] T3 — Take the sound out of a source and run the transcriber with progress and a stop
   Files: `service/clipper/media/__init__.py`, `service/clipper/media/extract_audio.py`,
   `service/clipper/media/test_extract_audio.py`, `service/clipper/transcription/__init__.py`,
   `service/clipper/transcription/run_transcriber.py`,

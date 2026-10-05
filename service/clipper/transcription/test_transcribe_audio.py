@@ -1,6 +1,7 @@
 import re
 import subprocess
 import sys
+import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -8,6 +9,7 @@ import numpy as np
 import pytest
 from pydantic import BaseModel
 
+from ..media import measure_sound_seconds
 from .transcribe_audio import SAMPLE_RATE, find_part_end
 
 TRANSCRIBER = Path(__file__).with_name("transcribe_audio.py")
@@ -37,11 +39,13 @@ class Hearing:
 
 
 def hear(samples: Path, model_dir: Path, *options: str) -> Hearing:
-    result_file = samples.with_suffix(".json")
-    program = [sys.executable, str(TRANSCRIBER), str(samples), str(model_dir), str(result_file)]
-    ran = subprocess.run([*program, *options], check=True, stdout=subprocess.PIPE, text=True)
+    with tempfile.TemporaryDirectory() as folder:
+        result_file = Path(folder) / "words.json"
+        program = [sys.executable, str(TRANSCRIBER), str(samples), str(model_dir), str(result_file)]
+        ran = subprocess.run([*program, *options], check=True, stdout=subprocess.PIPE, text=True)
+        result = WrittenResult.model_validate_json(result_file.read_text())
     printed = [float(line.removeprefix(PROGRESS_KEY)) for line in ran.stdout.splitlines()]
-    return Hearing(WrittenResult.model_validate_json(result_file.read_text()), printed)
+    return Hearing(result, printed)
 
 
 def split_words(text: str) -> list[str]:
@@ -67,10 +71,6 @@ def count_wrong_in_100(result: WrittenResult) -> float:
 
 def list_times(result: WrittenResult) -> list[float]:
     return [time for word in result.words for time in (word.start, word.end)]
-
-
-def measure_seconds(samples: Path) -> float:
-    return samples.stat().st_size / BYTES_PER_SECOND
 
 
 @pytest.fixture(scope="module")
@@ -105,7 +105,7 @@ def test_every_word_has_a_start_and_an_end_in_order_and_inside_the_sound(
     assert len(whole_talk.result.words) > 500
     assert times == sorted(times)
     assert times[0] >= 0
-    assert times[-1] <= measure_seconds(talk_samples)
+    assert times[-1] <= measure_sound_seconds(talk_samples)
 
 
 def test_the_talk_in_parts_of_sixty_seconds_is_within_15_in_100_with_times_in_order(
@@ -116,7 +116,7 @@ def test_the_talk_in_parts_of_sixty_seconds_is_within_15_in_100_with_times_in_or
     assert count_wrong_in_100(talk_in_parts.result) <= MOST_WORDS_WRONG_IN_100
     assert times == sorted(times)
     assert times[0] >= 0
-    assert times[-1] <= measure_seconds(talk_samples)
+    assert times[-1] <= measure_sound_seconds(talk_samples)
 
 
 @pytest.mark.parametrize("hearing", ["whole_talk", "talk_in_parts"])
@@ -127,7 +127,7 @@ def test_the_printed_seconds_rise_and_end_at_the_length_of_the_sound(
 
     assert len(printed) >= 3
     assert printed == sorted(set(printed))
-    assert printed[-1] == pytest.approx(measure_seconds(talk_samples), abs=0.01)
+    assert printed[-1] == pytest.approx(measure_sound_seconds(talk_samples), abs=0.01)
 
 
 def test_twenty_seconds_of_silence_give_no_word(silent_samples: Path, test_model_dir: Path) -> None:
