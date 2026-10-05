@@ -363,11 +363,12 @@ What the spec's file list leaves out
   "Transcribed" and still find a bar that never falls and the fixture's real length.
   `settings.spec.ts` sets the defaults again after each test. `pnpm test` exits 0.
 
-- [ ] T11 — Browser tests: the fixture transcribed, progress, Stop and Resume, and a restart
+- [x] T11 — Browser tests: the fixture transcribed, progress, Stop and Resume, and a restart
   Files: `web/e2e/transcribe.spec.ts`, `web/e2e/transcribe-restart.spec.ts`,
   `web/e2e/support/read-transcript.ts`, `web/e2e/support/service-api.ts`,
   `web/e2e/support/index.ts`,
-  `docs/missions/clipper-tool/m2-transcripts-made-on-the-mac/evidence/talk-transcript.json`
+  `docs/missions/clipper-tool/m2-transcripts-made-on-the-mac/evidence/talk-transcript.json`,
+  `service/clipper/media/run_media_tool.py`, `service/clipper/media/test_run_media_tool.py`
   Done: in `transcribe.spec.ts` the uploaded talk reaches "Transcribed". Its stored transcript
   has every word with a start and an end, no time before the one before it, none past the
   video's length, and at most 15 words wrong in every 100 against the script. The test saves

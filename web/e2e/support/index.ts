@@ -12,6 +12,7 @@ export {
   readShownProblem,
 } from './new-project-sheet';
 export { presentAsReady } from './present-as-ready';
+export { countWordsWrongInHundred, readTranscript, type StoredTranscript } from './read-transcript';
 export { RESTING, type RestingState, waitForRest } from './resting-state';
 export {
   type EnvironmentChanges,

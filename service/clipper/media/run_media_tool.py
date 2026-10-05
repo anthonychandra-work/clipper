@@ -27,7 +27,10 @@ def run_media_tool(
     command: Sequence[str], stop: threading.Event, on_line: Callable[[str], None]
 ) -> None:
     with tempfile.TemporaryFile("w+") as errors:
-        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=errors, text=True)
+        # In a group of its own, the program ends on the stop signal and not with the service.
+        process = subprocess.Popen(
+            command, stdout=subprocess.PIPE, stderr=errors, text=True, process_group=0
+        )
         threading.Thread(target=end_when_stopped, args=(process, stop), daemon=True).start()
         with process:
             for line in process.stdout or []:

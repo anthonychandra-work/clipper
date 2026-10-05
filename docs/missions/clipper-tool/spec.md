@@ -428,6 +428,12 @@ From `intent.md`. Base `82df5ce`.
   and a new attempt first removes what a tool that was killed left behind. When the video's
   length was never recorded, the length of its sound bounds the times. The plan names what the
   step leaves and not where it works. (executor, m2)
+- A53 — Every program the service starts, ffmpeg and the transcriber alike, runs in a process
+  group of its own, and the service alone ends it, on a stop or when the tool shuts down. The
+  start command stops the service by signalling its whole group. A program in that group died at
+  the same moment, before the queue knew the tool was stopping, and its step was recorded as
+  failed, so the project did not carry on at the next start. Measured with the restart check of
+  this milestone, which failed until the change. (executor, m2)
 
 ## Milestones
 
