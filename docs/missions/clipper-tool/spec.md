@@ -434,6 +434,10 @@ From `intent.md`. Base `82df5ce`.
   the same moment, before the queue knew the tool was stopping, and its step was recorded as
   failed, so the project did not carry on at the next start. Measured with the restart check of
   this milestone, which failed until the change. (executor, m2)
+- A54 — The no-speech check reads from the service's answers, asked every 50 ms, that Retry ran
+  the transcribe step again, and reads the sentence from the screen. On the silent fixture the
+  step lasts about a second and the web app asks for the projects once a second, so the screen
+  does not show the running step every time. (executor, m2)
 
 ## Milestones
 

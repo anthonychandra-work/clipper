@@ -383,7 +383,7 @@ What the spec's file list leaves out
   copy and the transcript and nothing else. The evidence file is saved with the command of block
   V4 and committed.
 
-- [ ] T12 — Browser tests: no speech, and the model download as a step of its own
+- [x] T12 — Browser tests: no speech, and the model download as a step of its own
   Files: `web/e2e/no-speech.spec.ts`, `web/e2e/model-download.spec.ts`,
   `web/e2e/support/index.ts`
   Done: in `no-speech.spec.ts` a link to the silent fixture ends at "Could Not Finish" with the
