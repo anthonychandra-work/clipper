@@ -14,7 +14,7 @@ export type RunningUploads = Readonly<Record<string, UploadProgress>>;
 export interface UploadsSource {
   sendPart: (projectId: string, offset: number, part: Blob) => Promise<{ receivedBytes: number }>;
   showToast: (message: string) => void;
-  onEnded: () => void;
+  onEnded: () => Promise<void>;
   resendDelayMs?: number;
 }
 
@@ -39,9 +39,9 @@ export class UploadsStore {
       onProgress: (sentBytes) => this.publish({ ...this.running, [projectId]: { sentBytes, totalBytes: file.size } }),
       waitBeforeResend: () => wait(this.source.resendDelayMs ?? RESEND_DELAY_MS),
     });
+    await this.source.onEnded();
     this.publish(without(this.running, projectId));
     if (outcome === 'stopped') this.source.showToast(UPLOAD_STOPPED);
-    this.source.onEnded();
     return outcome;
   }
 

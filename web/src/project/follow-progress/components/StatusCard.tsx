@@ -1,4 +1,6 @@
-import type { Project } from '@/library';
+'use client';
+
+import { type Project, useUpload } from '@/library';
 import { Icon } from '@/shared/ui';
 
 import { describeStatus } from '../lib/describe-status';
@@ -11,7 +13,8 @@ interface StatusCardProps {
 }
 
 export function StatusCard({ project, projects }: StatusCardProps) {
-  const status = describeStatus(project, projects);
+  const isSendingHere = useUpload(project.id) !== null;
+  const status = describeStatus(project, { projects, isSendingHere });
   return (
     <section className="status-card" aria-label={status.heading}>
       {status.hasWarning ? <Icon name="warning" /> : null}

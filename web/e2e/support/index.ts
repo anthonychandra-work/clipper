@@ -1,5 +1,14 @@
 export { expect } from '@playwright/test';
-export { newProjectSheet, projectRow, readRow, type RowText } from './library-page';
+export { probeTalkLength } from './build-fixtures';
+export { followBarUntil, newProjectSheet, projectRow, readRow, type RowText } from './library-page';
+export {
+  createFileProjectInSheet,
+  createLinkProjectInSheet,
+  newProjectForm,
+  openNewProjectSheet,
+  pressFindClips,
+  readShownProblem,
+} from './new-project-sheet';
 export { presentAsReady } from './present-as-ready';
 export {
   type EnvironmentChanges,

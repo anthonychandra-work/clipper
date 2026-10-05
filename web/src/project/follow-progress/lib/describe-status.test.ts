@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { Project, ProjectStatus, ProjectStep } from '@/library';
 
-import { describeStatus } from './describe-status';
+import { describeStatus, type StatusView } from './describe-status';
 
 const LATER_STEPS: ProjectStep[] = [
   { kind: 'transcribe', label: 'Transcribing on this Mac', state: 'pending', percent: 0 },
@@ -26,11 +26,15 @@ function describeProject(status: ProjectStatus, fetch: Partial<ProjectStep> = {}
   };
 }
 
+function among(...projects: Project[]): StatusView {
+  return { projects, isSendingHere: true };
+}
+
 describe('describeStatus', () => {
-  it('tells an uploading project to keep the page open', () => {
+  it('tells the browser that sends an upload to keep the page open', () => {
     const project = describeProject('uploading', { label: 'Uploading video' });
 
-    expect(describeStatus(project, [project])).toEqual({
+    expect(describeStatus(project, among(project))).toEqual({
       heading: 'Uploading Video',
       hasWarning: false,
       bar: { percent: 10, label: 'Uploading video' },
@@ -40,10 +44,19 @@ describe('describeStatus', () => {
     });
   });
 
+  it('tells a browser that does not send the upload what to do about it', () => {
+    const project = describeProject('uploading', { label: 'Uploading video' });
+
+    expect(describeStatus(project, { projects: [project], isSendingHere: false }).footnote).toBe(
+      'Step 1 of 4. This upload is not running in this browser. ' +
+        'If no other browser is sending it, delete the project and upload the file again.',
+    );
+  });
+
   it('shows the step of a processing project and offers Stop', () => {
     const project = describeProject('processing');
 
-    expect(describeStatus(project, [project])).toEqual({
+    expect(describeStatus(project, among(project))).toEqual({
       heading: 'Finding Clips',
       hasWarning: false,
       bar: { percent: 10, label: 'Fetching video' },
@@ -57,7 +70,7 @@ describe('describeStatus', () => {
     const waiting = describeProject('queued', { state: 'pending', percent: 0 });
     const active = { ...describeProject('processing'), id: 'ffffffffffff', title: 'Shop Talk #48' };
 
-    expect(describeStatus(waiting, [waiting, active])).toMatchObject({
+    expect(describeStatus(waiting, among(waiting, active))).toMatchObject({
       heading: 'Waiting in Queue',
       bar: null,
       stage: 'It starts when “Shop Talk #48” finishes.',
@@ -69,14 +82,14 @@ describe('describeStatus', () => {
   it('says a waiting project starts in a moment when nothing is processed', () => {
     const waiting = describeProject('queued', { state: 'pending', percent: 0 });
 
-    expect(describeStatus(waiting, [waiting]).stage).toBe('It starts in a moment.');
+    expect(describeStatus(waiting, among(waiting)).stage).toBe('It starts in a moment.');
   });
 
   it('gives the reason of a failed project and offers Retry', () => {
     const reason = 'The video could not be downloaded. Check the link and your connection, then retry.';
     const failed = { ...describeProject('failed', { state: 'pending', percent: 0 }), halt: { reason } };
 
-    expect(describeStatus(failed, [failed])).toEqual({
+    expect(describeStatus(failed, among(failed))).toEqual({
       heading: 'Could Not Finish',
       hasWarning: true,
       bar: null,
@@ -90,7 +103,7 @@ describe('describeStatus', () => {
     const reason = 'Stopped at “Fetching video”. The stages before it are kept.';
     const stopped = { ...describeProject('stopped', { state: 'pending', percent: 0 }), halt: { reason } };
 
-    expect(describeStatus(stopped, [stopped])).toMatchObject({
+    expect(describeStatus(stopped, among(stopped))).toMatchObject({
       heading: 'Stopped',
       hasWarning: true,
       stage: reason,
@@ -101,7 +114,7 @@ describe('describeStatus', () => {
   it('names what has not started for a project that rests after its first step', () => {
     const fetched = describeProject('fetched', { state: 'done', percent: 100 });
 
-    expect(describeStatus(fetched, [fetched])).toEqual({
+    expect(describeStatus(fetched, among(fetched))).toEqual({
       heading: 'Fetched',
       hasWarning: false,
       bar: { percent: 25, label: 'Fetched' },

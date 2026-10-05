@@ -7,7 +7,8 @@ import { type RunningUploads, UploadsStore, type UploadsSource } from './uploads
 const MIB = 1024 * 1024;
 
 function buildStore(sendPart: UploadsSource['sendPart']) {
-  const source = { sendPart: vi.fn(sendPart), showToast: vi.fn(), onEnded: vi.fn(), resendDelayMs: 0 };
+  const onEnded = vi.fn(async () => undefined);
+  const source = { sendPart: vi.fn(sendPart), showToast: vi.fn(), onEnded, resendDelayMs: 0 };
   const store = new UploadsStore(source);
   const seen: RunningUploads[] = [];
   store.watch(() => seen.push(store.read()));
@@ -37,6 +38,19 @@ describe('the uploads store', () => {
     expect(outcome).toBe('sent');
     expect(source.showToast).not.toHaveBeenCalled();
     expect(source.onEnded).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps the upload listed until the Library has been asked for the new state', async () => {
+    const { store, source } = buildStore(acceptPart);
+    const listedWhenAsked: string[][] = [];
+    source.onEnded.mockImplementation(async () => {
+      listedWhenAsked.push(Object.keys(store.read()));
+    });
+
+    await store.start('a1b2c3', buildFile(MIB));
+
+    expect(listedWhenAsked).toEqual([['a1b2c3']]);
+    expect(store.read()).toEqual({});
   });
 
   it('sends each part to the project it belongs to', async () => {

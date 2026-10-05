@@ -1,4 +1,4 @@
-export { NewProjectSheet } from './create-project';
+export { CLIP_LENGTHS, type ClipLength, NewProjectSheet } from './create-project';
 export type {
   Project,
   ProjectList,

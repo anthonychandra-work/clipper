@@ -315,6 +315,9 @@ From `intent.md`. Base `82df5ce`.
   starts FastAPI with its tracing, metrics, logs and exporter setup switched off, and without its
   documentation pages, which load scripts from a public address. The boundaries allow no
   telemetry and three outside contacts only. (executor, m1)
+- A33 — The status screen of an upload shows the bytes this browser has sent as the fill of its
+  bar, read from the count the service holds, and keeps the prototype's wording; it adds no
+  figure in megabytes. The prototype has no wording for one. (executor, m1)
 
 ## Milestones
 

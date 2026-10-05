@@ -553,8 +553,14 @@ The prototype
   whether this browser is sending a given project and how many bytes have gone. A project that
   was deleted ends its upload quietly. Unit tests drive it with a stand-in for the request.
 
-- [ ] T16 — Build the new project sheet
-  Files: `web/src/library/create-project/index.ts`,
+- [x] T16 — Build the new project sheet
+  Files: `docs/missions/clipper-tool/spec.md`, `web/src/library/index.ts`,
+  `web/src/library/upload-video/lib/uploads-store.ts`,
+  `web/src/library/upload-video/lib/uploads-store.test.ts`,
+  `web/src/project/follow-progress/lib/describe-status.ts`,
+  `web/src/project/follow-progress/lib/describe-status.test.ts`,
+  `web/e2e/support/build-fixtures.ts`, `web/e2e/support/library-page.ts`,
+  `web/src/library/create-project/index.ts`,
   `web/src/library/create-project/components/NewProjectSheet.tsx`,
   `web/src/library/create-project/components/SourceSection.tsx`,
   `web/src/library/create-project/components/LinkField.tsx`,

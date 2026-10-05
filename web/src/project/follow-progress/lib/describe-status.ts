@@ -12,12 +12,21 @@ export interface StatusCardText {
 }
 
 const KEEP_PAGE_OPEN = 'Keep this page open until the upload finishes.';
+const SENT_ELSEWHERE =
+  'This upload is not running in this browser. If no other browser is sending it, delete the project and upload the file again.';
 
-export function describeStatus(project: Project, projects: Project[]): StatusCardText {
+export interface StatusView {
+  projects: Project[];
+  isSendingHere: boolean;
+}
+
+export function describeStatus(project: Project, view: StatusView): StatusCardText {
   if (project.status === 'failed') return describeHalt(project, 'Could Not Finish', 'retry');
   if (project.status === 'stopped') return describeHalt(project, 'Stopped', 'resume');
-  if (project.status === 'queued') return describeWait(projects);
-  if (project.status === 'uploading') return describeRun(project, 'Uploading Video', KEEP_PAGE_OPEN);
+  if (project.status === 'queued') return describeWait(view.projects);
+  if (project.status === 'uploading') {
+    return describeRun(project, 'Uploading Video', view.isSendingHere ? KEEP_PAGE_OPEN : SENT_ELSEWHERE);
+  }
   if (project.status === 'processing') return { ...describeRun(project, 'Finding Clips', ''), action: 'stop' };
   return describeRest(project);
 }
