@@ -442,6 +442,134 @@ From `intent.md`. Base `82df5ce`.
   "Downloading Whisper large-v3-turbo", and shows the four new states in the Library together on
   one screen. All four fit at both text sizes under the rules the app already had, so the app's
   stylesheet gained none. (executor, m2)
+- A56 — The Anthropic SDK is `anthropic` 1.11.0, its newest release. Three packages it needs are
+  new to the service: `docstring_parser` 0.18.0, `jiter` 0.17.0 and `sniffio` 1.3.1. All four
+  carry the MIT licence, `sniffio` with Apache-2.0 beside it, and the SDK's other packages are
+  already pinned at the versions it resolves. A21 asks for the newest release. (planner, m3)
+- A57 — `CLIPPER_ANTHROPIC_SOURCE` replaces `https://api.anthropic.com` as the address selection
+  requests go to. The tool hands the SDK the saved key and this address itself, so a key, a token
+  or an address set in the shell that started the tool is not used. A test run names a closed
+  local port there for everything it starts, as it does for the model source, and the service's
+  tests do the same, so no test can reach the live API. (planner, m3)
+- A58 — A test run starts with no key saved, as a new install does, so a project in a test stops
+  at the score step with the reason of D30. A test that needs candidates saves a key of its own
+  first and removes it when it ends. A key used in a test has fewer than twenty characters after
+  `sk-`, so the rule against committing a key can tell it from a real one. The service's tests
+  name a key file that can be neither read nor made unless a test names its own, so none of them
+  opens the file of A10. (planner, m3)
+- A59 — The stand-in for the API is a program in `scripts` that the service's tests and the
+  browser tests start on a local port. It serves the recorded replies in `fixtures/claude`, one
+  folder for each scenario, at an address that begins with the scenario's name; with `/slow` in
+  front it answers six seconds late. A recorded reply names the task it answers and, for a cut,
+  the window, and holds the reply in the shape the API returns, with the model's structured
+  output written as an object that the stand-in sends as text. The stand-in answers as a stream
+  when the request asks for one. Of each request it keeps the scenario, the path, the beta header
+  and the body, and whether a key came with it, never the key itself (`scenario`, `path`, `beta`,
+  `body`, `hasKey`), and it gives them out and forgets them when asked. This refines A13, which
+  fixed only that the replies are written by hand. (planner, m3)
+- A60 — The key is saved with a `PUT` to `/api/settings/api-key` and removed with a `DELETE`
+  there. The key file and its folder are made readable by the user's account only. Settings
+  answers with whether a key is saved and with its last four characters, which is all of the key
+  the browser ever receives; the prototype shows the same four. The row then reads "Saved · ends
+  in" and those characters, with Remove. An empty key is refused with "Paste the key first.", and
+  a key with a space or a line break in it with "An API key has no spaces or line breaks. Paste it
+  again." A refusal never repeats what was sent. Saving shows "Key saved on this Mac" and removing
+  shows "Key removed", as in the prototype. (planner, m3)
+- A61 — A transcript sentence ends at a word whose text ends in `.`, `?`, `!`, `…`, `。`, `？` or
+  `！`, with any closing quotation marks or brackets after it, and at the last word. A sentence
+  longer than 30 seconds is split at its longest pause between two words, and again until no part
+  is longer; a transcript with little punctuation would otherwise leave no place to cut.
+  (planner, m3)
+- A62 — Windows are laid out from the first sentence. A window takes whole sentences for as long
+  as it stays at or under 90 seconds, and takes the rest of the transcript when less than 30
+  seconds would be left after it. The next window starts with the first later sentence that
+  begins at or after the moment 30 seconds before the window ends. Windows are named `w01`, `w02`
+  and so on in the order of their starts, in requests, in replies and in what is stored. D18 gives
+  the lengths and not the procedure. (planner, m3)
+- A63 — The shortlist holds 3 windows for a video of up to ten minutes and one more for each
+  further ten minutes begun, up to 10 for a video over seventy minutes, and never more windows
+  than the transcript has. It takes the windows with the highest scores, the earlier one first
+  when two score the same. A window's score is a whole number. D18 gives the range and says only
+  that it grows with the length. (planner, m3)
+- A64 — A selection request carries its instructions as the system text and one user message of
+  two parts: the transcript as numbered sentences, each with its start time, marked for the
+  cache; and the task as one JSON object. The task names itself `score` or `cut`, the windows to
+  score with their first and last sentence or the one window to cut, the limits of the clip
+  length in seconds, the language of the transcript and the text of D28 (`task`, `windows` or
+  `window` with `id`, `firstSentence` and `lastSentence`, `clipSeconds` with `min` and `max`,
+  `language`, `brief`); a cut also names the number of clips asked for. One request of pass one
+  scores at most 60 windows, and a longer video takes several, one after another. Scoring asks
+  for medium effort and cutting for high. The three models that accept an effort setting are the
+  three that take the server-side fallback, which is asked for in its `default` form. Replies
+  are streamed, and a request sets no `thinking`, no sampling setting and no tools. D62 fixes
+  the rules and leaves these forms open. (planner, m3)
+- A65 — A reply is unreadable when it does not fit its schema, when it was cut off at the token
+  limit, when a score lies outside its range, when a hook title has more than ten words, or when
+  pass one's reply leaves a window out, names one twice or names one that was not asked about. An
+  unreadable reply is asked for again, twice at most, and the step then fails with "Claude’s
+  reply could not be read, three times in a row. Retry to run this step again." A reply that ends
+  declined fails the step with "Claude declined to read this transcript. Retry, or choose another
+  model for this step in Settings." A key that Anthropic refuses fails it with "Anthropic did not
+  accept the saved API key. Check the key in Settings, then retry." No answer from Anthropic fails
+  it with "Clipper could not reach Anthropic. Check your connection, then retry.", and a busy or
+  failing service with "Anthropic is too busy to answer right now. Wait a minute, then retry." A
+  missing key fails it with the prototype's sentence, "No Anthropic API key is saved. Add one in
+  Settings, then retry." A cut that leaves no candidate fails with "No clip of the chosen length
+  was found in this video. Retry to look again." (planner, m3)
+- A66 — A failure the user mends in Settings carries a mark, and its status card offers "Open
+  Settings" beside Retry, as the prototype's missing-key failure does. The missing key, the
+  refused key and the declined reply carry it. (planner, m3)
+- A67 — A clip belongs to a window when its first sentence lies in that window. It may end after
+  the window does, because a clip of up to a minute cannot always lie inside windows that share
+  30 seconds. For each clip the model quotes the words it opens with and the words it closes
+  with. The tool looks for the opening words among the window's words and for the closing words
+  after them, comparing words without case and punctuation. The clip starts on the first word of
+  the sentence that holds the first quoted word and ends on the last word of the sentence that
+  holds the last, and takes that word's start and that word's end as its times. A clip whose
+  quote is not found, or whose length lies outside the preset, is dropped. (planner, m3)
+- A68 — Besides the fields of D21 a candidate carries one working title, which the Review tab
+  lists and lets the user edit, and with a flag one sentence that says why; the prototype shows
+  both. The hook types are the prototype's seven: number, story, list, hot take, confession,
+  contrarian and no hook. The tool adds up the total. (planner, m3)
+- A69 — Candidates are ranked by total, then with the replay marker first, then by the earlier
+  start. The overlap rule of D22 is applied in that order, so of two that overlap the lower-ranked
+  one goes. On Auto each cut request asks for at least 2 clips in the whole video, or 4 from ten
+  minutes on, and the tool keeps the 12 best; with a fixed target it asks for that many and keeps
+  that many. The tool never adds a clip to reach a number. A length on the edge of the preset
+  counts as inside it. The models for the two passes and the clips per video are read from
+  Settings from this milestone on, because the steps they govern are built here (A9).
+  (planner, m3)
+- A70 — The fetch step keeps the most-replayed graph of a link's metadata as `replay-graph.json`
+  in the project's folder, in the form yt-dlp gives it, and the cut step reads it. The points
+  that start in the first twentieth of the video are left out, because every graph is high where
+  viewers begin. A point belongs to a peak when it is among the tenth of the remaining points
+  with the highest values and reaches one and a half times their median; points side by side form
+  one peak. A candidate carries the marker when it shares at least one second with a peak. An
+  uploaded file has no graph. (planner, m3)
+- A71 — Windows with their scores and their place on the shortlist, replay peaks and candidates
+  are records in the database, removed with their project. `GET /api/projects/<id>/selection`
+  returns them with the limits of the clip length (`clipSeconds` with `min` and `max`, `windows`,
+  `replayPeaks`, `candidates`), so this milestone's checks and the next milestone's Review tab
+  read one form. A window is given as `id`, `startSeconds`, `endSeconds`, `score` and
+  `isShortlisted`, and a peak as `startSeconds` and `endSeconds`. A candidate is given as `id`,
+  `rank`, `startSeconds`,
+  `endSeconds`, `scores` with `hook`, `arc`, `value` and `share`, `total`, `reason`, `title`,
+  `hookTitle`, `hookType` (`number`, `story`, `list`, `hot-take`, `confession`, `contrarian` or
+  `none`), `platforms` with a `title` and a `description` under `tiktok`, `reels` and `shorts`,
+  `flag` (`needs-context`, `not-recommended` or none), `flagNote` and `isReplayPeak`. A project's
+  own JSON carries the number of its candidates as `candidateCount`. (planner, m3)
+- A72 — While it runs, the score step reads "Scoring N windows" with the real number, as the
+  prototype's does. The row of a ready project reads "Ready to review · N candidates", and the
+  project's subtitle gives the same number. The kept and rejected counts of the prototype's row
+  join it in M4, which stores decisions, and until M4 the Review tab still shows the prototype's
+  empty list. (planner, m3)
+- A73 — Two more test inputs are committed: the transcript the tool makes of the talk with the
+  test model, so the rules and the recorded replies can be tested without transcribing, and a
+  replay graph for the talk in yt-dlp's form. The browser test that takes the talk to ready gives
+  it the brief "Advice a shop owner can use." and saves two files into the milestone's evidence
+  folder: `talk-selection.json`, with the project as the service gives it, its selection and its
+  stored transcript (`project`, `selection`, `transcript`), and `selection-requests.json`, with
+  what the stand-in kept of that project's requests, in the order they came. (planner, m3)
 
 ## Milestones
 
