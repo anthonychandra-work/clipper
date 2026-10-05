@@ -1,4 +1,5 @@
 from .ask_claude import ClaudeAccess, ClaudeQuestion, Effort, ask_claude
+from .choose_candidates import PlacedClip, choose_candidates
 from .claude_errors import (
     AskStoppedError,
     BusyServiceError,
@@ -50,6 +51,7 @@ __all__ = [
     "ModelTraits",
     "NoAnswerError",
     "PassContext",
+    "PlacedClip",
     "Placement",
     "PlatformText",
     "PlatformTexts",
@@ -64,6 +66,7 @@ __all__ = [
     "Window",
     "WindowRecord",
     "ask_claude",
+    "choose_candidates",
     "count_clips",
     "count_shortlist",
     "cut_clips",

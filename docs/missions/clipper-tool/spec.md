@@ -619,6 +619,12 @@ From `intent.md`. Base `82df5ce`.
   tool does the keeping. Quoted words are compared as letters and digits only, a quote of no such
   word places nothing, and of closing words said more than once the first after the opening
   words is taken. A64 and A67 fix the rules and leave these forms open. (executor, m3)
+- A81 — A candidate is named after its rank, `c01`, `c02` and so on, so a project's candidates
+  keep their names for as long as the cut step is not run again. A clip's length and the part two
+  clips share are measured in hundredths of a second, the unit the transcript's times are stored
+  in, so a clip of exactly 25 or 60 seconds counts as on the edge whatever its start. A clip
+  dropped for its overlap takes none of the places among those kept. A69 and A71 leave the name
+  and the unit open. (executor, m3)
 
 ## Milestones
 

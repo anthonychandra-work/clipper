@@ -319,7 +319,7 @@ What the spec's file list leaves out
   stand-in, each of the three recorded replies is read, and every clip in them but the one with
   the absent quote is placed in the committed transcript.
 
-- [ ] T7 — Choose the candidates: length, overlap, rank and count
+- [x] T7 — Choose the candidates: length, overlap, rank and count
   Files: `service/clipper/selection/choose_candidates.py`,
   `service/clipper/selection/test_choose_candidates.py`, `service/clipper/selection/__init__.py`
   Done: from the placed clips of every window, a clip shorter or longer than the preset is
