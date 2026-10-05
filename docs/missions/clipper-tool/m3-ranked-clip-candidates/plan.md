@@ -1,6 +1,6 @@
 # Plan: m3-ranked-clip-candidates
 
-Attempt: 1
+Attempt: 2
 
 ## Findings
 
@@ -150,6 +150,66 @@ What the spec's file list leaves out
   step's label, the count of candidates and three new tables. The stand-in and the test run's
   settings change `scripts/`. `service/.coding-standards-structure`, `README.md`, `AGENTS.md`
   and this milestone's `evidence` folder change too.
+
+What attempt 1 got wrong
+
+- Every task is built. What fails is `pnpm test`, by chance, on a fixture test that M2 wrote and
+  this milestone did not touch (`issues.md`). Attempt 1 took the one passing run at `c5c6e25`
+  as its baseline, and the command could already fail there. The cause is in the fixture
+  builder. It ends the talk and the long talk with ffmpeg's `-shortest`, over a picture that
+  never ends (`scripts/build-fixtures.mjs`), and ffmpeg does not end such a video where its
+  sound ends.
+- How ffmpeg 8.1.2 ends it, read from a build of the talk logged at debug level: `-shortest`
+  holds the picture in a queue until the sound reaches it, and the queue holds ten seconds at
+  most. The picture source runs ahead of the sound, so the queue stays full, and each frame that
+  arrives pushes one out whether the sound has reached it or not: 3,377 times in that build. The
+  video keeps as much picture after the sound as the source was ahead by, less ten seconds, at
+  the moment the sound's end reaches the queue. That lead is a race between two threads.
+  ffmpeg's documentation gives ten seconds as the default of `-shortest_buf_duration` and says
+  a larger value makes `-shortest` more accurate. (Context7, `/websites/ffmpeg_documentation`)
+- Measured on this Mac on 2026-10-06. The speech lasts 234.94 seconds, and `say` wrote the same
+  bytes twice. In every build the sound track lasts 234.94 seconds in the talk and 1,174.70 in
+  the long talk. The picture runs on after it: by 0.53 to 4.76 seconds in ten builds of the
+  talk, and by 2.1 to 2.6 seconds in nine of the long talk. In the two failing runs of
+  `issues.md` it ran on by 1.53 and 2.29 seconds in the talk.
+- The test allows five seconds between the long video and five times the talk, so the talk's
+  extra picture counts five times. It fails once the talk carries about a second and a half of
+  it (`service/clipper/transcription/test_built_fixtures.py`). One build of the ten made here
+  would have failed it, with 4.76 seconds, outside the test command.
+- Two readings of `issues.md` are corrected. It takes the speech as 235.42 seconds, a fifth of
+  the long video. The speech is 0.48 seconds shorter, and the long video carries extra picture
+  of its own. Sixteen busy processes did not lengthen the picture: the talk carried 0.59 to
+  0.79 seconds in three builds. What makes it longer in one build than in the next was not
+  found. The fix does not depend on it, because a stated length takes the queue out of the
+  build.
+- Tried in a copy of the builder outside the worktree: it asks ffprobe for the length of the
+  speech and gives each video its length with `-t`, five times the speech for the long talk,
+  with no `-shortest`. Three builds in a row, the three videos at once as before, gave the same
+  bytes for each video, and so did builds made beside sixteen busy processes. The talk lasts
+  234.94 seconds and the long talk 1,174.70, which is 0.005 seconds from five times the talk.
+  In both, the picture and the sound end within 0.01 seconds of each other. A build still takes
+  13 seconds. (A90)
+- Against that build the service's 674 tests passed, in 3 minutes 58 seconds. Nothing reads the
+  extra picture: only the sound is transcribed (`service/clipper/media/extract_audio.py`), the
+  last word of the committed transcript ends at 234.56 seconds, the browser tests compare a
+  project's length with what ffprobe gives the built video, and 234.94 seconds still reads
+  "4 min" in a row. The replay graph and the selection tests use a made-up length of 235.7
+  seconds, and a graph is measured against its own length (A82).
+- `talk-selection.json` in the evidence folder holds the length of a talk built the old way.
+- The builder holds 7 top-level functions and gains one. The standards review prints no finding
+  for the changed copy. No rule and no hook refuses a change to the builder, to M2's test file,
+  to `fixtures/README.md` or to `AGENTS.md`.
+- M2's plan chose `-shortest`, and no test compared where a fixture's picture ends with where
+  its sound ends. T20 changes `scripts/build-fixtures.mjs` and
+  `service/clipper/transcription/test_built_fixtures.py`, which the spec's file list for this
+  milestone does not name.
+- The validation blocks that only read were run on the tree as attempt 1 left it: V5, V6, V9,
+  V10, V23, V24, V25, V26 and V27. All print what their rows expect but one search of V24. Run
+  with `bash`, as the validation says, it also finds the compiled copy of the start-up settings
+  in a `__pycache__` folder, which exists once a test has run, and prints two lines where one
+  is expected. The compiled file is the same line of the same source, and git ignores it. As
+  written the check fails a tree that meets R57, so its search now skips compiled files. What
+  it expects is unchanged.
 
 ## Tasks
 
@@ -576,3 +636,31 @@ What the spec's file list leaves out
   key and why it is short; the key file the service's tests name; the new variable; and that
   selection requests go through the async client so a stop can cancel them. Each command in the
   three files was run as written.
+
+- [ ] T20 — End each fixture video where its sound ends
+  Files: `service/clipper/transcription/test_built_fixtures.py`, `scripts/build-fixtures.mjs`,
+  `fixtures/README.md`, `AGENTS.md`
+  Done: the tests of the built fixtures gain two: in the talk, and in the long talk, the picture
+  and the sound end within two tenths of a second of each other, each length read from ffprobe.
+  The test of the long talk against five times the talk allows half a second where it allowed
+  five. Run against the builder as it stood, the two new tests fail. The builder asks ffprobe,
+  taken from the folder it takes ffmpeg from, for the length of the speech it has just written,
+  and gives each video its length with `-t`: the speech's for the talk, five times it for the
+  long talk and twenty seconds for the silence. No command of it uses `-shortest`, and nothing
+  else in the three commands changes. Built three times in a row, each video has the same
+  picture length and the same sound length in every build, and the measurements of validation
+  block V29 end each of their six lines about the builds in `True`. `fixtures/README.md` says
+  that each video lasts as long as its sound and that the builder measures the speech to know
+  that length. `AGENTS.md` gains a section headed "ffmpeg" with what the Findings measured: on
+  ffmpeg 8.1.2, `-shortest` over a picture that never ends leaves from half a second to several
+  seconds of picture after the sound, a different amount in each run, so a command that must
+  end a video at a known moment states the length with `-t`. `pnpm test` exits 0 with its nine
+  gates passed.
+
+- [ ] T21 — Save the evidence again from the rebuilt talk
+  Files: `docs/missions/clipper-tool/m3-ranked-clip-candidates/evidence/talk-selection.json`,
+  `docs/missions/clipper-tool/m3-ranked-clip-candidates/evidence/selection-requests.json`
+  Done: the two files of A73 are saved again with the command of validation block V4, on the
+  tree T20 left, and committed. The project's length in `talk-selection.json` is the length
+  ffprobe gives a talk built by T20's builder, 234.94 seconds on this Mac. Blocks V5, V6, V9 and
+  V10 print on the new files what their rows expect.

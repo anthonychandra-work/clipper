@@ -688,6 +688,14 @@ From `intent.md`. Base `82df5ce`.
   walk leaves it, and the two tests that walk the screens remove a key again when they end. All
   five screens fit at both text sizes under the rules the app already had, so the app's
   stylesheet gained none. The plan names the states and leaves these open. (executor, m3)
+- A90 — The fixture builder measures the speech it has synthesised and gives each video its
+  length outright: the speech's length for the talk and five times it for the long talk. It
+  does not use ffmpeg's `-shortest`. Measured on ffmpeg 8.1.2: over a picture that never ends,
+  `-shortest` left from half a second to almost five seconds of picture after the sound, a
+  different amount in each build, and a test that holds the long video against five times the
+  talk failed by chance. A built video's picture ends within two tenths of a second of its
+  sound, and the tests of the fixtures check it. A12 and A47 say what is built and not how a
+  video's length is set. (planner, m3)
 
 ## Milestones
 

@@ -1,9 +1,10 @@
 # Validation: m3-ranked-clip-candidates
 
-Run every check from the worktree's root, in the order of the table. A check written as "block"
-runs the commands under its heading below the table, with `bash`. Ports 3100, 8865, 3101 and 8866
-must be free before V2. The Mac must be on a network for V1, which fetches packages, and it must
-stay awake until the last check ends, because the browser tests time their steps on the clock.
+Run every check from the worktree's root, in the order of the table: V29, added on attempt 2,
+comes after V3. A check written as "block" runs the commands under its heading below the table,
+with `bash`. Ports 3100, 8865, 3101 and 8866 must be free before V2. The Mac must be on a network
+for V1, which fetches packages, and it must stay awake until the last check ends, because the
+browser tests time their steps on the clock.
 
 `pnpm test:browser <file>` prints one line per test. Such a check passes when the command exits 0
 and the passed tests show everything its `expected` cell lists.
@@ -17,6 +18,7 @@ reads the recorded exchange reads the two evidence files of A73, which V4 saves.
 | V1 | Setup installs the pinned packages inside the project, the Anthropic SDK among them (A2, A56, R8, R27, R59) | block V1 | The first lines are the listing of the user's key folder, or the message that it does not exist; V24 compares with them. Both commands exit 0. `pip` lists `anthropic 1.11.0`, `docstring_parser 0.18.0`, `jiter 0.17.0`, `sniffio 1.3.1` and `httpx2 2.13.1`. |
 | V2 | "The test command passes"; one command runs every check, with no key in the environment (R9, R12) | block V2 | The last line gives exit code 0. The output reports Fixtures, Ruff, mypy, pytest, ESLint, Web build, TypeScript check, Vitest and Playwright, each passed. Its closing lines name the folder that held the run's data, give its size as under 2 GB and say it was removed. Baseline: all nine passed at `c5c6e25`, and only documents changed before this milestone's first commit, so no gate may fail. |
 | V3 | Test data is removed and no tracked file changes (R56) | block V3 | `ls` reports that the folder does not exist. Every path `git status` lists is inside this milestone's folder. |
+| V29 | "The test command passes" whichever build of the fixtures it runs on: each fixture video comes out the same in every build and ends where its sound ends (R12, A12, A47, A90) | block V29 | For each of the three videos, the three builds show the same picture length, the same sound length and the same length of the whole file, and the two lines after them end in `True`. The line about the long video and five times the talk gives less than 0.5 s. The exit code of pytest is 0. Its passed tests include one for the talk and one for the long talk that hold the end of the picture against the end of the sound, and the one that holds the long talk against five times the talk. |
 | V4 | "The fixture project reaches the ready state"; "With no key saved, the score stage fails with the reason from D30"; the key is entered in Settings (R15, R39, A65, A66, A72) | block V4 | The exit code is 0. The passed tests show: with no key saved the uploaded talk's card reads "Could Not Finish" with "No Anthropic API key is saved. Add one in Settings, then retry.", Retry and "Open Settings", and the stand-in has received no request; "Open Settings" leads to Settings, where the key is saved; Retry then ends on the project's Review tab, and its Library row reads "Ready to review" with its number of candidates. `ls` shows `talk-selection.json` and `selection-requests.json`. Both counts of `grep` are 0. |
 | V5 | "candidates that carry every field in D21" (R31, A68, A71) | block V5 | `status: ready`. The two counts of candidates agree. Every candidate's line ends in `every field`. `0` candidates with a field missing or out of range. The ranks run from 1 without a gap. `True` for the totals. |
 | V6 | "Every candidate starts on the first word of a transcript sentence and ends on the last word of one" (R29, R30, A61, A67) | block V6 | The longest sentence lasts 30 seconds or less. Both lists of candidates off a sentence's edge are `[]`. |
@@ -68,6 +70,46 @@ echo "exit code of pnpm test: ${PIPESTATUS[0]}"
 ```bash
 ls "<the folder V2's closing lines named>"
 git status --porcelain
+```
+
+### V29
+
+```bash
+folder="$(mktemp -d)"
+for build in 1 2 3; do node scripts/build-fixtures.mjs "$folder/$build" > /dev/null; done
+service/.venv/bin/python - "$folder" <<'EOF'
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+FFPROBE = "/opt/homebrew/opt/ffmpeg-full/bin/ffprobe"
+ASK = ["-v", "error", "-show_entries", "stream=codec_type,duration:format=duration", "-of", "json"]
+
+
+def measure(video):
+    probe = subprocess.run([FFPROBE, *ASK, str(video)], capture_output=True, text=True, check=True)
+    report = json.loads(probe.stdout)
+    lengths = {stream["codec_type"]: float(stream["duration"]) for stream in report["streams"]}
+    return lengths["video"], lengths["audio"], float(report["format"]["duration"])
+
+
+folder = Path(sys.argv[1])
+whole = {}
+for name in ("talk", "long-talk", "silence"):
+    builds = [measure(folder / str(build) / f"{name}.mp4") for build in (1, 2, 3)]
+    for at, (picture, sound, length) in enumerate(builds, 1):
+        print("%s, build %d: picture %.3f s, sound %.3f s, whole file %.3f s" % (name, at, picture, sound, length))
+    print("%s: the three builds have the same lengths: %s" % (name, len(set(builds)) == 1))
+    near = all(abs(picture - sound) <= 0.2 for picture, sound, _ in builds)
+    print("%s: the picture ends within 0.2 s of the sound in every build: %s" % (name, near))
+    whole[name] = [length for _, _, length in builds]
+worst = max(abs(long - 5 * talk) for long in whole["long-talk"] for talk in whole["talk"])
+print("the long video against five times the talk, the worst pair of builds: %.3f s apart" % worst)
+EOF
+(cd service && CLIPPER_FIXTURES_DIR="$folder/1" .venv/bin/python -m pytest clipper/transcription/test_built_fixtures.py -v)
+echo "exit code of pytest: $?"
+rm -rf "$folder"
 ```
 
 ### V4
@@ -348,7 +390,7 @@ echo "end of the changes to the web app's packages"
 
 ```bash
 grep -rnE --include='*.py' '^[[:space:]]*(import|from)[[:space:]]+(anthropic|httpx2|httpx|urllib\.request|urllib3|http\.client|socket|requests|aiohttp)' service/clipper/selection service/clipper/settings | grep -vE '/(test_[^/]*|conftest)\.py:'
-grep -rn "api\.anthropic\.com" service/clipper scripts web/src web/e2e fixtures | grep -v '/test_'
+grep -rnI --exclude-dir=__pycache__ "api\.anthropic\.com" service/clipper scripts web/src web/e2e fixtures | grep -v '/test_'
 grep -n "CLIPPER_ANTHROPIC_SOURCE" scripts/prepare-test-run.mjs service/clipper/conftest.py
 grep -rnE "ANTHROPIC_(API_KEY|AUTH_TOKEN|BASE_URL)" service/clipper scripts web/src | grep -v '/test_' || echo "outside tests, nothing reads an Anthropic variable of the shell"
 service/.venv/bin/python - docs/missions/clipper-tool/m3-ranked-clip-candidates/evidence/selection-requests.json <<'EOF'
