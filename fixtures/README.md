@@ -3,7 +3,7 @@
 The committed inputs of the tests. Videos are built from them when the tests run and are never
 committed. Everything in this folder together stays under 20 MB.
 
-## The talk
+## The videos
 
 `talk-script.txt` is a talk written for this project: a baker's advice in six parts, each one a
 short story or one piece of advice, between a housekeeping opening and a closing. It has about
@@ -11,8 +11,22 @@ short story or one piece of advice, between a housekeeping opening and a closing
 compared with it word for word.
 
 `node scripts/build-fixtures.mjs <folder>` speaks the script with the macOS voice Samantha and
-writes `talk.mp4` into the folder: about four minutes of 1280 × 720 H.264 video with AAC sound,
-the speech over colour bars. The build takes about ten seconds.
+writes three videos into the folder, each H.264 with AAC sound. The build takes about fifteen
+seconds.
+
+| Video | What it holds |
+| ----- | ------------- |
+| `talk.mp4` | The speech over colour bars, about four minutes at 1280 × 720. |
+| `long-talk.mp4` | The speech five times over, about twenty minutes, over a 320 × 180 picture at 10 frames a second. It is long enough for a test to stop a transcription that is under way. |
+| `silence.mp4` | Twenty seconds of the colour bars over a silent sound track. |
+
+## The test model
+
+The tests transcribe with the smallest Whisper model, `mlx-community/whisper-tiny`, 74 MB.
+`node scripts/fetch-test-model.mjs` fetches its two files from Hugging Face at a fixed revision
+into `.cache/whisper/tiny`, which git ignores, and prints that folder. Once the folder is
+complete the program fetches nothing. `pnpm bootstrap` runs it, and the tests run it again before
+they need the model.
 
 ## The fixture server
 

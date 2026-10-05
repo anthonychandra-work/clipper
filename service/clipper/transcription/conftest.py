@@ -22,6 +22,16 @@ def test_model_dir() -> Path:
 
 
 @pytest.fixture(scope="session")
+def silent_video(fixtures_dir: Path) -> Path:
+    return fixtures_dir / "silence.mp4"
+
+
+@pytest.fixture(scope="session")
+def long_talk_video(fixtures_dir: Path) -> Path:
+    return fixtures_dir / "long-talk.mp4"
+
+
+@pytest.fixture(scope="session")
 def talk_samples(
     talk_video: Path, media_tools: MediaTools, tmp_path_factory: pytest.TempPathFactory
 ) -> Path:

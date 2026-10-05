@@ -193,7 +193,7 @@ What the spec's file list leaves out
   a model folder that does not exist. `service/.coding-standards-structure` lists
   `transcription/`. `pnpm bootstrap` and `pnpm test` exit 0.
 
-- [ ] T2 — Build the silent fixture and the long fixture
+- [x] T2 — Build the silent fixture and the long fixture
   Files: `scripts/build-fixtures.mjs`, `fixtures/README.md`,
   `service/clipper/transcription/conftest.py`,
   `service/clipper/transcription/test_built_fixtures.py`
