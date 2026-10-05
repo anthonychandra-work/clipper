@@ -158,7 +158,7 @@ What the spec's file list leaves out
 
 ## Tasks
 
-- [ ] T1 — Add mlx-whisper at pinned versions and turn a file of sound into timed words
+- [x] T1 — Add mlx-whisper at pinned versions and turn a file of sound into timed words
   Files: `service/requirements.txt`, `service/requirements-dev.txt`, `service/pyproject.toml`,
   `service/.coding-standards-structure`, `scripts/bootstrap-project.mjs`,
   `scripts/fetch-test-model.mjs`, `scripts/run-tests.mjs`,

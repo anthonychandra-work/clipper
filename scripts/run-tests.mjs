@@ -8,10 +8,11 @@ import { runProgram } from './run-program.mjs';
 
 const SERVICE_PYTHON = join(SERVICE_DIR, '.venv', 'bin', 'python');
 const FIXTURE_BUILD_PROGRAM = join(ROOT_DIR, 'scripts', 'build-fixtures.mjs');
+const TEST_MODEL_PROGRAM = join(ROOT_DIR, 'scripts', 'fetch-test-model.mjs');
 const INTERRUPTS = ['SIGINT', 'SIGTERM'];
 
 const GATES = [
-  { name: 'Fixtures', run: (testRun) => buildFixturesOnce(testRun) },
+  { name: 'Fixtures', run: (testRun) => prepareFixturesOnce(testRun) },
   { name: 'Ruff', run: () => runProgram(describeServiceTool(['ruff', 'check', 'clipper'])) },
   { name: 'mypy', run: () => runProgram(describeServiceTool(['mypy', '--strict', 'clipper'])) },
   { name: 'pytest', run: () => runProgram(describeServiceTool(['pytest', 'clipper'])) },
@@ -45,11 +46,12 @@ async function runGate(gate, testRun) {
   return (await gate.run(testRun)) === 0;
 }
 
-async function buildFixturesOnce(testRun) {
+async function prepareFixturesOnce(testRun) {
   const folder = join(testRun.folder, 'fixtures');
   const exitCode = await runProgram({ command: process.execPath, args: [FIXTURE_BUILD_PROGRAM, folder] });
-  if (exitCode === 0) process.env.CLIPPER_FIXTURES_DIR = folder;
-  return exitCode;
+  if (exitCode !== 0) return exitCode;
+  process.env.CLIPPER_FIXTURES_DIR = folder;
+  return runProgram({ command: process.execPath, args: [TEST_MODEL_PROGRAM] });
 }
 
 function describeServiceTool(args) {

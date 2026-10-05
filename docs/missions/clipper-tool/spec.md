@@ -402,6 +402,13 @@ From `intent.md`. Base `82df5ce`.
   stop the step or the tool while it is being transcribed. The fixture's stored transcript, with
   the video's length, is committed as a file in the milestone's evidence folder, so the checks on
   its words can be repeated on what the tool produced. (planner, m2)
+- A48 — The transcriber cuts a part in the middle of the quietest half second before its mark,
+  and the quietest half second is the one whose samples add up to the least. For each stretch and
+  each part it prints one line, `transcribed_seconds=` and the seconds done so far. It writes its
+  result as one JSON object: the language, or none when no part reached the model, and the words.
+  When sound has to reach the model and the model folder holds none, it ends with an error that
+  names the folder. The plan fixes what the transcriber does and leaves these forms open.
+  (executor, m2)
 
 ## Milestones
 

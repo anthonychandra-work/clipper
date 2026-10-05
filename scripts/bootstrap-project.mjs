@@ -3,13 +3,17 @@ import { join } from 'node:path';
 import process from 'node:process';
 
 import { BROWSERS_DIR, describeWebTool } from './prepare-test-run.mjs';
-import { SERVICE_DIR } from './read-run-settings.mjs';
+import { ROOT_DIR, SERVICE_DIR } from './read-run-settings.mjs';
 import { runProgram } from './run-program.mjs';
 
 const SYSTEM_PYTHON = '/opt/homebrew/bin/python3.12';
 const VENV_DIR = join(SERVICE_DIR, '.venv');
 const VENV_PYTHON = join(VENV_DIR, 'bin', 'python');
 const PINNED_PACKAGES = 'requirements-dev.txt';
+const TEST_MODEL_PROGRAM = join(ROOT_DIR, 'scripts', 'fetch-test-model.mjs');
+
+// The two requirement files name every package, and two that mlx-whisper declares are left out.
+const INSTALL_AS_PINNED = ['install', '--disable-pip-version-check', '--no-deps'];
 
 const STEPS = [
   {
@@ -21,7 +25,7 @@ const STEPS = [
     title: 'Installing the pinned Python packages',
     program: {
       command: VENV_PYTHON,
-      args: ['-m', 'pip', 'install', '--disable-pip-version-check', '--requirement', PINNED_PACKAGES],
+      args: ['-m', 'pip', ...INSTALL_AS_PINNED, '--requirement', PINNED_PACKAGES],
       cwd: SERVICE_DIR,
     },
   },
@@ -31,6 +35,10 @@ const STEPS = [
       ...describeWebTool('playwright', ['install', 'chromium', '--only-shell']),
       env: { ...process.env, PLAYWRIGHT_BROWSERS_PATH: BROWSERS_DIR },
     },
+  },
+  {
+    title: 'Fetching the model the tests transcribe with into .cache/whisper',
+    program: { command: process.execPath, args: [TEST_MODEL_PROGRAM] },
   },
 ];
 
