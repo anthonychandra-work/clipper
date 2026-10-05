@@ -289,7 +289,7 @@ What the spec's file list leaves out
   while its next step has a stage; one whose next step has none stays as it is. A project's JSON
   shows a step's own label. `pnpm test` exits 0 with the queue still ending at fetched.
 
-- [ ] T7 — Build the download step and the transcribe step
+- [x] T7 — Build the download step and the transcribe step
   Files: `service/clipper/transcription/__init__.py`,
   `service/clipper/transcription/model_stage.py`,
   `service/clipper/transcription/test_model_stage.py`,

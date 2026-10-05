@@ -423,6 +423,11 @@ From `intent.md`. Base `82df5ce`.
   the project failed at the step it was run for. A project counts as resting when its state is
   one that a step of the queue leaves a project in. A42 and A46 fix that the bar must not fall
   and that a resting project goes on, and leave these open. (executor, m2)
+- A52 — While the transcribe step runs, the project's folder also holds the samples taken out of
+  the source and the transcriber's result. The step removes both when it ends, however it ends,
+  and a new attempt first removes what a tool that was killed left behind. When the video's
+  length was never recorded, the length of its sound bounds the times. The plan names what the
+  step leaves and not where it works. (executor, m2)
 
 ## Milestones
 
