@@ -696,6 +696,132 @@ From `intent.md`. Base `82df5ce`.
   talk failed by chance. A built video's picture ends within two tenths of a second of its
   sound, and the tests of the fixtures check it. A12 and A47 say what is built and not how a
   video's length is set. (planner, m3)
+- A91 — The Review tab reads one address, `GET /api/projects/<id>/review`. It gives the project's
+  look, whether its preview copy is on the Mac, the limits of the clip length with the preferred
+  band, the windows as A71 gives them, and the clips in the order of their ranks (`look`,
+  `hasPreview`, `clipSeconds` with `min`, `max` and `preferred`, `windows`, `clips`). A clip holds
+  what A71 lists for a candidate without the platform texts, with its start and end as they stand
+  now, and the review of it: the decision, the reason of a rejection, the sentence and the nudge of
+  each point, the sentences selection cut it on, the sentences its points can reach, its captions
+  and the addresses of its filmstrip frames (`decision`, `rejectReason`, `startSentence`,
+  `endSentence`, `startNudge`, `endNudge`, `cutStartSentence`, `cutEndSentence`, `sentences` with
+  `number`, `startSeconds`, `endSeconds` and `text`, `captions`, `frames`). A sentence's number is
+  its place in the whole transcript, from 1. A project with no candidates answers with no clips,
+  whatever its state. `PATCH /api/projects/<id>/clips/<clip>` changes a clip's decision with its
+  reason, its title or its points, and answers with the clip. `PUT /api/projects/<id>/look` stores
+  the look. `GET /api/projects/<id>/preview` gives the preview copy and honours byte ranges, and
+  `GET /api/projects/<id>/clips/<clip>/frames/<n>` gives one filmstrip frame, counted from 1. A
+  change to a clip or to the look that the rules do not allow is refused with "Clipper could not
+  make this change. Reload the page and try again." A6 sends everything through the service and
+  leaves these forms open. (planner, m4)
+- A92 — A decision is `undecided`, `keep` or `reject`. The reason of a rejection is `cut-off`,
+  `not-interesting`, `needs-context`, `repeat` or none, and any other decision carries none. Keep
+  pressed on a kept clip leaves it undecided, as in the prototype. An edited title is stored
+  without the blanks around it, and an empty one brings back the title selection gave. The page
+  saves the title half a second after the last keystroke and when the field is left. A project's
+  JSON carries `keptCount` and `rejectedCount`. The row of a ready project reads "Ready to review ·
+  6 candidates, 2 kept, 1 rejected", which completes A72, and the number on the Export tab is the
+  kept count. Cutting a project's clips again removes its reviews. (planner, m4)
+- A93 — A clip's points can reach the sentences selection cut it on and three more on each side,
+  fewer where the transcript begins or ends. The filmstrip shows that stretch. The in point sits
+  where a sentence's first word starts and the out point where a sentence's last word ends, each
+  moved by its nudge, a whole number of 0.2-second steps from −5 to 5. Moving a point to another
+  sentence sets its nudge back to none. The in point's sentence never comes after the out point's.
+  A step is switched off on the page and refused by the service when it would pass one of these
+  limits, put a point before the video's start or after its end, or leave the clip shorter than
+  one second. The "needs context" flag is hidden while the in point sits on an earlier sentence
+  than selection chose and shows again when it returns; a nudge does not hide it. D32 and D52 give
+  the steps and leave their bounds open. (planner, m4)
+- A94 — The length reading compares the clip with its project's preset. The 25–60 s preset has the
+  preferred band of 25–50 s; the two others have none, because D23 names one for the default
+  alone, and their reading has three states. After the length to a tenth of a second the reading
+  says "inside the preferred 25–50 s band", "inside the 25–60 s limits", "shorter than the 25 s
+  minimum" or "longer than the 60 s maximum", with the preset's numbers. A length on a limit counts
+  as inside it, as in A69. The band drawn under the reading ends at one and a quarter times the
+  maximum. (planner, m4)
+- A95 — The cut step makes twelve filmstrip frames for each candidate, evenly spaced over the
+  stretch of A93, each taken at the middle of its twelfth. A frame is a JPEG picture 104 px high,
+  kept under `frames` in the project's folder and removed with it. The frames are taken from the
+  preview copy, which holds the source's picture and is H.264 for every source. The cut requests
+  fill the first nine tenths of the step's bar and the frames the rest. A frame that cannot be
+  taken leaves its place in the strip empty and does not fail the step, so a clip already paid for
+  is not asked for again over a picture. A project cut before this milestone has no frames, and
+  its strip is empty. Measured on ffmpeg 8.1.2: one command that takes all twelve frames writes
+  none of them when one moment lies after the picture's end, so each frame is its own command;
+  twelve take about a second for the talk. (planner, m4)
+- A96 — The look has four parts, stored for the project and brought back by a reload: the caption
+  style (`keyword`, `word-by-word` or `plain`, shown as Keyword, Each Word and Plain), the framing
+  (`follow-speaker`, `stack-two` or `whole-frame`, shown as Speaker, Stacked and Full Frame), the
+  hook title switch and the safe-zone switch (`captionStyle`, `framing`, `showHookTitle`,
+  `showSafeZones`). A project starts with keyword captions, the speaker framing, the hook title on
+  and the safe zones off, as the prototype does. D35 names three parts. The safe-zone switch is
+  stored with them so the screen comes back as it was left, and it never reaches an export.
+  (planner, m4)
+- A97 — The service groups a clip's words into captions and the page draws them, so the export of
+  M5 draws the same groups. A clip's captions hold the words of its sentences, from the in point's
+  sentence to the out point's. A caption takes words until it has three in the keyword style, one
+  in the word-by-word style or six in the plain style, or until a sentence ends. A word is shown
+  without the quotation marks before it and without the punctuation after it. In the keyword style
+  the highlighted word is the longest word of the caption that holds a digit or is six characters
+  or longer as shown, the earlier one of two as long, and a caption without such a word highlights
+  none. A caption shows from the start of its first word, counted from the in point, until the
+  next caption starts. These are the prototype's rules (`captions` with `keyword`, `wordByWord`
+  and `plain`, each a list of captions with `startSeconds` and `words`, a word with `text` and
+  `isHighlighted`). (planner, m4)
+- A98 — The preview plays the preview copy from the in point to the out point and stops there.
+  Play at the end starts again from the in point. Choosing another clip or moving a point puts
+  the preview back at the in point, paused. Until M5 finds faces, the preview draws the framings
+  without them: the speaker framing fills the 9:16 frame with the middle of the picture, the
+  stacked framing puts the left half of the picture above the right half, and the full frame
+  shows the whole picture over a blurred, enlarged copy of itself. The hook title shows over the
+  first three seconds when its switch is on. With no preview copy on the Mac the notice reads
+  "Preview unavailable. The source video was deleted to free space.", as in the prototype, and
+  everything else on the tab still works. (planner, m4)
+- A99 — From 720 px a project's Review address shows the list beside the first-ranked clip, and a
+  clip's address shows the list beside that clip. Below 720 px the Review address is the list and
+  a clip's address is the clip screen, titled "Clip 3 of 6", with "Clips" as its back control and
+  no More menu, as in the prototype; the list one step back has the menu. A clip's address that
+  names no clip of the project leads to the list. Choosing a clip, and Next, each add a step to
+  the browser's history. Next goes to the next clip of the group the filter shows, and from the
+  last to the first. The filter is not part of an address and starts at All. On a phone a clip's
+  screen opens at its top, and the list returns where it was left, by the back control and by the
+  browser's Back. Measured on Next.js 16.3.8: a screen held by the layout of the Review addresses
+  stays in place while the address moves between the list and the clips. The browser's Back
+  brings the list's position back by itself and a link to the list does not, so the screen keeps
+  the position for the back control. (planner, m4)
+- A100 — Two wordings depart from the prototype because the real data differs. Under the source
+  timeline: "Each bar is a window of about 90 seconds of the transcript. Highlighted bars scored
+  highest and were searched for clips. Numbers are the clips, by rank." The prototype names a
+  fixed score of 70, and the shortlist is the highest-scoring windows (A63). Under the candidate
+  list: "The score orders clips inside this video. It does not forecast views.", the sentence the
+  prototype prints under a clip's scores. On a phone the list shows scores with no clip open, and
+  R44 asks for the statement wherever a score appears. (planner, m4)
+- A101 — On the timeline a clip's number sits over the middle of the clip. Two numbers on one row
+  keep a tap area between their middles, 44 px on a phone, and each is moved sideways no further
+  than that needs, so twelve clips cut close together can each be tapped. When the windows are too
+  many to draw with gaps, their bars are drawn without gaps. R7 asks for the tap area, and the
+  prototype's eight sample clips never crowd. (planner, m4)
+- A102 — Where a text of the Review tab measures under 4.5 to 1 against its background with the
+  prototype's colours, the app's own stylesheet gives it a colour that reaches the ratio, one of
+  the prototype's tokens where one does. Measured on the prototype, by composing each text's
+  colour with the backgrounds behind it: a tag on the selected row gives 4.45 in light and 4.15
+  in dark, the button inside a flag 4.27 and 4.30, and a count in a segmented control 3.01 in
+  dark. D49 keeps the prototype's colours and D57 sets the ratio. Where the two disagree the ratio
+  wins, as the text size did in A35. The copied stylesheets and the tokens stay unchanged. The
+  screens of M1 to M3 are not measured by this milestone. (planner, m4)
+- A103 — The checks of the Review tab share one ready project, made from the talk with the
+  recorded replies; a test takes it as it was cut, with every review and the look put back first.
+  A control's tap area is measured by tapping: just inside 22 px to the left, to the right, above
+  and below the control's middle, each tap must land on the control or on a label that belongs to
+  it, with the control scrolled to the middle of the window first. The contrast check composes a
+  text's colour with the background colours behind it, plain gradients among them. Both leave out
+  controls that are switched off, and the contrast check also leaves out text drawn over the video
+  picture. These two checks and the 200% check run on the talk's Review tab and on a review
+  presented to the page with twelve clips cut close together, the 180 windows of a three-hour
+  video and long titles, which no fixture can produce. The captures are `review-list` and
+  `review-clip`, each at 390 and 1360 px, in light and in dark, and a file `talk-review.json`
+  holds the talk's project, its review and its stored transcript (`project`, `review`,
+  `transcript`). (planner, m4)
 
 ## Milestones
 
