@@ -546,8 +546,9 @@ What the spec's file list leaves out
   the run holds it with mode 600, and every request the stand-in kept came with a key. After
   Remove the file is gone and the row is the field again. A test can read what the tool printed.
 
-- [ ] T18 — Fit the new states on a phone at 200%
-  Files: `web/e2e/support/selection-screens.ts`, `web/e2e/support/walk-screens.ts`,
+- [x] T18 — Fit the new states on a phone at 200%
+  Files: `docs/missions/clipper-tool/spec.md`,
+  `web/e2e/support/selection-screens.ts`, `web/e2e/support/walk-screens.ts`,
   `web/e2e/support/seed-projects.ts`, `web/e2e/support/index.ts`, `web/e2e/text-size.spec.ts`,
   `web/e2e/own-origin.spec.ts`, `web/src/shared/styles/app.css`
   Done: the walk of screens shows these states more, presented to the page from the held list

@@ -2,7 +2,8 @@ import { type APIRequestContext, expect, type Page } from '@playwright/test';
 
 import type { Project, ProjectList } from '@/library';
 
-import { presentTranscriptionStates, type SeededProjects } from './seed-projects';
+import { type PresentedStates, presentTranscriptionStates, type SeededProjects } from './seed-projects';
+import { listSavedKeyScreens, presentSelectionStates } from './selection-screens';
 
 const PROJECT_LIST_ADDRESS = '**/api/projects';
 const PROJECT_TABS = ['review', 'export', 'results'];
@@ -11,6 +12,7 @@ const STATUS_HEADING = 'section.status-card h2';
 export interface ScreenVisit {
   name: string;
   open: (page: Page) => Promise<void>;
+  leave?: (page: Page) => Promise<void>;
 }
 
 export interface Walk {
@@ -38,7 +40,11 @@ export async function visitScreens(
   for (const screen of walk.screens) {
     await holdProjectList(page, walk.shownList);
     await screen.open(page);
-    await inspect(screen.name);
+    try {
+      await inspect(screen.name);
+    } finally {
+      await screen.leave?.(page);
+    }
   }
 }
 
@@ -67,27 +73,28 @@ export function listProjectScreens(seeded: SeededProjects, shownList: ProjectLis
   return [
     { name: 'library', open: (page) => showAddress(page, '/', `#project-${seeded.keyless.id}`) },
     ...statuses,
-    ...listTranscriptionScreens(seeded, shownList),
+    ...listPresentedScreens(shownList, presentTranscriptionStates(seeded)),
+    ...listPresentedScreens(shownList, presentSelectionStates(seeded)),
     ...tabs,
     { name: 'delete-alert', open: (page) => showDeleteAlert(page, seeded.failed.id) },
     { name: 'settings', open: (page) => showAddress(page, '/settings', '#setting-scoringModel') },
+    ...listSavedKeyScreens(),
   ];
 }
 
-function listTranscriptionScreens(seeded: SeededProjects, shownList: ProjectList): ScreenVisit[] {
-  const presented = presentTranscriptionStates(seeded);
-  const heldList = replaceProjects(shownList, Object.values(presented));
+function listPresentedScreens(shownList: ProjectList, presented: PresentedStates): ScreenVisit[] {
+  const heldList = replaceProjects(shownList, Object.values(presented.projects));
   const showHeld = async (page: Page, address: string, landmark: string) => {
     await holdProjectList(page, heldList);
     await showAddress(page, address, landmark);
   };
-  const statuses = Object.entries(presented).map(([state, project]) => {
+  const withStatusScreen = Object.entries(presented.projects).filter(([, project]) => project.status !== 'ready');
+  const statuses = withStatusScreen.map(([state, project]) => {
     const stage = project.halt?.reason ?? project.steps.find((step) => step.state === 'running')?.label;
     const landmark = `.status-card__stage:text-is("${stage}")`;
     return { name: `status-${state}`, open: (page: Page) => showHeld(page, `/projects/${project.id}`, landmark) };
   });
-  const rowOfFailure = `#project-${presented['no-speech'].id} .project-row__status--failed`;
-  return [{ name: 'library-transcription', open: (page) => showHeld(page, '/', rowOfFailure) }, ...statuses];
+  return [{ name: presented.libraryName, open: (page) => showHeld(page, '/', presented.rowLandmark) }, ...statuses];
 }
 
 function replaceProjects(list: ProjectList, replacements: Project[]): ProjectList {

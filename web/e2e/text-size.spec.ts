@@ -10,6 +10,7 @@ import {
   listSheetScreens,
   measureWalk,
   readProjectList,
+  removeSavedKey,
   seedEveryState,
   test,
 } from './support';
@@ -29,11 +30,16 @@ const SCREENS_WITH_PROJECTS = [
   'status-transcribing',
   'status-no-speech',
   'status-download-failed',
+  'library-selection',
+  'status-scoring',
+  'status-cutting',
+  'status-declined',
   'project-review',
   'project-export',
   'project-results',
   'delete-alert',
   'settings',
+  'settings-saved-key',
   'new-project-link',
   'new-project-file',
   'error-bad-link',
@@ -62,6 +68,7 @@ test.beforeEach(async ({ request }) => {
 });
 
 test.afterEach(async ({ request }) => {
+  await removeSavedKey(request);
   await deleteAllProjects(request);
 });
 

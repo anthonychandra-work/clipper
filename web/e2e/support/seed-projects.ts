@@ -24,6 +24,12 @@ const LONGEST_DOWNLOAD: ProjectStep = {
   percent: 0,
 };
 
+export interface PresentedStates {
+  libraryName: string;
+  rowLandmark: string;
+  projects: Record<string, Project>;
+}
+
 export interface SeededProjects {
   keyless: Project;
   failed: Project;
@@ -56,7 +62,15 @@ export async function seedEveryState(request: APIRequestContext, server: Fixture
   };
 }
 
-export function presentTranscriptionStates(seeded: SeededProjects): Record<string, Project> {
+export function presentTranscriptionStates(seeded: SeededProjects): PresentedStates {
+  return {
+    libraryName: 'library-transcription',
+    rowLandmark: `#project-${seeded.failed.id} .project-row__status--failed`,
+    projects: describeTranscriptionStates(seeded),
+  };
+}
+
+function describeTranscriptionStates(seeded: SeededProjects): Record<string, Project> {
   const [fetched, transcribe, ...later] = seeded.keyless.steps;
   const waiting: ProjectStep = { ...transcribe, state: 'pending', percent: 0 };
   const downloading: ProjectStep = { ...LONGEST_DOWNLOAD, state: 'running', percent: 40 };

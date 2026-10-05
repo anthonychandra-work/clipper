@@ -680,6 +680,14 @@ From `intent.md`. Base `82df5ce`.
   waits for each screen to stop receiving before it opens the next. The progress tests answer
   every selection request six seconds late, about 24 seconds for one project. The plan says what
   the tests show and leaves these open. (executor, m3)
+- A89 — The walk presents the score step, the cut step, the declined failure and the ready row
+  from the seeded projects the transcription states are presented from, on a held list of their
+  own. Each of these screens is measured only once it shows the sentence or the step it is meant
+  to show, the ready row its whole sentence. The ready project is shown as a row and has no
+  status screen. The screen with a saved key saves the key as it opens and removes it as the
+  walk leaves it, and the two tests that walk the screens remove a key again when they end. All
+  five screens fit at both text sizes under the rules the app already had, so the app's
+  stylesheet gained none. The plan names the states and leaves these open. (executor, m3)
 
 ## Milestones
 

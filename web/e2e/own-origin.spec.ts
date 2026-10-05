@@ -10,6 +10,7 @@ import {
   listProjectScreens,
   listSheetScreens,
   readProjectList,
+  removeSavedKey,
   seedEveryState,
   test,
   visitScreens,
@@ -22,7 +23,7 @@ const SIZES = [
 ];
 const THREE_GB_IN_BYTES = String(3 * 1024 ** 3);
 const SETTLE_MS = 400;
-const SCREENS_WITH_PROJECTS = 23;
+const SCREENS_WITH_PROJECTS = 28;
 
 function listenForRequests(page: Page): string[] {
   const asked: string[] = [];
@@ -52,6 +53,7 @@ test.beforeEach(async ({ request }) => {
 });
 
 test.afterEach(async ({ request }) => {
+  await removeSavedKey(request);
   await deleteAllProjects(request);
 });
 
