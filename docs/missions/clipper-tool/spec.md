@@ -644,6 +644,11 @@ From `intent.md`. Base `82df5ce`.
   One more scenario of recorded replies, `no-clips`, answers every cut with no clip, so the
   failure of a cut that leaves no candidate is tested. The plan fixes what the two steps do and
   leaves these open. (executor, m3)
+- A84 — The key field is emptied the moment Save is pressed, also when the service then refuses
+  the key, so the page holds a typed key no longer than it takes to send it; the refusal asks to
+  paste it again. The key is sent as it was typed, and the service leaves out the blanks around
+  it. A saved key too short to show an ending of reads "Saved". Enter in the field does nothing,
+  as in the prototype. The plan words the row and leaves these open. (executor, m3)
 
 ## Milestones
 

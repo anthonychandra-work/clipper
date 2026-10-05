@@ -23,6 +23,8 @@ export interface Settings extends Choices {
   freeDiskGb: number;
   totalDiskGb: number;
   phoneAddress: string;
+  hasApiKey: boolean;
+  apiKeyEnding: string | null;
 }
 
 export type ChoiceName = keyof Choices;
@@ -69,6 +71,10 @@ export const REJECT_REASONS: readonly SettingOption[] = [
   { value: 'context', label: 'Needs Earlier Context' },
   { value: 'repeat', label: 'Repeats Another Clip' },
 ];
+
+export function describeSavedKey(ending: string | null): string {
+  return ending === null ? 'Saved' : `Saved · ends in ${ending}`;
+}
 
 export function describeDiskUse(settings: Settings): number {
   if (settings.totalDiskGb <= 0) return 0;

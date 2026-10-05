@@ -424,8 +424,9 @@ What the spec's file list leaves out
   store and read them through the address: every field of A71 is there under its name, a
   candidate without a flag gives none, and the lists keep their order.
 
-- [ ] T12 — Save the key in Settings, show it masked and remove it
-  Files: `web/src/settings/change-settings/lib/setting-options.ts`,
+- [x] T12 — Save the key in Settings, show it masked and remove it
+  Files: `docs/missions/clipper-tool/spec.md`,
+  `web/src/settings/change-settings/lib/setting-options.ts`,
   `web/src/settings/change-settings/lib/setting-options.test.ts`,
   `web/src/settings/change-settings/api/save-api-key.ts`,
   `web/src/settings/change-settings/api/remove-api-key.ts`,

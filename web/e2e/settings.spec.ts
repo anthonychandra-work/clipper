@@ -23,6 +23,9 @@ const CHANGES = [
   { name: 'sourceRetention', row: 'Delete Source Videos After', label: 'Never', value: 'never' },
 ];
 
+const TEST_KEY = 'sk-ant-test-4f2a';
+const KEY_ADDRESS = '/api/settings/api-key';
+
 function readShownChoices(page: Page): Promise<string[]> {
   return page.locator('.menu-button__chosen').allInnerTexts();
 }
@@ -33,12 +36,21 @@ async function chooseTheDefaults(request: APIRequestContext): Promise<void> {
   }
 }
 
+function watchKeyRequests(page: Page): string[] {
+  const methods: string[] = [];
+  page.on('request', (sent) => {
+    if (new URL(sent.url()).pathname === KEY_ADDRESS) methods.push(sent.method());
+  });
+  return methods;
+}
+
 test.beforeEach(async ({ request }) => {
   await chooseTheDefaults(request);
 });
 
 test.afterEach(async ({ request }) => {
   await chooseTheDefaults(request);
+  await request.delete(KEY_ADDRESS);
 });
 
 test.describe('at 390 px', () => {
@@ -69,7 +81,7 @@ test.describe('at 390 px', () => {
       'Repeats Another Clip',
     ]);
     await expect(page.getByLabel('Anthropic API Key')).toHaveAttribute('placeholder', 'sk-ant-…');
-    await expect(page.getByRole('button', { name: 'Save' })).toBeDisabled();
+    await expect(page.getByRole('button', { name: 'Save' })).toBeEnabled();
     await expect(page.locator('.memory-count')).toHaveText(['0', '0', '0', '0']);
     await expect(page.getByRole('button', { name: 'Forget All of It' })).toBeDisabled();
     await expect(groups.nth(2).locator('.list-footer')).toHaveText('Exported clips stay until you delete them.');
@@ -103,6 +115,54 @@ test.describe('at 390 px', () => {
     for (const change of CHANGES) {
       await expect(page.locator(`#setting-${change.name}`)).toHaveValue(change.value);
     }
+  });
+
+  test('Save with nothing typed asks for the key and sends nothing', async ({ page }) => {
+    const keyRequests = watchKeyRequests(page);
+    await page.goto('/settings');
+
+    await page.getByRole('button', { name: 'Save' }).click();
+
+    await expect(page.locator('#toast')).toHaveText('Paste the key first.');
+    await expect(page.getByLabel('Anthropic API Key')).toBeVisible();
+    expect(keyRequests).toEqual([]);
+  });
+
+  test('a saved key is shown by its last four characters, also after a reload, and Remove brings the field back', async ({
+    page,
+  }) => {
+    const keyRow = page.locator('.row', { hasText: 'Anthropic API Key' });
+    const keyRequests = watchKeyRequests(page);
+    await page.goto('/settings');
+    await expect(page.getByRole('button', { name: 'Save' })).toBeEnabled();
+
+    await page.getByLabel('Anthropic API Key').fill(TEST_KEY);
+    await page.getByRole('button', { name: 'Save' }).click();
+    await expect(page.locator('#toast')).toHaveText('Key saved on this Mac');
+    await expect(keyRow.locator('.row__value')).toHaveText('Saved · ends in 4f2a');
+    await expect(page.locator('#setting-apiKey')).toHaveCount(0);
+    await page.reload();
+    await expect(keyRow.locator('.row__value')).toHaveText('Saved · ends in 4f2a');
+    await expect(keyRow.locator('button')).toHaveText(['Remove']);
+    expect(await page.content()).not.toContain(TEST_KEY);
+
+    await page.getByRole('button', { name: 'Remove' }).click();
+
+    await expect(page.locator('#toast')).toHaveText('Key removed');
+    await expect(page.getByLabel('Anthropic API Key')).toHaveValue('');
+    await expect(page.getByRole('button', { name: 'Save' })).toBeEnabled();
+    expect(keyRequests).toEqual(['PUT', 'DELETE']);
+  });
+
+  test('a key the service refuses is answered in the service’s words, and the field is emptied', async ({ page }) => {
+    await page.goto('/settings');
+
+    await page.getByLabel('Anthropic API Key').fill('sk-ant test');
+    await page.getByRole('button', { name: 'Save' }).click();
+
+    await expect(page.locator('#toast')).toHaveText('An API key has no spaces or line breaks. Paste it again.');
+    await expect(page.getByLabel('Anthropic API Key')).toHaveValue('');
+    await expect(page.getByRole('button', { name: 'Save' })).toBeEnabled();
   });
 
   test('the storage row gives the free and the total space with a bar', async ({ page }) => {

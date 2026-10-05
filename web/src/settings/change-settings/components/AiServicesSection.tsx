@@ -6,14 +6,16 @@ import { SelectRow } from './SelectRow';
 interface SectionProps {
   settings: Settings;
   choose: SettingsEditor['choose'];
+  saveKey: SettingsEditor['saveKey'];
+  removeKey: SettingsEditor['removeKey'];
 }
 
-export function AiServicesSection({ settings, choose }: SectionProps) {
+export function AiServicesSection({ settings, choose, saveKey, removeKey }: SectionProps) {
   return (
     <section className="group-section">
       <h2 className="list-header">AI Services</h2>
       <div className="group divided">
-        <ApiKeyRow />
+        <ApiKeyRow settings={settings} saveKey={saveKey} removeKey={removeKey} />
         <SelectRow name="scoringModel" settings={settings} choose={choose} />
         <SelectRow name="cuttingModel" settings={settings} choose={choose} />
         <SelectRow name="whisperModel" settings={settings} choose={choose} />

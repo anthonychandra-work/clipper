@@ -6,12 +6,20 @@ import { readProblem } from '@/shared/lib/read-problem';
 import { showToast } from '@/shell';
 
 import { fetchSettings } from '../api/fetch-settings';
+import { removeApiKey } from '../api/remove-api-key';
+import { saveApiKey } from '../api/save-api-key';
 import { saveSetting } from '../api/save-setting';
 import type { ChoiceName, Settings } from '../lib/setting-options';
+
+const NO_KEY_TYPED = 'Paste the key first.';
+const KEY_SAVED = 'Key saved on this Mac';
+const KEY_REMOVED = 'Key removed';
 
 export interface SettingsEditor {
   settings: Settings | null;
   choose: (name: ChoiceName, value: string) => void;
+  saveKey: (typedKey: string) => void;
+  removeKey: () => void;
 }
 
 export function useSettings(): SettingsEditor {
@@ -40,5 +48,27 @@ export function useSettings(): SettingsEditor {
     });
   }
 
-  return { settings, choose };
+  function saveKey(typedKey: string): void {
+    if (typedKey.trim() === '') {
+      showToast(NO_KEY_TYPED);
+      return;
+    }
+    showOnceAnswered(saveApiKey(typedKey), KEY_SAVED);
+  }
+
+  function removeKey(): void {
+    showOnceAnswered(removeApiKey(), KEY_REMOVED);
+  }
+
+  function showOnceAnswered(answer: Promise<Settings>, message: string): void {
+    answer.then(
+      (answered) => {
+        setSettings(answered);
+        showToast(message);
+      },
+      (error: unknown) => showToast(readProblem(error).message),
+    );
+  }
+
+  return { settings, choose, saveKey, removeKey };
 }

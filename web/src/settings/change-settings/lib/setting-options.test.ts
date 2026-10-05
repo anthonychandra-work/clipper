@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
-import { describeDiskUse, REJECT_REASONS, SETTING_FIELDS, type Settings } from './setting-options';
+import {
+  describeDiskUse,
+  describeSavedKey,
+  REJECT_REASONS,
+  SETTING_FIELDS,
+  type Settings,
+} from './setting-options';
 
 const DEFAULTS: Settings = {
   scoringModel: 'claude-sonnet-5-5',
@@ -12,6 +18,8 @@ const DEFAULTS: Settings = {
   freeDiskGb: 29,
   totalDiskGb: 460,
   phoneAddress: 'http://192.168.1.24:3000',
+  hasApiKey: false,
+  apiKeyEnding: null,
 };
 
 function labelsOf(name: keyof typeof SETTING_FIELDS): string[] {
@@ -73,6 +81,16 @@ describe('the setting options', () => {
       'Needs Earlier Context',
       'Repeats Another Clip',
     ]);
+  });
+});
+
+describe('describeSavedKey', () => {
+  it('reads "Saved · ends in" with the last four characters of the saved key', () => {
+    expect(describeSavedKey('4f2a')).toBe('Saved · ends in 4f2a');
+  });
+
+  it('reads "Saved" alone for a key too short to show an ending of', () => {
+    expect(describeSavedKey(null)).toBe('Saved');
   });
 });
 
