@@ -7,7 +7,7 @@ import {
 import { followHashChanges, navigationActions, readViewFromHash } from './navigate.js';
 import {
   createProjectState, paintPlayhead, paintPreviewDock, projectActions, projectDrags, projectInputs,
-  renderProjectScreen, renderRejectMenu,
+  renderDeleteProjectSheet, renderProjectMenu, renderProjectScreen, renderRejectMenu,
 } from './project/index.js';
 import { isCompact, isSidebarDocked, onLayoutChange } from './read-layout.js';
 import { routeEvents } from './route-events.js';
@@ -20,8 +20,8 @@ import {
 } from './shell/index.js';
 
 const SCREENS = { library: renderLibraryScreen, project: renderProjectScreen, settings: renderSettingsScreen };
-const SHEETS = { 'new-project': renderNewProjectSheet };
-const MENUS = { reject: renderRejectMenu };
+const SHEETS = { 'new-project': renderNewProjectSheet, 'delete-project': renderDeleteProjectSheet };
+const MENUS = { reject: renderRejectMenu, project: renderProjectMenu };
 
 const actions = { ...navigationActions, ...shellActions, ...libraryActions, ...projectActions, ...settingsActions };
 const inputs = { ...libraryInputs, ...projectInputs, ...settingsInputs };

@@ -14,6 +14,7 @@ const SHAPES = {
   warning: '<path d="M12 4.5l8.5 14.5h-17z"/><path d="M12 10v4"/><path d="M12 16.6v.1"/>',
   replay: '<path d="M5 12a7 7 0 1 0 2.2-5.1"/><path d="M4.5 4.5v4h4"/>',
   download: '<path d="M12 4v10M7.5 10l4.5 4.5 4.5-4.5M5 19h14"/>',
+  ellipsis: '<path d="M6 12h.01M12 12h.01M18 12h.01" stroke-width="3.2"/>',
   film: '<rect x="3" y="5" width="18" height="14" rx="3"/><path d="M8 5v14M16 5v14M3 10h5M3 14h5M16 10h5M16 14h5"/>',
   chart: '<path d="M5 19v-8M10 19V5M15 19v-6M20 19V8"/>',
 };

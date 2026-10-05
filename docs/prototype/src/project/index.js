@@ -1,5 +1,6 @@
 import { createReview, rankClips } from './clip-review.js';
 import { createPlayback } from './clip-preview/index.js';
+import { deleteActions } from './delete-project.js';
 import { exportActions } from './export/index.js';
 import { tabActions } from './render-project.js';
 import { resultsInputs } from './render-results.js';
@@ -9,10 +10,12 @@ import { sampleClips } from './sample-clips.js';
 export { REJECT_REASONS, renderRejectMenu } from './clip-inspector/index.js';
 export { paintPlayhead, paintPreviewDock } from './clip-preview/index.js';
 export { trimDrags as projectDrags } from './clip-trim/index.js';
+export { renderDeleteProjectSheet, renderProjectMenu } from './delete-project.js';
 export { renderProjectScreen } from './render-project.js';
 
 export const projectActions = {
   ...tabActions,
+  ...deleteActions,
   ...reviewActions,
   ...exportActions,
 };

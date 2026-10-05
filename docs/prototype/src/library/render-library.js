@@ -8,6 +8,15 @@ const NEW_PROJECT_ICON_BUTTON = `
   <button type="button" class="bar-button bar-button--icon bar-button--tinted" id="new-project"
     data-action="open-sheet" data-sheet="new-project" aria-label="New Project">${renderIcon('plus')}</button>`;
 
+const NO_PROJECTS = `
+  <div class="empty">
+    ${renderIcon('film')}
+    <h2 class="empty__title">No Projects Yet</h2>
+    <p>Paste a video link or upload a file, and Clipper finds its best clips.</p>
+    <button type="button" class="button button--prominent" id="first-project" data-action="open-sheet"
+      data-sheet="new-project">New Project</button>
+  </div>`;
+
 export function renderLibraryScreen(state) {
   return {
     key: 'library',
@@ -15,13 +24,17 @@ export function renderLibraryScreen(state) {
     title: 'Library',
     hasLargeTitle: true,
     actions: NEW_PROJECT_ICON_BUTTON,
-    body: renderPage('library', `
-      <section class="group-section" aria-labelledby="projects-heading">
-        <h2 class="list-header" id="projects-heading">Projects</h2>
-        <ul class="group divided project-rows">${renderRows(state)}</ul>
-        <p class="list-footer">${PROTOTYPE_NOTICE}</p>
-        <p class="list-footer numeric">${describeDisk(state)}</p>
-      </section>`),
+    body: renderPage('library', state.projects.length > 0 ? renderProjectSection(state) : NO_PROJECTS),
+  };
+}
+
+export function renderEmptyLibraryScreen() {
+  return {
+    key: 'library',
+    depth: 0,
+    title: 'Library',
+    hasLargeTitle: false,
+    body: renderPage('library', NO_PROJECTS),
   };
 }
 
@@ -47,6 +60,16 @@ export function renderSidebar(state) {
         <p class="sidebar__disk numeric">${describeDisk(state)}</p>
       </footer>
     </aside>`;
+}
+
+function renderProjectSection(state) {
+  return `
+    <section class="group-section" aria-labelledby="projects-heading">
+      <h2 class="list-header" id="projects-heading">Projects</h2>
+      <ul class="group divided project-rows">${renderRows(state)}</ul>
+      <p class="list-footer">${PROTOTYPE_NOTICE}</p>
+      <p class="list-footer numeric">${describeDisk(state)}</p>
+    </section>`;
 }
 
 function renderRows(state) {

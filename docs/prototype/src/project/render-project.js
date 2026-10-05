@@ -1,8 +1,11 @@
 import { update } from '../app-state.js';
 import { formatTimecode } from '../format-timecode.js';
 import { renderSegmented } from '../controls/index.js';
-import { findOpenProject, isInPipeline, renderProcessingScreen } from '../library/index.js';
+import {
+  findOpenProject, isInPipeline, renderEmptyLibraryScreen, renderProcessingScreen,
+} from '../library/index.js';
 import { keptClips } from './clip-review.js';
+import { renderProjectMoreButton } from './delete-project.js';
 import { renderExport } from './export/index.js';
 import { renderResults } from './render-results.js';
 import { renderReview } from './review/index.js';
@@ -13,6 +16,8 @@ const TABS = [
   { value: 'results', label: 'Results', render: renderResults },
 ];
 
+const PUSHED_CLIP_KEY = 'clip';
+
 export const tabActions = {
   'set-tab': ({ value }) => update((state) => {
     state.tab = value;
@@ -21,7 +26,10 @@ export const tabActions = {
 
 export function renderProjectScreen(state) {
   const project = findOpenProject(state);
-  if (isInPipeline(project)) return renderProcessingScreen(project, state);
+  if (!project) return renderEmptyLibraryScreen();
+  const more = renderProjectMoreButton(state);
+  if (isInPipeline(project)) return { ...renderProcessingScreen(project, state), actions: more };
+  const tab = TABS.find((candidate) => candidate.value === state.tab).render(state);
   const length = formatTimecode(project.durationSeconds);
   return {
     key: 'project',
@@ -32,7 +40,8 @@ export function renderProjectScreen(state) {
     hasLargeTitle: true,
     back: { label: 'Library', action: 'navigate', view: 'library' },
     centre: renderTabs(state),
-    ...TABS.find((tab) => tab.value === state.tab).render(state),
+    ...tab,
+    actions: tab.key === PUSHED_CLIP_KEY ? tab.actions : `${more}${tab.actions ?? ''}`,
   };
 }
 
