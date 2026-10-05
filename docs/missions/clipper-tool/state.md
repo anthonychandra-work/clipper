@@ -1,14 +1,14 @@
 # Mission: clipper-tool
 
-State: executing
+State: research-and-planning
 Milestone: m1-a-running-tool-with-a-library-and-import
-Attempt: 1
+Attempt: 2
 Base: 82df5ce
 Branch: mission/clipper-tool
 
 | milestone | status |
 | --------- | ------ |
-| m1-a-running-tool-with-a-library-and-import | executing |
+| m1-a-running-tool-with-a-library-and-import | planning |
 | m2-transcripts-made-on-the-mac | pending |
 | m3-ranked-clip-candidates | pending |
 | m4-the-review-workbench | pending |
