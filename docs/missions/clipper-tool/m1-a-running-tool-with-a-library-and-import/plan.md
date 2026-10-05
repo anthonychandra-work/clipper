@@ -371,8 +371,12 @@ The prototype
   suggests a retry. Deleting a processing project stops it first, through a dependency the
   projects package receives and does not import.
 
-- [ ] T11 — Copy the prototype's design and build the shell
-  Files: `web/src/shared/styles/tokens.css`, `web/src/shared/styles/base.css`,
+- [x] T11 — Copy the prototype's design and build the shell
+  Files: `web/e2e/start-command.spec.ts`, `web/src/shell/frame-screens/lib/shell-context.ts`,
+  `web/src/shell/frame-screens/hooks/use-screen-transition.ts`,
+  `web/src/shell/present-sheet/components/SheetGrabber.tsx`,
+  `web/src/shell/present-sheet/hooks/use-sheet-drag.ts`,
+  `web/src/shared/styles/tokens.css`, `web/src/shared/styles/base.css`,
   `web/src/shared/styles/controls.css`, `web/src/shared/styles/lists.css`,
   `web/src/shared/styles/shell.css`, `web/src/shared/styles/pages.css`,
   `web/src/shared/styles/app.css`, `web/src/shared/ui/index.ts`, `web/src/shared/ui/Icon.tsx`,

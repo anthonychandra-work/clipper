@@ -1,7 +1,10 @@
+import { PagePane } from '@/shared/ui';
+import { ScreenFrame } from '@/shell';
+
 export default function LibraryPage() {
   return (
-    <div id="app" className="app">
-      <p className="loading">Loading Clipper…</p>
-    </div>
+    <ScreenFrame screenKey="library" depth={0} section="library" title="Library" hasLargeTitle>
+      <PagePane name="library">{null}</PagePane>
+    </ScreenFrame>
   );
 }

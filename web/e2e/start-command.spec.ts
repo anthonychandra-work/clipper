@@ -2,6 +2,8 @@ import { networkInterfaces } from 'node:os';
 
 import { expect, isPortOpen, test } from './support';
 
+const SETTLE_MS = 2000;
+
 function findNetworkAddress(): string {
   const interfaces = Object.values(networkInterfaces()).flatMap((addresses) => addresses ?? []);
   const reachable = interfaces.find((address) => address.family === 'IPv4' && !address.internal);
@@ -40,7 +42,8 @@ test('every request of the page goes to the address of the tool', async ({ page,
   page.on('request', (request) => requestedAddresses.push(request.url()));
 
   await page.goto('/');
-  await page.waitForLoadState('networkidle');
+  await expect(page.locator('#app[data-layout]')).toBeVisible();
+  await page.waitForTimeout(SETTLE_MS);
 
   expect(requestedAddresses.length).toBeGreaterThan(0);
   expect(requestedAddresses.filter((address) => !address.startsWith(`${tool.address}/`))).toEqual([]);

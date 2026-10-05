@@ -1,0 +1,11 @@
+/* The rules the real app needs beyond the prototype's stylesheets: links that wear the classes of its buttons. */
+a.bar-button,
+a.tab-bar__tab,
+a.sidebar__new,
+a.sidebar__link {
+  text-decoration: none;
+}
+
+a.sidebar__link {
+  color: inherit;
+}
