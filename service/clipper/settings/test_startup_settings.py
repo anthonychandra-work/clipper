@@ -12,7 +12,9 @@ SETTING_VARIABLES = [
     "CLIPPER_SERVICE_PORT",
     "CLIPPER_REPORTED_FREE_BYTES",
     "CLIPPER_MODEL_SOURCE",
+    "CLIPPER_ANTHROPIC_SOURCE",
 ]
+CLOSED_LOCAL_PORT = "http://127.0.0.1:9"
 
 
 @pytest.fixture
@@ -51,6 +53,20 @@ def test_models_come_from_hugging_face_unless_another_source_is_named(
     clean_environment.setenv("CLIPPER_MODEL_SOURCE", "http://127.0.0.1:4000")
 
     assert StartupSettings().model_source == "http://127.0.0.1:4000"
+
+
+def test_selection_asks_anthropic_unless_another_source_is_named(
+    clean_environment: pytest.MonkeyPatch,
+) -> None:
+    assert StartupSettings().anthropic_source == "https://api.anthropic.com"
+
+    clean_environment.setenv("CLIPPER_ANTHROPIC_SOURCE", "http://127.0.0.1:4001/talk")
+
+    assert StartupSettings().anthropic_source == "http://127.0.0.1:4001/talk"
+
+
+def test_a_test_session_names_a_closed_local_port_in_place_of_anthropic() -> None:
+    assert StartupSettings().anthropic_source == CLOSED_LOCAL_PORT
 
 
 def test_the_repository_root_holds_the_service_folder() -> None:

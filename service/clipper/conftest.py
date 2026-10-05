@@ -18,6 +18,8 @@ CLOSED_LOCAL_PORT = "http://127.0.0.1:9"
 
 # No test reaches Hugging Face: a model is fetched only from a source the test names.
 os.environ.setdefault("CLIPPER_MODEL_SOURCE", CLOSED_LOCAL_PORT)
+# No test reaches Anthropic, whatever the shell says: a request goes only where a test sends it.
+os.environ["CLIPPER_ANTHROPIC_SOURCE"] = CLOSED_LOCAL_PORT
 
 
 @dataclass(frozen=True)

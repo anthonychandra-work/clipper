@@ -570,6 +570,17 @@ From `intent.md`. Base `82df5ce`.
   folder: `talk-selection.json`, with the project as the service gives it, its selection and its
   stored transcript (`project`, `selection`, `transcript`), and `selection-requests.json`, with
   what the stand-in kept of that project's requests, in the order they came. (planner, m3)
+- A74 — A recorded reply is one JSON file in its scenario's folder. `task` and, for a cut, `window`
+  name what it answers, and a file with neither answers every task. `uses` gives how many requests
+  it answers before it stands aside, `status` makes it an error, and `reply` holds the message or
+  the error body. The files of a scenario are tried in the order of their names, and forgetting the
+  kept requests also forgets the uses. Of a request the stand-in keeps the API's path with its
+  query, and the scenario as it was written, without `/slow`. A model that takes no fallback is
+  asked at the API's stable address, `/v1/messages`, and the three others at the beta one. A key
+  counts as refused on a 401 or a 403, and the service as busy on a 429 or a status from 500 up;
+  any other refusal of the API fails the step with the queue's own sentence. A request looks at
+  the stop signal every 50 ms. The plan fixes the stand-in's addresses and the request rules and
+  leaves these forms open. (executor, m3)
 
 ## Milestones
 

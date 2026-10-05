@@ -1,0 +1,9 @@
+{
+  "task": "score",
+  "reply": {
+    "type": "message",
+    "role": "assistant",
+    "content": [{ "type": "text", "text": { "windows": [{ "id": "w01", "score": 62 }] } }],
+    "stop_reason": "end_turn"
+  }
+}

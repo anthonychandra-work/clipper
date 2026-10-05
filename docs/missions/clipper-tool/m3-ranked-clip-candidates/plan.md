@@ -153,18 +153,20 @@ What the spec's file list leaves out
 
 ## Tasks
 
-- [ ] T1 — Add the Anthropic SDK and the stand-in, and ask Claude under the request rules
+- [x] T1 — Add the Anthropic SDK and the stand-in, and ask Claude under the request rules
   Files: `service/requirements.txt`, `service/.coding-standards-structure`,
   `service/clipper/settings/startup_settings.py`,
   `service/clipper/settings/test_startup_settings.py`, `service/clipper/conftest.py`,
   `scripts/prepare-test-run.mjs`, `scripts/serve-recorded-claude.mjs`,
-  `scripts/recorded-replies.mjs`, `fixtures/claude/one-window/score.json`,
+  `scripts/recorded-replies.mjs`, `scripts/shape-claude-answer.mjs`,
+  `fixtures/claude/one-window/score.json`,
   `fixtures/claude/unreadable/every-task.json`,
   `fixtures/claude/unreadable-once/first-request.json`,
   `fixtures/claude/declined/every-task.json`, `fixtures/claude/rejected-key/every-task.json`,
   `service/clipper/selection/__init__.py`, `service/clipper/selection/conftest.py`,
   `service/clipper/selection/model_traits.py`, `service/clipper/selection/test_model_traits.py`,
   `service/clipper/selection/ask_claude.py`, `service/clipper/selection/test_ask_claude.py`,
+  `service/clipper/selection/claude_errors.py`,
   `service/clipper/selection/test_recorded_claude.py`
   Done: `requirements.txt` pins the four packages of A56, and after `pnpm bootstrap` `pip list`
   shows `anthropic 1.11.0`. The start-up settings gain the address of A57. A test run names a

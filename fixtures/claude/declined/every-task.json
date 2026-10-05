@@ -1,0 +1,9 @@
+{
+  "reply": {
+    "type": "message",
+    "role": "assistant",
+    "content": [{ "type": "text", "text": { "windows": [{ "id": "w01", "score": 50 }] } }],
+    "stop_reason": "refusal",
+    "stop_details": { "type": "refusal", "category": "general_harms", "explanation": null }
+  }
+}
