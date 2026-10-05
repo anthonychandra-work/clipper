@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[3]
@@ -8,10 +9,11 @@ KEY_FILE_IN_HOME = Path("Library") / "Application Support" / "Clipper" / "anthro
 
 
 class StartupSettings(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="CLIPPER_")
+    model_config = SettingsConfigDict(env_prefix="CLIPPER_", populate_by_name=True)
 
     data_dir: Path = REPOSITORY_ROOT / "data"
     ffmpeg_dir: Path = HOMEBREW_FFMPEG_DIR
     key_file: Path = Path.home() / KEY_FILE_IN_HOME
     web_port: int = 3000
     service_port: int = 8765
+    search_path: str = Field(default="", validation_alias="PATH")

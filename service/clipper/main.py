@@ -1,6 +1,10 @@
 from fastapi import FastAPI
 from fastapi.telemetry import TelemetryConfig
 
+from .media import locate_media_tools
+from .settings import StartupSettings
+from .storage import open_data_folder, open_database
+
 TELEMETRY_OFF: TelemetryConfig = {
     "tracing": False,
     "metrics": False,
@@ -9,7 +13,10 @@ TELEMETRY_OFF: TelemetryConfig = {
 }
 
 
-def create_app() -> FastAPI:
+def create_app(settings: StartupSettings) -> FastAPI:
+    locate_media_tools(settings.ffmpeg_dir, settings.search_path)
+    data_folder = open_data_folder(settings.data_dir)
+    open_database(data_folder.database_file)
     app = FastAPI(
         title="Clipper",
         telemetry=TELEMETRY_OFF,

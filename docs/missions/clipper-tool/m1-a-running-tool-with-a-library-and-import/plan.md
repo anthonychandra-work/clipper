@@ -209,14 +209,15 @@ The prototype
   The first unit tests cover the start-up settings' defaults and the request helper that every
   later call to `/api` goes through. `git status` is clean after a run.
 
-- [ ] T3 — Give the service its data folder, its database and the media tools check
+- [x] T3 — Give the service its data folder, its database and the media tools check
   Files: `service/clipper/__main__.py`, `service/clipper/main.py`,
   `service/clipper/settings/startup_settings.py`,
   `service/clipper/settings/test_startup_settings.py`, `service/clipper/storage/__init__.py`,
   `service/clipper/storage/data_folder.py`, `service/clipper/storage/test_data_folder.py`,
   `service/clipper/storage/open_database.py`, `service/clipper/storage/test_open_database.py`,
   `service/clipper/media/__init__.py`, `service/clipper/media/locate_media_tools.py`,
-  `service/clipper/media/test_locate_media_tools.py`, `scripts/start-tool.mjs`,
+  `service/clipper/media/test_locate_media_tools.py`, `service/clipper/test_main.py`,
+  `scripts/start-tool.mjs`, `web/e2e/support/index.ts`, `web/e2e/support/run-tool.ts`,
   `web/e2e/missing-ffmpeg.spec.ts`
   Done: at start the service creates the data folder and `clipper.sqlite3` inside it, in WAL
   mode, with a schema version it can raise later. It looks for ffmpeg and ffprobe in

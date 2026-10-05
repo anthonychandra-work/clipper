@@ -12,6 +12,7 @@ const PORT_POLL_MS = 100;
 const PORT_CLOSE_TIMEOUT_MS = 20_000;
 
 export interface TestRunSettings {
+  runDir: string;
   dataDir: string;
   webPort: number;
   servicePort: number;
@@ -25,6 +26,7 @@ export interface StartCommand {
 
 export function readTestRunSettings(): TestRunSettings {
   return {
+    runDir: readVariable('CLIPPER_TEST_RUN_DIR'),
     dataDir: readVariable('CLIPPER_DATA_DIR'),
     webPort: Number(readVariable('CLIPPER_WEB_PORT')),
     servicePort: Number(readVariable('CLIPPER_SERVICE_PORT')),

@@ -35,6 +35,22 @@ def test_the_repository_root_holds_the_service_folder() -> None:
     assert (REPOSITORY_ROOT / "service" / "clipper").is_dir()
 
 
+def test_the_search_path_is_the_path_of_the_environment(
+    clean_environment: pytest.MonkeyPatch,
+) -> None:
+    clean_environment.setenv("PATH", "/first/bin:/second/bin")
+
+    assert StartupSettings().search_path == "/first/bin:/second/bin"
+
+
+def test_a_setting_given_by_name_wins_over_the_environment(
+    clean_environment: pytest.MonkeyPatch,
+) -> None:
+    clean_environment.setenv("PATH", "/first/bin")
+
+    assert StartupSettings(search_path="").search_path == ""
+
+
 def test_environment_variables_replace_the_defaults(clean_environment: pytest.MonkeyPatch) -> None:
     clean_environment.setenv("CLIPPER_DATA_DIR", "/tmp/clipper-data")
     clean_environment.setenv("CLIPPER_FFMPEG_DIR", "/tmp/tools")
