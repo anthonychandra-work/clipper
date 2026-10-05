@@ -1,9 +1,12 @@
-/* The rules the real app needs beyond the prototype's stylesheets: links that wear the classes of its buttons, and buttons that are switched off. */
+/* The rules the real app needs beyond the prototype's stylesheets. */
+
+/* A button that is switched off. */
 .button:disabled {
   color: var(--label-3);
   cursor: default;
 }
 
+/* Links that wear the classes of the prototype's buttons. */
 a.bar-button,
 a.button,
 a.tab-bar__tab,
@@ -31,4 +34,56 @@ a.segmented__option[aria-current="page"]:active {
   background: var(--segment);
   box-shadow: 0 0 0 0.5px var(--glass-rim), 0 1px 4px var(--shadow);
   font-weight: 600;
+}
+
+/* A hint longer than its field ends in an ellipsis. */
+.row__field:placeholder-shown {
+  text-overflow: ellipsis;
+}
+
+/* A choice shows its chosen option as text that can wrap, with the select lying over it unseen. */
+.menu-button__chosen {
+  min-width: 0;
+  padding: 6px max(20px, 1.2em) 6px 6px;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.menu-button__chosen ~ select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  opacity: 0;
+}
+
+.menu-button:has(select:focus-visible) {
+  border-radius: 8px;
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* A choice moves under its label when the two do not fit side by side. */
+label.row {
+  flex-wrap: wrap;
+}
+
+label.row .menu-button {
+  margin-left: auto;
+}
+
+/* With large text, every control that does not fit beside its label moves under it. */
+.group {
+  container-type: inline-size;
+}
+
+@container (max-width: 18rem) {
+  .row {
+    flex-wrap: wrap;
+  }
+
+  .row > .row__label ~ :last-child {
+    margin-left: auto;
+  }
 }

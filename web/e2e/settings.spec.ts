@@ -23,9 +23,8 @@ const CHANGES = [
   { name: 'sourceRetention', row: 'Delete Source Videos After', label: 'Never', value: 'never' },
 ];
 
-async function readChosenLabels(page: Page): Promise<string[]> {
-  const selects = page.locator('.menu-button select');
-  return selects.evaluateAll((all) => all.map((select) => (select as HTMLSelectElement).selectedOptions[0].label));
+function readShownChoices(page: Page): Promise<string[]> {
+  return page.locator('.menu-button__chosen').allInnerTexts();
 }
 
 test.beforeEach(async ({ request }) => {
@@ -75,7 +74,7 @@ test.describe('at 390 px', () => {
   test('the choices start at the defaults, and each one is kept after a reload', async ({ page }) => {
     await page.goto('/settings');
     await expect(page.locator('#setting-scoringModel')).toBeVisible();
-    const startedWith = await readChosenLabels(page);
+    const startedWith = await readShownChoices(page);
 
     for (const change of CHANGES) {
       await page.getByLabel(change.row).selectOption({ label: change.label });
@@ -92,7 +91,10 @@ test.describe('at 390 px', () => {
       'Auto',
       '7 days',
     ]);
-    expect(await readChosenLabels(page)).toEqual(CHANGES.map((change) => change.label));
+    expect(await readShownChoices(page)).toEqual(CHANGES.map((change) => change.label));
+    for (const change of CHANGES) {
+      await expect(page.locator(`#setting-${change.name}`)).toHaveValue(change.value);
+    }
   });
 
   test('the storage row gives the free and the total space with a bar', async ({ page }) => {

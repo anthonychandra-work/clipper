@@ -636,10 +636,14 @@ The prototype
   All of It". A browser test changes each choice, reloads and finds it kept, and finds every
   row.
 
-- [ ] T18 — Check the layouts, the text sizes and the requests, and save the captures
+- [x] T18 — Check the layouts, the text sizes and the requests, and save the captures
   Files: `web/e2e/support/index.ts`, `web/e2e/support/capture-screens.ts`,
-  `web/e2e/support/measure-text-fit.ts`, `web/e2e/layout.spec.ts`, `web/e2e/text-size.spec.ts`,
-  `web/e2e/own-origin.spec.ts`, `web/e2e/captures.spec.ts`,
+  `web/e2e/support/measure-text-fit.ts`, `web/e2e/support/walk-screens.ts`,
+  `web/e2e/support/sheet-screens.ts`, `web/e2e/layout.spec.ts`, `web/e2e/text-size.spec.ts`,
+  `web/e2e/own-origin.spec.ts`, `web/e2e/captures.spec.ts`, `web/e2e/settings.spec.ts`,
+  `web/src/shared/styles/app.css`,
+  `web/src/settings/change-settings/components/SelectRow.tsx`,
+  `web/src/shell/frame-screens/hooks/use-large-title.ts`, `docs/missions/clipper-tool/spec.md`,
   `docs/missions/clipper-tool/m1-a-running-tool-with-a-library-and-import/evidence/`
   Done: `layout.spec.ts` measures, at 390 px, the Library list above the tab bar at the bottom
   edge and the new project sheet spanning the width from the bottom edge; at 1360 px, the

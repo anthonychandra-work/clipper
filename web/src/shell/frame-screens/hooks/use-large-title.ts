@@ -1,6 +1,6 @@
 'use client';
 
-import { type RefObject, useEffect, useRef } from 'react';
+import { type RefObject, useLayoutEffect, useRef } from 'react';
 
 import type { LargeTitleState } from '../lib/shell-context';
 
@@ -9,7 +9,7 @@ const BAR_CLEARANCE = '-60px 0px 0px 0px';
 export function useLargeTitle(report: (state: LargeTitleState) => void): RefObject<HTMLHeadingElement | null> {
   const title = useRef<HTMLHeadingElement | null>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (title.current === null) return undefined;
     const observer = new IntersectionObserver(
       (entries) => report(entries[entries.length - 1].isIntersecting ? 'visible' : 'scrolled'),

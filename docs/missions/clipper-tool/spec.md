@@ -318,6 +318,18 @@ From `intent.md`. Base `82df5ce`.
 - A33 — The status screen of an upload shows the bytes this browser has sent as the fill of its
   bar, read from the count the service holds, and keeps the prototype's wording; it adds no
   figure in megabytes. The prototype has no wording for one. (executor, m1)
+- A34 — The 200% text check doubles the root font size before a page loads, as a browser's text
+  size setting does. Doubled after the load, Chromium keeps a container rule measured in `rem` at
+  its old width, and the prototype's narrow sheet bar never applies. A label counts as cut when
+  its text overflows its own box, when it lies outside an ancestor that hides overflow, or when
+  it is the chosen option of a select narrower than that option. Text typed into a field and a
+  field's hint scroll with the field and are not counted. (executor, m1)
+- A35 — A Settings choice shows its chosen option as text that wraps, with the select lying over
+  it unseen, and moves under its label when the two do not fit side by side. In a group narrower
+  than 18 rem, any row lets a control move under its label. The prototype's select cuts a long
+  option with an ellipsis, at 390 px for the transcription model and at 200% for four of the six
+  choices, which R7 does not allow. The rules sit in the app's own stylesheet, and the copied
+  stylesheets stay unchanged. (executor, m1)
 
 ## Milestones
 
