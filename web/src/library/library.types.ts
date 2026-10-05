@@ -7,10 +7,11 @@ export type ProjectStatus =
   | 'failed'
   | 'stopped'
   | 'fetched'
+  | 'transcribed'
   | 'ready'
   | 'exported';
 
-export type StepKind = 'fetch' | 'transcribe' | 'score' | 'cut';
+export type StepKind = 'fetch' | 'model' | 'transcribe' | 'score' | 'cut';
 
 export interface ProjectStep {
   kind: StepKind;

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import type { Project, ProjectStatus, ProjectStep } from '../../library.types';
-import { describeRowStatus, findCurrentStep } from './describe-row-status';
+import { describeRowStatus, findCurrentStep, nameRestingState } from './describe-row-status';
 
 function planSteps(fetchState: ProjectStep['state'], fetchLabel: string): ProjectStep[] {
   return [
@@ -46,6 +46,25 @@ describe('describeRowStatus', () => {
     expect(describeRowStatus(project)).toEqual({ kind: 'progress', percent: 25, label: 'Fetched' });
   });
 
+  it('shows the bar and Transcribed for a project that rests after its transcription', () => {
+    const [fetch, transcribe, ...later] = planSteps('done', 'Fetching video');
+    const steps: ProjectStep[] = [fetch, { ...transcribe, state: 'done', percent: 100 }, ...later];
+
+    expect(describeRowStatus(describeProject('transcribed', steps))).toEqual({
+      kind: 'progress',
+      percent: 50,
+      label: 'Transcribed',
+    });
+  });
+
+  it('shows the label the service sent while a model is downloaded', () => {
+    const [fetch, ...later] = planSteps('done', 'Fetching video');
+    const download: ProjectStep = { kind: 'model', label: 'Downloading Whisper small', state: 'running', percent: 30 };
+    const project = describeProject('processing', [fetch, download, ...later]);
+
+    expect(describeRowStatus(project)).toMatchObject({ kind: 'progress', label: 'Downloading Whisper small' });
+  });
+
   it.each([
     ['queued', 'Waiting in queue', false],
     ['failed', 'Could not finish', true],
@@ -55,6 +74,22 @@ describe('describeRowStatus', () => {
 
     expect(describeRowStatus(project)).toEqual({ kind: 'note', status, text, hasWarning });
   });
+});
+
+describe('nameRestingState', () => {
+  it.each([
+    ['fetched', 'Fetched'],
+    ['transcribed', 'Transcribed'],
+  ] as const)('gives the %s state one word', (status, word) => {
+    expect(nameRestingState(status)).toBe(word);
+  });
+
+  it.each(['uploading', 'queued', 'processing', 'failed', 'stopped'] as const)(
+    'has no word for a %s project, which does not rest',
+    (status) => {
+      expect(nameRestingState(status)).toBeUndefined();
+    },
+  );
 });
 
 describe('findCurrentStep', () => {

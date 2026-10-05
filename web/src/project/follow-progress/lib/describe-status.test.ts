@@ -26,6 +26,15 @@ function describeProject(status: ProjectStatus, fetch: Partial<ProjectStep> = {}
   };
 }
 
+const [TRANSCRIBE, ...NOT_TRANSCRIPTION] = LATER_STEPS;
+const DOWNLOAD: ProjectStep = { kind: 'model', label: 'Downloading Whisper small', state: 'pending', percent: 0 };
+const DONE = { state: 'done', percent: 100 } as const;
+
+function describeFetchedProject(status: ProjectStatus, laterSteps: ProjectStep[]): Project {
+  const fetched = describeProject(status, DONE);
+  return { ...fetched, steps: [fetched.steps[0], ...laterSteps] };
+}
+
 function among(...projects: Project[]): StatusView {
   return { projects, isSendingHere: true };
 }
@@ -121,6 +130,55 @@ describe('describeStatus', () => {
       stage: 'Step 1 of 4 is done.',
       footnote: 'Not started: Transcribing on this Mac, Scoring windows, Cutting clips.',
       action: null,
+    });
+  });
+
+  it('heads a transcribed project Transcribed and names the two steps that have not started', () => {
+    const steps = [{ ...TRANSCRIBE, ...DONE }, ...NOT_TRANSCRIPTION];
+    const transcribed = { ...describeFetchedProject('transcribed', steps), percent: 50 };
+
+    expect(describeStatus(transcribed, among(transcribed))).toEqual({
+      heading: 'Transcribed',
+      hasWarning: false,
+      bar: { percent: 50, label: 'Transcribed' },
+      stage: 'Step 2 of 4 is done.',
+      footnote: 'Not started: Scoring windows, Cutting clips.',
+      action: null,
+    });
+  });
+
+  it('counts a model download among the steps that are done', () => {
+    const steps = [{ ...DOWNLOAD, ...DONE }, { ...TRANSCRIBE, ...DONE }, ...NOT_TRANSCRIPTION];
+    const transcribed = describeFetchedProject('transcribed', steps);
+
+    expect(describeStatus(transcribed, among(transcribed)).stage).toBe('Step 3 of 5 is done.');
+  });
+
+  it('shows a model download under the label the service sent, as step 2 of 5', () => {
+    const steps: ProjectStep[] = [{ ...DOWNLOAD, state: 'running', percent: 30 }, ...LATER_STEPS];
+    const downloading = { ...describeFetchedProject('processing', steps), percent: 29 };
+
+    expect(describeStatus(downloading, among(downloading))).toEqual({
+      heading: 'Finding Clips',
+      hasWarning: false,
+      bar: { percent: 29, label: 'Downloading Whisper small' },
+      stage: 'Downloading Whisper small',
+      footnote: 'Step 2 of 5.',
+      action: 'stop',
+    });
+  });
+
+  it('counts the transcription as step 3 of 5 after a model download', () => {
+    const steps: ProjectStep[] = [
+      { ...DOWNLOAD, ...DONE },
+      { ...TRANSCRIBE, state: 'running', percent: 40 },
+      ...NOT_TRANSCRIPTION,
+    ];
+    const transcribing = describeFetchedProject('processing', steps);
+
+    expect(describeStatus(transcribing, among(transcribing))).toMatchObject({
+      stage: 'Transcribing on this Mac',
+      footnote: 'Step 3 of 5.',
     });
   });
 });

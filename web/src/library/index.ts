@@ -14,6 +14,7 @@ export {
   EmptyLibraryScreen,
   findCurrentStep,
   LibraryScreen,
+  nameRestingState,
   refreshProjects,
   SidebarDiskLine,
   SidebarProjects,

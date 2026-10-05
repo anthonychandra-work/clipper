@@ -1,4 +1,4 @@
-import { findCurrentStep, type Project } from '@/library';
+import { findCurrentStep, nameRestingState, type Project } from '@/library';
 
 export type HaltAction = 'stop' | 'resume' | 'retry';
 
@@ -66,10 +66,11 @@ function describeRun(project: Project, heading: string, advice: string): StatusC
 function describeRest(project: Project): StatusCardText {
   const finished = project.steps.filter((step) => step.state === 'done');
   const notStarted = project.steps.filter((step) => step.state !== 'done').map((step) => step.label);
+  const restingWord = nameRestingState(project.status) ?? '';
   return {
-    heading: 'Fetched',
+    heading: restingWord,
     hasWarning: false,
-    bar: { percent: project.percent, label: 'Fetched' },
+    bar: { percent: project.percent, label: restingWord },
     stage: `Step ${finished.length} of ${project.steps.length} is done.`,
     footnote: notStarted.length > 0 ? `Not started: ${notStarted.join(', ')}.` : null,
     action: null,

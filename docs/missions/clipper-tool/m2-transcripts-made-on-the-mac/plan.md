@@ -314,7 +314,7 @@ What the spec's file list leaves out
   step; with the model source closed the download fails with its reason; and with the model in
   place and the model source closed, transcription still finishes.
 
-- [ ] T8 — Show the transcribed rest in the web app
+- [x] T8 — Show the transcribed rest in the web app
   Files: `web/src/library/library.types.ts`, `web/src/library/index.ts`,
   `web/src/library/list-projects/index.ts`,
   `web/src/library/list-projects/lib/describe-row-status.ts`,
