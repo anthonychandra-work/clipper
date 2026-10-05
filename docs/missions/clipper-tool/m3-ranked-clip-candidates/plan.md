@@ -527,8 +527,9 @@ What the spec's file list leaves out
   talk to ready and finds six candidates and no peak in its selection. The evidence files are
   saved with the command of validation block V4 and committed.
 
-- [ ] T17 — Browser tests: the two steps on screen, Stop and Resume, a restart, and the key
-  Files: `web/e2e/selection-progress.spec.ts`, `web/e2e/api-key.spec.ts`,
+- [x] T17 — Browser tests: the two steps on screen, Stop and Resume, a restart, and the key
+  Files: `docs/missions/clipper-tool/spec.md`,
+  `web/e2e/selection-progress.spec.ts`, `web/e2e/api-key.spec.ts`,
   `web/e2e/support/run-tool.ts`, `web/e2e/support/index.ts`
   Done: `selection-progress.spec.ts` starts the tool with the stand-in's `/slow/talk` and a
   saved key, and starts it as it found it afterwards. A link to the talk shows, in its Library

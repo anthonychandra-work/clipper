@@ -14,6 +14,7 @@ const PORT_CLOSE_TIMEOUT_MS = 20_000;
 export interface TestRunSettings {
   runDir: string;
   dataDir: string;
+  keyFile: string;
   webPort: number;
   servicePort: number;
 }
@@ -28,6 +29,7 @@ export function readTestRunSettings(): TestRunSettings {
   return {
     runDir: readVariable('CLIPPER_TEST_RUN_DIR'),
     dataDir: readVariable('CLIPPER_DATA_DIR'),
+    keyFile: readVariable('CLIPPER_KEY_FILE'),
     webPort: Number(readVariable('CLIPPER_WEB_PORT')),
     servicePort: Number(readVariable('CLIPPER_SERVICE_PORT')),
   };
@@ -82,6 +84,10 @@ export class ToolRun {
     };
     this.command = launchStartCommand(environment);
     this.address = await readPrintedAddress(this.command);
+  }
+
+  readOutput(): string {
+    return this.command?.output() ?? '';
   }
 
   async stop(): Promise<void> {

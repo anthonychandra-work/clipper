@@ -670,6 +670,16 @@ From `intent.md`. Base `82df5ce`.
   ready, so the saved requests are that project's alone. It names the missing-key sentence and
   the two controls of the card itself, beside the shared description of that end. The plan says
   what the test shows and saves and leaves these open. (executor, m3)
+- A88 — The key test reads the answers a page receives by passing every request of the page
+  through the test, which fetches each answer and reads it before the page gets it. Measured on
+  Playwright 1.63.0 with Chromium: asked afterwards, the browser no longer holds the body of an
+  answer to a page it has left, and never holds the body of a link the framework fetched ahead of
+  a tap, so a test that asks afterwards cannot check those answers. An answer that cannot be read
+  fails the test; none is counted as empty. The test also requires that what it read holds a
+  page, a link fetched ahead and an answer of the service, so reading nothing cannot pass. It
+  waits for each screen to stop receiving before it opens the next. The progress tests answer
+  every selection request six seconds late, about 24 seconds for one project. The plan says what
+  the tests show and leaves these open. (executor, m3)
 
 ## Milestones
 
