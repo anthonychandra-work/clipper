@@ -1,4 +1,5 @@
 from .create_project import create_project
+from .describe_project import describe_project
 from .project import (
     ARRIVAL_SHARE_PERCENT,
     STEP_ORDER,
@@ -14,7 +15,7 @@ from .project import (
 )
 from .project_queue import ProjectQueue
 from .project_repository import ProjectNotFoundError, ProjectRepository
-from .project_schemas import CreateProjectRequest
+from .project_schemas import CreateProjectRequest, ProjectResponse
 from .receive_upload import UploadPart, receive_upload_part
 from .router import ProjectsDependencies, router
 
@@ -28,6 +29,7 @@ __all__ = [
     "ProjectNotFoundError",
     "ProjectQueue",
     "ProjectRepository",
+    "ProjectResponse",
     "ProjectStatus",
     "ProjectsDependencies",
     "SourceKind",
@@ -37,6 +39,7 @@ __all__ = [
     "Upload",
     "UploadPart",
     "create_project",
+    "describe_project",
     "receive_upload_part",
     "router",
 ]

@@ -28,6 +28,7 @@ class ProjectsDependencies:
     repository: ProjectRepository
     data_folder: DataFolder
     read_disk_space: Callable[[], DiskSpace]
+    stop_processing: Callable[[str], object]
 
 
 def provide_projects(request: Request) -> ProjectsDependencies:
@@ -62,7 +63,7 @@ def read_project(project_id: str, projects: Projects) -> ProjectResponse:
 
 @router.delete("/{project_id}", status_code=status.HTTP_204_NO_CONTENT)
 def remove_project(project_id: str, projects: Projects) -> None:
-    delete_project(project_id, projects.repository, projects.data_folder)
+    delete_project(project_id, projects.repository, projects.data_folder, projects.stop_processing)
 
 
 @router.put("/{project_id}/upload")

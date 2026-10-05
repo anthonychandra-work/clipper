@@ -4,6 +4,7 @@ from ..storage import BYTES_PER_GB, DataFolder, DiskSpace
 from .create_project import create_project
 from .delete_project import delete_project
 from .project import Platform, Project, SourceKind
+from .project_queue import ProjectQueue
 from .project_repository import ProjectNotFoundError, ProjectRepository
 from .project_schemas import CreateProjectRequest
 
@@ -17,6 +18,10 @@ def create_link_project(repository: ProjectRepository) -> Project:
     return create_project(draft, repository, PLENTY)
 
 
+def refuse_to_stop(project_id: str) -> None:
+    raise AssertionError(f"Project {project_id} is not being processed and must not be stopped.")
+
+
 def test_delete_removes_the_files_of_the_project(
     repository: ProjectRepository, data_folder: DataFolder
 ) -> None:
@@ -26,7 +31,7 @@ def test_delete_removes_the_files_of_the_project(
     (project_dir / "source.mp4").write_bytes(b"video")
     (project_dir / "preview.mp4").write_bytes(b"preview")
 
-    delete_project(project.id, repository, data_folder)
+    delete_project(project.id, repository, data_folder, refuse_to_stop)
 
     assert not project_dir.exists()
     assert repository.find(project.id) is None
@@ -40,7 +45,7 @@ def test_delete_leaves_the_other_projects_alone(
     kept_dir.mkdir()
     (kept_dir / "source.mp4").write_bytes(b"video")
 
-    delete_project(removed.id, repository, data_folder)
+    delete_project(removed.id, repository, data_folder, refuse_to_stop)
 
     assert (kept_dir / "source.mp4").read_bytes() == b"video"
     assert repository.get(kept.id) == kept
@@ -51,13 +56,32 @@ def test_delete_works_for_a_project_that_has_no_files_yet(
 ) -> None:
     project = create_link_project(repository)
 
-    delete_project(project.id, repository, data_folder)
+    delete_project(project.id, repository, data_folder, refuse_to_stop)
 
     assert repository.find(project.id) is None
+
+
+def test_a_processing_project_is_stopped_before_its_files_are_removed(
+    repository: ProjectRepository, data_folder: DataFolder, queue: ProjectQueue
+) -> None:
+    project = create_link_project(repository)
+    project_dir = data_folder.project_dir(project.id)
+    project_dir.mkdir()
+    queue.take_oldest_queued()
+    files_when_stopped: list[bool] = []
+
+    def record_stop(project_id: str) -> None:
+        assert project_id == project.id
+        files_when_stopped.append(project_dir.exists())
+
+    delete_project(project.id, repository, data_folder, record_stop)
+
+    assert files_when_stopped == [True]
+    assert not project_dir.exists()
 
 
 def test_deleting_an_unknown_project_raises_not_found(
     repository: ProjectRepository, data_folder: DataFolder
 ) -> None:
     with pytest.raises(ProjectNotFoundError):
-        delete_project("missing", repository, data_folder)
+        delete_project("missing", repository, data_folder, refuse_to_stop)

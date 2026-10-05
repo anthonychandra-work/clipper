@@ -8,7 +8,7 @@ import pytest
 
 from ..conftest import VideoRecipe
 from ..media import MediaTools, NotAVideoError, probe_video
-from ..pipeline import StageRun
+from ..pipeline import StageFailedError, StageRun
 from ..projects import (
     CreateProjectRequest,
     Platform,
@@ -154,6 +154,19 @@ def test_a_rerun_starts_from_clean_files(
 
     assert sorted(left.name for left in project_dir.iterdir()) == ["preview.mp4", "source.mp4"]
     assert (project_dir / "preview.mp4").stat().st_size > 1000
+
+
+def test_a_link_that_cannot_be_downloaded_fails_with_a_plain_reason(
+    stage: FetchStage, add_link_project: Callable[[str], Project], fixture_server: str
+) -> None:
+    project = add_link_project(f"{fixture_server}/missing.mp4")
+
+    with pytest.raises(StageFailedError) as raised:
+        run_stage(stage, project)
+
+    assert raised.value.reason == (
+        "The video could not be downloaded. Check the link and your connection, then retry."
+    )
 
 
 def test_an_upload_that_is_not_a_video_fails_by_name(

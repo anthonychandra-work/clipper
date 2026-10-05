@@ -1,11 +1,14 @@
 from pathlib import Path
 
 from ..media import MediaTools, PreviewJob, make_preview_copy, probe_video
-from ..pipeline import StageRun
+from ..pipeline import StageFailedError, StageRun
 from ..projects import ARRIVAL_SHARE_PERCENT, ProjectRepository, ProjectStatus, StepKind
 from ..storage import DataFolder
-from .download_link import LinkDownload, download_link
+from .download_link import DownloadedVideo, LinkDownload, LinkDownloadError, download_link
 
+DOWNLOAD_FAILED = (
+    "The video could not be downloaded. Check the link and your connection, then retry."
+)
 PREVIEW_NAME = "preview.mp4"
 PREVIEW_PATTERN = "preview*"
 ARRIVAL_SHARE = ARRIVAL_SHARE_PERCENT / 100
@@ -45,15 +48,21 @@ class FetchStage:
         project = stage_run.project
         if project.link is None:
             return self._find_uploaded_source(project.id)
-        downloaded = download_link(
-            LinkDownload(project.link, self._data_folder.project_dir(project.id)),
-            self._tools,
-            stage_run.stop,
-            lambda percent: stage_run.report_percent(percent * ARRIVAL_SHARE),
-        )
+        downloaded = self._download(stage_run, project.link)
         if downloaded.title:
             self._repository.rename(project.id, downloaded.title)
         return downloaded.file
+
+    def _download(self, stage_run: StageRun, link: str) -> DownloadedVideo:
+        try:
+            return download_link(
+                LinkDownload(link, self._data_folder.project_dir(stage_run.project.id)),
+                self._tools,
+                stage_run.stop,
+                lambda percent: stage_run.report_percent(percent * ARRIVAL_SHARE),
+            )
+        except LinkDownloadError as failure:
+            raise StageFailedError(DOWNLOAD_FAILED) from failure
 
     def _find_uploaded_source(self, project_id: str) -> Path:
         uploaded = self._data_folder.find_source_file(project_id)

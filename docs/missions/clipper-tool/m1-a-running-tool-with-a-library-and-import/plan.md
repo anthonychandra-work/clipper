@@ -350,8 +350,10 @@ The prototype
   port, sees the second wait and then finish, stops the tool during a slow fetch, starts it and
   sees that project finish.
 
-- [ ] T10 — Stop, resume and retry a project, with plain failure reasons
-  Files: `service/clipper/main.py`, `service/clipper/pipeline/__init__.py`,
+- [x] T10 — Stop, resume and retry a project, with plain failure reasons
+  Files: `service/clipper/main.py`, `service/clipper/pipeline/pipeline_stage.py`,
+  `service/clipper/fetching/fetch_stage.py`, `service/clipper/fetching/test_fetch_stage.py`,
+  `service/clipper/projects/__init__.py`, `service/clipper/pipeline/__init__.py`,
   `service/clipper/pipeline/halt_project.py`, `service/clipper/pipeline/test_halt_project.py`,
   `service/clipper/pipeline/explain_failure.py`,
   `service/clipper/pipeline/test_explain_failure.py`, `service/clipper/pipeline/run_queue.py`,
