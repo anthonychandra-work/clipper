@@ -1,7 +1,10 @@
 # Validation: m1-a-running-tool-with-a-library-and-import
 
-Run every check from the worktree's root, in order. A check written as "block" runs the commands
-under its heading below the table. Ports 3000, 8765, 3100 and 8865 must be free before V1.
+Run every check from the worktree's root, in the order of the table: V33, added on attempt 2,
+comes after V5. A check written as "block" runs the commands under its heading below the table,
+with `bash`. Ports 3000, 8765, 3100 and 8865 must be free before V1. The Mac must be on a network
+and stay awake until the last check ends, because the browser tests time their steps on the
+clock. On battery power a closed lid puts it to sleep.
 
 `pnpm test:browser <file>` prints one line per test. Such a check passes when the command exits 0
 and the passed tests show everything its `expected` cell lists.
@@ -13,6 +16,7 @@ and the passed tests show everything its `expected` cell lists.
 | V3 | Test data is removed and no tracked file changes (R56) | block V3 | `ls` reports that the folder does not exist. `git status` prints nothing. |
 | V4 | "The start command brings the tool up, and the Library opens at the address it prints"; the web app on every interface, the service on loopback only (R2, R11, A3) | block V4 | The log shows `http://localhost:3000`. The Library answers 200 and the page's title is `Clipper`. `/api/health` answers 200 through port 3000. `lsof` shows port 3000 listening on `*` and port 8765 on `127.0.0.1`. The data folder holds a database file. After the interrupt neither port has a listener. |
 | V5 | "Started with a setting that points at a folder without ffmpeg, the tool stops with a message that names ffmpeg" (R10) | block V5 | The exit code is neither 0 nor 142. The log holds a sentence that names `ffmpeg` and `ffprobe` and says where Clipper looked. No line contains `Traceback`. Neither port has a listener. |
+| V33 | When the tool is stopped, the service stops before the web app, so nothing of the tool is listening once its address no longer answers (A36) | block V33 | Five rounds. Each prints `200` for the service through the web app, then a line that reads `<count> samples, 0 with the web port closed and the service port open`, then exit code 130. After the last round neither port has a listener. |
 | V6 | The web app is reachable on the Mac's network address and the service is not; pages ask nothing outside the tool (R2, R57) | `pnpm test:browser e2e/start-command.spec.ts e2e/own-origin.spec.ts` | The Library opens at the address the start command printed. The web port answers on the Mac's network address and the service port refuses there. On every screen of this milestone, each request goes to the tool's own address. |
 | V7 | "Uploading the fixture video creates a project whose row shows the fetch stage progressing and then complete, with the fixture's real length" (R13, R15) | `pnpm test:browser e2e/import-upload.spec.ts` | The fixture is uploaded through the new project sheet. The project's row shows the first step's bar at two or more rising values and never a falling one. The row then reads "Fetched" with the length ffprobe reports for the fixture. |
 | V8 | "A link to the same file, served by a local test server, does the same" (R13) | `pnpm test:browser e2e/import-link.spec.ts` | A link to the fixture on the local server is entered in the sheet. The row shows the first step's bar rising, then "Fetched" with the fixture's length. |
@@ -91,6 +95,47 @@ lsof -nP -iTCP:3000 -sTCP:LISTEN; lsof -nP -iTCP:8765 -sTCP:LISTEN; echo "end of
 rm -rf "$run"
 ```
 
+### V33
+
+```bash
+run="$(mktemp -d)"
+printf 'import os, sys\ntry:\n    os.setsid()\nexcept OSError:\n    pass\nos.execvp(sys.argv[1], sys.argv[1:])\n' > "$run/own-group.py"
+cat > "$run/watch-ports.py" <<'EOF'
+import socket
+import time
+
+
+def is_open(port):
+    with socket.socket() as probe:
+        probe.settimeout(0.5)
+        return probe.connect_ex(("127.0.0.1", port)) == 0
+
+
+samples = service_alone = 0
+deadline = time.monotonic() + 30
+while time.monotonic() < deadline:
+    is_web_open = is_open(3000)
+    is_service_open = is_open(8765)
+    samples += 1
+    service_alone += (not is_web_open) and is_service_open
+    if not is_web_open and not is_service_open:
+        break
+    time.sleep(0.005)
+print(f"{samples} samples, {service_alone} with the web port closed and the service port open")
+EOF
+for round in 1 2 3 4 5; do
+  CLIPPER_DATA_DIR="$run/data" python3 "$run/own-group.py" pnpm start > "$run/start.log" 2>&1 &
+  tool=$!
+  for i in $(seq 1 180); do grep -q "http://localhost:3000" "$run/start.log" && break; sleep 1; done
+  curl -s -o /dev/null -w "round $round, service through the web app: %{http_code}\n" http://localhost:3000/api/health
+  kill -INT -- "-$tool"
+  python3 "$run/watch-ports.py"
+  wait "$tool"; echo "exit code of the start command: $?"
+done
+lsof -nP -iTCP:3000 -sTCP:LISTEN; lsof -nP -iTCP:8765 -sTCP:LISTEN; echo "end of listeners after the last round"
+rm -rf "$run"
+```
+
 ### V19
 
 ```bash
@@ -116,7 +161,7 @@ grep -rniE "sqlite" web/src web/package.json
 
 ```bash
 for f in base controls lists shell pages; do cmp docs/prototype/styles/$f.css "$(find web/src -name "$f.css")" && echo "$f.css identical"; done
-diff <(grep -o -- '--[a-z0-9-]*: [^;]*;' docs/prototype/index.html | sort -u) <(grep -rho -- '--[a-z0-9-]*: [^;]*;' web/src --include='tokens.css' | sort -u) && echo "tokens identical"
+diff <(grep -o -- '--[a-z0-9-]*: [^;]*;' docs/prototype/index.html | sort -u) <(grep -rho --include='tokens.css' -- '--[a-z0-9-]*: [^;]*;' web/src | sort -u) && echo "tokens identical"
 find web/src -name '*.css' | sort
 ```
 

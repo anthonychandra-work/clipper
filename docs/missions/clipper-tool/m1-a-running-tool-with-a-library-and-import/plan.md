@@ -1,6 +1,6 @@
 # Plan: m1-a-running-tool-with-a-library-and-import
 
-Attempt: 1
+Attempt: 2
 
 ## Findings
 
@@ -149,6 +149,57 @@ The prototype
 - Not audited here: from the token values, a tinted button label on the sheet in light measures
   about 4.4 to 1 and placeholder text on the dark sheet about 4.35 to 1, just under D57's 4.5.
   M1 copies the tokens unchanged and no check in this milestone measures contrast.
+
+What attempt 1 got wrong
+
+- V4. The start command stops both parts at the same moment (`scripts/start-tool.mjs`,
+  `shutDown`). Measured over eight starts on ports 3100 and 8865: the web port closed 4 ms after
+  the interrupt and the service port 39 to 163 ms after it. uvicorn 0.54.0 looks for a stop
+  signal ten times a second and closes its listener only then
+  (`service/.venv/lib/python3.12/site-packages/uvicorn/server.py`, `main_loop` and `shutdown`).
+  Block V4 lists both ports as soon as port 3000 is free, so it can find the service still
+  listening, and did in one run of six. T1 said "Ctrl-C stops both parts" and named no order, and
+  no test watched the ports while they closed.
+- Tried in a copy of the script outside the worktree: the service stopped first, and the web app
+  only after the service's process had ended. In six stops of six, no sample found the web port
+  closed with the service port open. The web port closed about 0.1 s after the service port, and
+  the command still exited 130. (A36)
+- `scripts/start-tool.mjs` and `scripts/run-program.mjs` each hold 9 top-level functions, and
+  `web/e2e/support/run-tool.ts` holds 8. The hooks refuse an eleventh.
+- V20. The capture test saves the first window of each screen, 390 × 844 and 1360 × 900
+  (`web/e2e/support/capture-screens.ts`). Settings is longer than both: 1419 px at 390 px wide
+  and 1041 px at 1360. On the phone layout the document scrolls and the tab bar is fixed to the
+  bottom of the window (`web/src/shared/styles/shell.css`, `.tab-bar`), so the first window shows
+  the bar over the Storage group, as the prototype does at that scroll position. The screen is
+  right: `.app[data-layout="compact"]` keeps 5.75 rem under the content, more than the bar's
+  82 px, so at the end of the scroll no text lies under the bar. The capture was wrong.
+- Playwright 1.63.0's `fullPage` capture does not help. At 390 px it gave a picture 1419 px tall
+  with the tab bar drawn where the first window ends, over the same row. At 1360 px it stayed
+  900 px tall, because there the pane scrolls and the document does not. (tried)
+- Growing the window does. With `page.setViewportSize` at 390 × 1419 and at 1360 × 1041 after the
+  screen had loaded, the captures showed all five groups with the tab bar under the last footer,
+  and `data-layout` and `data-large-title` did not change. (tried, A37)
+- What scrolls downward: the document on the phone layout; `.pane` and `.sidebar__scroll` from
+  720 px (`lists.css`, `shell.css`); `.sheet__body` in the sheet. `.status-card` has a top margin
+  of `12vh` (`pages.css`), so a taller window pushes it down, and one pass of growing can leave a
+  little still out of view.
+- On the phone layout the new project sheet is drawn over the tab bar and reaches the bottom
+  edge, so its text shares the bar's place on the screen without lying under it.
+- The Settings captures show the Mac's network address. Once they hold the whole screen, all four
+  differ from the committed files whenever the Mac has changed network. V32 allows changes inside
+  the milestone's folder.
+- V26. The check was wrong and the code is right. `--include='tokens.css'` stood after the `--`
+  separator, so grep took it for a file name and read every file under `web/src`. The three lines
+  it reported are lines 254 to 256 of `controls.css`, which the prototype's `controls.css` holds
+  at the same lines. Written that way the check passes only when a copied stylesheet departs from
+  the prototype, which R4 and A31 forbid, so it contradicted the spec. `validation.md` now puts
+  the option before the separator. Run under `bash` on the code as it stands, the block prints
+  `tokens identical`, with 170 declarations on each side.
+- V2. Its first run failed because the Mac slept with its lid closed, and the browser tests time
+  their steps on the clock. No code changes for it. `validation.md` now says the Mac must stay
+  awake while the checks run.
+- V33 is new and proves A36. Run on the code as it stands, each of its five rounds printed 3 to
+  11 samples with the web port closed and the service port open.
 
 ## Tasks
 
@@ -669,3 +720,40 @@ The prototype
   `AGENTS.md` names the same commands, the layout of each part, the rules in the Findings, the
   prototype as the design reference with its stylesheets copied unchanged, and the mission's
   boundaries. Each command in both files was run as written.
+
+- [ ] T20 — Stop the service before the web app
+  Files: `scripts/start-tool.mjs`, `web/e2e/support/watch-ports.ts`,
+  `web/e2e/support/index.ts`, `web/e2e/stop-order.spec.ts`, `AGENTS.md`
+  Done: when it is interrupted, hung up or terminated, and when one part ends by itself, the
+  start command stops the service and a build in progress, waits for their processes to end, and
+  only then stops the web app. A program still running 5 seconds after it was told to stop is
+  killed, as before, and the exit codes are unchanged: 130 after Ctrl-C and 1 when a part ends by
+  itself. `stop-order.spec.ts` finds both ports open, then samples them every 5 ms or less, the
+  web port first and the service port second, from before `tool.stop()` until both are closed.
+  It starts the tool again and then expects no sample with the web port closed and the service
+  port open. Written before the script changes, the test fails on the code as it stands.
+  `pnpm test:browser e2e/stop-order.spec.ts e2e/start-command.spec.ts e2e/missing-ffmpeg.spec.ts e2e/restart.spec.ts e2e/queue-through-tool.spec.ts`
+  exits 0. Block V33 of `validation.md` prints 0 samples with the web port closed and the
+  service port open in each of its five rounds. `AGENTS.md` gives the order where it describes
+  `pnpm start`. The standards review of the task's source files prints no finding without
+  `[advisory]`.
+
+- [ ] T21 — Capture each screen whole
+  Files: `web/e2e/support/capture-screens.ts`, `web/e2e/support/show-whole-screen.ts`,
+  `web/e2e/captures.spec.ts`, `AGENTS.md`,
+  `docs/missions/clipper-tool/m1-a-running-tool-with-a-library-and-import/evidence/`
+  Done: before each capture the test makes the window taller, at the same width, until the
+  document and every element that scrolls downward have nothing left out of view. It takes the
+  capture and sets the window back to 390 × 844 or 1360 × 900 before the next screen opens. The
+  test fails, naming the screen, when something is still out of view after five passes. On the
+  phone layout it also fails when a line of text lies under the tab bar at the moment of the
+  capture; text in an open sheet, which is drawn over the bar, is not counted.
+  `captures.spec.ts` reads the size of each saved picture from its header and expects the width
+  in its name, a height no less than the window's, and for the four Settings captures a height
+  greater than the window's. The 24 captures are saved again with the command of block V19 and
+  committed. The executor opens them: `settings-390-light.png` and `settings-390-dark.png` show
+  five titled groups with the tab bar under the last footer, `settings-1360-light.png` and
+  `settings-1360-dark.png` show the fifth group down to its footer, and every other capture
+  still shows what V20 expects of it. `AGENTS.md` says that a capture holds its whole screen.
+  The standards review of the task's source files prints no finding without `[advisory]`.
+  `pnpm test` exits 0 with every gate passed, and `git status` prints nothing after the commit.

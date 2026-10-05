@@ -330,6 +330,14 @@ From `intent.md`. Base `82df5ce`.
   option with an ellipsis, at 390 px for the transcription model and at 200% for four of the six
   choices, which R7 does not allow. The rules sit in the app's own stylesheet, and the copied
   stylesheets stay unchanged. (executor, m1)
+- A36 — When the tool is stopped, the service stops first, and the web app stops once the
+  service's process has ended. The web app's address is the one the user opens, so it is the last
+  thing to close: when it no longer answers, nothing of the tool is still listening. The intent
+  asks for one command that starts the tool and does not say how the tool stops. (planner, m1)
+- A37 — A saved screen capture holds its whole screen. For a screen longer than the window, the
+  capture is taken with the window made as tall as the screen, at the same width. On a phone the
+  tab bar floats over a screen that scrolls, as in the prototype, so a capture of the first
+  window alone shows the bar over text and leaves out what is below it. (planner, m1)
 
 ## Milestones
 
