@@ -657,6 +657,13 @@ From `intent.md`. Base `82df5ce`.
   that moment. `web/e2e/support` holds more flat source files than the coding standards advise,
   as A79 records for two other folders; the plan names each new file at its flat path. The plan
   says what the description holds and leaves these open. (executor, m3)
+- A86 — The service makes its stores once and hands them to the steps and to the addresses that
+  need them, and it makes the score step and the cut step together from one set of what both
+  need. The tests that take the uploaded talk through the whole app with a key run it once and
+  read that one run from several tests, because a run takes about ten seconds. They compare the
+  transcribed words with the committed ones by their text. One more test starts the app on a
+  project that rested transcribed, with no key saved, and finds it failed for the missing key.
+  The plan fixes what is handed over and what is tested and leaves these open. (executor, m3)
 
 ## Milestones
 

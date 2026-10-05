@@ -31,6 +31,7 @@ WAIT_SECONDS = 30
 MODEL_DOWNLOAD_FAILED = (
     "The transcription model could not be downloaded. Check your connection, then retry."
 )
+NO_KEY = "No Anthropic API key is saved. Add one in Settings, then retry."
 
 
 @pytest.fixture
@@ -154,6 +155,32 @@ def test_a_project_that_rested_fetched_goes_on_to_the_steps_after_it_at_the_star
     assert halted.halt is not None and halted.halt.reason == MODEL_DOWNLOAD_FAILED
     assert [step.kind for step in halted.steps] == ["fetch", "model", "transcribe", "score", "cut"]
     assert halted.steps[1].label == "Downloading Whisper large-v3-turbo"
+
+
+def test_a_project_that_rested_transcribed_goes_on_to_the_score_step_which_needs_a_saved_key(
+    tmp_path: Path, build_video: Callable[[VideoRecipe], Path]
+) -> None:
+    settings = StartupSettings(data_dir=tmp_path / "data")
+    rested = leave_a_project_processing(settings, build_video(VideoRecipe(name="upload.mp4")))
+    queue = ProjectQueue(open_database(settings.data_dir / "clipper.sqlite3"))
+    queue.finish_step(rested, StepKind.FETCH)
+    queue.finish_step(rested, StepKind.TRANSCRIBE)
+    queue.rest(rested, ProjectStatus.TRANSCRIBED)
+
+    with TestClient(create_app(settings)) as restarted:
+        halted = wait_until(restarted, rested, has_halted)
+        selection = restarted.get(f"/api/projects/{rested}/selection").json()
+
+    assert halted.status is ProjectStatus.FAILED
+    assert halted.halt is not None and halted.halt.reason == NO_KEY
+    assert halted.halt.opens_settings is True
+    assert [step.state for step in halted.steps] == [
+        StepState.DONE,
+        StepState.DONE,
+        StepState.PENDING,
+        StepState.PENDING,
+    ]
+    assert selection["candidates"] == []
 
 
 @pytest.mark.parametrize("address", ["/docs", "/redoc", "/openapi.json"])

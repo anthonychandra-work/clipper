@@ -486,8 +486,9 @@ What the spec's file list leaves out
   the steps' kinds and states from the service instead of the resting card. No spec names the
   transcribed rest itself. `pnpm test` exits 0.
 
-- [ ] T15 — Hand the queue the score and cut steps
-  Files: `service/clipper/main.py`, `service/clipper/test_main.py`,
+- [x] T15 — Hand the queue the score and cut steps
+  Files: `docs/missions/clipper-tool/spec.md`,
+  `service/clipper/main.py`, `service/clipper/test_main.py`,
   `service/clipper/transcription/test_whole_app.py`,
   `service/clipper/selection/test_whole_app.py`, `service/clipper/selection/conftest.py`,
   `web/e2e/support/keyless-end.ts`

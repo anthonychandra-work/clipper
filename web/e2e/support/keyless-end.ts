@@ -6,6 +6,8 @@ import type { RowText } from './library-page';
 import type { StatusCardText } from './status-screen';
 import { isStepDone, waitForProject } from './wait-for-step';
 
+const NO_KEY = 'No Anthropic API key is saved. Add one in Settings, then retry.';
+
 export interface KeylessEnd {
   status: ProjectStatus;
   row: Pick<RowText, 'status' | 'barLabel'>;
@@ -15,16 +17,16 @@ export interface KeylessEnd {
 }
 
 export const KEYLESS_END: KeylessEnd = {
-  status: 'transcribed',
-  row: { status: 'Transcribed', barLabel: 'Transcribed' },
+  status: 'failed',
+  row: { status: 'Could not finish', barLabel: null },
   card: {
-    heading: 'Transcribed',
-    stage: 'Step 2 of 4 is done.',
-    footnote: 'Not started: Scoring windows, Cutting clips.',
-    buttons: [],
-    links: [],
-    hasBar: true,
-    hasWarning: false,
+    heading: 'Could Not Finish',
+    stage: NO_KEY,
+    footnote: null,
+    buttons: ['Retry'],
+    links: ['Open Settings'],
+    hasBar: false,
+    hasWarning: true,
   },
   stepStates: ['done', 'done', 'pending', 'pending'],
   files: ['preview.mp4', 'source.mp4', 'transcript.json'],

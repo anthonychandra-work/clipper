@@ -116,8 +116,13 @@ def talk_transcript() -> Transcript:
 
 
 @pytest.fixture
-def key_store(tmp_path: Path) -> ApiKeyStore:
-    return ApiKeyStore(tmp_path / "keys" / "anthropic-api-key")
+def key_file(tmp_path: Path) -> Path:
+    return tmp_path / "keys" / "anthropic-api-key"
+
+
+@pytest.fixture
+def key_store(key_file: Path) -> ApiKeyStore:
+    return ApiKeyStore(key_file)
 
 
 @pytest.fixture
