@@ -14,7 +14,8 @@ const WEB_BUILD_FAILED = 'The web app could not be built. The lines above say wh
 const EXIT_FAILED = 1;
 const SIGNAL_EXIT_CODES = { SIGHUP: 129, SIGINT: 130, SIGTERM: 143 };
 
-const runningPrograms = new Set();
+const programsToStopFirst = new Set();
+let webApp = null;
 let isStopping = false;
 
 main().catch(failStart);
@@ -23,11 +24,11 @@ async function main() {
   assertSetUp();
   const settings = readRunSettings(process.env);
   stopOnSignals();
-  launchPart(describeService(settings));
+  programsToStopFirst.add(launchPart(describeService(settings)));
   await waitUntilAnswering(`http://127.0.0.1:${settings.servicePort}/api/health`);
   const buildExitCode = await buildWebAppIfStale(settings, runToCompletion);
   if (buildExitCode !== 0) throw new Error(WEB_BUILD_FAILED);
-  launchPart(describeWebApp(settings));
+  webApp = launchPart(describeWebApp(settings));
   await waitUntilAnswering(`http://127.0.0.1:${settings.webPort}/api/health`);
   process.stdout.write(`Clipper is running at http://localhost:${settings.webPort}\n`);
 }
@@ -53,15 +54,15 @@ function describeWebApp(settings) {
 
 function launchPart(program) {
   const part = startProgram(program);
-  runningPrograms.add(part);
   waitForExit(part).then(() => shutDown(EXIT_FAILED));
+  return part;
 }
 
 async function runToCompletion(program) {
   const child = startProgram(program);
-  runningPrograms.add(child);
+  programsToStopFirst.add(child);
   const exitCode = await waitForExit(child);
-  runningPrograms.delete(child);
+  programsToStopFirst.delete(child);
   return exitCode;
 }
 
@@ -74,7 +75,9 @@ function stopOnSignals() {
 async function shutDown(exitCode) {
   if (isStopping) return;
   isStopping = true;
-  await Promise.all([...runningPrograms].map(stopProgram));
+  await Promise.all([...programsToStopFirst].map(stopProgram));
+  // The web app goes last, so once its address stops answering nothing of the tool is still listening.
+  if (webApp !== null) await stopProgram(webApp);
   process.exit(exitCode);
 }
 

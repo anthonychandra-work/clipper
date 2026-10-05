@@ -13,7 +13,9 @@ Run every command from the repository root.
   the tests drive into `.cache/playwright`.
 - `pnpm start` starts the service on `127.0.0.1:8765` and the web app on port 3000, then prints
   the address to open. It builds the web app when the build is missing or older than the sources.
-  Ctrl-C stops both parts.
+  Ctrl-C stops both parts: the service first, and the web app once the service's process has
+  ended, so nothing of the tool is still listening when the address no longer answers. The order
+  is the same when one part ends by itself.
 - `pnpm test` runs every check: Ruff, mypy, pytest, ESLint, the web build, the TypeScript check,
   Vitest and Playwright. It runs them all, reports each as passed or failed, and exits 0 only when
   all passed.

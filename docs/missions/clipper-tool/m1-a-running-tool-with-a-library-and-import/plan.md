@@ -721,7 +721,7 @@ What attempt 1 got wrong
   prototype as the design reference with its stylesheets copied unchanged, and the mission's
   boundaries. Each command in both files was run as written.
 
-- [ ] T20 — Stop the service before the web app
+- [x] T20 — Stop the service before the web app
   Files: `scripts/start-tool.mjs`, `web/e2e/support/watch-ports.ts`,
   `web/e2e/support/index.ts`, `web/e2e/stop-order.spec.ts`, `AGENTS.md`
   Done: when it is interrupted, hung up or terminated, and when one part ends by itself, the

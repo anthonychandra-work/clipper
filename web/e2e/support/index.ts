@@ -44,3 +44,4 @@ export {
   visitScreens,
   type Walk,
 } from './walk-screens';
+export { type PortSample, samplePortsUntilClosed } from './watch-ports';
