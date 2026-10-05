@@ -35,6 +35,7 @@ RESET_STEP = """
 UPDATE project_steps SET state = 'pending', percent = 0, label = ?
 WHERE project_id = ? AND kind = ?
 """
+LABEL_STEP = "UPDATE project_steps SET label = ? WHERE project_id = ? AND kind = ?"
 POSITION_OF_STEP = "SELECT position FROM project_steps WHERE project_id = ? AND kind = ?"
 # Two rows never share a position: the later steps wait below zero until the new one is in.
 MOVE_LATER_STEPS_ASIDE = """
@@ -92,6 +93,10 @@ class ProjectQueue:
     def list_processing(self) -> list[str]:
         with self._database.transaction() as connection:
             return [str(row["id"]) for row in connection.execute(PROCESSING_IDS)]
+
+    def label_step(self, project_id: str, step: StepKind, label: str) -> None:
+        with self._database.transaction() as connection:
+            connection.execute(LABEL_STEP, [label, project_id, step])
 
     def put_step_ahead(
         self, project_id: str, *, kind: StepKind, label: str, ahead_of: StepKind

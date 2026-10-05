@@ -375,14 +375,16 @@ What the spec's file list leaves out
   mark as `opensSettings` beside the reason. Tests with stand-in stages: a marked failure is
   stored and shown marked; Retry clears it; a failure that states only its reason is unmarked.
 
-- [ ] T10 — Build the score step and the cut step
+- [x] T10 — Build the score step and the cut step
   Files: `service/clipper/selection/selection_reasons.py`,
   `service/clipper/selection/test_selection_reasons.py`,
+  `service/clipper/selection/prepare_pass.py`, `service/clipper/selection/test_prepare_pass.py`,
   `service/clipper/selection/score_stage.py`, `service/clipper/selection/test_score_stage.py`,
   `service/clipper/selection/cut_stage.py`, `service/clipper/selection/test_cut_stage.py`,
   `service/clipper/selection/conftest.py`, `service/clipper/selection/__init__.py`,
   `service/clipper/projects/project_queue.py`, `service/clipper/projects/test_project_queue.py`,
-  `fixtures/claude/unreadable-cuts/cut.json`
+  `fixtures/claude/unreadable-cuts/cut.json`, `fixtures/claude/no-clips/cut.json`,
+  `docs/missions/clipper-tool/spec.md`
   Done: the queue's records can give a step a label without touching its state or its percent.
   The named errors of T1 become the sentences of A65 with the marks of A66. The score step
   stands for the `score` step and rests `transcribed`. It reads the key first, and with none it

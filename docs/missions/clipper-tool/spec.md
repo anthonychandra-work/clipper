@@ -634,6 +634,16 @@ From `intent.md`. Base `82df5ce`.
   with a peak is measured in hundredths, so a clip that shares 0.99 seconds carries no marker. A
   graph with a point that cannot be read counts as no graph. A70 gives the rule and leaves these
   edges open. (executor, m3)
+- A83 — What the score step and the cut step do before they ask is one piece of code in a file of
+  its own: it reads the key, reads and splits the stored transcript, and gathers what both passes
+  send. With it `service/clipper/selection` holds one source file more than A79 counted. A
+  transcript with one window is labelled "Scoring 1 window". The label stays on the step when the
+  step stops or fails, so the reason of a stop names the real number of windows. A video whose
+  length was never recorded counts as lasting until its last sentence ends, for the shortlist and
+  for the number of clips asked for. The unreadable cut reply holds a hook title of eleven words.
+  One more scenario of recorded replies, `no-clips`, answers every cut with no clip, so the
+  failure of a cut that leaves no candidate is tested. The plan fixes what the two steps do and
+  leaves these open. (executor, m3)
 
 ## Milestones
 

@@ -13,10 +13,13 @@ from .claude_errors import (
 from .clip_limits import ClipCounts, count_clips, find_clip_limits
 from .clip_proposal import ProposedClip, ProposedClips
 from .cut_clips import cut_clips, write_cut_question
+from .cut_stage import CutStage
 from .form_shortlist import count_shortlist, form_shortlist
 from .model_traits import FALLBACK_BETA, ModelTraits, describe_model
 from .place_quote import Placement, place_quote
+from .prepare_pass import PreparedPass, StageDependencies, prepare_pass
 from .replay_peaks import find_replay_peaks, read_replay_peaks
+from .score_stage import ScoreStage
 from .score_windows import score_windows, write_score_questions
 from .selection_records import (
     Candidate,
@@ -46,6 +49,7 @@ __all__ = [
     "ClipCounts",
     "ClipFlag",
     "ClipSeconds",
+    "CutStage",
     "DeclinedReplyError",
     "Effort",
     "HookType",
@@ -56,12 +60,15 @@ __all__ = [
     "Placement",
     "PlatformText",
     "PlatformTexts",
+    "PreparedPass",
     "ProposedClip",
     "ProposedClips",
     "RefusedKeyError",
     "ReplayPeak",
+    "ScoreStage",
     "SelectionStore",
     "Sentence",
+    "StageDependencies",
     "Subscores",
     "UnreadableReplyError",
     "Window",
@@ -76,6 +83,7 @@ __all__ = [
     "find_replay_peaks",
     "form_shortlist",
     "place_quote",
+    "prepare_pass",
     "read_replay_peaks",
     "score_windows",
     "split_sentences",

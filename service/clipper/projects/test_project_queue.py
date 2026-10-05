@@ -181,6 +181,37 @@ def put_download_ahead_of_transcribe(queue: ProjectQueue, project_id: str, label
     queue.put_step_ahead(project_id, kind=StepKind.MODEL, label=label, ahead_of=StepKind.TRANSCRIBE)
 
 
+def test_a_running_step_is_given_a_label_without_a_change_to_its_state_or_its_percent(
+    repository: ProjectRepository, queue: ProjectQueue
+) -> None:
+    project_id = finish_the_fetch(repository, queue)
+    other = queue_link_project(repository)
+    queue.start_step(project_id, StepKind.SCORE)
+    queue.raise_step_percent(project_id, StepKind.SCORE, 40)
+
+    queue.label_step(project_id, StepKind.SCORE, "Scoring 4 windows")
+
+    labelled = repository.get(project_id)
+    assert labelled.steps[2] == Step(StepKind.SCORE, StepState.RUNNING, 40, "Scoring 4 windows")
+    assert labelled.label_of_kind(StepKind.SCORE) == "Scoring 4 windows"
+    assert [step.label for step in labelled.steps if step.kind is not StepKind.SCORE] == [None] * 3
+    assert [step.label for step in repository.get(other.id).steps] == [None] * 4
+
+
+def test_a_label_given_to_a_step_stays_when_the_step_goes_back_to_its_start(
+    repository: ProjectRepository, queue: ProjectQueue
+) -> None:
+    project_id = finish_the_fetch(repository, queue)
+    queue.start_step(project_id, StepKind.SCORE)
+    queue.label_step(project_id, StepKind.SCORE, "Scoring 4 windows")
+
+    queue.halt(project_id, ProjectStatus.STOPPED, "Stopped.")
+
+    assert repository.get(project_id).steps[2] == Step(
+        StepKind.SCORE, StepState.PENDING, 0, "Scoring 4 windows"
+    )
+
+
 def test_a_step_put_ahead_of_another_waits_at_0_with_its_label_and_the_later_steps_move_down(
     repository: ProjectRepository, queue: ProjectQueue
 ) -> None:
