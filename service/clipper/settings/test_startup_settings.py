@@ -11,6 +11,7 @@ SETTING_VARIABLES = [
     "CLIPPER_WEB_PORT",
     "CLIPPER_SERVICE_PORT",
     "CLIPPER_REPORTED_FREE_BYTES",
+    "CLIPPER_MODEL_SOURCE",
 ]
 
 
@@ -40,6 +41,16 @@ def test_the_free_disk_space_is_measured_unless_a_figure_is_reported(
     clean_environment.setenv("CLIPPER_REPORTED_FREE_BYTES", "3221225472")
 
     assert StartupSettings().reported_free_bytes == 3 * 1024**3
+
+
+def test_models_come_from_hugging_face_unless_another_source_is_named(
+    clean_environment: pytest.MonkeyPatch,
+) -> None:
+    assert StartupSettings().model_source == "https://huggingface.co"
+
+    clean_environment.setenv("CLIPPER_MODEL_SOURCE", "http://127.0.0.1:4000")
+
+    assert StartupSettings().model_source == "http://127.0.0.1:4000"
 
 
 def test_the_repository_root_holds_the_service_folder() -> None:

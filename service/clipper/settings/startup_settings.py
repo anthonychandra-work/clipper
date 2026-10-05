@@ -6,6 +6,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 REPOSITORY_ROOT = Path(__file__).resolve().parents[3]
 HOMEBREW_FFMPEG_DIR = Path("/opt/homebrew/opt/ffmpeg-full/bin")
 KEY_FILE_IN_HOME = Path("Library") / "Application Support" / "Clipper" / "anthropic-api-key"
+HUGGING_FACE = "https://huggingface.co"
 
 
 class StartupSettings(BaseSettings):
@@ -18,3 +19,4 @@ class StartupSettings(BaseSettings):
     service_port: int = 8765
     search_path: str = Field(default="", validation_alias="PATH")
     reported_free_bytes: int | None = None
+    model_source: str = HUGGING_FACE

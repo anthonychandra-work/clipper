@@ -236,7 +236,7 @@ What the spec's file list leaves out
   and then renamed, so a reader never finds half a file. Read back, it equals what was written.
   Tests cover each rule with made-up words.
 
-- [ ] T5 — Know the three models and download one
+- [x] T5 — Know the three models and download one
   Files: `service/clipper/settings/startup_settings.py`,
   `service/clipper/settings/test_startup_settings.py`, `service/clipper/storage/data_folder.py`,
   `service/clipper/storage/test_data_folder.py`, `service/clipper/conftest.py`,

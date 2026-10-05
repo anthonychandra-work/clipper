@@ -412,6 +412,12 @@ From `intent.md`. Base `82df5ce`.
 - A49 — The latest time a transcript holds is the video's length rounded down to a hundredth of a
   second. The plan rounds every time to a hundredth, A44 keeps every time inside the video, and a
   video's length is rarely a whole hundredth. (executor, m2)
+- A50 — A model download first asks each file for its first byte, which makes the server declare
+  the file's whole size, and then asks for the bytes it lacks. It needs both sizes before it can
+  give a first percent, and a request for a byte range is the kind the plan measured against the
+  model source. A download checks for a stop between the pieces it receives, and it fails when
+  the source sends nothing for twenty seconds. The closed local port a test run names is port 9
+  on the loopback address. (executor, m2)
 
 ## Milestones
 

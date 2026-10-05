@@ -1,10 +1,12 @@
+import re
 import subprocess
 import threading
+from collections.abc import Iterator
 from pathlib import Path
 
 import pytest
 
-from ..conftest import SCRIPTS_DIR
+from ..conftest import SCRIPTS_DIR, SERVER_START_TIMEOUT_SECONDS
 from ..media import MediaTools, extract_audio
 
 
@@ -17,6 +19,23 @@ def test_model_dir() -> Path:
         text=True,
     )
     return Path(fetched.stdout.strip())
+
+
+@pytest.fixture(scope="session")
+def model_server(test_model_dir: Path) -> Iterator[str]:
+    server = subprocess.Popen(
+        ["node", str(SCRIPTS_DIR / "serve-fixtures.mjs"), str(test_model_dir)],
+        stdout=subprocess.PIPE,
+        text=True,
+    )
+    assert server.stdout is not None
+    announced = re.search(r"http://\S+", server.stdout.readline())
+    assert announced is not None, "The model server did not print its address."
+    try:
+        yield announced.group(0)
+    finally:
+        server.terminate()
+        server.wait(timeout=SERVER_START_TIMEOUT_SECONDS)
 
 
 @pytest.fixture(scope="session")

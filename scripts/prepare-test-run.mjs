@@ -9,6 +9,7 @@ export const BROWSERS_DIR = join(ROOT_DIR, '.cache', 'playwright');
 const TEST_WEB_PORT = '3100';
 const TEST_SERVICE_PORT = '8865';
 const TEST_WEB_BUILD_DIR = '.next-test';
+const CLOSED_LOCAL_PORT = 'http://127.0.0.1:9';
 const BYTES_PER_MB = 1024 ** 2;
 const BYTES_PER_GB = 1024 ** 3;
 
@@ -21,6 +22,7 @@ export function enterTestRun() {
     CLIPPER_WEB_PORT: TEST_WEB_PORT,
     CLIPPER_SERVICE_PORT: TEST_SERVICE_PORT,
     CLIPPER_WEB_BUILD_DIR: TEST_WEB_BUILD_DIR,
+    CLIPPER_MODEL_SOURCE: CLOSED_LOCAL_PORT,
     PLAYWRIGHT_BROWSERS_PATH: BROWSERS_DIR,
     NEXT_TELEMETRY_DISABLED: '1',
   });

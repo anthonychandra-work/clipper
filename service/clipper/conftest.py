@@ -14,6 +14,10 @@ from .storage import Database, DataFolder, open_data_folder, open_database
 
 SCRIPTS_DIR = Path(__file__).resolve().parents[2] / "scripts"
 SERVER_START_TIMEOUT_SECONDS = 10
+CLOSED_LOCAL_PORT = "http://127.0.0.1:9"
+
+# No test reaches Hugging Face: a model is fetched only from a source the test names.
+os.environ.setdefault("CLIPPER_MODEL_SOURCE", CLOSED_LOCAL_PORT)
 
 
 @dataclass(frozen=True)
