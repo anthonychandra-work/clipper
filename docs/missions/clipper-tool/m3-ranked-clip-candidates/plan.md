@@ -357,7 +357,7 @@ What the spec's file list leaves out
   with equal totals the one under the peak carries the marker and ranks first, and without the
   graph the earlier one ranks first.
 
-- [ ] T9 — Let a failure point to Settings
+- [x] T9 — Let a failure point to Settings
   Files: `service/clipper/storage/open_database.py`,
   `service/clipper/storage/test_open_database.py`, `service/clipper/projects/project.py`,
   `service/clipper/projects/project_queue.py`, `service/clipper/projects/test_project_queue.py`,
@@ -367,7 +367,7 @@ What the spec's file list leaves out
   `service/clipper/projects/test_router.py`, `service/clipper/pipeline/pipeline_stage.py`,
   `service/clipper/pipeline/explain_failure.py`,
   `service/clipper/pipeline/test_explain_failure.py`, `service/clipper/pipeline/run_queue.py`,
-  `service/clipper/pipeline/test_run_queue.py`
+  `service/clipper/pipeline/test_run_queue.py`, `service/clipper/pipeline/test_router.py`
   Done: a stage's stated failure can carry the mark of A66. The queue stores the mark with the
   halt, a fifth migration adds it, and a database made before it opens with its projects
   unchanged and unmarked. Putting a project back into the queue clears the mark with the reason.

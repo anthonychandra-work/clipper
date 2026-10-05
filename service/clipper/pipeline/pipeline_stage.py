@@ -14,9 +14,10 @@ class StageRun:
 
 
 class StageFailedError(Exception):
-    def __init__(self, reason: str) -> None:
+    def __init__(self, reason: str, *, opens_settings: bool = False) -> None:
         super().__init__(reason)
         self.reason = reason
+        self.opens_settings = opens_settings
 
 
 class PipelineStage(Protocol):

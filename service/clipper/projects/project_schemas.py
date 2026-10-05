@@ -27,6 +27,7 @@ class StepResponse(ApiModel):
 
 class HaltResponse(ApiModel):
     reason: str
+    opens_settings: bool
 
 
 class UploadResponse(ApiModel):

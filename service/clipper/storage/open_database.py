@@ -83,11 +83,14 @@ CREATE TABLE candidates (
 ALTER TABLE projects ADD COLUMN candidate_count INTEGER NOT NULL DEFAULT 0;
 """
 
+ADD_HALT_MARK = "ALTER TABLE projects ADD COLUMN halt_opens_settings INTEGER NOT NULL DEFAULT 0;"
+
 MIGRATIONS: tuple[str, ...] = (
     CREATE_PROJECTS,
     CREATE_PREFERENCES,
     ADD_STEP_LABEL,
     CREATE_SELECTION,
+    ADD_HALT_MARK,
 )
 
 

@@ -6,8 +6,13 @@ from fastapi.testclient import TestClient
 from ..main import create_app
 from ..settings import StartupSettings
 from ..storage import BYTES_PER_GB, open_database
-from .project import StepKind
+from .project import ProjectStatus, StepKind
 from .project_queue import ProjectQueue
+
+NO_KEY = "No Anthropic API key is saved. Add one in Settings, then retry."
+DOWNLOAD_FAILED = (
+    "The video could not be downloaded. Check the link and your connection, then retry."
+)
 
 LINK_DRAFT = {
     "sourceKind": "link",
@@ -82,6 +87,28 @@ def test_a_project_carries_the_number_of_its_candidates(client: TestClient, tmp_
 
     assert client.get(f"/api/projects/{created['id']}").json()["candidateCount"] == 6
     assert client.get("/api/projects").json()["projects"][0]["candidateCount"] == 6
+
+
+def test_a_halt_gives_its_reason_and_whether_it_points_to_settings(
+    client: TestClient, tmp_path: Path
+) -> None:
+    plain = client.post("/api/projects", json=LINK_DRAFT).json()
+    marked = client.post("/api/projects", json=LINK_DRAFT).json()
+    queue = ProjectQueue(open_database(tmp_path / "data" / "clipper.sqlite3"))
+
+    queue.halt(plain["id"], ProjectStatus.FAILED, DOWNLOAD_FAILED)
+    queue.halt(marked["id"], ProjectStatus.FAILED, NO_KEY, opens_settings=True)
+
+    assert client.get(f"/api/projects/{plain['id']}").json()["halt"] == {
+        "reason": DOWNLOAD_FAILED,
+        "opensSettings": False,
+    }
+    assert client.get(f"/api/projects/{marked['id']}").json()["halt"] == {
+        "reason": NO_KEY,
+        "opensSettings": True,
+    }
+    listed = client.get("/api/projects").json()["projects"]
+    assert [project["halt"]["opensSettings"] for project in listed] == [True, False]
 
 
 def test_a_created_file_project_reports_its_upload(client: TestClient) -> None:

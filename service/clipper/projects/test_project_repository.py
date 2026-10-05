@@ -4,7 +4,16 @@ import pytest
 
 from ..storage import Database
 from .create_project import plan_project
-from .project import Platform, Project, SourceKind, Step, StepKind, StepState, Upload
+from .project import (
+    Platform,
+    Project,
+    ProjectStatus,
+    SourceKind,
+    Step,
+    StepKind,
+    StepState,
+    Upload,
+)
 from .project_repository import ProjectNotFoundError, ProjectRepository
 from .project_schemas import CreateProjectRequest
 
@@ -45,6 +54,28 @@ def test_a_new_project_has_no_candidate_and_a_stored_count_is_read_back(
     assert repository.get(new.id).candidate_count == 0
     assert repository.get(selected.id) == selected
     assert [project.candidate_count for project in repository.list_newest_first()] == [6, 0]
+
+
+def test_a_failure_that_points_to_settings_is_read_back_with_its_mark(
+    repository: ProjectRepository,
+) -> None:
+    plain = plan_link_project("Plain")
+    marked = replace(
+        plan_link_project("Marked"),
+        status=ProjectStatus.FAILED,
+        halt_reason="No Anthropic API key is saved. Add one in Settings, then retry.",
+        halt_opens_settings=True,
+    )
+
+    repository.add(plain)
+    repository.add(marked)
+
+    assert repository.get(plain.id).halt_opens_settings is False
+    assert repository.get(marked.id) == marked
+    assert [project.halt_opens_settings for project in repository.list_newest_first()] == [
+        True,
+        False,
+    ]
 
 
 def test_a_step_with_a_label_of_its_own_is_stored_with_it(repository: ProjectRepository) -> None:

@@ -21,10 +21,12 @@ from .project import (
 INSERT_PROJECT = """
 INSERT INTO projects (
     id, title, source_kind, source_label, link, file_name, file_size_bytes, received_bytes,
-    clip_length, platforms, brief, status, duration_seconds, halt_reason, candidate_count
+    clip_length, platforms, brief, status, duration_seconds, halt_reason, halt_opens_settings,
+    candidate_count
 ) VALUES (
     :id, :title, :source_kind, :source_label, :link, :file_name, :file_size_bytes, :received_bytes,
-    :clip_length, :platforms, :brief, :status, :duration_seconds, :halt_reason, :candidate_count
+    :clip_length, :platforms, :brief, :status, :duration_seconds, :halt_reason,
+    :halt_opens_settings, :candidate_count
 )
 """
 INSERT_STEP = """
@@ -120,6 +122,7 @@ def describe_project_row(project: Project) -> dict[str, str | int | float | None
         "status": project.status,
         "duration_seconds": project.duration_seconds,
         "halt_reason": project.halt_reason,
+        "halt_opens_settings": project.halt_opens_settings,
         "candidate_count": project.candidate_count,
     }
 
@@ -163,6 +166,7 @@ def read_project(row: sqlite3.Row, steps: list[Step]) -> Project:
         halt_reason=row["halt_reason"],
         upload=read_upload(row),
         candidate_count=row["candidate_count"],
+        halt_opens_settings=bool(row["halt_opens_settings"]),
     )
 
 

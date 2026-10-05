@@ -7,6 +7,7 @@ from .project_schemas import CreateProjectRequest
 from .receive_upload import UploadPart, receive_upload_part
 
 PLENTY = DiskSpace(free_bytes=50 * BYTES_PER_GB, total_bytes=460 * BYTES_PER_GB)
+NO_KEY = "No Anthropic API key is saved. Add one in Settings, then retry."
 
 
 def queue_link_project(repository: ProjectRepository) -> Project:
@@ -96,6 +97,46 @@ def test_a_requeued_project_waits_again_without_its_reason(
     assert requeued.status is ProjectStatus.QUEUED
     assert requeued.halt_reason is None
     assert queue.take_oldest_queued() == project_id
+
+
+def test_a_halt_that_gives_only_its_reason_stores_no_mark(
+    repository: ProjectRepository, queue: ProjectQueue
+) -> None:
+    queue_link_project(repository)
+    project_id = start_fetching_the_oldest(queue)
+
+    queue.halt(project_id, ProjectStatus.FAILED, "The video could not be downloaded.")
+
+    assert repository.get(project_id).halt_opens_settings is False
+
+
+def test_a_halt_marked_for_settings_stores_the_mark_and_a_requeue_clears_it_with_the_reason(
+    repository: ProjectRepository, queue: ProjectQueue
+) -> None:
+    queue_link_project(repository)
+    project_id = start_fetching_the_oldest(queue)
+
+    queue.halt(project_id, ProjectStatus.FAILED, NO_KEY, opens_settings=True)
+    halted = repository.get(project_id)
+    queue.requeue(project_id)
+
+    requeued = repository.get(project_id)
+    assert (halted.halt_reason, halted.halt_opens_settings) == (NO_KEY, True)
+    assert (requeued.halt_reason, requeued.halt_opens_settings) == (None, False)
+
+
+def test_a_marked_project_that_is_taken_again_carries_no_mark(
+    repository: ProjectRepository, queue: ProjectQueue, database: Database
+) -> None:
+    project = queue_link_project(repository)
+    with database.transaction() as connection:
+        connection.execute("UPDATE projects SET halt_reason = ?, halt_opens_settings = 1", [NO_KEY])
+
+    queue.take_oldest_queued()
+
+    taken = repository.get(project.id)
+    assert (taken.status, taken.halt_reason) == (ProjectStatus.PROCESSING, None)
+    assert taken.halt_opens_settings is False
 
 
 def test_an_uploaded_file_keeps_the_share_its_arrival_earned_when_its_step_restarts(

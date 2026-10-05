@@ -1,5 +1,6 @@
 import errno
 from collections.abc import Iterator
+from typing import NamedTuple
 
 from ..media import NotAVideoError
 from .pipeline_stage import StageFailedError
@@ -9,16 +10,21 @@ NOT_A_VIDEO = "This file is not a video Clipper can read. Delete the project and
 DISK_FULL_WORDING = "No space left on device"
 
 
-def explain_failure(failure: BaseException, step_label: str) -> str:
+class Explanation(NamedTuple):
+    reason: str
+    opens_settings: bool = False
+
+
+def explain_failure(failure: BaseException, step_label: str) -> Explanation:
     causes = list(walk_causes(failure))
     if any(is_disk_full(cause) for cause in causes):
-        return DISK_FULL
+        return Explanation(DISK_FULL)
     stated = next((cause for cause in causes if isinstance(cause, StageFailedError)), None)
     if stated is not None:
-        return stated.reason
+        return Explanation(stated.reason, stated.opens_settings)
     if any(isinstance(cause, NotAVideoError) for cause in causes):
-        return NOT_A_VIDEO
-    return f"“{step_label}” did not finish. Retry to run this step again."
+        return Explanation(NOT_A_VIDEO)
+    return Explanation(f"“{step_label}” did not finish. Retry to run this step again.")
 
 
 def describe_stop(step_label: str) -> str:

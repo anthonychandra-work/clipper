@@ -9,6 +9,15 @@ CREATE_NOTES = "CREATE TABLE notes (body TEXT NOT NULL);"
 ADD_AUTHOR = "ALTER TABLE notes ADD COLUMN author TEXT;"
 MIGRATIONS_OF_M1 = MIGRATIONS[:2]
 MIGRATIONS_OF_M2 = MIGRATIONS[:3]
+MIGRATIONS_BEFORE_THE_HALT_MARK = MIGRATIONS[:4]
+ADD_FAILED_PROJECT = """
+INSERT INTO projects (
+    id, title, source_kind, source_label, clip_length, platforms, brief, status, halt_reason
+) VALUES (
+    'f7a8b9', 'A talk', 'file', 'Uploaded file', 'standard', '["reels"]', '', 'failed',
+    'No Anthropic API key is saved. Add one in Settings, then retry.'
+)
+"""
 ADD_M2_PROJECT = """
 INSERT INTO projects (
     id, title, source_kind, source_label, link, clip_length, platforms, brief, status,
@@ -118,6 +127,24 @@ def test_a_database_made_by_m2_gains_the_selection_tables_and_keeps_its_projects
         ("d4e5f6", 3, "score", "pending", 0.0, None),
     ]
     assert {"selection_windows", "replay_peaks", "candidates"} <= names
+
+
+def test_a_database_made_before_the_halt_mark_keeps_its_projects_and_marks_none(
+    tmp_path: Path,
+) -> None:
+    database_file = tmp_path / "clipper.sqlite3"
+    earlier = open_database(database_file, MIGRATIONS_BEFORE_THE_HALT_MARK)
+    with earlier.transaction() as connection:
+        connection.execute(ADD_FAILED_PROJECT)
+        before = [tuple(row) for row in connection.execute("SELECT * FROM projects")]
+
+    database = open_database(database_file)
+
+    with database.transaction() as connection:
+        projects = connection.execute("SELECT * FROM projects").fetchall()
+        assert read_schema_version(connection) == len(MIGRATIONS)
+    assert [tuple(project)[: len(before[0])] for project in projects] == before
+    assert [project["halt_opens_settings"] for project in projects] == [0]
 
 
 def test_the_rows_of_the_selection_tables_go_with_their_project(tmp_path: Path) -> None:

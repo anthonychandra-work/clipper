@@ -31,6 +31,7 @@ class ProjectRun:
 class Halt(NamedTuple):
     status: ProjectStatus
     reason: str
+    opens_settings: bool = False
 
 
 class StoredPercent:
@@ -152,10 +153,13 @@ class QueueWorker:
         halt = describe_halt(run, failure, project.label_of_kind(step))
         if halt.status is ProjectStatus.FAILED:
             log.exception("A step of project %s failed.", run.project_id)
-        self._queue.halt(run.project_id, halt.status, halt.reason)
+        self._queue.halt(
+            run.project_id, halt.status, halt.reason, opens_settings=halt.opens_settings
+        )
 
 
 def describe_halt(run: ProjectRun, failure: Exception, step_label: str) -> Halt:
     if run.is_stopped_by_user:
         return Halt(ProjectStatus.STOPPED, describe_stop(step_label))
-    return Halt(ProjectStatus.FAILED, explain_failure(failure, step_label))
+    explained = explain_failure(failure, step_label)
+    return Halt(ProjectStatus.FAILED, explained.reason, explained.opens_settings)

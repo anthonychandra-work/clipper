@@ -67,7 +67,8 @@ def test_stop_during_a_fetch_leaves_the_project_stopped_and_resume_finishes_it(
     assert seconds_to_stop < 2
     assert stopped.json()["status"] == "stopped"
     assert stopped.json()["halt"] == {
-        "reason": "Stopped at “Fetching video”. The stages before it are kept."
+        "reason": "Stopped at “Fetching video”. The stages before it are kept.",
+        "opensSettings": False,
     }
     assert resumed.json()["halt"] is None
     assert fetched.title == "talk"
@@ -83,7 +84,7 @@ def test_a_link_that_answers_not_found_fails_with_a_reason_and_retry_finishes_it
     retried = client.post(f"/api/projects/{project_id}/retry")
     fetched = wait_for_the_fetch(client, project_id)
 
-    assert failed["halt"] == {"reason": DOWNLOAD_FAILED}
+    assert failed["halt"] == {"reason": DOWNLOAD_FAILED, "opensSettings": False}
     assert retried.status_code == 200
     assert retried.json()["halt"] is None
     assert fetched.steps[0].percent == 100
@@ -103,7 +104,8 @@ def test_an_upload_that_is_not_a_video_fails_with_what_to_do(client: TestClient)
     failed = wait_for_status(client, project_id, "failed")
     assert failed["halt"] == {
         "reason": "This file is not a video Clipper can read. "
-        "Delete the project and try another file."
+        "Delete the project and try another file.",
+        "opensSettings": False,
     }
 
 

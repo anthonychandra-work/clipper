@@ -15,14 +15,20 @@ from ..projects import (
     StepKind,
     StepState,
     create_project,
+    describe_project,
 )
 from ..storage import BYTES_PER_GB, DiskSpace
-from .pipeline_stage import StageRun
+from .halt_project import requeue_project
+from .pipeline_stage import StageFailedError, StageRun
 from .run_queue import QueueWorker, StepCheck
 
 PLENTY = DiskSpace(free_bytes=50 * BYTES_PER_GB, total_bytes=460 * BYTES_PER_GB)
 WAIT_SECONDS = 5
 DOWNLOAD_LABEL = "Downloading Whisper small"
+NO_KEY = "No Anthropic API key is saved. Add one in Settings, then retry."
+DOWNLOAD_FAILED = (
+    "The video could not be downloaded. Check the link and your connection, then retry."
+)
 
 
 class HeldStage:
@@ -196,6 +202,76 @@ def test_a_failing_stage_leaves_the_project_failed_with_a_reason_and_the_queue_m
     assert failed.status is ProjectStatus.FAILED
     assert failed.halt_reason == "“Fetching video” did not finish. Retry to run this step again."
     assert (failed.steps[0].state, failed.steps[0].percent) == (StepState.PENDING, 0)
+
+
+def test_a_failure_marked_for_settings_is_stored_and_shown_marked_and_retry_clears_it(
+    repository: ProjectRepository, queue: ProjectQueue
+) -> None:
+    project = queue_project(repository)
+    is_mended = threading.Event()
+
+    def fail_until_mended(stage_run: StageRun) -> None:
+        if not is_mended.is_set():
+            raise StageFailedError(NO_KEY, opens_settings=True)
+
+    worker = QueueWorker(repository, queue, [ScriptedStage(fail_until_mended)])
+    worker.start()
+    wait_until(lambda: repository.get(project.id).status is ProjectStatus.FAILED)
+    failed = repository.get(project.id)
+    is_mended.set()
+    retried = requeue_project(project.id, repository, queue)
+    wait_until(lambda: repository.get(project.id).status is ProjectStatus.FETCHED)
+    worker.stop()
+
+    assert (failed.halt_reason, failed.halt_opens_settings) == (NO_KEY, True)
+    assert describe_project(failed).model_dump(by_alias=True)["halt"] == {
+        "reason": NO_KEY,
+        "opensSettings": True,
+    }
+    assert (retried.halt_reason, retried.halt_opens_settings) == (None, False)
+    assert describe_project(repository.get(project.id)).halt is None
+
+
+def test_a_failure_that_states_only_its_reason_is_stored_and_shown_unmarked(
+    repository: ProjectRepository, queue: ProjectQueue
+) -> None:
+    project = queue_project(repository)
+
+    def state_a_reason(stage_run: StageRun) -> None:
+        raise StageFailedError(DOWNLOAD_FAILED)
+
+    worker = QueueWorker(repository, queue, [ScriptedStage(state_a_reason)])
+    worker.start()
+    wait_until(lambda: repository.get(project.id).status is ProjectStatus.FAILED)
+    worker.stop()
+
+    failed = repository.get(project.id)
+    assert (failed.halt_reason, failed.halt_opens_settings) == (DOWNLOAD_FAILED, False)
+    assert describe_project(failed).model_dump(by_alias=True)["halt"] == {
+        "reason": DOWNLOAD_FAILED,
+        "opensSettings": False,
+    }
+
+
+def test_a_stop_stores_no_mark_whatever_the_stopped_stage_states(
+    repository: ProjectRepository, queue: ProjectQueue
+) -> None:
+    project = queue_project(repository)
+
+    def state_a_marked_failure_once_stopped(stage_run: StageRun) -> None:
+        stage_run.stop.wait(WAIT_SECONDS)
+        raise StageFailedError(NO_KEY, opens_settings=True)
+
+    worker = QueueWorker(repository, queue, [ScriptedStage(state_a_marked_failure_once_stopped)])
+    worker.start()
+    wait_until(lambda: repository.get(project.id).steps[0].state is StepState.RUNNING)
+    worker.stop_project(project.id)
+    worker.stop()
+
+    stopped = repository.get(project.id)
+    assert stopped.status is ProjectStatus.STOPPED
+    assert stopped.halt_reason == "Stopped at “Fetching video”. The stages before it are kept."
+    assert stopped.halt_opens_settings is False
 
 
 def test_stopping_the_worker_ends_the_running_stage_and_leaves_its_project_processing(

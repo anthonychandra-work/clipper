@@ -14,10 +14,16 @@ def describe_project(project: Project) -> ProjectResponse:
         status=project.status,
         steps=[describe_step(project, step) for step in project.steps],
         percent=round(project.percent(), PERCENT_DECIMALS),
-        halt=HaltResponse(reason=project.halt_reason) if project.halt_reason else None,
+        halt=describe_halt(project),
         upload=describe_upload(project.upload) if project.upload else None,
         candidate_count=project.candidate_count,
     )
+
+
+def describe_halt(project: Project) -> HaltResponse | None:
+    if not project.halt_reason:
+        return None
+    return HaltResponse(reason=project.halt_reason, opens_settings=project.halt_opens_settings)
 
 
 def describe_step(project: Project, step: Step) -> StepResponse:
