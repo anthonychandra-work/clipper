@@ -10,17 +10,17 @@ import {
   deleteAllProjects,
   expect,
   projectRow,
-  readProject,
   readStatusCard,
   readTranscript,
   statusCard,
   test,
+  waitForStepDone,
 } from './support';
 
 const PHONE = { width: 390, height: 844 };
 const TRANSCRIBING = 'Transcribing on this Mac';
 const STOPPED_WHILE_TRANSCRIBING = 'Stopped at “Transcribing on this Mac”. The stages before it are kept.';
-const REST_TIMEOUT_MS = 90_000;
+const STEP_TIMEOUT_MS = 90_000;
 const BAR_TIMEOUT_MS = 30_000;
 const EVIDENCE_NAME = 'talk-transcript.json';
 const MOST_WORDS_WRONG_IN_HUNDRED = 15;
@@ -51,21 +51,21 @@ test.afterEach(async ({ request }) => {
   await deleteAllProjects(request);
 });
 
-test('the uploaded talk reaches Transcribed, and its stored words are timed in order and match the script', async ({
+test('the uploaded talk is transcribed, and its stored words are timed in order and match the script', async ({
   page,
   request,
   fixturesDir,
   tool,
 }, testInfo) => {
   const projectId = await createFileProjectInSheet(page, join(fixturesDir, 'talk.mp4'));
-  await expect(statusCard(page).locator('h2')).toHaveText('Transcribed', { timeout: REST_TIMEOUT_MS });
-  const project = await readProject(request, projectId);
+  const project = await waitForStepDone(request, projectId, 'transcribe');
   const transcript = readTranscript(tool.settings.dataDir, projectId);
   const times = transcript.words.flatMap((word) => [word.start, word.end]);
   const evidence = { status: project.status, durationSeconds: project.durationSeconds, transcript };
   saveEvidence(process.env.CLIPPER_EVIDENCE_DIR ?? testInfo.outputDir, evidence);
 
-  expect(project.status).toBe('transcribed');
+  expect(project.steps.map((step) => step.kind)).toEqual(['fetch', 'transcribe', 'score', 'cut']);
+  expect(project.steps.slice(0, 2).map((step) => step.state)).toEqual(['done', 'done']);
   expect(transcript.words.length).toBeGreaterThan(500);
   expect(times.every((time) => typeof time === 'number')).toBe(true);
   expect(times).toEqual([...times].sort((earlier, later) => earlier - later));
@@ -84,7 +84,7 @@ test('the long talk shows its transcription in the Library with a rising bar, st
   const folder = join(tool.settings.dataDir, 'projects', project.id);
   await page.goto('/');
   const row = projectRow(page, project.id);
-  await expect(row.locator('.project-row__status')).toHaveText(TRANSCRIBING, { timeout: REST_TIMEOUT_MS });
+  await expect(row.locator('.project-row__status')).toHaveText(TRANSCRIBING, { timeout: STEP_TIMEOUT_MS });
   const barValues = await readRisingBarValues(row.getByRole('progressbar', { name: TRANSCRIBING }), 3);
 
   await row.click();
@@ -95,7 +95,7 @@ test('the long talk shows its transcription in the Library with a rising bar, st
   const stopped = await readStatusCard(page);
   const filesWhenStopped = readdirSync(folder).sort();
   await page.getByRole('button', { name: 'Resume' }).click();
-  await expect(statusCard(page).locator('h2')).toHaveText('Transcribed', { timeout: REST_TIMEOUT_MS });
+  await waitForStepDone(request, project.id, 'transcribe');
 
   expect(barValues).toEqual([...new Set(barValues)].sort((lower, higher) => lower - higher));
   expect(running).toMatchObject({ heading: 'Finding Clips', footnote: 'Step 2 of 4.', buttons: ['Stop'], hasBar: true });

@@ -2,7 +2,9 @@ import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 
-import type { Page } from '@playwright/test';
+import type { APIRequestContext, Page } from '@playwright/test';
+
+import type { Project } from '@/library';
 
 import {
   createLinkProject,
@@ -14,6 +16,7 @@ import {
   statusCard,
   type StatusCardText,
   test,
+  waitForStepDone,
 } from './support';
 
 const PHONE = { width: 390, height: 844 };
@@ -34,10 +37,18 @@ async function readCardAtStage(page: Page, stage: string): Promise<StatusCardTex
   return readStatusCard(page);
 }
 
-async function collectStagesUntilTranscribed(page: Page): Promise<string[]> {
+function listDoneSteps(project: Project): string[] {
+  return project.steps.filter((step) => step.state === 'done').map((step) => step.kind);
+}
+
+async function collectStagesUntilTranscribed(
+  page: Page,
+  request: APIRequestContext,
+  projectId: string,
+): Promise<string[]> {
   const stages: string[] = [];
   const deadline = Date.now() + STEP_TIMEOUT_MS;
-  while ((await statusCard(page).locator('h2').innerText()) !== 'Transcribed') {
+  while (!listDoneSteps(await readProject(request, projectId)).includes('transcribe')) {
     if (Date.now() > deadline) throw new Error(`The project was not transcribed. Stages shown: ${stages}`);
     stages.push(await statusCard(page).locator('.status-card__stage').innerText());
     await delay(SAMPLE_MS);
@@ -70,15 +81,16 @@ test('the first project to need a model that is not on the Mac downloads it as a
   await page.goto(`/projects/${first.id}`);
   const downloading = await readCardAtStage(page, DOWNLOADING);
   const transcribing = await readCardAtStage(page, TRANSCRIBING);
-  const rested = await readCardAtStage(page, 'Step 3 of 5 is done.');
+  const firstTranscribed = await waitForStepDone(request, first.id, 'transcribe');
   const second = await createLinkProject(request, `${fixtureServer.address}/talk.mp4`);
   await page.goto(`/projects/${second.id}`);
-  const stagesOfSecond = await collectStagesUntilTranscribed(page);
+  const stagesOfSecond = await collectStagesUntilTranscribed(page, request, second.id);
   const stepsOfSecond = (await readProject(request, second.id)).steps.map((step) => step.kind);
 
   expect(downloading).toMatchObject({ heading: 'Finding Clips', footnote: 'Step 2 of 5.', hasBar: true });
   expect(transcribing).toMatchObject({ heading: 'Finding Clips', footnote: 'Step 3 of 5.', hasBar: true });
-  expect(rested).toMatchObject({ heading: 'Transcribed', footnote: 'Not started: Scoring windows, Cutting clips.' });
+  expect(firstTranscribed.steps.map((step) => step.kind)).toEqual(['fetch', 'model', 'transcribe', 'score', 'cut']);
+  expect(listDoneSteps(firstTranscribed)).toEqual(['fetch', 'model', 'transcribe']);
   expect(readdirSync(join(tool.settings.dataDir, 'models', 'small')).sort()).toEqual(['config.json', 'weights.npz']);
   expect(readTranscript(tool.settings.dataDir, first.id).model).toBe('small');
   expect(stagesOfSecond).toContain(TRANSCRIBING);

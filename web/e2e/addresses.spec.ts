@@ -6,7 +6,7 @@ import {
   projectRow,
   statusCard,
   test,
-  waitForRest,
+  waitForKeylessEnd,
   waitForStatus,
 } from './support';
 
@@ -48,20 +48,20 @@ test.describe('at 390 px', () => {
     fixtureServer,
   }) => {
     const created = await createLinkProject(request, `${fixtureServer.address}/talk.mp4`);
-    const rested = await waitForRest(request, created.id);
-    await presentAsReady(page, rested.id);
+    const ended = await waitForKeylessEnd(request, created.id);
+    await presentAsReady(page, ended.id);
 
-    await page.goto(`/projects/${rested.id}`);
-    await expect(page).toHaveURL(`/projects/${rested.id}/review`);
+    await page.goto(`/projects/${ended.id}`);
+    await expect(page).toHaveURL(`/projects/${ended.id}/review`);
     await expect(page.locator('h1.large-title')).toHaveText('talk');
     await expect(page.locator('.screen-head__subtitle')).toHaveText(FOUR_MINUTE_SUBTITLE);
     await expect(page.locator('#tab-review')).toHaveAttribute('aria-current', 'page');
     await expect(page.getByText('No clips in this group.')).toBeVisible();
     await page.getByRole('group', { name: 'Project steps' }).getByRole('link', { name: 'Export' }).click();
-    await expect(page).toHaveURL(`/projects/${rested.id}/export`);
+    await expect(page).toHaveURL(`/projects/${ended.id}/export`);
     await page.reload();
 
-    await expect(page).toHaveURL(`/projects/${rested.id}/export`);
+    await expect(page).toHaveURL(`/projects/${ended.id}/export`);
     await expect(page.locator('#tab-export')).toHaveAttribute('aria-current', 'page');
     await expect(page.locator('.empty h2')).toHaveText('No Kept Clips');
     await expect(page.locator('.empty').getByRole('link', { name: 'Go to Review' })).toBeVisible();

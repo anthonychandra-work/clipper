@@ -6,13 +6,13 @@ import {
   deleteAllProjects,
   expect,
   followBarUntil,
+  KEYLESS_END,
   probeTalkLength,
-  readProject,
   readRow,
   readStatusCard,
-  RESTING,
   statusCard,
   test,
+  waitForKeylessEnd,
 } from './support';
 
 const PHONE = { width: 390, height: 844 };
@@ -27,7 +27,7 @@ test.afterEach(async ({ request }) => {
   await deleteAllProjects(request);
 });
 
-test('the uploaded fixture is prepared and transcribed: its bar never falls, then the row rests with the real length', async ({
+test('the uploaded fixture is prepared and transcribed: its bar never falls, then the row shows the real length', async ({
   page,
   request,
   fixturesDir,
@@ -37,18 +37,17 @@ test('the uploaded fixture is prepared and transcribed: its bar never falls, the
   await page.getByRole('link', { name: 'Back to Library' }).click();
 
   const whilePrepared = await followBarUntil(page, projectId, TRANSCRIBING);
-  const whileTranscribed = await followBarUntil(page, projectId, RESTING.word);
+  const whileTranscribed = await followBarUntil(page, projectId, KEYLESS_END.row.status);
   const barValues = [...whilePrepared, ...whileTranscribed];
+  const ended = await waitForKeylessEnd(request, projectId);
   const row = await readRow(page, projectId);
-  const rested = await readProject(request, projectId);
-  const restingRow = { title: 'talk.mp4', meta: 'Uploaded file · 4 min', status: RESTING.word, barLabel: RESTING.word };
 
   expect(new Set(barValues).size).toBeGreaterThanOrEqual(2);
   expect(barValues).toEqual([...barValues].sort((lower, higher) => lower - higher));
-  expect(row).toEqual(restingRow);
-  expect(rested.durationSeconds).toBe(probeTalkLength(fixturesDir));
-  expect(rested.upload).toMatchObject({ fileName: 'talk.mp4', receivedBytes: rested.upload?.sizeBytes });
-  expect(rested.steps.map((step) => step.state)).toEqual(RESTING.stepStates);
+  expect(row).toEqual({ title: 'talk.mp4', meta: 'Uploaded file · 4 min', ...KEYLESS_END.row });
+  expect(ended.durationSeconds).toBe(probeTalkLength(fixturesDir));
+  expect(ended.upload).toMatchObject({ fileName: 'talk.mp4', receivedBytes: ended.upload?.sizeBytes });
+  expect(ended.steps.map((step) => step.state)).toEqual(KEYLESS_END.stepStates);
 });
 
 test('a browser that is not sending the file says so on the status screen', async ({ page, request }) => {

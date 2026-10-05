@@ -5,10 +5,10 @@ import {
   createLinkProject,
   deleteAllProjects,
   expect,
+  KEYLESS_END,
   readProject,
-  RESTING,
   test,
-  waitForRest,
+  waitForKeylessEnd,
   waitForStatus,
 } from './support';
 
@@ -22,15 +22,15 @@ test('a second link project waits for the first and then finishes', async ({ req
 
   await waitForStatus(request, first.id, 'processing');
   const secondWhileFirstRuns = await readProject(request, second.id);
-  const firstRested = await waitForRest(request, first.id);
+  const firstEnded = await waitForKeylessEnd(request, first.id);
   const secondAfterFirst = await readProject(request, second.id);
-  const secondRested = await waitForRest(request, second.id);
+  const secondEnded = await waitForKeylessEnd(request, second.id);
 
   expect(secondWhileFirstRuns.status).toBe('queued');
   expect(['queued', 'processing']).toContain(secondAfterFirst.status);
-  expect(firstRested.title).toBe('talk');
-  expect(firstRested.steps.map((step) => step.state)).toEqual(RESTING.stepStates);
-  expect(secondRested.durationSeconds).toBe(firstRested.durationSeconds);
+  expect(firstEnded.title).toBe('talk');
+  expect(firstEnded.steps.map((step) => step.state)).toEqual(KEYLESS_END.stepStates);
+  expect(secondEnded.durationSeconds).toBe(firstEnded.durationSeconds);
 });
 
 test('a project whose fetch is cut off by a stop finishes after the start', async ({ request, tool, fixtureServer }) => {
@@ -40,9 +40,9 @@ test('a project whose fetch is cut off by a stop finishes after the start', asyn
   await tool.stop();
   await tool.start();
   const afterRestart = await readProject(request, project.id);
-  const rested = await waitForRest(request, project.id);
+  const ended = await waitForKeylessEnd(request, project.id);
 
   expect(['queued', 'processing']).toContain(afterRestart.status);
-  expect(rested.durationSeconds).toBeGreaterThan(200);
-  expect(readdirSync(join(tool.settings.dataDir, 'projects', project.id)).sort()).toEqual(RESTING.files);
+  expect(ended.durationSeconds).toBeGreaterThan(200);
+  expect(readdirSync(join(tool.settings.dataDir, 'projects', project.id)).sort()).toEqual(KEYLESS_END.files);
 });

@@ -649,6 +649,14 @@ From `intent.md`. Base `82df5ce`.
   paste it again. The key is sent as it was typed, and the service leaves out the blanks around
   it. A saved key too short to show an ending of reads "Saved". Enter in the field does nothing,
   as in the prototype. The plan words the row and leaves these open. (executor, m3)
+- A85 — In the browser tests a project counts as at the end of a run without a key when it has
+  the state of that end and its transcribe step is done, so an earlier failure of the same
+  project is not taken for it. The seeded project is named `keyless` and its screen
+  `status-keyless`. The three tests about transcription check the kinds of all steps and the
+  states of the steps up to the transcription, and leave open what the step after it is doing at
+  that moment. `web/e2e/support` holds more flat source files than the coding standards advise,
+  as A79 records for two other folders; the plan names each new file at its flat path. The plan
+  says what the description holds and leaves these open. (executor, m3)
 
 ## Milestones
 

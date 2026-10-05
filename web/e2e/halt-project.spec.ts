@@ -1,7 +1,15 @@
-import { createLinkProject, deleteAllProjects, expect, readStatusCard, RESTING, statusCard, test } from './support';
+import {
+  createLinkProject,
+  deleteAllProjects,
+  expect,
+  KEYLESS_END,
+  readStatusCard,
+  statusCard,
+  test,
+} from './support';
 
 const PHONE = { width: 390, height: 844 };
-const REST_TIMEOUT_MS = 60_000;
+const END_TIMEOUT_MS = 60_000;
 const DOWNLOAD_FAILED = 'The video could not be downloaded. Check the link and your connection, then retry.';
 
 test.use({ viewport: PHONE });
@@ -22,7 +30,9 @@ test('a link that answers "not found" shows the reason and Retry, and Retry fini
 
   await fixtureServer.repair();
   await page.getByRole('button', { name: 'Retry' }).click();
-  await expect(statusCard(page).locator('h2')).toHaveText(RESTING.card.heading, { timeout: REST_TIMEOUT_MS });
+  await expect(statusCard(page).locator('.status-card__stage')).toHaveText(KEYLESS_END.card.stage, {
+    timeout: END_TIMEOUT_MS,
+  });
 
   expect(failed).toEqual({
     heading: 'Could Not Finish',
@@ -33,13 +43,7 @@ test('a link that answers "not found" shows the reason and Retry, and Retry fini
     hasBar: false,
     hasWarning: true,
   });
-  expect(await readStatusCard(page)).toEqual({
-    ...RESTING.card,
-    buttons: [],
-    links: [],
-    hasBar: true,
-    hasWarning: false,
-  });
+  expect(await readStatusCard(page)).toEqual(KEYLESS_END.card);
 });
 
 test('Stop during a fetch leaves the project stopped, and Resume finishes it', async ({ page, request, fixtureServer }) => {
@@ -52,7 +56,9 @@ test('Stop during a fetch leaves the project stopped, and Resume finishes it', a
   await expect(statusCard(page).locator('h2')).toHaveText('Stopped');
   const stopped = await readStatusCard(page);
   await page.getByRole('button', { name: 'Resume' }).click();
-  await expect(statusCard(page).locator('h2')).toHaveText(RESTING.card.heading, { timeout: REST_TIMEOUT_MS });
+  await expect(statusCard(page).locator('.status-card__stage')).toHaveText(KEYLESS_END.card.stage, {
+    timeout: END_TIMEOUT_MS,
+  });
 
   expect(running).toMatchObject({ stage: 'Fetching video', footnote: 'Step 1 of 4.', buttons: ['Stop'], hasBar: true });
   expect(stopped).toEqual({

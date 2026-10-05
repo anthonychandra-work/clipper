@@ -6,18 +6,18 @@ import {
   createLinkProject,
   deleteAllProjects,
   expect,
+  KEYLESS_END,
   projectRow,
   readProject,
-  RESTING,
   sendPart,
   statusCard,
   test,
-  waitForRest,
+  waitForKeylessEnd,
   waitForStatus,
 } from './support';
 
 const PHONE = { width: 390, height: 844 };
-const REST_TIMEOUT_MS = 90_000;
+const END_TIMEOUT_MS = 90_000;
 
 test.use({ viewport: PHONE });
 
@@ -41,12 +41,14 @@ test('a second project waits while the first is processed, names it, and starts 
   await expect(statusCard(page).locator('.status-card__stage')).toHaveText('It starts when “talk” finishes.');
   await expect(statusCard(page).locator('.list-footer')).toHaveText('One video is processed at a time.');
   const firstWhileSecondWaits = await readProject(request, first.id);
-  await expect(statusCard(page).locator('h2')).toHaveText('Finding Clips', { timeout: REST_TIMEOUT_MS });
+  await expect(statusCard(page).locator('h2')).toHaveText('Finding Clips', { timeout: END_TIMEOUT_MS });
   const firstWhenSecondStarts = await readProject(request, first.id);
-  await expect(statusCard(page).locator('h2')).toHaveText(RESTING.card.heading, { timeout: REST_TIMEOUT_MS });
+  await expect(statusCard(page).locator('.status-card__stage')).toHaveText(KEYLESS_END.card.stage, {
+    timeout: END_TIMEOUT_MS,
+  });
 
   expect(firstWhileSecondWaits.status).toBe('processing');
-  expect(firstWhenSecondStarts.status).toBe(RESTING.status);
+  expect(firstWhenSecondStarts.status).toBe(KEYLESS_END.status);
 });
 
 test('a file sent while another project is processed arrives in full and then waits its turn', async ({
@@ -64,12 +66,12 @@ test('a file sent while another project is processed arrives in full and then wa
   const sent = await sendPart(request, { projectId: upload.id, offset: 0, bytes: talk });
   const afterUpload = await readProject(request, upload.id);
   const runningMeanwhile = await readProject(request, running.id);
-  const rested = await waitForRest(request, upload.id);
+  const ended = await waitForKeylessEnd(request, upload.id);
 
   expect(whileUploading.status).toBe('uploading');
   expect((await sent.json()).receivedBytes).toBe(talk.length);
   expect(statSync(join(tool.settings.dataDir, 'projects', upload.id, 'source.mp4')).size).toBe(talk.length);
   expect(afterUpload.status).toBe('queued');
   expect(runningMeanwhile.status).toBe('processing');
-  expect(rested.durationSeconds).toBeGreaterThan(200);
+  expect(ended.durationSeconds).toBeGreaterThan(200);
 });

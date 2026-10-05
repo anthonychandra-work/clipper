@@ -52,7 +52,7 @@ export function listEmptyScreens(): ScreenVisit[] {
 }
 
 export function listProjectScreens(seeded: SeededProjects, shownList: ProjectList): ScreenVisit[] {
-  const readyList = presentAsFinished(shownList, seeded.rested.id);
+  const readyList = presentAsFinished(shownList, seeded.keyless.id);
   const statuses = Object.entries(seeded).map(([state, project]) => ({
     name: `status-${state}`,
     open: (page: Page) => showAddress(page, `/projects/${project.id}`, STATUS_HEADING),
@@ -61,11 +61,11 @@ export function listProjectScreens(seeded: SeededProjects, shownList: ProjectLis
     name: `project-${tab}`,
     open: async (page: Page) => {
       await holdProjectList(page, readyList);
-      await showAddress(page, `/projects/${seeded.rested.id}/${tab}`, `#tab-${tab}[aria-current="page"]`);
+      await showAddress(page, `/projects/${seeded.keyless.id}/${tab}`, `#tab-${tab}[aria-current="page"]`);
     },
   }));
   return [
-    { name: 'library', open: (page) => showAddress(page, '/', `#project-${seeded.rested.id}`) },
+    { name: 'library', open: (page) => showAddress(page, '/', `#project-${seeded.keyless.id}`) },
     ...statuses,
     ...listTranscriptionScreens(seeded, shownList),
     ...tabs,
@@ -99,7 +99,7 @@ function replaceProjects(list: ProjectList, replacements: Project[]): ProjectLis
 
 function presentAsFinished(list: ProjectList, projectId: string): ProjectList {
   const projects = list.projects.map((project) =>
-    project.id === projectId ? { ...project, status: 'ready' as const, percent: 100 } : project,
+    project.id === projectId ? { ...project, status: 'ready' as const, percent: 100, halt: null } : project,
   );
   return { ...list, projects };
 }

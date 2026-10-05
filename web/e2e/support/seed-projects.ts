@@ -2,7 +2,7 @@ import type { APIRequestContext } from '@playwright/test';
 
 import type { Project, ProjectStep } from '@/library';
 
-import { waitForRest } from './resting-state';
+import { waitForKeylessEnd } from './keyless-end';
 import type { FixtureServer } from './serve-fixtures';
 import {
   createFileProject,
@@ -25,7 +25,7 @@ const LONGEST_DOWNLOAD: ProjectStep = {
 };
 
 export interface SeededProjects {
-  rested: Project;
+  keyless: Project;
   failed: Project;
   stopped: Project;
   processing: Project;
@@ -34,8 +34,8 @@ export interface SeededProjects {
 }
 
 export async function seedEveryState(request: APIRequestContext, server: FixtureServer): Promise<SeededProjects> {
-  const rested = await createLinkProject(request, `${server.address}/talk.mp4`);
-  await waitForRest(request, rested.id);
+  const keyless = await createLinkProject(request, `${server.address}/talk.mp4`);
+  await waitForKeylessEnd(request, keyless.id);
   const failed = await createLinkProject(request, `${server.address}/missing.mp4`);
   await waitForStatus(request, failed.id, 'failed');
   const stopped = await createLinkProject(request, `${server.address}/slow/talk.mp4`);
@@ -47,7 +47,7 @@ export async function seedEveryState(request: APIRequestContext, server: Fixture
   await sendPart(request, { projectId: uploading.id, offset: 0, bytes: UPLOADED_SO_FAR });
   await waitForStatus(request, processing.id, 'processing');
   return {
-    rested: await readProject(request, rested.id),
+    keyless: await readProject(request, keyless.id),
     failed: await readProject(request, failed.id),
     stopped: await readProject(request, stopped.id),
     processing: await readProject(request, processing.id),
@@ -57,21 +57,23 @@ export async function seedEveryState(request: APIRequestContext, server: Fixture
 }
 
 export function presentTranscriptionStates(seeded: SeededProjects): Record<string, Project> {
-  const [fetched, transcribe, ...later] = seeded.rested.steps;
+  const [fetched, transcribe, ...later] = seeded.keyless.steps;
   const waiting: ProjectStep = { ...transcribe, state: 'pending', percent: 0 };
   const downloading: ProjectStep = { ...LONGEST_DOWNLOAD, state: 'running', percent: 40 };
   const transcribing: ProjectStep = { ...transcribe, state: 'running', percent: 60 };
   return {
     downloading: {
-      ...seeded.rested,
+      ...seeded.keyless,
       status: 'processing',
       percent: 30,
+      halt: null,
       steps: [fetched, downloading, waiting, ...later],
     },
     transcribing: {
       ...seeded.processing,
       status: 'processing',
       percent: 40,
+      halt: null,
       steps: [fetched, transcribing, ...later],
     },
     'no-speech': {

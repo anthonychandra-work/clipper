@@ -18,7 +18,7 @@ const PHONE = { width: 390, height: 844 };
 const THREE_GB_IN_BYTES = String(3 * 1024 ** 3);
 const SCREENS_WITH_PROJECTS = [
   'library',
-  'status-rested',
+  'status-keyless',
   'status-failed',
   'status-stopped',
   'status-processing',

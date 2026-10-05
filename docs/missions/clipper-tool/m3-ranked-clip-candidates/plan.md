@@ -465,8 +465,9 @@ What the spec's file list leaves out
   and the row with 0, 1 and 6 candidates. The browser tests' reading of the status card also
   gives the card's links.
 
-- [ ] T14 — Describe the end of a run without a key once in the browser tests
-  Files: `web/e2e/support/keyless-end.ts`, `web/e2e/support/resting-state.ts`,
+- [x] T14 — Describe the end of a run without a key once in the browser tests
+  Files: `docs/missions/clipper-tool/spec.md`,
+  `web/e2e/support/keyless-end.ts`, `web/e2e/support/resting-state.ts`,
   `web/e2e/support/index.ts`, `web/e2e/support/wait-for-step.ts`,
   `web/e2e/support/seed-projects.ts`, `web/e2e/support/walk-screens.ts`,
   `web/e2e/addresses.spec.ts`, `web/e2e/delete-project.spec.ts`, `web/e2e/halt-project.spec.ts`,
