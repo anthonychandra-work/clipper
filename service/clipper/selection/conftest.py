@@ -8,8 +8,11 @@ import httpx2
 import pytest
 
 from ..conftest import SCRIPTS_DIR, SERVER_START_TIMEOUT_SECONDS
+from ..transcription import Transcript
 
-RECORDED_REPLIES_DIR = SCRIPTS_DIR.parent / "fixtures" / "claude"
+COMMITTED_FIXTURES_DIR = SCRIPTS_DIR.parent / "fixtures"
+RECORDED_REPLIES_DIR = COMMITTED_FIXTURES_DIR / "claude"
+TALK_TRANSCRIPT_FILE = COMMITTED_FIXTURES_DIR / "talk-transcript.json"
 TEST_KEY = "sk-ant-test-4f2a"
 
 
@@ -78,3 +81,8 @@ def recorded_claude(recorded_claude_address: str) -> RecordedClaude:
     stand_in = RecordedClaude(recorded_claude_address)
     stand_in.forget_requests()
     return stand_in
+
+
+@pytest.fixture(scope="session")
+def talk_transcript() -> Transcript:
+    return Transcript.model_validate_json(TALK_TRANSCRIPT_FILE.read_text(encoding="utf-8"))

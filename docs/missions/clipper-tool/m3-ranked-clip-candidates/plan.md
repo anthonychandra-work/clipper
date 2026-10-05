@@ -223,7 +223,7 @@ What the spec's file list leaves out
   record holds the key; the start-up settings of a test session do not name a file in the
   user's home.
 
-- [ ] T3 — Split a transcript into sentences and windows
+- [x] T3 — Split a transcript into sentences and windows
   Files: `fixtures/talk-transcript.json`, `service/clipper/selection/split_sentences.py`,
   `service/clipper/selection/test_split_sentences.py`,
   `service/clipper/selection/split_windows.py`,

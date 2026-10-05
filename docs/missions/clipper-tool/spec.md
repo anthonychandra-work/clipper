@@ -587,6 +587,11 @@ From `intent.md`. Base `82df5ce`.
   written under another name first and then moved into place. The ending is shown only for a key
   longer than four characters, so the browser never receives a whole key. A60 words two refusals
   and leaves these open. (executor, m3)
+- A76 — Where a sentence longer than 30 seconds has several pauses of the same greatest length,
+  it is split at the one nearest its middle. Whisper often times words with no pause between
+  them, and a split at the first of equal pauses would shave one word off at a time. A single
+  word longer than 30 seconds stays whole. A61 names the longest pause and not a choice between
+  equal ones. (executor, m3)
 
 ## Milestones
 

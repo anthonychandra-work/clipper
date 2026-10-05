@@ -73,12 +73,14 @@ folders.
   otherwise import each other.
 - `web/e2e/` holds the browser tests, with their shared code in `support/`.
 - `service/clipper/` holds one package per capability: `problems`, `settings`, `storage`,
-  `media`, `projects`, `pipeline`, `fetching` and `transcription`. Each exports through its
-  `__init__.py` and has at most one router. `main.py` joins them.
+  `media`, `projects`, `pipeline`, `fetching`, `transcription` and `selection`. Each exports
+  through its `__init__.py` and has at most one router. `main.py` joins them.
 - Service imports run one way: `fetching` and `transcription` import `pipeline`, `projects`,
   `media` and `storage`, and `transcription` also imports `settings`; `pipeline` imports
-  `projects` and `media`; `projects` imports none of them. Nothing but `main.py` imports
-  `fetching` or `transcription`. `main.py` hands `projects` what it needs from `pipeline`.
+  `projects` and `media`; `projects` imports none of them. `selection` imports `transcription`
+  for the stored transcript, and `settings`, `pipeline`, `projects` and `storage`. Nothing but
+  `main.py` imports `fetching` or `selection`, and nothing but `main.py` and `selection` imports
+  `transcription`. `main.py` hands `projects` what it needs from `pipeline`.
 - The transcriber, `service/clipper/transcription/transcribe_audio.py`, is a program of its own.
   The service starts it by its file path once for each transcription and imports nothing from
   it, and it imports nothing from the service. MLX and the model are loaded in that program
