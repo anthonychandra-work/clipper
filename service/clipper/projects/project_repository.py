@@ -6,6 +6,7 @@ from collections.abc import Iterable
 from ..problems import NotFoundError
 from ..storage import Database
 from .project import (
+    ARRIVAL_SHARE_PERCENT,
     ClipLength,
     Platform,
     Project,
@@ -29,6 +30,16 @@ INSERT INTO projects (
 INSERT_STEP = """
 INSERT INTO project_steps (project_id, position, kind, state, percent) VALUES (?, ?, ?, ?, ?)
 """
+RECORD_RECEIVED_BYTES = "UPDATE projects SET received_bytes = ? WHERE id = ?"
+RAISE_UPLOAD_PERCENT = """
+UPDATE project_steps
+SET percent = ? * (
+    SELECT 1.0 * received_bytes / file_size_bytes FROM projects WHERE id = project_id
+)
+WHERE project_id = ? AND kind = 'fetch'
+"""
+QUEUE_UPLOADED = "UPDATE projects SET status = ? WHERE id = ? AND status = 'uploading'"
+SET_FETCH_STATE = "UPDATE project_steps SET state = ? WHERE project_id = ? AND kind = 'fetch'"
 
 
 class ProjectNotFoundError(NotFoundError):
@@ -69,6 +80,16 @@ class ProjectRepository:
     def delete(self, project_id: str) -> None:
         with self._database.transaction() as connection:
             connection.execute("DELETE FROM projects WHERE id = ?", [project_id])
+
+    def record_received_bytes(self, project_id: str, received_bytes: int) -> None:
+        with self._database.transaction() as connection:
+            connection.execute(RECORD_RECEIVED_BYTES, [received_bytes, project_id])
+            connection.execute(RAISE_UPLOAD_PERCENT, [ARRIVAL_SHARE_PERCENT, project_id])
+
+    def queue_uploaded(self, project_id: str) -> None:
+        with self._database.transaction() as connection:
+            connection.execute(QUEUE_UPLOADED, [ProjectStatus.QUEUED, project_id])
+            connection.execute(SET_FETCH_STATE, [StepState.PENDING, project_id])
 
 
 def describe_project_row(project: Project) -> dict[str, str | int | float | None]:

@@ -284,8 +284,8 @@ The prototype
   `DELETE /api/projects/<id>` removes the project's folder under `projects/` in the data folder
   and its records. An unknown id answers 404 through the one error handler.
 
-- [ ] T6 — Receive an upload in parts, straight to disk
-  Files: `service/clipper/projects/receive_upload.py`,
+- [x] T6 — Receive an upload in parts, straight to disk
+  Files: `service/clipper/projects/project.py`, `service/clipper/projects/receive_upload.py`,
   `service/clipper/projects/test_receive_upload.py`, `service/clipper/projects/router.py`,
   `service/clipper/projects/test_router.py`, `service/clipper/projects/project_repository.py`,
   `service/clipper/projects/project_schemas.py`, `web/e2e/support/index.ts`,

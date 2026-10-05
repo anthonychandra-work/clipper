@@ -158,6 +158,73 @@ def test_delete_removes_the_project_and_its_folder(client: TestClient, tmp_path:
     assert client.get("/api/projects").json()["projects"] == []
 
 
+def test_upload_parts_are_appended_and_the_new_count_is_answered(
+    client: TestClient, tmp_path: Path
+) -> None:
+    created = client.post("/api/projects", json={**FILE_DRAFT, "fileSizeBytes": 6}).json()
+    upload_address = f"/api/projects/{created['id']}/upload"
+
+    first = client.put(upload_address, params={"offset": 0}, content=b"abc")
+    second = client.put(upload_address, params={"offset": 3}, content=b"def")
+
+    assert (first.status_code, first.json()) == (200, {"receivedBytes": 3})
+    assert (second.status_code, second.json()) == (200, {"receivedBytes": 6})
+    stored = tmp_path / "data" / "projects" / created["id"] / "source.mp4"
+    assert stored.read_bytes() == b"abcdef"
+    assert client.get(f"/api/projects/{created['id']}").json()["status"] == "queued"
+
+
+def test_a_part_at_another_offset_answers_409_with_the_count_held(client: TestClient) -> None:
+    created = client.post("/api/projects", json={**FILE_DRAFT, "fileSizeBytes": 6}).json()
+    upload_address = f"/api/projects/{created['id']}/upload"
+    client.put(upload_address, params={"offset": 0}, content=b"abc")
+
+    response = client.put(upload_address, params={"offset": 0}, content=b"abc")
+
+    assert response.status_code == 409
+    assert response.json()["receivedBytes"] == 3
+
+
+def test_a_part_declared_larger_than_8_mib_answers_413(client: TestClient) -> None:
+    created = client.post("/api/projects", json=FILE_DRAFT).json()
+    oversized = b"x" * (8 * 1024 * 1024 + 1)
+
+    response = client.put(
+        f"/api/projects/{created['id']}/upload", params={"offset": 0}, content=oversized
+    )
+
+    assert response.status_code == 413
+    assert client.get(f"/api/projects/{created['id']}").json()["upload"]["receivedBytes"] == 0
+
+
+def test_a_part_of_exactly_8_mib_is_accepted(client: TestClient) -> None:
+    part = b"x" * (8 * 1024 * 1024)
+    created = client.post(
+        "/api/projects", json={**FILE_DRAFT, "fileSizeBytes": len(part) + 1}
+    ).json()
+
+    upload_address = f"/api/projects/{created['id']}/upload"
+    response = client.put(upload_address, params={"offset": 0}, content=part)
+
+    assert response.json() == {"receivedBytes": len(part)}
+
+
+def test_a_part_for_a_link_project_answers_409(client: TestClient) -> None:
+    created = client.post("/api/projects", json=LINK_DRAFT).json()
+
+    response = client.put(
+        f"/api/projects/{created['id']}/upload", params={"offset": 0}, content=b"abc"
+    )
+
+    assert response.status_code == 409
+
+
+def test_a_part_for_an_unknown_project_answers_404(client: TestClient) -> None:
+    response = client.put("/api/projects/missing/upload", params={"offset": 0}, content=b"abc")
+
+    assert response.status_code == 404
+
+
 @pytest.mark.parametrize("method", ["GET", "DELETE"])
 def test_an_unknown_id_answers_404_through_the_error_handler(
     client: TestClient, method: str

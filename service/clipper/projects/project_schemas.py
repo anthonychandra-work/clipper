@@ -51,3 +51,7 @@ class ProjectResponse(ApiModel):
 class ProjectListResponse(ApiModel):
     projects: list[ProjectResponse]
     free_disk_gb: float
+
+
+class UploadProgressResponse(ApiModel):
+    received_bytes: int

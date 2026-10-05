@@ -44,6 +44,7 @@ class StepState(StrEnum):
 
 
 STEP_ORDER = (StepKind.FETCH, StepKind.TRANSCRIBE, StepKind.SCORE, StepKind.CUT)
+ARRIVAL_SHARE_PERCENT = 70.0
 LATER_STEP_LABELS = {
     StepKind.TRANSCRIBE: "Transcribing on this Mac",
     StepKind.SCORE: "Scoring windows",
