@@ -19,3 +19,4 @@ export {
   SidebarProjects,
   useProjects,
 } from './list-projects';
+export { startUpload, type UploadProgress, useUpload } from './upload-video';

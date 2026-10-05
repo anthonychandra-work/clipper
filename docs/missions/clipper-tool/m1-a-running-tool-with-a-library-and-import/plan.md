@@ -537,7 +537,7 @@ The prototype
   the project's folder from the data folder, also while it is being fetched, and cancelling
   removes neither.
 
-- [ ] T15 — Send a file from the browser in parts
+- [x] T15 — Send a file from the browser in parts
   Files: `web/src/library/index.ts`, `web/src/library/upload-video/index.ts`,
   `web/src/library/upload-video/api/send-part.ts`,
   `web/src/library/upload-video/lib/send-in-parts.ts`,
