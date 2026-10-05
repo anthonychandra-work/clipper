@@ -418,6 +418,11 @@ From `intent.md`. Base `82df5ce`.
   model source. A download checks for a stop between the pieces it receives, and it fails when
   the source sends nothing for twenty seconds. The closed local port a test run names is port 9
   on the loopback address. (executor, m2)
+- A51 — The steps that share a quarter of a project's bar fill it in equal parts, so a finished
+  download with no word transcribed yet shows as half of that quarter. A check that fails leaves
+  the project failed at the step it was run for. A project counts as resting when its state is
+  one that a step of the queue leaves a project in. A42 and A46 fix that the bar must not fall
+  and that a resting project goes on, and leave these open. (executor, m2)
 
 ## Milestones
 

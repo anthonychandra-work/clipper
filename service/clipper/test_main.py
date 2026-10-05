@@ -14,6 +14,7 @@ from .projects import (
     Platform,
     ProjectQueue,
     ProjectRepository,
+    ProjectStatus,
     SourceKind,
     StepKind,
     UploadPart,
@@ -119,6 +120,23 @@ def test_the_queue_does_not_run_before_the_service_has_started(
     time.sleep(0.5)
 
     assert not_started.get(f"/api/projects/{interrupted}").json()["status"] == "processing"
+
+
+def test_a_project_that_rests_before_a_step_without_a_stage_is_left_resting_at_the_start(
+    tmp_path: Path, build_video: Callable[[VideoRecipe], Path]
+) -> None:
+    settings = StartupSettings(data_dir=tmp_path / "data")
+    rested = leave_a_project_processing(settings, build_video(VideoRecipe(name="upload.mp4")))
+    queue = ProjectQueue(open_database(settings.data_dir / "clipper.sqlite3"))
+    queue.finish_step(rested, StepKind.FETCH)
+    queue.rest(rested, ProjectStatus.FETCHED)
+
+    with TestClient(create_app(settings)) as restarted:
+        time.sleep(0.5)
+        after_the_start = restarted.get(f"/api/projects/{rested}").json()
+
+    assert after_the_start["status"] == "fetched"
+    assert [step["state"] for step in after_the_start["steps"]] == ["done", *["pending"] * 3]
 
 
 @pytest.mark.parametrize("address", ["/docs", "/redoc", "/openapi.json"])

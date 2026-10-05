@@ -4,7 +4,7 @@ import pytest
 
 from ..storage import Database
 from .create_project import plan_project
-from .project import Platform, Project, SourceKind, Upload
+from .project import Platform, Project, SourceKind, Step, StepKind, StepState, Upload
 from .project_repository import ProjectNotFoundError, ProjectRepository
 from .project_schemas import CreateProjectRequest
 
@@ -32,6 +32,17 @@ def test_a_stored_project_is_read_back_unchanged(repository: ProjectRepository) 
     repository.add(project)
 
     assert repository.get(project.id) == project
+
+
+def test_a_step_with_a_label_of_its_own_is_stored_with_it(repository: ProjectRepository) -> None:
+    project = plan_link_project("Talk")
+    download = Step(StepKind.MODEL, StepState.PENDING, 0.0, "Downloading Whisper small")
+    labelled = replace(project, steps=(project.steps[0], download, *project.steps[1:]))
+
+    repository.add(labelled)
+
+    assert repository.get(labelled.id) == labelled
+    assert [step.label for step in repository.get(project.id).steps[2:]] == [None, None, None]
 
 
 def test_a_file_project_keeps_its_upload(repository: ProjectRepository) -> None:

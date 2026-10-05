@@ -26,6 +26,22 @@ SET state = 'pending',
     END
 WHERE project_id = ? AND state = 'running'
 """
+RESET_STEP = """
+UPDATE project_steps SET state = 'pending', percent = 0, label = ?
+WHERE project_id = ? AND kind = ?
+"""
+POSITION_OF_STEP = "SELECT position FROM project_steps WHERE project_id = ? AND kind = ?"
+# Two rows never share a position: the later steps wait below zero until the new one is in.
+MOVE_LATER_STEPS_ASIDE = """
+UPDATE project_steps SET position = -(position + 1) WHERE project_id = ? AND position >= ?
+"""
+INSERT_WAITING_STEP = """
+INSERT INTO project_steps (project_id, position, kind, state, percent, label)
+VALUES (?, ?, ?, 'pending', 0, ?)
+"""
+SETTLE_MOVED_STEPS = """
+UPDATE project_steps SET position = -position WHERE project_id = ? AND position < 0
+"""
 
 
 class ProjectQueue:
@@ -69,3 +85,16 @@ class ProjectQueue:
     def list_processing(self) -> list[str]:
         with self._database.transaction() as connection:
             return [str(row["id"]) for row in connection.execute(PROCESSING_IDS)]
+
+    def put_step_ahead(
+        self, project_id: str, *, kind: StepKind, label: str, ahead_of: StepKind
+    ) -> None:
+        with self._database.transaction() as connection:
+            if connection.execute(RESET_STEP, [label, project_id, kind]).rowcount > 0:
+                return
+            found = connection.execute(POSITION_OF_STEP, [project_id, ahead_of]).fetchone()
+            if found is None:
+                return
+            connection.execute(MOVE_LATER_STEPS_ASIDE, [project_id, found["position"]])
+            connection.execute(INSERT_WAITING_STEP, [project_id, found["position"], kind, label])
+            connection.execute(SETTLE_MOVED_STEPS, [project_id])

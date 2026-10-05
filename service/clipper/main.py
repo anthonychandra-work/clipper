@@ -1,4 +1,4 @@
-from collections.abc import AsyncIterator, Callable
+from collections.abc import AsyncIterator, Callable, Sequence
 from contextlib import AbstractAsyncContextManager, asynccontextmanager
 from functools import partial
 
@@ -28,10 +28,11 @@ def create_app(startup: StartupSettings) -> FastAPI:
     measure_disk = partial(read_disk_space, data_folder.root, startup.reported_free_bytes)
     repository = projects.ProjectRepository(database)
     queue = projects.ProjectQueue(database)
-    fetch_stage = FetchStage(repository, data_folder, media_tools)
-    worker = pipeline.QueueWorker(repository, queue, [fetch_stage])
-    app = start_quiet_app(partial(run_queue_with_app, worker, queue))
-    app.state.pipeline = pipeline.PipelineDependencies(repository, queue, worker)
+    stages = [FetchStage(repository, data_folder, media_tools)]
+    worker = pipeline.QueueWorker(repository, queue, stages)
+    queued = pipeline.PipelineDependencies(repository, queue, worker)
+    app = start_quiet_app(partial(run_queue_with_app, queued, stages))
+    app.state.pipeline = queued
     app.state.projects = projects.ProjectsDependencies(
         repository=repository,
         data_folder=data_folder,
@@ -63,14 +64,15 @@ def start_quiet_app(lifespan: Callable[[FastAPI], AbstractAsyncContextManager[No
 
 @asynccontextmanager
 async def run_queue_with_app(
-    worker: pipeline.QueueWorker, queue: projects.ProjectQueue, app: FastAPI
+    queued: pipeline.PipelineDependencies, stages: Sequence[pipeline.PipelineStage], app: FastAPI
 ) -> AsyncIterator[None]:
-    pipeline.recover_interrupted(queue)
-    worker.start()
+    pipeline.recover_interrupted(queued.queue)
+    pipeline.requeue_rested(queued.repository, queued.queue, stages)
+    queued.worker.start()
     try:
         yield
     finally:
-        await run_in_threadpool(worker.stop)
+        await run_in_threadpool(queued.worker.stop)
 
 
 async def report_health() -> dict[str, str]:

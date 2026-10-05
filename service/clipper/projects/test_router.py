@@ -5,7 +5,9 @@ from fastapi.testclient import TestClient
 
 from ..main import create_app
 from ..settings import StartupSettings
-from ..storage import BYTES_PER_GB
+from ..storage import BYTES_PER_GB, open_database
+from .project import StepKind
+from .project_queue import ProjectQueue
 
 LINK_DRAFT = {
     "sourceKind": "link",
@@ -95,6 +97,30 @@ def test_one_project_is_read_by_its_id(client: TestClient) -> None:
 
     assert response.status_code == 200
     assert response.json() == created
+
+
+def test_a_step_added_to_a_project_is_shown_under_its_own_label(
+    client: TestClient, tmp_path: Path
+) -> None:
+    created = client.post("/api/projects", json=LINK_DRAFT).json()
+    queue = ProjectQueue(open_database(tmp_path / "data" / "clipper.sqlite3"))
+
+    queue.put_step_ahead(
+        created["id"],
+        kind=StepKind.MODEL,
+        label="Downloading Whisper small",
+        ahead_of=StepKind.TRANSCRIBE,
+    )
+
+    steps = client.get(f"/api/projects/{created['id']}").json()["steps"]
+    assert [step["kind"] for step in steps] == ["fetch", "model", "transcribe", "score", "cut"]
+    assert steps[1] == {
+        "kind": "model",
+        "label": "Downloading Whisper small",
+        "state": "pending",
+        "percent": 0.0,
+    }
+    assert steps[2]["label"] == "Transcribing on this Mac"
 
 
 @pytest.mark.parametrize(

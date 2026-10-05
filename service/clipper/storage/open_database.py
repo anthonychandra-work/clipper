@@ -40,7 +40,9 @@ CREATE TABLE preferences (
 );
 """
 
-MIGRATIONS: tuple[str, ...] = (CREATE_PROJECTS, CREATE_PREFERENCES)
+ADD_STEP_LABEL = "ALTER TABLE project_steps ADD COLUMN label TEXT;"
+
+MIGRATIONS: tuple[str, ...] = (CREATE_PROJECTS, CREATE_PREFERENCES, ADD_STEP_LABEL)
 
 
 class Database:

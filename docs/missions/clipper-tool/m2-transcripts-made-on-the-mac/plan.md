@@ -261,7 +261,7 @@ What the spec's file list leaves out
   closed port. A test run sets `CLIPPER_MODEL_SOURCE` to a closed local port for everything it
   starts, and the service's tests set it the same way when the variable is absent.
 
-- [ ] T6 — Let a project gain a step, rest as transcribed, and carry on after an upgrade
+- [x] T6 — Let a project gain a step, rest as transcribed, and carry on after an upgrade
   Files: `service/clipper/storage/open_database.py`,
   `service/clipper/storage/test_open_database.py`, `service/clipper/projects/__init__.py`,
   `service/clipper/projects/project.py`, `service/clipper/projects/test_project.py`,

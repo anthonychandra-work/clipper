@@ -26,12 +26,14 @@ class ProjectStatus(StrEnum):
     FAILED = "failed"
     STOPPED = "stopped"
     FETCHED = "fetched"
+    TRANSCRIBED = "transcribed"
     READY = "ready"
     EXPORTED = "exported"
 
 
 class StepKind(StrEnum):
     FETCH = "fetch"
+    MODEL = "model"
     TRANSCRIBE = "transcribe"
     SCORE = "score"
     CUT = "cut"
@@ -43,9 +45,11 @@ class StepState(StrEnum):
     DONE = "done"
 
 
+# A project is created with these four; a step of another kind is added ahead of one of them.
 STEP_ORDER = (StepKind.FETCH, StepKind.TRANSCRIBE, StepKind.SCORE, StepKind.CUT)
 ARRIVAL_SHARE_PERCENT = 70.0
 LATER_STEP_LABELS = {
+    StepKind.MODEL: "Downloading the transcription model",
     StepKind.TRANSCRIBE: "Transcribing on this Mac",
     StepKind.SCORE: "Scoring windows",
     StepKind.CUT: "Cutting clips",
@@ -57,6 +61,7 @@ class Step:
     kind: StepKind
     state: StepState
     percent: float
+    label: str | None = None
 
 
 @dataclass(frozen=True)
@@ -83,7 +88,16 @@ class Project:
     upload: Upload | None
 
     def percent(self) -> float:
-        return sum(step.percent for step in self.steps) / len(self.steps)
+        shares = self._share_out_steps()
+        return sum(sum(share) / len(share) for share in shares) / len(shares)
+
+    def _share_out_steps(self) -> list[list[float]]:
+        shares: list[list[float]] = [[]]
+        for step in self.steps:
+            shares[-1].append(step.percent)
+            if step.kind in STEP_ORDER:
+                shares.append([])
+        return [share for share in shares if share]
 
     def first_unfinished_step(self) -> Step | None:
         return next((step for step in self.steps if step.state is not StepState.DONE), None)
@@ -92,6 +106,8 @@ class Project:
         return self.label_of(next(step for step in self.steps if step.kind is kind))
 
     def label_of(self, step: Step) -> str:
+        if step.label is not None:
+            return step.label
         if step.kind is not StepKind.FETCH:
             return LATER_STEP_LABELS[step.kind]
         if self.source_kind is SourceKind.LINK:

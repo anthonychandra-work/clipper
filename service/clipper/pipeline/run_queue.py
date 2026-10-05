@@ -1,13 +1,15 @@
 import logging
 import threading
 import time
-from collections.abc import Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import NamedTuple
 
-from ..projects import ProjectQueue, ProjectRepository, ProjectStatus, StepKind
+from ..projects import Project, ProjectQueue, ProjectRepository, ProjectStatus, StepKind
 from .explain_failure import describe_stop, explain_failure
 from .pipeline_stage import PipelineStage, StageRun
+
+StepCheck = Callable[[Project], None]
 
 IDLE_POLL_SECONDS = 0.25
 STORE_INTERVAL_SECONDS = 0.25
@@ -51,11 +53,16 @@ class StoredPercent:
 
 class QueueWorker:
     def __init__(
-        self, repository: ProjectRepository, queue: ProjectQueue, stages: Sequence[PipelineStage]
+        self,
+        repository: ProjectRepository,
+        queue: ProjectQueue,
+        stages: Sequence[PipelineStage],
+        checks: Mapping[StepKind, StepCheck] | None = None,
     ) -> None:
         self._repository = repository
         self._queue = queue
         self._stages = {stage.step: stage for stage in stages}
+        self._checks = dict(checks or {})
         self._shutdown = threading.Event()
         self._current: ProjectRun | None = None
         self._lock = threading.Lock()
@@ -104,35 +111,45 @@ class QueueWorker:
 
     def _run_stages(self, run: ProjectRun) -> None:
         resting_status: ProjectStatus | None = None
-        while (stage := self._find_next_stage(run.project_id)) is not None:
-            if not self._run_stage(run, stage):
+        while (planned := self._find_next_step(run.project_id)) is not None:
+            stage = self._run_step(run, planned)
+            if stage is None:
                 return
             resting_status = stage.resting_status
         if resting_status is not None:
             self._queue.rest(run.project_id, resting_status)
 
-    def _find_next_stage(self, project_id: str) -> PipelineStage | None:
+    def _find_next_step(self, project_id: str) -> StepKind | None:
         project = self._repository.find(project_id)
         step = project.first_unfinished_step() if project else None
-        return self._stages.get(step.kind) if step else None
+        return step.kind if step and step.kind in self._stages else None
 
-    def _run_stage(self, run: ProjectRun, stage: PipelineStage) -> bool:
-        project = self._repository.find(run.project_id)
-        if project is None:
-            return False
-        self._queue.start_step(project.id, stage.step)
-        percent = StoredPercent(self._queue, project.id, stage.step)
+    def _run_step(self, run: ProjectRun, planned: StepKind) -> PipelineStage | None:
+        step = planned
         try:
-            stage.run(StageRun(project, run.stop, percent.report))
+            step = self._check_then_take(run.project_id, planned)
+            stage = self._stages[step]
+            self._queue.start_step(run.project_id, step)
+            percent = StoredPercent(self._queue, run.project_id, step)
+            stage.run(StageRun(self._repository.get(run.project_id), run.stop, percent.report))
         except Exception as failure:
-            self._record_halt(run, describe_halt(run, failure, project.label_of_kind(stage.step)))
-            return False
-        self._queue.finish_step(project.id, stage.step)
-        return True
+            self._record_halt(run, failure, step)
+            return None
+        self._queue.finish_step(run.project_id, step)
+        return stage
 
-    def _record_halt(self, run: ProjectRun, halt: Halt) -> None:
-        if self._shutdown.is_set():
+    def _check_then_take(self, project_id: str, planned: StepKind) -> StepKind:
+        check = self._checks.get(planned)
+        if check is not None:
+            check(self._repository.get(project_id))
+        taken = self._repository.get(project_id).first_unfinished_step()
+        return taken.kind if taken else planned
+
+    def _record_halt(self, run: ProjectRun, failure: Exception, step: StepKind) -> None:
+        project = self._repository.find(run.project_id)
+        if self._shutdown.is_set() or project is None:
             return
+        halt = describe_halt(run, failure, project.label_of_kind(step))
         if halt.status is ProjectStatus.FAILED:
             log.exception("A step of project %s failed.", run.project_id)
         self._queue.halt(run.project_id, halt.status, halt.reason)

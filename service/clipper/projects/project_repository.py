@@ -28,7 +28,8 @@ INSERT INTO projects (
 )
 """
 INSERT_STEP = """
-INSERT INTO project_steps (project_id, position, kind, state, percent) VALUES (?, ?, ?, ?, ?)
+INSERT INTO project_steps (project_id, position, kind, state, percent, label)
+VALUES (?, ?, ?, ?, ?, ?)
 """
 RECORD_RECEIVED_BYTES = "UPDATE projects SET received_bytes = ? WHERE id = ?"
 RAISE_UPLOAD_PERCENT = """
@@ -122,9 +123,9 @@ def describe_project_row(project: Project) -> dict[str, str | int | float | None
     }
 
 
-def describe_step_rows(project: Project) -> list[tuple[str, int, str, str, float]]:
+def describe_step_rows(project: Project) -> list[tuple[str, int, str, str, float, str | None]]:
     return [
-        (project.id, position, step.kind, step.state, step.percent)
+        (project.id, position, step.kind, step.state, step.percent, step.label)
         for position, step in enumerate(project.steps)
     ]
 
@@ -137,7 +138,12 @@ def group_steps(rows: Iterable[sqlite3.Row]) -> dict[str, list[Step]]:
 
 
 def read_step(row: sqlite3.Row) -> Step:
-    return Step(kind=StepKind(row["kind"]), state=StepState(row["state"]), percent=row["percent"])
+    return Step(
+        kind=StepKind(row["kind"]),
+        state=StepState(row["state"]),
+        percent=row["percent"],
+        label=row["label"],
+    )
 
 
 def read_project(row: sqlite3.Row, steps: list[Step]) -> Project:

@@ -18,10 +18,11 @@ from ..projects import (
 )
 from ..storage import BYTES_PER_GB, DiskSpace
 from .pipeline_stage import StageRun
-from .run_queue import QueueWorker
+from .run_queue import QueueWorker, StepCheck
 
 PLENTY = DiskSpace(free_bytes=50 * BYTES_PER_GB, total_bytes=460 * BYTES_PER_GB)
 WAIT_SECONDS = 5
+DOWNLOAD_LABEL = "Downloading Whisper small"
 
 
 class HeldStage:
@@ -224,3 +225,109 @@ def test_a_project_deleted_while_it_waits_is_skipped(
     held_stage.release.release()
 
     wait_until(lambda: held_stage.started == [running.id, last.id])
+
+
+class RecordingStage:
+    def __init__(self, step: StepKind, resting_status: ProjectStatus, ran: list[StepKind]) -> None:
+        self.step = step
+        self.resting_status = resting_status
+        self.waits_for_stop = False
+        self._ran = ran
+
+    def run(self, stage_run: StageRun) -> None:
+        self._ran.append(self.step)
+        while self.waits_for_stop and not stage_run.stop.wait(0.02):
+            stage_run.report_percent(40)
+        if stage_run.stop.is_set():
+            raise RuntimeError("stopped")
+
+
+def add_download_once(queue: ProjectQueue) -> StepCheck:
+    def check(project: Project) -> None:
+        if all(step.kind is not StepKind.MODEL for step in project.steps):
+            queue.put_step_ahead(
+                project.id, kind=StepKind.MODEL, label=DOWNLOAD_LABEL, ahead_of=StepKind.TRANSCRIBE
+            )
+
+    return check
+
+
+@pytest.fixture
+def ran() -> list[StepKind]:
+    return []
+
+
+@pytest.fixture
+def stages(ran: list[StepKind]) -> dict[StepKind, RecordingStage]:
+    return {
+        StepKind.FETCH: RecordingStage(StepKind.FETCH, ProjectStatus.FETCHED, ran),
+        StepKind.MODEL: RecordingStage(StepKind.MODEL, ProjectStatus.FETCHED, ran),
+        StepKind.TRANSCRIBE: RecordingStage(StepKind.TRANSCRIBE, ProjectStatus.TRANSCRIBED, ran),
+    }
+
+
+def test_a_check_that_puts_a_step_ahead_of_the_second_makes_it_run_first_and_the_second_after(
+    repository: ProjectRepository,
+    queue: ProjectQueue,
+    stages: dict[StepKind, RecordingStage],
+    ran: list[StepKind],
+) -> None:
+    project = queue_project(repository)
+    checks = {StepKind.TRANSCRIBE: add_download_once(queue)}
+    worker = QueueWorker(repository, queue, list(stages.values()), checks)
+
+    worker.start()
+    wait_until(lambda: repository.get(project.id).status is ProjectStatus.TRANSCRIBED)
+    worker.stop()
+
+    rested = repository.get(project.id)
+    assert ran == [StepKind.FETCH, StepKind.MODEL, StepKind.TRANSCRIBE]
+    assert [step.kind for step in rested.steps] == ["fetch", "model", "transcribe", "score", "cut"]
+    assert [step.state for step in rested.steps[:3]] == [StepState.DONE] * 3
+    assert rested.label_of_kind(StepKind.MODEL) == DOWNLOAD_LABEL
+    assert rested.percent() == 50
+
+
+def test_the_stop_reason_of_an_added_step_carries_its_own_label(
+    repository: ProjectRepository,
+    queue: ProjectQueue,
+    stages: dict[StepKind, RecordingStage],
+    ran: list[StepKind],
+) -> None:
+    stages[StepKind.MODEL].waits_for_stop = True
+    project = queue_project(repository)
+    checks = {StepKind.TRANSCRIBE: add_download_once(queue)}
+    worker = QueueWorker(repository, queue, list(stages.values()), checks)
+    worker.start()
+    wait_until(lambda: ran == [StepKind.FETCH, StepKind.MODEL])
+
+    has_ended = worker.stop_project(project.id)
+    worker.stop()
+
+    stopped = repository.get(project.id)
+    assert has_ended
+    assert stopped.status is ProjectStatus.STOPPED
+    assert stopped.halt_reason == f"Stopped at “{DOWNLOAD_LABEL}”. The stages before it are kept."
+    assert (stopped.steps[1].state, stopped.steps[1].percent) == (StepState.PENDING, 0)
+
+
+def test_a_check_that_fails_leaves_the_project_failed_at_the_step_it_was_for(
+    repository: ProjectRepository,
+    queue: ProjectQueue,
+    stages: dict[StepKind, RecordingStage],
+    ran: list[StepKind],
+) -> None:
+    def refuse(project: Project) -> None:
+        raise RuntimeError(f"nothing can be checked for {project.id}")
+
+    project = queue_project(repository)
+    worker = QueueWorker(repository, queue, list(stages.values()), {StepKind.TRANSCRIBE: refuse})
+
+    worker.start()
+    wait_until(lambda: repository.get(project.id).status is ProjectStatus.FAILED)
+    worker.stop()
+
+    assert ran == [StepKind.FETCH]
+    assert repository.get(project.id).halt_reason == (
+        "“Transcribing on this Mac” did not finish. Retry to run this step again."
+    )
