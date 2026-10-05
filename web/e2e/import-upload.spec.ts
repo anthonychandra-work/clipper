@@ -16,6 +16,7 @@ import {
 } from './support';
 
 const PHONE = { width: 390, height: 844 };
+const TRANSCRIBING = 'Transcribing on this Mac';
 const NOT_SENT_HERE =
   'Step 1 of 4. This upload is not running in this browser. ' +
   'If no other browser is sending it, delete the project and upload the file again.';
@@ -26,7 +27,7 @@ test.afterEach(async ({ request }) => {
   await deleteAllProjects(request);
 });
 
-test('the uploaded fixture is imported: its bar rises, then the row rests with the real length', async ({
+test('the uploaded fixture is prepared and transcribed: its bar never falls, then the row rests with the real length', async ({
   page,
   request,
   fixturesDir,
@@ -35,7 +36,9 @@ test('the uploaded fixture is imported: its bar rises, then the row rests with t
   await expect(page.locator('h1.large-title')).toHaveText('talk.mp4');
   await page.getByRole('link', { name: 'Back to Library' }).click();
 
-  const barValues = await followBarUntil(page, projectId, RESTING.word);
+  const whilePrepared = await followBarUntil(page, projectId, TRANSCRIBING);
+  const whileTranscribed = await followBarUntil(page, projectId, RESTING.word);
+  const barValues = [...whilePrepared, ...whileTranscribed];
   const row = await readRow(page, projectId);
   const rested = await readProject(request, projectId);
   const restingRow = { title: 'talk.mp4', meta: 'Uploaded file · 4 min', status: RESTING.word, barLabel: RESTING.word };
@@ -45,6 +48,7 @@ test('the uploaded fixture is imported: its bar rises, then the row rests with t
   expect(row).toEqual(restingRow);
   expect(rested.durationSeconds).toBe(probeTalkLength(fixturesDir));
   expect(rested.upload).toMatchObject({ fileName: 'talk.mp4', receivedBytes: rested.upload?.sizeBytes });
+  expect(rested.steps.map((step) => step.state)).toEqual(RESTING.stepStates);
 });
 
 test('a browser that is not sending the file says so on the status screen', async ({ page, request }) => {

@@ -12,6 +12,7 @@ from .media import locate_media_tools
 from .problems import handle_app_errors
 from .settings import StartupSettings
 from .storage import open_data_folder, open_database, read_disk_space
+from .transcription import DownloadPlanner, ModelStage, TranscribeStage
 
 TELEMETRY_OFF: TelemetryConfig = {
     "tracing": False,
@@ -28,8 +29,14 @@ def create_app(startup: StartupSettings) -> FastAPI:
     measure_disk = partial(read_disk_space, data_folder.root, startup.reported_free_bytes)
     repository = projects.ProjectRepository(database)
     queue = projects.ProjectQueue(database)
-    stages = [FetchStage(repository, data_folder, media_tools)]
-    worker = pipeline.QueueWorker(repository, queue, stages)
+    preferences = settings.PreferenceStore(database)
+    planner = DownloadPlanner(preferences, data_folder, queue)
+    stages: list[pipeline.PipelineStage] = [
+        FetchStage(repository, data_folder, media_tools),
+        ModelStage(preferences, data_folder, startup.model_source),
+        TranscribeStage(preferences, data_folder, media_tools),
+    ]
+    worker = pipeline.QueueWorker(repository, queue, stages, planner.list_checks())
     queued = pipeline.PipelineDependencies(repository, queue, worker)
     app = start_quiet_app(partial(run_queue_with_app, queued, stages))
     app.state.pipeline = queued
@@ -40,7 +47,7 @@ def create_app(startup: StartupSettings) -> FastAPI:
         stop_processing=worker.stop_project,
     )
     app.state.settings = settings.SettingsDependencies(
-        store=settings.PreferenceStore(database),
+        store=preferences,
         read_disk_space=measure_disk,
         web_port=startup.web_port,
     )

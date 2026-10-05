@@ -14,9 +14,11 @@ from .projects import (
     Platform,
     ProjectQueue,
     ProjectRepository,
+    ProjectResponse,
     ProjectStatus,
     SourceKind,
     StepKind,
+    StepState,
     UploadPart,
     create_project,
     receive_upload_part,
@@ -26,6 +28,9 @@ from .storage import BYTES_PER_GB, DiskSpace, open_data_folder, open_database
 
 PLENTY = DiskSpace(free_bytes=50 * BYTES_PER_GB, total_bytes=460 * BYTES_PER_GB)
 WAIT_SECONDS = 30
+MODEL_DOWNLOAD_FAILED = (
+    "The transcription model could not be downloaded. Check your connection, then retry."
+)
 
 
 @pytest.fixture
@@ -87,26 +92,37 @@ def leave_a_project_processing(settings: StartupSettings, video: Path) -> str:
     return project.id
 
 
-def wait_for_status(client: TestClient, project_id: str, status: str) -> dict[str, object]:
+def wait_until(
+    client: TestClient, project_id: str, has_arrived: Callable[[ProjectResponse], bool]
+) -> ProjectResponse:
     deadline = time.monotonic() + WAIT_SECONDS
     while True:
-        project: dict[str, object] = client.get(f"/api/projects/{project_id}").json()
-        if project["status"] == status:
+        answer = client.get(f"/api/projects/{project_id}").json()
+        project = ProjectResponse.model_validate(answer)
+        if has_arrived(project):
             return project
-        assert time.monotonic() < deadline, f"The project did not become {status}: {project}"
+        assert time.monotonic() < deadline, f"The project did not get there: {project}"
         time.sleep(0.05)
 
 
-def test_a_project_interrupted_by_a_restart_is_finished_after_the_start(
+def has_fetched(project: ProjectResponse) -> bool:
+    return project.steps[0].state is StepState.DONE
+
+
+def has_halted(project: ProjectResponse) -> bool:
+    return project.halt is not None
+
+
+def test_a_fetch_interrupted_by_a_restart_is_finished_after_the_start(
     tmp_path: Path, build_video: Callable[[VideoRecipe], Path]
 ) -> None:
     settings = StartupSettings(data_dir=tmp_path / "data")
     interrupted = leave_a_project_processing(settings, build_video(VideoRecipe(name="upload.mp4")))
 
     with TestClient(create_app(settings)) as restarted:
-        fetched = wait_for_status(restarted, interrupted, "fetched")
+        fetched = wait_until(restarted, interrupted, has_fetched)
 
-    assert fetched["durationSeconds"] == pytest.approx(2, abs=0.2)
+    assert fetched.duration_seconds == pytest.approx(2, abs=0.2)
     assert (settings.data_dir / "projects" / interrupted / "preview.mp4").is_file()
 
 
@@ -122,7 +138,7 @@ def test_the_queue_does_not_run_before_the_service_has_started(
     assert not_started.get(f"/api/projects/{interrupted}").json()["status"] == "processing"
 
 
-def test_a_project_that_rests_before_a_step_without_a_stage_is_left_resting_at_the_start(
+def test_a_project_that_rested_fetched_goes_on_to_the_steps_after_it_at_the_start(
     tmp_path: Path, build_video: Callable[[VideoRecipe], Path]
 ) -> None:
     settings = StartupSettings(data_dir=tmp_path / "data")
@@ -132,11 +148,12 @@ def test_a_project_that_rests_before_a_step_without_a_stage_is_left_resting_at_t
     queue.rest(rested, ProjectStatus.FETCHED)
 
     with TestClient(create_app(settings)) as restarted:
-        time.sleep(0.5)
-        after_the_start = restarted.get(f"/api/projects/{rested}").json()
+        halted = wait_until(restarted, rested, has_halted)
 
-    assert after_the_start["status"] == "fetched"
-    assert [step["state"] for step in after_the_start["steps"]] == ["done", *["pending"] * 3]
+    assert halted.status is ProjectStatus.FAILED
+    assert halted.halt is not None and halted.halt.reason == MODEL_DOWNLOAD_FAILED
+    assert [step.kind for step in halted.steps] == ["fetch", "model", "transcribe", "score", "cut"]
+    assert halted.steps[1].label == "Downloading Whisper large-v3-turbo"
 
 
 @pytest.mark.parametrize("address", ["/docs", "/redoc", "/openapi.json"])

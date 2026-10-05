@@ -66,10 +66,18 @@ export class ToolRun {
   address = '';
   private command: StartCommand | null = null;
 
-  constructor(readonly settings: TestRunSettings) {}
+  constructor(
+    readonly settings: TestRunSettings,
+    readonly modelSource: string,
+  ) {}
 
   async start(changes: EnvironmentChanges = {}): Promise<void> {
-    const environment = { ...process.env, CLIPPER_REPORTED_FREE_BYTES: FIFTY_GB_IN_BYTES, ...changes };
+    const environment = {
+      ...process.env,
+      CLIPPER_REPORTED_FREE_BYTES: FIFTY_GB_IN_BYTES,
+      CLIPPER_MODEL_SOURCE: this.modelSource,
+      ...changes,
+    };
     this.command = launchStartCommand(environment);
     this.address = await readPrintedAddress(this.command);
   }

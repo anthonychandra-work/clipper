@@ -1,4 +1,4 @@
-import type { Page } from '@playwright/test';
+import type { APIRequestContext, Page } from '@playwright/test';
 
 import { expect, test } from './support';
 
@@ -27,10 +27,18 @@ function readShownChoices(page: Page): Promise<string[]> {
   return page.locator('.menu-button__chosen').allInnerTexts();
 }
 
-test.beforeEach(async ({ request }) => {
+async function chooseTheDefaults(request: APIRequestContext): Promise<void> {
   for (const [name, value] of Object.entries(DEFAULTS)) {
     await request.patch('/api/settings', { data: { [name]: value } });
   }
+}
+
+test.beforeEach(async ({ request }) => {
+  await chooseTheDefaults(request);
+});
+
+test.afterEach(async ({ request }) => {
+  await chooseTheDefaults(request);
 });
 
 test.describe('at 390 px', () => {

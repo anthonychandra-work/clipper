@@ -13,15 +13,15 @@ export interface RestingState {
 }
 
 export const RESTING: RestingState = {
-  status: 'fetched',
-  word: 'Fetched',
+  status: 'transcribed',
+  word: 'Transcribed',
   card: {
-    heading: 'Fetched',
-    stage: 'Step 1 of 4 is done.',
-    footnote: 'Not started: Transcribing on this Mac, Scoring windows, Cutting clips.',
+    heading: 'Transcribed',
+    stage: 'Step 2 of 4 is done.',
+    footnote: 'Not started: Scoring windows, Cutting clips.',
   },
-  stepStates: ['done', 'pending', 'pending', 'pending'],
-  files: ['preview.mp4', 'source.mp4'],
+  stepStates: ['done', 'done', 'pending', 'pending'],
+  files: ['preview.mp4', 'source.mp4', 'transcript.json'],
 };
 
 export function waitForRest(request: APIRequestContext, projectId: string): Promise<Project> {

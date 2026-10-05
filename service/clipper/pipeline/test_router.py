@@ -7,6 +7,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from ..main import create_app
+from ..projects import ProjectResponse, StepState
 from ..settings import StartupSettings
 from ..storage import BYTES_PER_GB
 
@@ -39,6 +40,17 @@ def wait_for_status(client: TestClient, project_id: str, status: str) -> dict[st
         time.sleep(0.05)
 
 
+def wait_for_the_fetch(client: TestClient, project_id: str) -> ProjectResponse:
+    deadline = time.monotonic() + WAIT_SECONDS
+    while True:
+        answer = client.get(f"/api/projects/{project_id}").json()
+        project = ProjectResponse.model_validate(answer)
+        if project.steps[0].state is StepState.DONE:
+            return project
+        assert time.monotonic() < deadline, f"The fetch did not finish: {project}"
+        time.sleep(0.05)
+
+
 def test_stop_during_a_fetch_leaves_the_project_stopped_and_resume_finishes_it(
     client: TestClient, fixture_server: str
 ) -> None:
@@ -50,7 +62,7 @@ def test_stop_during_a_fetch_leaves_the_project_stopped_and_resume_finishes_it(
     stopped = client.post(f"/api/projects/{project_id}/stop")
     seconds_to_stop = time.monotonic() - asked_at
     resumed = client.post(f"/api/projects/{project_id}/resume")
-    fetched = wait_for_status(client, project_id, "fetched")
+    fetched = wait_for_the_fetch(client, project_id)
 
     assert seconds_to_stop < 2
     assert stopped.json()["status"] == "stopped"
@@ -58,7 +70,7 @@ def test_stop_during_a_fetch_leaves_the_project_stopped_and_resume_finishes_it(
         "reason": "Stopped at “Fetching video”. The stages before it are kept."
     }
     assert resumed.json()["halt"] is None
-    assert fetched["title"] == "talk"
+    assert fetched.title == "talk"
 
 
 def test_a_link_that_answers_not_found_fails_with_a_reason_and_retry_finishes_it_once_repaired(
@@ -69,11 +81,12 @@ def test_a_link_that_answers_not_found_fails_with_a_reason_and_retry_finishes_it
     failed = wait_for_status(client, project_id, "failed")
     httpx2.get(f"{fixture_server}/repair")
     retried = client.post(f"/api/projects/{project_id}/retry")
-    fetched = wait_for_status(client, project_id, "fetched")
+    fetched = wait_for_the_fetch(client, project_id)
 
     assert failed["halt"] == {"reason": DOWNLOAD_FAILED}
     assert retried.status_code == 200
-    assert fetched["halt"] is None
+    assert retried.json()["halt"] is None
+    assert fetched.steps[0].percent == 100
 
 
 def test_an_upload_that_is_not_a_video_fails_with_what_to_do(client: TestClient) -> None:

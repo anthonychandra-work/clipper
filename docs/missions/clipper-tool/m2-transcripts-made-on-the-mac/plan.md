@@ -341,7 +341,7 @@ What the spec's file list leaves out
   the project's folder. The description still says fetched, and no test names the fetched state
   itself. `pnpm test` exits 0.
 
-- [ ] T10 — Hand the queue the download and transcribe steps
+- [x] T10 — Hand the queue the download and transcribe steps
   Files: `service/clipper/main.py`, `service/clipper/test_main.py`,
   `service/clipper/pipeline/test_router.py`, `service/clipper/transcription/conftest.py`,
   `service/clipper/transcription/test_whole_app.py`, `web/e2e/support/test-model.ts`,
