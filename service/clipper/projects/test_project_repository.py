@@ -34,6 +34,19 @@ def test_a_stored_project_is_read_back_unchanged(repository: ProjectRepository) 
     assert repository.get(project.id) == project
 
 
+def test_a_new_project_has_no_candidate_and_a_stored_count_is_read_back(
+    repository: ProjectRepository,
+) -> None:
+    new, selected = plan_link_project("New"), replace(plan_link_project("Ready"), candidate_count=6)
+
+    repository.add(new)
+    repository.add(selected)
+
+    assert repository.get(new.id).candidate_count == 0
+    assert repository.get(selected.id) == selected
+    assert [project.candidate_count for project in repository.list_newest_first()] == [6, 0]
+
+
 def test_a_step_with_a_label_of_its_own_is_stored_with_it(repository: ProjectRepository) -> None:
     project = plan_link_project("Talk")
     download = Step(StepKind.MODEL, StepState.PENDING, 0.0, "Downloading Whisper small")

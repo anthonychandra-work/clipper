@@ -16,6 +16,7 @@ def describe_project(project: Project) -> ProjectResponse:
         percent=round(project.percent(), PERCENT_DECIMALS),
         halt=HaltResponse(reason=project.halt_reason) if project.halt_reason else None,
         upload=describe_upload(project.upload) if project.upload else None,
+        candidate_count=project.candidate_count,
     )
 
 

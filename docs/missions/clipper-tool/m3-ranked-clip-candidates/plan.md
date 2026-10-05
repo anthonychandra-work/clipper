@@ -243,7 +243,7 @@ What the spec's file list leaves out
   window. A transcript of one sentence gives one window. The committed transcript gives 54
   sentences and the four windows of the Findings.
 
-- [ ] T4 — Store windows, replay peaks and candidates, and count a project's candidates
+- [x] T4 — Store windows, replay peaks and candidates, and count a project's candidates
   Files: `service/clipper/storage/open_database.py`,
   `service/clipper/storage/test_open_database.py`,
   `service/clipper/selection/selection_records.py`,

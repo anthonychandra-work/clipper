@@ -46,6 +46,7 @@ class ProjectResponse(ApiModel):
     percent: float
     halt: HaltResponse | None
     upload: UploadResponse | None
+    candidate_count: int
 
 
 class ProjectListResponse(ApiModel):

@@ -592,6 +592,10 @@ From `intent.md`. Base `82df5ce`.
   them, and a split at the first of equal pauses would shave one word off at a time. A single
   word longer than 30 seconds stays whole. A61 names the longest pause and not a choice between
   equal ones. (executor, m3)
+- A77 — A stored window also keeps the numbers of its first and last sentence, which the cut step
+  sends in its task. A replay peak is stored by its start, and a project's peaks are read back in
+  the order of their starts. A71 lists what the selection address gives and leaves the stored
+  form open. (executor, m3)
 
 ## Milestones
 

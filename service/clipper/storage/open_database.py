@@ -42,7 +42,53 @@ CREATE TABLE preferences (
 
 ADD_STEP_LABEL = "ALTER TABLE project_steps ADD COLUMN label TEXT;"
 
-MIGRATIONS: tuple[str, ...] = (CREATE_PROJECTS, CREATE_PREFERENCES, ADD_STEP_LABEL)
+CREATE_SELECTION = """
+CREATE TABLE selection_windows (
+    project_id TEXT NOT NULL REFERENCES projects (id) ON DELETE CASCADE,
+    id TEXT NOT NULL,
+    first_sentence INTEGER NOT NULL,
+    last_sentence INTEGER NOT NULL,
+    start_seconds REAL NOT NULL,
+    end_seconds REAL NOT NULL,
+    score INTEGER NOT NULL,
+    is_shortlisted INTEGER NOT NULL,
+    PRIMARY KEY (project_id, id)
+);
+CREATE TABLE replay_peaks (
+    project_id TEXT NOT NULL REFERENCES projects (id) ON DELETE CASCADE,
+    start_seconds REAL NOT NULL,
+    end_seconds REAL NOT NULL,
+    PRIMARY KEY (project_id, start_seconds)
+);
+CREATE TABLE candidates (
+    project_id TEXT NOT NULL REFERENCES projects (id) ON DELETE CASCADE,
+    id TEXT NOT NULL,
+    rank INTEGER NOT NULL,
+    start_seconds REAL NOT NULL,
+    end_seconds REAL NOT NULL,
+    hook_score INTEGER NOT NULL,
+    arc_score INTEGER NOT NULL,
+    value_score INTEGER NOT NULL,
+    share_score INTEGER NOT NULL,
+    reason TEXT NOT NULL,
+    title TEXT NOT NULL,
+    hook_title TEXT NOT NULL,
+    hook_type TEXT NOT NULL,
+    platforms TEXT NOT NULL,
+    flag TEXT,
+    flag_note TEXT,
+    is_replay_peak INTEGER NOT NULL,
+    PRIMARY KEY (project_id, id)
+);
+ALTER TABLE projects ADD COLUMN candidate_count INTEGER NOT NULL DEFAULT 0;
+"""
+
+MIGRATIONS: tuple[str, ...] = (
+    CREATE_PROJECTS,
+    CREATE_PREFERENCES,
+    ADD_STEP_LABEL,
+    CREATE_SELECTION,
+)
 
 
 class Database:

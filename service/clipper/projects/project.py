@@ -86,6 +86,7 @@ class Project:
     steps: tuple[Step, ...]
     halt_reason: str | None
     upload: Upload | None
+    candidate_count: int = 0
 
     def percent(self) -> float:
         shares = self._share_out_steps()
