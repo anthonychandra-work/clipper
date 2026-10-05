@@ -343,6 +343,65 @@ From `intent.md`. Base `82df5ce`.
   line of text beside the pill counts as lying under the bar. A phone screen keeps more room than
   the strip free under its content, so a screen shown whole leaves the strip empty. The plan says
   "under the tab bar" and names no box. (executor, m1)
+- A39 — mlx-whisper is 0.4.3, its newest release. Bootstrap installs the pinned packages exactly
+  as listed, without following their declared dependencies; both requirement files already name
+  every package. Two packages that mlx-whisper declares are left out because transcription never
+  loads them: PyTorch, a 127 MB download that only its model converter uses, and `requests`, which
+  brings `certifi` under the MPL. `tqdm` is installed: mlx-whisper cannot be imported without it,
+  and part of it is under MPL-2.0. It is used unchanged and nothing of it is copied into the app.
+  D61 names mlx-whisper, and every other package it needs carries a permissive licence.
+  (planner, m2)
+- A40 — The three models in Settings are the MLX conversions that the `mlx-community` group
+  publishes on Hugging Face: `whisper-large-v3-turbo`, `whisper-medium-mlx` and
+  `whisper-small-mlx`. The tool fetches a model's two files itself, over HTTPS, at a fixed
+  revision, into a folder named after the choice inside `models` in the data folder. A download
+  carries on from the bytes it already holds, and a model counts as on the Mac once its folder is
+  complete. The Hugging Face client that mlx-whisper loads is kept offline; left to itself it
+  stores models and logs in the user's home folder. `CLIPPER_MODEL_SOURCE` replaces
+  `https://huggingface.co` as the place models come from. (planner, m2)
+- A41 — A test run transcribes with `mlx-community/whisper-tiny`, 74 MB, kept in
+  `.cache/whisper/tiny`. `pnpm bootstrap` fetches it, and a test run fetches it when it is
+  missing. The run copies it into its data folder under the default choice, so no test downloads
+  a model unless it asks to, and a transcript made in a test run names the default model while it
+  was made by the smallest. The run points `CLIPPER_MODEL_SOURCE` at a local server that answers
+  every model with those files. The service's own tests point it at a closed local port, so none
+  of them reaches Hugging Face. (planner, m2)
+- A42 — The download step joins a project when its transcription is about to start and the chosen
+  model is not on the Mac. The project then has five steps, and the second reads "Downloading
+  Whisper large-v3-turbo", with the name of the chosen model. The prototype adds the step when the
+  project is created; by the time the project's turn comes, another project may have fetched the
+  model, or the choice in Settings may have changed. The step shares the transcribe step's quarter
+  of the project's bar, so the bar does not fall when the step appears. A download that fails
+  reads "The transcription model could not be downloaded. Check your connection, then retry."
+  (planner, m2)
+- A43 — Transcription runs in a process of its own, which the service starts for each project and
+  ends when the step is stopped or the tool shuts down. Its memory returns to the Mac when it
+  finishes. It takes the sound in parts of about ten minutes, each cut at the quietest moment
+  before its mark. Measured on this Mac: mlx-whisper works out the spectrogram of everything it is
+  given before it decodes, and three hours of sound took 7 GB for that alone; cut into two parts,
+  the twenty-minute fixture lost no word. (planner, m2)
+- A44 — The transcript is one file, `transcript.json`, in the project's folder: the language, the
+  model that made it, and the words in order. Each word has its text as the model gave it, with
+  the space in front of it when there is one, so that the words joined give the text in any
+  language, and a start and an end in seconds. Before the file is written the times are put in
+  order: no word starts before the word before it ends, none ends before it starts, and none lies
+  outside the video's length. R11 puts transcripts in the data folder beside the database, and
+  deleting the project removes the file with the folder. (planner, m2)
+- A45 — A source has no recognisable speech when it has no sound track, when its sound stays
+  under one thousandth of full scale, or when the model returns no word. The stage then fails with
+  "No speech was recognised in this video. Clipper needs spoken words to find clips." A part of
+  the sound that stays under that level is not given to the model. Measured: on twenty seconds of
+  silence the smallest model wrote one word, and its own no-speech score, taken alone, marked
+  real speech in the long fixture as silence. (planner, m2)
+- A46 — A project resting after this milestone reads "Transcribed" in its row and on its status
+  screen, which names the two steps not yet started. At start, a project that rests after a step
+  built by an earlier version goes back into the queue when the next step now exists, so a
+  project fetched before this milestone is transcribed. (planner, m2)
+- A47 — Two more fixture videos are built with the talk: twenty seconds of silence, and the
+  talk's speech five times over a small picture, about twenty minutes, long enough for a check to
+  stop the step or the tool while it is being transcribed. The fixture's stored transcript, with
+  the video's length, is committed as a file in the milestone's evidence folder, so the checks on
+  its words can be repeated on what the tool produced. (planner, m2)
 
 ## Milestones
 
