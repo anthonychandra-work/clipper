@@ -9,6 +9,8 @@
   },
   "scripts": {
     "bootstrap": "node scripts/bootstrap-project.mjs",
-    "start": "node scripts/start-tool.mjs"
+    "start": "node scripts/start-tool.mjs",
+    "test": "node scripts/run-tests.mjs",
+    "test:browser": "node scripts/run-browser-tests.mjs"
   }
 }

@@ -3,3 +3,6 @@ packages:
 
 ignoredOptionalDependencies:
   - sharp
+
+ignoredBuiltDependencies:
+  - unrs-resolver

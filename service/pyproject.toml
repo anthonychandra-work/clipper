@@ -3,3 +3,20 @@ name = "clipper-service"
 version = "0.1.0"
 description = "The processing service of Clipper: projects, the queue and media work."
 requires-python = ">=3.12,<3.13"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+testpaths = ["clipper"]
+pythonpath = ["."]
+python_files = ["test_*.py"]

@@ -17,12 +17,16 @@ export function describeNextProgram(settings, args) {
 }
 
 export async function buildWebAppIfStale(settings, runToCompletion) {
-  if (!isWebBuildStale(settings)) return;
+  return isWebBuildStale(settings) ? buildWebApp(settings, runToCompletion) : 0;
+}
+
+export async function buildWebApp(settings, runToCompletion) {
   const startedAtMs = Date.now();
   rmSync(buildRecordPath(settings), { force: true });
   const exitCode = await runToCompletion(describeNextProgram(settings, ['build']));
-  if (exitCode !== 0) throw new Error('The web app could not be built. The lines above say why.');
+  if (exitCode !== 0) return exitCode;
   writeFileSync(buildRecordPath(settings), JSON.stringify({ servicePort: settings.servicePort, startedAtMs }));
+  return 0;
 }
 
 function isWebBuildStale(settings) {

@@ -2,6 +2,7 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import process from 'node:process';
 
+import { BROWSERS_DIR, describeWebTool } from './prepare-test-run.mjs';
 import { SERVICE_DIR } from './read-run-settings.mjs';
 import { runProgram } from './run-program.mjs';
 
@@ -22,6 +23,13 @@ const STEPS = [
       command: VENV_PYTHON,
       args: ['-m', 'pip', 'install', '--disable-pip-version-check', '--requirement', PINNED_PACKAGES],
       cwd: SERVICE_DIR,
+    },
+  },
+  {
+    title: 'Installing the browser the tests drive into .cache/playwright',
+    program: {
+      ...describeWebTool('playwright', ['install', 'chromium', '--only-shell']),
+      env: { ...process.env, PLAYWRIGHT_BROWSERS_PATH: BROWSERS_DIR },
     },
   },
 ];

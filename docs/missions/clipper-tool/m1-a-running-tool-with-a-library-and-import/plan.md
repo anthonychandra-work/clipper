@@ -183,8 +183,10 @@ The prototype
   holds a tree alone, and none has a comment. `AGENTS.md` names the setup and start commands,
   the layout and the rules above; `CLAUDE.md` is the one line `@AGENTS.md`.
 
-- [ ] T2 — Run every check with one command
-  Files: `package.json`, `pnpm-lock.yaml`, `AGENTS.md`, `scripts/bootstrap-project.mjs`,
+- [x] T2 — Run every check with one command
+  Files: `package.json`, `pnpm-lock.yaml`, `pnpm-workspace.yaml`, `AGENTS.md`,
+  `scripts/bootstrap-project.mjs`, `scripts/build-web-app.mjs`, `scripts/start-tool.mjs`,
+  `scripts/prepare-test-run.mjs`,
   `scripts/run-tests.mjs`, `scripts/run-browser-tests.mjs`, `service/pyproject.toml`,
   `service/clipper/test_main.py`, `service/clipper/settings/test_startup_settings.py`,
   `web/package.json`, `web/tsconfig.json`, `web/eslint.config.mjs`, `web/vitest.config.ts`,

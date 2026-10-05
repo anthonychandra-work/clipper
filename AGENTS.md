@@ -9,10 +9,21 @@ Run every command from the repository root.
 
 - `pnpm install` installs the web app's packages.
 - `pnpm bootstrap` creates the Python environment in `service/.venv` with
-  `/opt/homebrew/bin/python3.12` and installs the pinned Python packages.
+  `/opt/homebrew/bin/python3.12`, installs the pinned Python packages, and installs the browser
+  the tests drive into `.cache/playwright`.
 - `pnpm start` starts the service on `127.0.0.1:8765` and the web app on port 3000, then prints
   the address to open. It builds the web app when the build is missing or older than the sources.
   Ctrl-C stops both parts.
+- `pnpm test` runs every check: Ruff, mypy, pytest, ESLint, the web build, the TypeScript check,
+  Vitest and Playwright. It runs them all, reports each as passed or failed, and exits 0 only when
+  all passed.
+- `pnpm test:browser <file>` runs the named browser tests alone, for example
+  `pnpm test:browser e2e/start-command.spec.ts`. Paths are relative to `web`.
+
+A test run starts its own copy of the tool on ports 3100 and 8865, builds the web app into
+`web/.next-test`, and keeps its data in a temporary folder that it removes at the end. It does
+not touch a running tool or the `data` folder. Browser tests take the tool from the `tool`
+fixture in `web/e2e/support`, which can stop it and start it again inside a test.
 
 Five environment variables change where a run keeps its files and which ports it uses:
 `CLIPPER_DATA_DIR`, `CLIPPER_FFMPEG_DIR`, `CLIPPER_KEY_FILE`, `CLIPPER_WEB_PORT` and

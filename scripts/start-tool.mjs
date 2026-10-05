@@ -10,6 +10,7 @@ import { waitUntilAnswering } from './wait-until-answering.mjs';
 const SERVICE_PYTHON = join(SERVICE_DIR, '.venv', 'bin', 'python');
 const INSTALLED_NEXT = join(WEB_DIR, 'node_modules', 'next');
 const EVERY_INTERFACE = '0.0.0.0';
+const WEB_BUILD_FAILED = 'The web app could not be built. The lines above say why.';
 const EXIT_FAILED = 1;
 const SIGNAL_EXIT_CODES = { SIGHUP: 129, SIGINT: 130, SIGTERM: 143 };
 
@@ -24,7 +25,8 @@ async function main() {
   stopOnSignals();
   launchPart(describeService(settings));
   await waitUntilAnswering(`http://127.0.0.1:${settings.servicePort}/api/health`);
-  await buildWebAppIfStale(settings, runToCompletion);
+  const buildExitCode = await buildWebAppIfStale(settings, runToCompletion);
+  if (buildExitCode !== 0) throw new Error(WEB_BUILD_FAILED);
   launchPart(describeWebApp(settings));
   await waitUntilAnswering(`http://127.0.0.1:${settings.webPort}/api/health`);
   process.stdout.write(`Clipper is running at http://localhost:${settings.webPort}\n`);

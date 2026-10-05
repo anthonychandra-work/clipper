@@ -1,0 +1,51 @@
+from pathlib import Path
+
+import pytest
+
+from .startup_settings import REPOSITORY_ROOT, StartupSettings
+
+SETTING_VARIABLES = [
+    "CLIPPER_DATA_DIR",
+    "CLIPPER_FFMPEG_DIR",
+    "CLIPPER_KEY_FILE",
+    "CLIPPER_WEB_PORT",
+    "CLIPPER_SERVICE_PORT",
+]
+
+
+@pytest.fixture
+def clean_environment(monkeypatch: pytest.MonkeyPatch) -> pytest.MonkeyPatch:
+    for variable in SETTING_VARIABLES:
+        monkeypatch.delenv(variable, raising=False)
+    return monkeypatch
+
+
+def test_defaults_are_the_values_the_tool_runs_with(clean_environment: pytest.MonkeyPatch) -> None:
+    settings = StartupSettings()
+    application_support = Path.home() / "Library" / "Application Support"
+
+    assert settings.data_dir == REPOSITORY_ROOT / "data"
+    assert settings.ffmpeg_dir == Path("/opt/homebrew/opt/ffmpeg-full/bin")
+    assert settings.key_file == application_support / "Clipper" / "anthropic-api-key"
+    assert settings.web_port == 3000
+    assert settings.service_port == 8765
+
+
+def test_the_repository_root_holds_the_service_folder() -> None:
+    assert (REPOSITORY_ROOT / "service" / "clipper").is_dir()
+
+
+def test_environment_variables_replace_the_defaults(clean_environment: pytest.MonkeyPatch) -> None:
+    clean_environment.setenv("CLIPPER_DATA_DIR", "/tmp/clipper-data")
+    clean_environment.setenv("CLIPPER_FFMPEG_DIR", "/tmp/tools")
+    clean_environment.setenv("CLIPPER_KEY_FILE", "/tmp/key")
+    clean_environment.setenv("CLIPPER_WEB_PORT", "3100")
+    clean_environment.setenv("CLIPPER_SERVICE_PORT", "8865")
+
+    settings = StartupSettings()
+
+    assert settings.data_dir == Path("/tmp/clipper-data")
+    assert settings.ffmpeg_dir == Path("/tmp/tools")
+    assert settings.key_file == Path("/tmp/key")
+    assert settings.web_port == 3100
+    assert settings.service_port == 8865
