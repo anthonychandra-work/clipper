@@ -298,8 +298,9 @@ The prototype
   `queued`. A browser test sends 50 MiB of random bytes in 8 MiB parts through the web port and
   finds the stored file equal in size and checksum.
 
-- [ ] T7 — Read a video's length and make the 720p preview copy
-  Files: `service/clipper/media/__init__.py`, `service/clipper/media/run_media_tool.py`,
+- [x] T7 — Read a video's length and make the 720p preview copy
+  Files: `service/clipper/conftest.py`,
+  `service/clipper/media/__init__.py`, `service/clipper/media/run_media_tool.py`,
   `service/clipper/media/probe_video.py`, `service/clipper/media/test_probe_video.py`,
   `service/clipper/media/make_preview_copy.py`,
   `service/clipper/media/test_make_preview_copy.py`

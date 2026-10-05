@@ -1,16 +1,27 @@
 import os
 import re
 import subprocess
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
+from dataclasses import dataclass
 from pathlib import Path
 
 import pytest
 
+from .media import MediaTools, locate_media_tools
 from .projects import ProjectRepository
+from .settings import StartupSettings
 from .storage import Database, DataFolder, open_data_folder, open_database
 
 SCRIPTS_DIR = Path(__file__).resolve().parents[2] / "scripts"
 SERVER_START_TIMEOUT_SECONDS = 10
+
+
+@dataclass(frozen=True)
+class VideoRecipe:
+    name: str
+    size: str = "320x180"
+    seconds: float = 2
+    frames_per_second: int = 30
 
 
 @pytest.fixture(scope="session")
@@ -26,6 +37,26 @@ def fixtures_dir(tmp_path_factory: pytest.TempPathFactory) -> Path:
 @pytest.fixture(scope="session")
 def talk_video(fixtures_dir: Path) -> Path:
     return fixtures_dir / "talk.mp4"
+
+
+@pytest.fixture(scope="session")
+def media_tools() -> MediaTools:
+    settings = StartupSettings()
+    return locate_media_tools(settings.ffmpeg_dir, settings.search_path)
+
+
+@pytest.fixture
+def build_video(media_tools: MediaTools, tmp_path: Path) -> Callable[[VideoRecipe], Path]:
+    def build(recipe: VideoRecipe) -> Path:
+        video = tmp_path / recipe.name
+        picture = f"testsrc=size={recipe.size}:rate={recipe.frames_per_second}"
+        inputs = ["-f", "lavfi", "-i", picture, "-f", "lavfi", "-i", "sine=frequency=440"]
+        encoding = ["-t", str(recipe.seconds), "-c:v", "libx264", "-preset", "ultrafast"]
+        quiet = [str(media_tools.ffmpeg), "-hide_banner", "-loglevel", "error", "-y"]
+        subprocess.run([*quiet, *inputs, *encoding, "-c:a", "aac", str(video)], check=True)
+        return video
+
+    return build
 
 
 @pytest.fixture
