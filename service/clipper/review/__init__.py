@@ -1,4 +1,5 @@
 from .caption_groups import Caption, CaptionWord, group_captions
+from .change_clip import ClipAddress, ClipChange, ClipNotFoundError, change_clip
 from .clip_points import (
     ChangeRefusedError,
     ClipTimes,
@@ -6,6 +7,7 @@ from .clip_points import (
     refuse_points_past_the_limits,
     time_clip,
 )
+from .describe_review import ReviewSources, describe_review
 from .filmstrip import FilmstripMaker
 from .review_records import (
     STARTING_LOOK,
@@ -17,8 +19,9 @@ from .review_records import (
     Look,
     RejectReason,
 )
+from .review_schemas import ClipResponse, LookBody, ReviewResponse
 from .review_store import ReviewStore
-from .router import PreviewMissingError, ReviewDependencies, router
+from .router import FrameMissingError, PreviewMissingError, ReviewDependencies, router
 from .trim_reach import TrimReach, find_trim_reach, list_reach
 
 __all__ = [
@@ -27,19 +30,29 @@ __all__ = [
     "CaptionStyle",
     "CaptionWord",
     "ChangeRefusedError",
+    "ClipAddress",
+    "ClipChange",
+    "ClipNotFoundError",
     "ClipPoint",
+    "ClipResponse",
     "ClipReview",
     "ClipTimes",
     "Decision",
     "FilmstripMaker",
+    "FrameMissingError",
     "Framing",
     "Look",
+    "LookBody",
     "PreviewMissingError",
     "RejectReason",
     "ReviewDependencies",
+    "ReviewResponse",
+    "ReviewSources",
     "ReviewStore",
     "TrimLimits",
     "TrimReach",
+    "change_clip",
+    "describe_review",
     "find_trim_reach",
     "group_captions",
     "list_reach",

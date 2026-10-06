@@ -31,6 +31,7 @@ class Stores:
     preferences: settings.PreferenceStore
     api_keys: settings.ApiKeyStore
     selection_store: selection.SelectionStore
+    review_store: review.ReviewStore
 
 
 def create_app(startup: StartupSettings) -> FastAPI:
@@ -70,7 +71,8 @@ def create_app(startup: StartupSettings) -> FastAPI:
         repository=stores.repository, store=stores.selection_store
     )
     app.state.review = review.ReviewDependencies(
-        repository=stores.repository, data_folder=data_folder
+        repository=stores.repository,
+        sources=review.ReviewSources(data_folder, stores.selection_store, stores.review_store),
     )
     handle_app_errors(app)
     for feature in (projects, pipeline, settings, selection, review):
@@ -86,6 +88,7 @@ def open_stores(database: Database, key_file: Path) -> Stores:
         preferences=settings.PreferenceStore(database),
         api_keys=settings.ApiKeyStore(key_file),
         selection_store=selection.SelectionStore(database),
+        review_store=review.ReviewStore(database),
     )
 
 

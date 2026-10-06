@@ -19,7 +19,7 @@ from .model_traits import FALLBACK_BETA, ModelTraits, describe_model
 from .place_quote import Placement, place_quote
 from .prepare_pass import ChosenClips, ClipWork, PreparedPass, StageDependencies, prepare_pass
 from .replay_peaks import find_replay_peaks, read_replay_peaks
-from .router import SelectionDependencies, router
+from .router import SelectionDependencies, describe_window, router
 from .score_stage import ScoreStage
 from .score_windows import score_windows, write_score_questions
 from .selection_records import (
@@ -32,7 +32,7 @@ from .selection_records import (
     Subscores,
     WindowRecord,
 )
-from .selection_schemas import SelectionResponse
+from .selection_schemas import SelectionResponse, SubscoresResponse, WindowResponse
 from .selection_store import SelectionStore
 from .selection_task import ClipSeconds, PassContext
 from .split_sentences import Sentence, split_sentences
@@ -76,15 +76,18 @@ __all__ = [
     "Sentence",
     "StageDependencies",
     "Subscores",
+    "SubscoresResponse",
     "UnreadableReplyError",
     "Window",
     "WindowRecord",
+    "WindowResponse",
     "ask_claude",
     "choose_candidates",
     "count_clips",
     "count_shortlist",
     "cut_clips",
     "describe_model",
+    "describe_window",
     "find_clip_limits",
     "find_replay_peaks",
     "form_shortlist",

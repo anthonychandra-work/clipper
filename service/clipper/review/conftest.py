@@ -29,8 +29,11 @@ from ..selection import (
     WindowRecord,
     split_sentences,
 )
+from ..selection.conftest import recorded_claude_address as recorded_claude_address
 from ..storage import BYTES_PER_GB, Database, DataFolder, DiskSpace
 from ..transcription import Transcript, write_transcript
+from .describe_review import ReviewSources
+from .review_store import ReviewStore
 
 TALK_TRANSCRIPT_FILE = SCRIPTS_DIR.parent / "fixtures" / "talk-transcript.json"
 TALK_SECONDS = 234.94
@@ -204,3 +207,8 @@ def cut_the_talk(
 @pytest.fixture
 def cut_talk(cut_the_talk: CutTheTalk) -> CutTalk:
     return cut_the_talk()
+
+
+@pytest.fixture
+def sources(data_folder: DataFolder, database: Database) -> ReviewSources:
+    return ReviewSources(data_folder, SelectionStore(database), ReviewStore(database))

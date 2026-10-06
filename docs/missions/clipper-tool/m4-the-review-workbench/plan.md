@@ -260,13 +260,13 @@ What the spec's file list leaves out
   set during the work ends it. Through the whole app the uploaded talk ends ready with 72 frames
   in its folder, and deleting the project removes them.
 
-- [ ] T6 — Serve the review and take its changes
+- [x] T6 — Serve the review and take its changes
   Files: `service/clipper/review/review_schemas.py`, `service/clipper/review/describe_review.py`,
   `service/clipper/review/test_describe_review.py`, `service/clipper/review/change_clip.py`,
   `service/clipper/review/test_change_clip.py`, `service/clipper/review/router.py`,
   `service/clipper/review/test_router.py`, `service/clipper/review/test_whole_app.py`,
   `service/clipper/review/conftest.py`, `service/clipper/review/__init__.py`,
-  `service/clipper/main.py`
+  `service/clipper/selection/__init__.py`, `service/clipper/main.py`
   Done: the four other addresses of A91 answer in its form. The review of a project gives every
   field A91 names: the look, `hasPreview`, the limits with A94's preferred band or none, the
   windows, and for each clip the candidate's fields, the review, the times as they stand, the
