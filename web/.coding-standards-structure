@@ -29,6 +29,10 @@ layout: |
       trim-clip/
       preview-clip/
       set-look/
+    export/
+      open-export/
+      render-clips/
+      copy-text/
     settings/
       change-settings/
   e2e/                    browser tests

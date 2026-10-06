@@ -445,7 +445,7 @@ What the spec's file list leaves out
   `CLIPPER_EVIDENCE_DIR` is set. `pnpm test` exits 0, the browser tests that present a project
   without candidates as ready among them.
 
-- [ ] T11 — Hold a project's export in the web app
+- [x] T11 — Hold a project's export in the web app
   Files: `web/.coding-standards-structure`, `AGENTS.md`, `web/src/export/index.ts`,
   `web/src/export/export.types.ts`, `web/src/export/export.fixtures.ts`,
   `web/src/export/open-export/index.ts`, `web/src/export/open-export/api/fetch-export.ts`,

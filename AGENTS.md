@@ -102,14 +102,16 @@ folders.
 - `fixtures/` holds the committed test inputs.
 - `web/src/app/` holds routes only. A route renders a screen from a capability folder.
 - `web/src/shared/` holds the styles, the generic interface parts and the code three capabilities
-  use. `web/src/shell/`, `library/`, `project/`, `review/` and `settings/` are the capabilities.
-  Each holds use-case folders with `components/`, `hooks/`, `lib/` and `api/`, and exports
-  through its `index.ts`.
-- Web imports run one way: `shared` is used by all; `shell` by `library`, `project`, `review` and
-  `settings`; `library` by `project`, `review` and `settings`. `review`, the Review tab, also
-  imports `project`, which gives it the project's frame and the open project, and nothing but
-  `app/` imports `review`. `app/` joins capabilities that would otherwise import each other: it
-  hands the project screen the Review tab.
+  use. `web/src/shell/`, `library/`, `project/`, `review/`, `export/` and `settings/` are the
+  capabilities. Each holds use-case folders with `components/`, `hooks/`, `lib/` and `api/`, and
+  exports through its `index.ts`.
+- Web imports run one way: `shared` is used by all; `shell` by `library`, `project`, `review`,
+  `export` and `settings`; `library` by `project`, `review`, `export` and `settings`. `review`,
+  the Review tab, and `export`, the Export tab, each also import `project`, which gives them the
+  project's frame and the open project, and nothing but `app/` imports either of them. `export`
+  reads its own address of the service and imports nothing of `review`. `app/` joins
+  capabilities that would otherwise import each other: it hands the project screen the Review
+  tab and the Export tab.
 - `web/e2e/` holds the browser tests, with their shared code in `support/`.
 - `service/clipper/` holds one package per capability: `problems`, `settings`, `storage`,
   `media`, `projects`, `pipeline`, `fetching`, `transcription`, `selection`, `review` and

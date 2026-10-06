@@ -1113,6 +1113,15 @@ From `intent.md`. Base `82df5ce`.
   three small records, with the stores opened by a method of their record, so the file stays at
   the ten functions the hooks allow. A117 gives the addresses and leaves these open.
   (executor, m5)
+- A133 — The web app's store of an export fetches when the first reader starts watching and
+  asks again one second after each answer while a clip waits or renders. It tells its readers
+  only when an answer differs from the one it holds. A fetch that was on its way while Render,
+  Retry or Cancel was sent is dropped, because it may show the queue as it stood before. A fetch
+  that fails shows its problem only when nothing is held yet; later the store keeps what it
+  holds and asks again. The export capability names the caption styles and the framings itself,
+  since it imports nothing of the Review tab. With the source gone a row offers the download
+  of any clip that has a finished file, whatever its render, and otherwise shows what its render
+  says. A117 and A120 give the rules and leave these open. (executor, m5)
 
 ## Milestones
 
