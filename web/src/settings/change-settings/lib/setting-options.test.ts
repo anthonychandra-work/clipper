@@ -1,12 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  describeDiskUse,
-  describeSavedKey,
-  REJECT_REASONS,
-  SETTING_FIELDS,
-  type Settings,
-} from './setting-options';
+import { describeDiskUse, describeSavedKey, listLearnedRows, SETTING_FIELDS, type Settings } from './setting-options';
 
 const DEFAULTS: Settings = {
   scoringModel: 'claude-sonnet-5-5',
@@ -20,6 +14,7 @@ const DEFAULTS: Settings = {
   phoneAddress: 'http://192.168.1.24:3000',
   hasApiKey: false,
   apiKeyEnding: null,
+  rejections: { cutOff: 0, notInteresting: 0, needsContext: 0, repeat: 0 },
 };
 
 function labelsOf(name: keyof typeof SETTING_FIELDS): string[] {
@@ -74,13 +69,22 @@ describe('the setting options', () => {
     expect(shownDefault('sourceRetention')).toBe('7 days');
   });
 
-  it('names the four reasons a clip can be rejected for', () => {
-    expect(REJECT_REASONS.map((reason) => reason.label)).toEqual([
-      'Cut Off Mid-Thought',
-      'Not Interesting',
-      'Needs Earlier Context',
-      'Repeats Another Clip',
+});
+
+describe('listLearnedRows', () => {
+  it('gives the four rows of the prototype, each with the number the service gives its reason', () => {
+    const rows = listLearnedRows({ cutOff: 6, notInteresting: 4, needsContext: 3, repeat: 1 });
+
+    expect(rows).toEqual([
+      { reason: 'cutOff', label: 'Cut Off Mid-Thought', count: 6 },
+      { reason: 'notInteresting', label: 'Not Interesting', count: 4 },
+      { reason: 'needsContext', label: 'Needs Earlier Context', count: 3 },
+      { reason: 'repeat', label: 'Repeats Another Clip', count: 1 },
     ]);
+  });
+
+  it('gives four rows of 0 for a history that holds no rejection', () => {
+    expect(listLearnedRows(DEFAULTS.rejections).map((row) => row.count)).toEqual([0, 0, 0, 0]);
   });
 });
 

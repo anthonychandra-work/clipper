@@ -19,6 +19,7 @@ export {
 } from './export-page';
 export { finishFirstOfTwoClips, type ShownExport, walkExport } from './export-screens';
 export { KEYLESS_END, type KeylessEnd, waitForKeylessEnd } from './keyless-end';
+export { forgetHistory, readSettings } from './learned-history';
 export { followBarUntil, newProjectSheet, projectRow, readRow, type RowText } from './library-page';
 export { findFaintTexts } from './measure-contrast';
 export { findTextUnderBottomBar } from './measure-screen-end';

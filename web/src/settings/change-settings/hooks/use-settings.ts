@@ -6,6 +6,7 @@ import { readProblem } from '@/shared/lib/read-problem';
 import { showToast } from '@/shell';
 
 import { fetchSettings } from '../api/fetch-settings';
+import { forgetHistory } from '../api/forget-history';
 import { removeApiKey } from '../api/remove-api-key';
 import { saveApiKey } from '../api/save-api-key';
 import { saveSetting } from '../api/save-setting';
@@ -14,12 +15,14 @@ import type { ChoiceName, Settings } from '../lib/setting-options';
 const NO_KEY_TYPED = 'Paste the key first.';
 const KEY_SAVED = 'Key saved on this Mac';
 const KEY_REMOVED = 'Key removed';
+const HISTORY_FORGOTTEN = 'The selector forgot what it had learned';
 
 export interface SettingsEditor {
   settings: Settings | null;
   choose: (name: ChoiceName, value: string) => void;
   saveKey: (typedKey: string) => void;
   removeKey: () => void;
+  forgetLearned: () => void;
 }
 
 export function useSettings(): SettingsEditor {
@@ -60,6 +63,10 @@ export function useSettings(): SettingsEditor {
     showOnceAnswered(removeApiKey(), KEY_REMOVED);
   }
 
+  function forgetLearned(): void {
+    showOnceAnswered(forgetHistory(), HISTORY_FORGOTTEN);
+  }
+
   function showOnceAnswered(answer: Promise<Settings>, message: string): void {
     answer.then(
       (answered) => {
@@ -70,5 +77,5 @@ export function useSettings(): SettingsEditor {
     );
   }
 
-  return { settings, choose, saveKey, removeKey };
+  return { settings, choose, saveKey, removeKey, forgetLearned };
 }

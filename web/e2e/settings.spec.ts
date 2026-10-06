@@ -1,6 +1,17 @@
 import type { APIRequestContext, Page } from '@playwright/test';
 
-import { expect, test } from './support';
+import {
+  candidateRow,
+  deleteAllProjects,
+  expect,
+  forgetHistory,
+  openReview,
+  readCandidateRows,
+  readReview,
+  readSettings,
+  rejectAs,
+  test,
+} from './support';
 
 const PHONE = { width: 390, height: 844 };
 const DESKTOP = { width: 1360, height: 900 };
@@ -25,9 +36,30 @@ const CHANGES = [
 
 const TEST_KEY = 'sk-ant-test-4f2a';
 const KEY_ADDRESS = '/api/settings/api-key';
+const NOTHING_LEARNED = [
+  ['Cut Off Mid-Thought', '0'],
+  ['Not Interesting', '0'],
+  ['Needs Earlier Context', '0'],
+  ['Repeats Another Clip', '0'],
+];
+const NO_REJECTIONS = { cutOff: 0, notInteresting: 0, needsContext: 0, repeat: 0 };
 
 function readShownChoices(page: Page): Promise<string[]> {
   return page.locator('.menu-button__chosen').allInnerTexts();
+}
+
+function readLearnedRows(page: Page): Promise<string[][]> {
+  const learned = page.locator('section.group-section', { hasText: 'What the Selector Has Learned' });
+  return learned.locator('li.row').evaluateAll((rows) =>
+    rows.map((row) => [...row.querySelectorAll('.row__label, .memory-count')].map((part) => part.textContent ?? '')),
+  );
+}
+
+async function rejectOnTheReviewTab(page: Page, clipAddress: string, reason: string): Promise<void> {
+  await page.goto(clipAddress);
+  const stored = page.waitForResponse((answer) => answer.request().method() === 'PATCH' && answer.ok());
+  await rejectAs(page, reason);
+  await stored;
 }
 
 async function chooseTheDefaults(request: APIRequestContext): Promise<void> {
@@ -46,11 +78,14 @@ function watchKeyRequests(page: Page): string[] {
 
 test.beforeEach(async ({ request }) => {
   await chooseTheDefaults(request);
+  await forgetHistory(request);
 });
 
 test.afterEach(async ({ request }) => {
   await chooseTheDefaults(request);
   await request.delete(KEY_ADDRESS);
+  await forgetHistory(request);
+  await deleteAllProjects(request);
 });
 
 test.describe('at 390 px', () => {
@@ -83,7 +118,8 @@ test.describe('at 390 px', () => {
     await expect(page.getByLabel('Anthropic API Key')).toHaveAttribute('placeholder', 'sk-ant-…');
     await expect(page.getByRole('button', { name: 'Save' })).toBeEnabled();
     await expect(page.locator('.memory-count')).toHaveText(['0', '0', '0', '0']);
-    await expect(page.getByRole('button', { name: 'Forget All of It' })).toBeDisabled();
+    await expect(page.getByRole('button', { name: 'Forget All of It' })).toBeEnabled();
+    await expect(page.locator('#forget-preferences')).toHaveClass('row__action row__action--destructive');
     await expect(groups.nth(2).locator('.list-footer')).toHaveText('Exported clips stay until you delete them.');
     await expect(groups.nth(3).locator('.list-footer')).toHaveText('The phone and this Mac must be on the same Wi-Fi.');
     await expect(groups.nth(4).locator('.list-footer')).toHaveText(
@@ -171,6 +207,73 @@ test.describe('at 390 px', () => {
 
     await expect(storage.locator('p')).toHaveText(/^50 GB free of \d+ GB on this Mac$/);
     await expect(storage.getByRole('progressbar', { name: 'Disk space used' })).toBeVisible();
+  });
+
+  test('with nothing learned each of the four reasons reads 0, and Forget All of It is switched on', async ({
+    page,
+    request,
+  }) => {
+    await page.goto('/settings');
+    await expect(page.locator('.memory-count')).toHaveCount(4);
+
+    expect(await readLearnedRows(page)).toEqual(NOTHING_LEARNED);
+    expect((await readSettings(request)).rejections).toEqual(NO_REJECTIONS);
+    await expect(page.getByRole('button', { name: 'Forget All of It' })).toBeEnabled();
+  });
+
+  test('two clips rejected with a reason on the Review tab are counted, and Forget All of It forgets them and leaves the clips rejected', async ({
+    page,
+    request,
+    readyTalk,
+  }) => {
+    const reviewAddress = `/projects/${readyTalk.project.id}/review`;
+    await rejectOnTheReviewTab(page, `${reviewAddress}/c05`, 'Not Interesting');
+    await rejectOnTheReviewTab(page, `${reviewAddress}/c06`, 'Cut Off Mid-Thought');
+
+    await page.goto('/settings');
+    await expect(page.locator('.memory-count')).toHaveText(['1', '1', '0', '0']);
+    const learned = await readLearnedRows(page);
+    await page.getByRole('button', { name: 'Forget All of It' }).click();
+    await expect(page.locator('#toast')).toHaveText('The selector forgot what it had learned');
+    await expect(page.locator('.memory-count')).toHaveText(['0', '0', '0', '0']);
+    await page.reload();
+    await expect(page.locator('.memory-count')).toHaveText(['0', '0', '0', '0']);
+    await openReview(page, readyTalk.project.id);
+    await expect(candidateRow(page, 'c06')).toBeVisible();
+    const rows = await readCandidateRows(page);
+    const stored = (await readReview(request, readyTalk.project.id)).clips;
+
+    expect(learned).toEqual([
+      ['Cut Off Mid-Thought', '1'],
+      ['Not Interesting', '1'],
+      ['Needs Earlier Context', '0'],
+      ['Repeats Another Clip', '0'],
+    ]);
+    expect(rows.filter((row) => row.tags.includes('Rejected')).map((row) => row.id)).toEqual(['c05', 'c06']);
+    expect(stored.filter((clip) => clip.decision === 'reject').map((clip) => [clip.id, clip.rejectReason])).toEqual([
+      ['c05', 'not-interesting'],
+      ['c06', 'cut-off'],
+    ]);
+    expect((await readSettings(request)).rejections).toEqual(NO_REJECTIONS);
+  });
+
+  test('a refusal to forget shows the service’s sentence and leaves the numbers', async ({ page }) => {
+    const refusal = 'Clipper could not forget this. Try again.';
+    await page.route('**/api/settings', async (route) => {
+      const answer = await route.fetch();
+      const rejections = { ...NO_REJECTIONS, repeat: 1 };
+      await route.fulfill({ response: answer, json: { ...(await answer.json()), rejections } });
+    });
+    await page.route('**/api/settings/history', (route) =>
+      route.fulfill({ status: 409, json: { problem: { section: null, message: refusal } } }),
+    );
+    await page.goto('/settings');
+    await expect(page.locator('.memory-count')).toHaveText(['0', '0', '0', '1']);
+
+    await page.getByRole('button', { name: 'Forget All of It' }).click();
+
+    await expect(page.locator('#toast')).toHaveText(refusal);
+    await expect(page.locator('.memory-count')).toHaveText(['0', '0', '0', '1']);
   });
 });
 

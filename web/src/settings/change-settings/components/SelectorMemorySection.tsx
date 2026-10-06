@@ -1,16 +1,19 @@
-import { REJECT_REASONS } from '../lib/setting-options';
+import { listLearnedRows, type Rejections } from '../lib/setting-options';
 
-const NOTHING_LEARNED_YET = 0;
+interface SelectorMemorySectionProps {
+  rejections: Rejections;
+  forgetHistory: () => void;
+}
 
-export function SelectorMemorySection() {
+export function SelectorMemorySection({ rejections, forgetHistory }: SelectorMemorySectionProps) {
   return (
     <section className="group-section">
       <h2 className="list-header">What the Selector Has Learned</h2>
       <ul className="group divided">
-        {REJECT_REASONS.map((reason) => (
-          <li className="row" key={reason.value}>
-            <span className="row__label">{reason.label}</span>
-            <span className="memory-count numeric">{NOTHING_LEARNED_YET}</span>
+        {listLearnedRows(rejections).map((row) => (
+          <li className="row" key={row.reason}>
+            <span className="row__label">{row.label}</span>
+            <span className="memory-count numeric">{row.count}</span>
           </li>
         ))}
         <li>
@@ -18,7 +21,7 @@ export function SelectorMemorySection() {
             type="button"
             className="row__action row__action--destructive"
             id="forget-preferences"
-            disabled
+            onClick={forgetHistory}
           >
             Forget All of It
           </button>

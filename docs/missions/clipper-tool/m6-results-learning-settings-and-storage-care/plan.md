@@ -255,13 +255,14 @@ What the spec's file list leaves out
   six choices and the saved key are as they were after forgetting; forgetting an empty history
   answers four zeros.
 
-- [ ] T5 — Show what the selector has learned in Settings, and forget it
+- [x] T5 — Show what the selector has learned in Settings, and forget it
   Files: `web/src/settings/change-settings/lib/setting-options.ts`,
   `web/src/settings/change-settings/lib/setting-options.test.ts`,
   `web/src/settings/change-settings/api/forget-history.ts`,
   `web/src/settings/change-settings/hooks/use-settings.ts`,
   `web/src/settings/change-settings/components/SelectorMemorySection.tsx`,
   `web/src/settings/change-settings/components/SettingsScreen.tsx`,
+  `web/src/settings/change-settings/index.ts`, `web/src/settings/index.ts`,
   `web/e2e/support/learned-history.ts`, `web/e2e/support/index.ts`, `web/e2e/settings.spec.ts`
   Done: the four rows of "What the Selector Has Learned" show the numbers the service gives,
   each under the reason the service names, in the prototype's order and markup. "Forget All of

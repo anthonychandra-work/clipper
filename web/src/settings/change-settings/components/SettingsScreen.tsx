@@ -11,7 +11,7 @@ import { SelectorMemorySection } from './SelectorMemorySection';
 import { StorageSection } from './StorageSection';
 
 export function SettingsScreen() {
-  const { settings, choose, saveKey, removeKey } = useSettings();
+  const { settings, choose, saveKey, removeKey, forgetLearned } = useSettings();
   return (
     <ScreenFrame screenKey="settings" depth={0} section="settings" title="Settings" hasLargeTitle>
       <PagePane name="settings">
@@ -21,7 +21,7 @@ export function SettingsScreen() {
             <DefaultsSection settings={settings} choose={choose} />
             <StorageSection settings={settings} choose={choose} />
             <PhoneAccessSection phoneAddress={settings.phoneAddress} />
-            <SelectorMemorySection />
+            <SelectorMemorySection rejections={settings.rejections} forgetHistory={forgetLearned} />
           </>
         )}
       </PagePane>

@@ -19,12 +19,26 @@ export interface Choices {
   sourceRetention: string;
 }
 
+export interface Rejections {
+  cutOff: number;
+  notInteresting: number;
+  needsContext: number;
+  repeat: number;
+}
+
 export interface Settings extends Choices {
   freeDiskGb: number;
   totalDiskGb: number;
   phoneAddress: string;
   hasApiKey: boolean;
   apiKeyEnding: string | null;
+  rejections: Rejections;
+}
+
+export interface LearnedRow {
+  reason: keyof Rejections;
+  label: string;
+  count: number;
 }
 
 export type ChoiceName = keyof Choices;
@@ -65,12 +79,16 @@ export const SETTING_FIELDS: Record<ChoiceName, SettingField> = {
   sourceRetention: { label: 'Delete Source Videos After', options: RETENTIONS },
 };
 
-export const REJECT_REASONS: readonly SettingOption[] = [
-  { value: 'cut-off', label: 'Cut Off Mid-Thought' },
-  { value: 'dull', label: 'Not Interesting' },
-  { value: 'context', label: 'Needs Earlier Context' },
-  { value: 'repeat', label: 'Repeats Another Clip' },
+const REJECT_REASONS: readonly Pick<LearnedRow, 'reason' | 'label'>[] = [
+  { reason: 'cutOff', label: 'Cut Off Mid-Thought' },
+  { reason: 'notInteresting', label: 'Not Interesting' },
+  { reason: 'needsContext', label: 'Needs Earlier Context' },
+  { reason: 'repeat', label: 'Repeats Another Clip' },
 ];
+
+export function listLearnedRows(rejections: Rejections): LearnedRow[] {
+  return REJECT_REASONS.map((row) => ({ ...row, count: rejections[row.reason] }));
+}
 
 export function describeSavedKey(ending: string | null): string {
   return ending === null ? 'Saved' : `Saved · ends in ${ending}`;
