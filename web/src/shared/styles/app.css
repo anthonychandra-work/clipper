@@ -121,31 +121,55 @@ label.row .menu-button {
   background: var(--frame);
 }
 
-/* The video, and a second picture drawn from it, take the place of the figures the prototype draws in the preview. */
+/* The video, and the pictures drawn from it, take the place of the figures the prototype draws in the preview. */
 .scene__picture,
 .scene__backdrop {
   position: absolute;
   inset: 0;
-  overflow: hidden;
 }
 
-.scene video {
-  position: absolute;
-  max-width: none;
-  object-fit: fill;
-}
-
+.scene video,
 .scene canvas {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
+  object-fit: cover;
 }
 
-/* Enlarged, so the soft edge of the blur lies outside the frame. */
-.scene__backdrop canvas {
-  filter: blur(5cqw);
-  transform: scale(1.25);
+/* The copy behind the whole picture is blurred by a layer over it, so its edges do not fade into the frame. */
+.scene__backdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  -webkit-backdrop-filter: blur(5cqw);
+  backdrop-filter: blur(5cqw);
+}
+
+/* A pin's reach counts from inside its border, so two more pixels bring its tap area to 44 px. */
+.timeline__pin::after {
+  inset: calc(var(--pin-reach) - 2px);
+}
+
+/* The rows of a control that wraps at a large text size stand a tap area apart. */
+.segmented {
+  row-gap: 14px;
+}
+
+.edge__steppers {
+  row-gap: 10px;
+}
+
+/* A long word of a clip's title breaks where its row ends. */
+.candidate__title {
+  overflow-wrap: anywhere;
+}
+
+/* Three texts that the prototype's colours leave under 4.5 to 1 take the label colour. */
+.app[data-layout="regular"] .candidate.is-selected .tag:not(.tag--warn, .tag--keep, .tag--reject),
+.flag .button,
+.segmented__option[aria-pressed="true"] .segmented__count {
+  color: var(--label);
 }
 
 /* The caption and the hook title are drawn in Inter, the typeface of the exported file. */

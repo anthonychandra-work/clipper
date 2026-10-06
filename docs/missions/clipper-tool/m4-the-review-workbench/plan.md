@@ -610,10 +610,16 @@ What the spec's file list leaves out
   and scrolling back up puts the preview back in the page; Reject opens its menu above the bar,
   and a reason chosen there leaves the button reading "Rejected".
 
-- [ ] T17 — Fit the Review tab on a phone: 200% text, tap areas and contrast
+- [x] T17 — Fit the Review tab on a phone: 200% text, tap areas and contrast
   Files: `web/e2e/support/measure-tap-areas.ts`, `web/e2e/support/measure-contrast.ts`,
   `web/e2e/support/review-screens.ts`, `web/e2e/support/index.ts`, `web/e2e/review-fit.spec.ts`,
-  `web/e2e/own-origin.spec.ts`, `web/src/shared/styles/app.css`
+  `web/e2e/own-origin.spec.ts`, `web/src/shared/styles/app.css`,
+  `web/e2e/support/measure-screen-end.ts`, `web/e2e/support/crowded-review.ts`,
+  `web/e2e/support/review-preview.ts`, `web/src/review/chart-source/components/SourceTimeline.tsx`,
+  `web/src/review/preview-clip/components/PlayerPicture.tsx`,
+  `web/src/review/preview-clip/hooks/use-second-picture.ts`,
+  `web/src/review/preview-clip/lib/frame-picture.ts`,
+  `web/src/review/preview-clip/lib/frame-picture.test.ts`, `docs/missions/clipper-tool/spec.md`
   Done: the screens of the Review tab can be walked as the other screens are: the list, a clip,
   the flagged clip, a clip with the reject menu open, and a clip with the preview pinned, each on
   the talk and on the review A103 presents to the page. The tap-area measure and the contrast

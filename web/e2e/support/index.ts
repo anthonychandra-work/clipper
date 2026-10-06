@@ -3,6 +3,9 @@ export { probeTalkLength } from './build-fixtures';
 export { captureScreens } from './capture-screens';
 export { KEYLESS_END, type KeylessEnd, waitForKeylessEnd } from './keyless-end';
 export { followBarUntil, newProjectSheet, projectRow, readRow, type RowText } from './library-page';
+export { findFaintTexts } from './measure-contrast';
+export { findTextUnderBottomBar } from './measure-screen-end';
+export { findSmallTapAreas } from './measure-tap-areas';
 export { enlargeTextFromLoad, findMisfits, measureWalk, type TextFitReport } from './measure-text-fit';
 export {
   createFileProjectInSheet,
@@ -56,6 +59,7 @@ export {
   type TimelinePinText,
 } from './review-page';
 export { type BottomBarText, type DockText, readBottomBar, readDock, readWindowTop, scrollWindowTo } from './review-phone';
+export { walkCrowdedReview, walkTalkReview } from './review-screens';
 export {
   capturePlayer,
   changeLook,

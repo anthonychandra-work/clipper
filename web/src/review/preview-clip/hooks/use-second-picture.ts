@@ -8,12 +8,12 @@ import type { VideoRef } from './use-playback';
 export function useSecondPicture(
   videoRef: VideoRef,
   canvasRef: RefObject<HTMLCanvasElement | null>,
-  part: PicturePart | null,
+  part: PicturePart,
 ): void {
   useEffect(() => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
-    if (video === null || canvas === null || part === null) return undefined;
+    if (video === null || canvas === null) return undefined;
     let waiting = 0;
     const drawEveryFrame = () => {
       drawPart(video, canvas, part);

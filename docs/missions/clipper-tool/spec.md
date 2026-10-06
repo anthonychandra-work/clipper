@@ -851,17 +851,33 @@ From `intent.md`. Base `82df5ce`.
   path. The plan fixes what the tab does and leaves these open. (executor, m4)
 - A107 — Before a clip's first caption starts, the preview shows no caption. The prototype shows
   the first one early, and A97 lets a caption show from the start of its first word. The preview
-  plays with the video's sound. In the stacked framing the playing video is the upper picture
-  and the picture drawn from it the lower one; in the full frame the picture drawn from it is
-  the blurred copy behind. A source taller than the 9:16 frame is drawn narrower than the frame
-  in the full frame, so all of it shows. The controls of the look are named after A96's values,
-  as in `captions-word-by-word` and `framing-stack-two`, and the picture keeps the prototype's
-  class names. A97 and A98 give the rules and leave these open. (executor, m4)
+  plays with the video's sound. The playing video never leaves its place in the frame, so no
+  element is wider than the screen: it fills the frame in the speaker framing and shows whole in
+  the full frame. In the stacked framing both halves are drawn from it and lie over it; in the
+  full frame the picture drawn from it is the blurred copy behind. A source taller than the 9:16
+  frame is drawn narrower than the frame in the full frame, so all of it shows. The controls of
+  the look are named after A96's values, as in `captions-word-by-word` and `framing-stack-two`,
+  and the picture keeps the prototype's class names. A97 and A98 give the rules and leave these
+  open. (executor, m4)
 - A108 — On a phone the list's position is the one it had when it was last on the screen. A
   clip opened by its address, with no list before it, returns to the top of the list. The reject
   menu opens the shell's usual gap above the Reject button, which puts its lower edge inside
   the bar's own padding and clear of the bar's buttons; the test measures it against the
   button. A99 gives the rule and leaves these open. (executor, m4)
+- A109 — The tap measure taps 21 px from a control's middle. It leaves out a control whose
+  middle is covered, by an open menu or by the pinned strip, because that control cannot be
+  tapped there at all. Where a text lies on a gradient that is not plain, the contrast measure
+  takes the colour of the gradient that gives the lowest ratio. The three texts of A102 take the
+  label colour. Three more rules depart from the prototype for R7, each measured on the app: a
+  timeline pin's tap area reaches 44 px, where the prototype's reach counts from inside the
+  pin's border and gives 40; the rows of a segmented control or of a point's steps that wrap at
+  200% stand a tap area apart; and a long word of a clip's title breaks where its row ends.
+  Pins are placed in pixels: placed as a share of the width, a pin lay a sixty-fourth of a
+  pixel under its neighbour's tap area. The review presented to the page is made from the
+  talk's: its six clips twice, starting five seconds apart from 00:01:40, ten kept and two
+  rejected, each under a replay peak and with a title of 110 characters, over 180 windows of one
+  minute, in a project presented as three hours long. A101 to A103 give the rules and leave
+  these open. (executor, m4)
 
 ## Milestones
 

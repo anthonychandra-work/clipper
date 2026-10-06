@@ -10,32 +10,32 @@ export interface PicturePart {
   height: number;
 }
 
-export interface FramedPicture {
-  video: PicturePart;
-  second: PicturePart | null;
+export interface DrawnParts {
+  behind: PicturePart[];
+  inFront: PicturePart[];
 }
 
 const WHOLE_PICTURE: PicturePart = { left: 0, top: 0, width: 1, height: 1 };
 const LEFT_HALF: PicturePart = { left: 0, top: 0, width: 0.5, height: 1 };
 const RIGHT_HALF: PicturePart = { left: 0.5, top: 0, width: 0.5, height: 1 };
 
-const FRAMERS: Record<Framing, (sourceAspect: number) => FramedPicture> = {
-  'follow-speaker': (sourceAspect) => ({
-    video: cropMiddle(WHOLE_PICTURE, sourceAspect, FRAME_ASPECT),
-    second: null,
-  }),
+const PARTS_TO_DRAW: Record<Framing, (sourceAspect: number) => DrawnParts> = {
+  'follow-speaker': () => ({ behind: [], inFront: [] }),
   'stack-two': (sourceAspect) => ({
-    video: cropMiddle(LEFT_HALF, sourceAspect, HALF_FRAME_ASPECT),
-    second: cropMiddle(RIGHT_HALF, sourceAspect, HALF_FRAME_ASPECT),
+    behind: [],
+    inFront: [
+      cropMiddle(LEFT_HALF, sourceAspect, HALF_FRAME_ASPECT),
+      cropMiddle(RIGHT_HALF, sourceAspect, HALF_FRAME_ASPECT),
+    ],
   }),
   'whole-frame': (sourceAspect) => ({
-    video: WHOLE_PICTURE,
-    second: cropMiddle(WHOLE_PICTURE, sourceAspect, FRAME_ASPECT),
+    behind: [cropMiddle(WHOLE_PICTURE, sourceAspect, FRAME_ASPECT)],
+    inFront: [],
   }),
 };
 
-export function framePicture(framing: Framing, sourceAspect: number): FramedPicture {
-  return FRAMERS[framing](sourceAspect);
+export function listDrawnParts(framing: Framing, sourceAspect: number): DrawnParts {
+  return PARTS_TO_DRAW[framing](sourceAspect);
 }
 
 export function measureWholePictureWidth(sourceAspect: number): number {

@@ -9,12 +9,15 @@ import {
   listLowDiskScreens,
   listProjectScreens,
   listSheetScreens,
+  openPreview,
+  readPreview,
   readProjectList,
   removeSavedKey,
   seedEveryState,
   test,
   visitScreens,
   type Walk,
+  walkTalkReview,
 } from './support';
 
 const SIZES = [
@@ -24,6 +27,8 @@ const SIZES = [
 const THREE_GB_IN_BYTES = String(3 * 1024 ** 3);
 const SETTLE_MS = 400;
 const SCREENS_WITH_PROJECTS = 28;
+const REVIEW_SCREENS = ['list', 'clip', 'flagged-clip', 'reject-menu', 'pinned-preview', 'playing'];
+const PLAYED_SECONDS = 0.5;
 
 function listenForRequests(page: Page): string[] {
   const asked: string[] = [];
@@ -46,6 +51,12 @@ async function walkAtBothWidths(page: Page, walk: Walk): Promise<string[]> {
 
 function findOutsideTheTool(asked: string[], toolAddress: string): string[] {
   return asked.filter((address) => !address.startsWith(`${toolAddress}/`));
+}
+
+async function playFirstClip(page: Page, projectId: string): Promise<void> {
+  await openPreview(page, `/projects/${projectId}/review/c01`);
+  await page.locator('#preview-play').click();
+  await expect.poll(async () => (await readPreview(page)).place).toBeGreaterThan(PLAYED_SECONDS);
 }
 
 test.beforeEach(async ({ request }) => {
@@ -74,6 +85,25 @@ test('with projects, every request of every screen is addressed to the tool', as
 
   expect(visited).toHaveLength(SCREENS_WITH_PROJECTS * SIZES.length);
   expect(asked.length).toBeGreaterThan(visited.length);
+  expect(findOutsideTheTool(asked, tool.address)).toEqual([]);
+});
+
+test('the Review screens of the talk ask nothing outside the tool, with the preview playing on one of them', async ({
+  page,
+  request,
+  readyTalk,
+  tool,
+}) => {
+  const asked = listenForRequests(page);
+  const walk = walkTalkReview(readyTalk, await readProjectList(request));
+  const playing = { name: 'review-playing', open: (shown: Page) => playFirstClip(shown, readyTalk.project.id) };
+
+  const visited = await walkAtBothWidths(page, { ...walk, screens: [...walk.screens, playing] });
+
+  expect(visited).toEqual(SIZES.flatMap((size) => REVIEW_SCREENS.map((screen) => `review-${screen} at ${size.width}`)));
+  expect(asked.some((address) => address.endsWith('/preview'))).toBe(true);
+  expect(asked.some((address) => /\/clips\/c01\/frames\/12$/.test(address))).toBe(true);
+  expect(asked.some((address) => address.endsWith('/fonts/inter/InterVariable.ttf'))).toBe(true);
   expect(findOutsideTheTool(asked, tool.address)).toEqual([]);
 });
 

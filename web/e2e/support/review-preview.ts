@@ -37,11 +37,12 @@ export async function waitForPicture(page: Page): Promise<void> {
   await expect(page.locator('#preview-video')).toBeVisible();
   await page.waitForFunction(() => {
     const video = document.querySelector<HTMLVideoElement>('#preview-video');
-    const second = document.querySelector<HTMLCanvasElement>('#preview-second-picture');
+    const isDrawn = (canvas: HTMLCanvasElement) => {
+      const middle = canvas.getContext('2d')?.getImageData(canvas.width / 2, canvas.height / 2, 1, 1).data;
+      return middle !== undefined && middle[3] > 0;
+    };
     const isVideoShown = video !== null && video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA && !video.seeking;
-    if (!isVideoShown || second === null) return isVideoShown;
-    const middle = second.getContext('2d')?.getImageData(second.width / 2, second.height / 2, 1, 1).data;
-    return middle !== undefined && middle[3] > 0;
+    return isVideoShown && [...document.querySelectorAll<HTMLCanvasElement>('.scene canvas')].every(isDrawn);
   });
 }
 

@@ -6,7 +6,7 @@ import type { Caption, CaptionStyle, ClipCaptions, Framing, Look, ReviewClip } f
 import type { Playback, VideoRef } from '../hooks/use-playback';
 import { useSecondPicture } from '../hooks/use-second-picture';
 import { findCaption } from '../lib/find-caption';
-import { framePicture, measureWholePictureWidth, type PicturePart } from '../lib/frame-picture';
+import { listDrawnParts, measureWholePictureWidth, type PicturePart } from '../lib/frame-picture';
 
 const HOOK_TITLE_SECONDS = 3;
 const USUAL_SOURCE_ASPECT = 16 / 9;
@@ -14,17 +14,19 @@ const USUAL_SOURCE_ASPECT = 16 / 9;
 interface FrameStyles {
   player: string;
   video: string;
-  second?: string;
+  behind: string[];
+  inFront: string[];
 }
 
 const FRAME_STYLES: Record<Framing, FrameStyles> = {
-  'follow-speaker': { player: 'player player--follow', video: 'scene__picture' },
+  'follow-speaker': { player: 'player player--follow', video: 'scene__picture', behind: [], inFront: [] },
   'stack-two': {
     player: 'player player--stacked',
-    video: 'scene__half scene__half--top',
-    second: 'scene__half scene__half--bottom',
+    video: 'scene__picture',
+    behind: [],
+    inFront: ['scene__half scene__half--top', 'scene__half scene__half--bottom'],
   },
-  'whole-frame': { player: 'player player--fit', video: 'scene__wide', second: 'scene__backdrop' },
+  'whole-frame': { player: 'player player--fit', video: 'scene__wide', behind: ['scene__backdrop'], inFront: [] },
 };
 const CAPTION_STYLES: Record<CaptionStyle, string> = {
   keyword: 'player__caption caption--keyword',
@@ -74,17 +76,13 @@ interface SceneProps {
 
 function Scene({ source, framing, videoRef, playback }: SceneProps) {
   const [sourceAspect, setSourceAspect] = useState(USUAL_SOURCE_ASPECT);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const framed = useMemo(() => framePicture(framing, sourceAspect), [framing, sourceAspect]);
-  useSecondPicture(videoRef, canvasRef, framed.second);
+  const drawn = useMemo(() => listDrawnParts(framing, sourceAspect), [framing, sourceAspect]);
   const styles = FRAME_STYLES[framing];
   return (
     <div className="scene">
-      {framed.second === null ? null : (
-        <div className={styles.second}>
-          <canvas ref={canvasRef} id="preview-second-picture" />
-        </div>
-      )}
+      {drawn.behind.map((part, place) => (
+        <DrawnPicture key={styles.behind[place]} holder={styles.behind[place]} videoRef={videoRef} part={part} />
+      ))}
       <div className={styles.video} style={framing === 'whole-frame' ? fitWholePicture(sourceAspect) : undefined}>
         <video
           ref={videoRef}
@@ -92,7 +90,6 @@ function Scene({ source, framing, videoRef, playback }: SceneProps) {
           src={source}
           preload="auto"
           playsInline
-          style={showPart(framed.video)}
           onLoadedMetadata={({ currentTarget }) => setSourceAspect(currentTarget.videoWidth / currentTarget.videoHeight)}
           onPlay={playback.showPlaying}
           onPause={playback.showPaused}
@@ -100,6 +97,25 @@ function Scene({ source, framing, videoRef, playback }: SceneProps) {
           onEnded={playback.showEnd}
         />
       </div>
+      {drawn.inFront.map((part, place) => (
+        <DrawnPicture key={styles.inFront[place]} holder={styles.inFront[place]} videoRef={videoRef} part={part} />
+      ))}
+    </div>
+  );
+}
+
+interface DrawnPictureProps {
+  holder: string;
+  videoRef: VideoRef;
+  part: PicturePart;
+}
+
+function DrawnPicture({ holder, videoRef, part }: DrawnPictureProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  useSecondPicture(videoRef, canvasRef, part);
+  return (
+    <div className={holder}>
+      <canvas ref={canvasRef} />
     </div>
   );
 }
@@ -120,15 +136,6 @@ function CaptionWords({ caption }: { caption: Caption }) {
       {word.isHighlighted ? <mark>{word.text}</mark> : word.text}
     </Fragment>
   ));
-}
-
-function showPart(part: PicturePart): CSSProperties {
-  return {
-    left: `${(-100 * part.left) / part.width}%`,
-    top: `${(-100 * part.top) / part.height}%`,
-    width: `${100 / part.width}%`,
-    height: `${100 / part.height}%`,
-  };
 }
 
 function fitWholePicture(sourceAspect: number): CSSProperties {

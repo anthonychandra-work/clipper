@@ -73,8 +73,7 @@ function placeClipPins(clipsByStart: readonly ReviewClip[], place: PinPlace): Pl
     const range = clipRange(clip, clip.sentences);
     return { id: clip.id, middle: ((range.start + range.duration / 2) / place.videoSeconds) * place.width };
   });
-  const placed = placePins(spots, { width: place.width, tapSize: readTapSize(place.strip) });
-  return placed.map((pin) => ({ ...pin, middle: (pin.middle / place.width) * 100 }));
+  return placePins(spots, { width: place.width, tapSize: readTapSize(place.strip) });
 }
 
 function readTapSize(strip: HTMLDivElement | null): number {
@@ -103,12 +102,14 @@ function TimelinePin({ pin, clip, href, isShown }: TimelinePinProps) {
   if (pin.isOnLowRow) classes.push('timeline__pin--low');
   if (isShown) classes.push('is-selected');
   const start = formatTimecode(clipRange(clip, clip.sentences).start);
+  // Placed in pixels: as a share of the width a pin lands a fraction off, under the tap area of its neighbour.
+  const place = { left: pin.middle };
   return (
     <Link
       className={classes.join(' ')}
       id={`pin-${clip.id}`}
       href={href}
-      style={{ left: `${pin.middle.toFixed(2)}%` }}
+      style={place}
       aria-current={isShown}
       aria-label={`Clip ranked ${clip.rank}, at ${start}, ${DECISION_WORDS[clip.decision]}`}
     >
