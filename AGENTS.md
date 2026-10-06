@@ -102,16 +102,17 @@ folders.
 - `fixtures/` holds the committed test inputs.
 - `web/src/app/` holds routes only. A route renders a screen from a capability folder.
 - `web/src/shared/` holds the styles, the generic interface parts and the code three capabilities
-  use. `web/src/shell/`, `library/`, `project/`, `review/`, `export/` and `settings/` are the
-  capabilities. Each holds use-case folders with `components/`, `hooks/`, `lib/` and `api/`, and
-  exports through its `index.ts`.
+  use. `web/src/shell/`, `library/`, `project/`, `review/`, `export/`, `results/` and
+  `settings/` are the capabilities. Each holds use-case folders with `components/`, `hooks/`,
+  `lib/` and `api/`, and exports through its `index.ts`.
 - Web imports run one way: `shared` is used by all; `shell` by `library`, `project`, `review`,
-  `export` and `settings`; `library` by `project`, `review`, `export` and `settings`. `review`,
-  the Review tab, and `export`, the Export tab, each also import `project`, which gives them the
-  project's frame and the open project, and nothing but `app/` imports either of them. `export`
-  reads its own address of the service and imports nothing of `review`. `app/` joins
-  capabilities that would otherwise import each other: it hands the project screen the Review
-  tab and the Export tab.
+  `export`, `results` and `settings`; `library` by `project`, `review`, `export`, `results` and
+  `settings`. `review`, the Review tab, `export`, the Export tab, and `results`, the Results
+  tab, each also import `project`, which gives them the project's frame and the open project,
+  and nothing but `app/` imports any of the three. `export` and `results` each read their own
+  address of the service and import nothing of the other tabs. `app/` joins capabilities that
+  would otherwise import each other: it hands the project screen the Review tab and the Export
+  tab.
 - `web/e2e/` holds the browser tests, with their shared code in `support/`.
 - `service/clipper/` holds one package per capability: `problems`, `settings`, `storage`,
   `learning`, `media`, `projects`, `pipeline`, `fetching`, `transcription`, `selection`,

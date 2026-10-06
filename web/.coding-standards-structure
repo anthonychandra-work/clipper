@@ -33,6 +33,10 @@ layout: |
       open-export/
       render-clips/
       copy-text/
+    results/
+      open-results/
+      log-views/
+      compare-outcome/
     settings/
       change-settings/
   e2e/                    browser tests

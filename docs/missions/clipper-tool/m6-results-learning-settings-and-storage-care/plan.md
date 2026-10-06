@@ -324,7 +324,7 @@ What the spec's file list leaves out
   exits 0, the browser tests that open the Results tab of a project without candidates among
   them.
 
-- [ ] T7 — Hold a project's results in the web app
+- [x] T7 — Hold a project's results in the web app
   Files: `web/.coding-standards-structure`, `AGENTS.md`, `web/src/results/index.ts`,
   `web/src/results/results.types.ts`, `web/src/results/results.fixtures.ts`,
   `web/src/results/open-results/index.ts`, `web/src/results/open-results/api/fetch-results.ts`,
