@@ -535,7 +535,7 @@ What the spec's file list leaves out
   screen goes to the tool also opens the Results tab of a talk with the seeded set, at both
   widths.
 
-- [ ] T15 — Save the captures and the requests as evidence
+- [x] T15 — Save the captures and the requests as evidence
   Files: `web/e2e/results-captures.spec.ts`, `web/e2e/support/results-screens.ts`,
   `web/e2e/support/index.ts`,
   `docs/missions/clipper-tool/m6-results-learning-settings-and-storage-care/evidence/results-390-light.png`,

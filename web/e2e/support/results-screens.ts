@@ -16,6 +16,7 @@ const CROWD_COUNT = 12;
 const MOST_VIEWS = 9_999_999_999;
 const FEWER_VIEWS_EACH_RANK = 123_456_789;
 const COUNTS_OF_THREE_DIGITS = { cutOff: 128, notInteresting: 204, needsContext: 317, repeat: 100 };
+const REASON_COUNT = Object.keys(COUNTS_OF_THREE_DIGITS).length;
 const REJECTED_THROUGH_THE_SERVICE = [
   { clipId: 'c05', rejectReason: 'not-interesting' },
   { clipId: 'c06', rejectReason: 'cut-off' },
@@ -59,6 +60,13 @@ export function walkResults(projectId: string, shown: ShownResults): Walk {
   };
 }
 
+export function walkSeededScreens(projectId: string, shown: ShownResults): Walk {
+  return {
+    shownList: shown.list,
+    screens: [showResults('results', { projectId, held: null }), showSettings('settings', null)],
+  };
+}
+
 interface ResultsScreen {
   projectId: string;
   held: ProjectResults | null;
@@ -76,14 +84,14 @@ function showResults(name: string, screen: ResultsScreen): ScreenVisit {
   };
 }
 
-function showSettings(name: string, held: Settings): ScreenVisit {
+function showSettings(name: string, held: Settings | null): ScreenVisit {
   return {
     name,
     open: async (page: Page) => {
       await page.unroute(SETTINGS_ADDRESS);
-      await page.route(SETTINGS_ADDRESS, (route) => route.fulfill({ json: held }));
+      if (held !== null) await page.route(SETTINGS_ADDRESS, (route) => route.fulfill({ json: held }));
       await page.goto('/settings');
-      await expect(page.locator('.memory-count')).toHaveCount(Object.keys(held.rejections).length);
+      await expect(page.locator('.memory-count')).toHaveCount(REASON_COUNT);
     },
     leave: (page: Page) => page.unroute(SETTINGS_ADDRESS),
   };

@@ -60,7 +60,13 @@ export { changeClip, readReview, storeLook } from './read-review';
 export { readSelection, type Selection } from './read-selection';
 export { countWordsWrongInHundred, readTranscript, type StoredTranscript, type StoredWord } from './read-transcript';
 export type { ReadyTalk } from './ready-talk';
-export { makeSeededSet, readShownResults, type ShownResults, walkResults } from './results-screens';
+export {
+  makeSeededSet,
+  readShownResults,
+  type ShownResults,
+  walkResults,
+  walkSeededScreens,
+} from './results-screens';
 export {
   openResults,
   type OutcomeRowText,
