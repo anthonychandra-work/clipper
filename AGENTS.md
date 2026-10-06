@@ -133,6 +133,61 @@ folders.
 - `docs/missions/` holds the mission's intent, spec and plans. `docs/prototype/` holds the design
   reference.
 
+## The Review tab
+
+- `service/clipper/review` is the package behind the tab. It gives a project's review in one
+  answer, takes the changes to a clip and to the look, and serves the preview copy with byte
+  ranges and the filmstrip frames. It works out where a clip's points can go and groups a clip's
+  words into captions, so the page and a later export draw the same groups. The cut step of
+  `selection` is handed its frame maker by `main.py` and imports nothing from it.
+- `web/src/review/` is the capability, with nine use cases: `open-review` holds a project's
+  review and the tab's addresses, `time-clips` the rules for a clip's times and steps,
+  `list-candidates` the list and its filters, `chart-source` the timeline, `inspect-clip` the
+  title, the flag and the scores, `decide-clip` Keep, Reject and Next, `trim-clip` the in and out
+  points, `preview-clip` the player and `set-look` the look. `open-review` imports the others and
+  hands each what it shows as properties. None imports it back; several import `time-clips`.
+- The store of a review shows a change at once, sends it, and puts the service's answer in its
+  place. An answer that arrives after a newer change of the same clip does not undo that change.
+- The Review addresses, `/projects/<id>/review` and `/projects/<id>/review/<clip>`, share one
+  layout that holds the tab, and their pages draw nothing. Next.js keeps a layout mounted while
+  the address moves between its pages, so the list's place and the playing video stay as they
+  are from the list to a clip and from clip to clip. A page that drew the tab would mount it anew
+  at every address.
+- A clip is chosen with a link. Measured on Next.js 16.3.8: after a link the clip named in the
+  address reaches the screen through the route's parameters, and after the browser's own
+  `pushState` it does not.
+- The video of the preview stays inside its place in the frame. A framing that shows another
+  part of the picture draws it on a canvas from the video's frames. An element wider than the
+  screen fails the text fit measure even where an ancestor cuts it off.
+- Inter 4.1's variable font is `web/public/fonts/inter/InterVariable.ttf`, with its licence, the
+  SIL Open Font License 1.1, beside it in `LICENSE.txt`. The page declares the font face in its
+  own head, the caption and the hook title of the preview are drawn in it, and a later export
+  reads the same file. Keep both files, unchanged.
+
+## The Review tab in tests
+
+- The Review tests share one ready talk: the fixture talk, cut with the recorded replies. A test
+  takes it from the `readyTalk` fixture, which finds it by its title, its state and its six
+  candidates, or makes it from a link to `talk.mp4`. Before each test the fixture deletes every
+  other project and puts back every clip's decision, title and points and the project's look. A
+  test leaves the project in place for the next one, and a test that moves one of its files aside
+  moves it back when it ends, whatever its result.
+- The browser the tests drive plays the preview copy, H.264 with AAC, through the web port. A
+  test presses Play and reads the video's time and the caption together.
+- `web/e2e/support` holds three measures. The text fit finds a screen that scrolls sideways, an
+  element wider than the screen and a cut label, at the normal text size and at 200%. The tap
+  area measure scrolls each control to the middle of the window and taps 21 px to its left, to
+  its right, above and below its middle; each tap must land on the control or on its label. The
+  contrast measure composes a text's colour with the backgrounds behind it, plain gradients among
+  them, and finds a text under 4.5 to 1. The last two leave out controls that are switched off.
+  The tap area measure also leaves out a control whose middle is covered, and the contrast
+  measure text over the video.
+- `web/e2e/review-fit.spec.ts` runs the three over the Review screens, on the ready talk and on
+  a review presented to the page with twelve crowded clips, 180 windows and long titles. A rule
+  a screen needs to pass goes into `app.css`.
+- `web/e2e/review-captures.spec.ts` saves the captures of the Review tab and the talk's review
+  into the folder `CLIPPER_EVIDENCE_DIR` names.
+
 ## Rules every write passes through
 
 The coding-standards hooks on this Mac check every file an agent writes and refuse:

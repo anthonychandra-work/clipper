@@ -68,6 +68,46 @@ Claude reads the transcript in two passes. Claude Sonnet 5.5 scores every stretc
 seconds, and Claude Opus 5.5 cuts the clips from the best of them. Settings offers Claude Fable
 5.1, Opus 5.5, Sonnet 5.5 and Haiku 4.5 for each pass.
 
+## Review the clips
+
+A project that is ready opens on its Review tab, which lists the clip candidates by rank. A row
+gives the clip's title, where it starts in the video, its length and its score out of 100. Four
+filters show all the clips, the ones still to decide, the kept and the rejected. The score orders
+the clips inside one video. It does not forecast views.
+
+"Source Video" draws the video from its start to its end: a bar for each stretch of the
+transcript that was scored, as high as its score, with the stretches that were searched for clips
+highlighted, and a numbered pin where each clip sits.
+
+Choosing a clip shows the reason it was picked, its four part scores and its rank, and a warning
+when the clip needs context or is not recommended. Its title can be changed.
+
+The preview plays the clip from the fetched video inside an upright 9:16 frame, with captions
+timed to the spoken words. It is an approximation of the export, drawn by the browser: no clip
+file is made yet, and the framings do not look for faces. "Speaker" fills the frame with the
+middle of the picture, "Stacked" puts its left half above its right half, and "Full Frame" shows
+all of it over a blurred copy.
+
+"Look" sets the caption style and the framing, and switches the hook title and the platform safe
+zones on or off. The safe zones mark where a platform's buttons and captions cover the picture.
+The look applies to every clip of the project.
+
+"In and Out Points" moves the start and the end of a clip by one sentence of the transcript, or
+by 0.2 seconds up to one second either way. Dragging a handle of the filmstrip moves a point to
+another sentence. A point reaches up to three sentences beyond the clip as it was cut, and a
+reading says whether the length is inside the limits chosen for the project.
+
+Keep keeps a clip. Reject asks why first: the clip is cut off mid-thought, is not interesting,
+needs earlier context or repeats another clip, or you give no reason. Next opens the next clip of
+the filter.
+
+Every change is stored as you make it. A reload, or the phone, shows the same decisions, titles,
+points and look.
+
+On a phone the list comes first and a clip opens as a screen of its own, with Reject, Keep and
+Next in a bar at the bottom. Scrolling past the preview pins it under the top bar, where it goes
+on playing.
+
 ## Open it on a phone
 
 Put the phone on the same Wi-Fi as the Mac. In Clipper on the Mac, open Settings and read the
@@ -84,7 +124,7 @@ pnpm test
 
 This runs every check: the Python linter, type checker and tests, then the web linter, build, type
 check and unit tests, then the browser tests. It prints each as passed or failed and takes about
-sixteen minutes.
+twenty minutes.
 
 ```bash
 pnpm test:browser e2e/start-command.spec.ts
@@ -106,10 +146,11 @@ on the Mac that answers in place of the Anthropic API with replies recorded for 
 ## Where the data lives
 
 Clipper keeps everything but the API key in the `data` folder inside the repository folder: one
-database file, which also holds the clip candidates of every project; one folder per project with
-the fetched video, its preview copy, its transcript and, for a link whose site gives one, the
-video's most-replayed graph; and a `models` folder with the transcription models. Deleting a
-project in Clipper removes its folder and its candidates. Git ignores `data`.
+database file, which also holds the clip candidates of every project, what you decided about each
+and the project's look; one folder per project with the fetched video, its preview copy, its
+transcript, the filmstrip frames of its clips and, for a link whose site gives one, the video's
+most-replayed graph; and a `models` folder with the transcription models. Deleting a project in
+Clipper removes its folder, its candidates and your decisions about them. Git ignores `data`.
 
 A new project needs 5 GB free on the disk that holds the data folder. An uploaded file can be up
 to 4 GB.
@@ -161,10 +202,11 @@ Three more variables serve test runs.
 
 ## What this version does not do yet
 
-A project ends at "Ready to review" with the number of its clip candidates. The candidates are
-stored, each with its start and end, its scores, the reason it was picked and its texts for
-TikTok, Reels and Shorts, and the Review tab does not list them yet: it shows an empty list.
-Keeping, rejecting and trimming clips, the export and the results come in later versions.
+A project ends with its review. Kept clips cannot be exported yet: the number on the Export tab
+counts them, the tab itself still shows its empty screen, and the texts written for TikTok, Reels
+and Shorts with each clip are stored and not shown. The results of posted clips are not recorded.
+The reason of a rejection is stored, and it does not steer which clips are picked from the next
+video yet.
 
 The clip length and the note given with a new project steer which clips are picked. The platforms
 chosen with it are stored for the export. In Settings, the API key, the two Claude models, the

@@ -656,7 +656,7 @@ What the spec's file list leaves out
   that is set and into the test output otherwise. They are saved with the command of validation
   block V18 and committed.
 
-- [ ] T19 — Bring the README and the agents' instructions up to date
+- [x] T19 — Bring the README and the agents' instructions up to date
   Files: `README.md`, `AGENTS.md`
   Done: `README.md` says what the Review tab does: the list and its filters, the timeline, the
   preview and that it is an approximation of the export, the look, the in and out points, Keep
