@@ -17,7 +17,7 @@ from .cut_stage import CutStage
 from .form_shortlist import count_shortlist, form_shortlist
 from .model_traits import FALLBACK_BETA, ModelTraits, describe_model
 from .place_quote import Placement, place_quote
-from .prepare_pass import PreparedPass, StageDependencies, prepare_pass
+from .prepare_pass import ChosenClips, ClipWork, PreparedPass, StageDependencies, prepare_pass
 from .replay_peaks import find_replay_peaks, read_replay_peaks
 from .router import SelectionDependencies, router
 from .score_stage import ScoreStage
@@ -44,6 +44,7 @@ __all__ = [
     "AskStoppedError",
     "BusyServiceError",
     "Candidate",
+    "ChosenClips",
     "ClaudeAccess",
     "ClaudeAskError",
     "ClaudeQuestion",
@@ -51,6 +52,7 @@ __all__ = [
     "ClipCounts",
     "ClipFlag",
     "ClipSeconds",
+    "ClipWork",
     "CutStage",
     "DeclinedReplyError",
     "Effort",

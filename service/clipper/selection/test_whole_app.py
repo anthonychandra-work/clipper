@@ -44,6 +44,8 @@ class WholeRun:
     selection_json: str
     transcript: Transcript
     requests: list[KeptRequest]
+    frame_names: list[str]
+    frames_left_by_delete: list[str]
 
 
 def describe_settings(
@@ -110,8 +112,21 @@ def whole_run(
         project_id = upload_with_the_brief(client, talk_video)
         ready = wait_for_status(client, project_id, ProjectStatus.READY)
         selection_json = client.get(f"/api/projects/{project_id}/selection").text
-    transcript = read_transcript(data_folder.project_dir(project_id))
-    return WholeRun(ready, selection_json, transcript, stand_in.list_requests())
+        transcript = read_transcript(data_folder.project_dir(project_id))
+        frame_names = list_frame_names(data_folder, project_id)
+        client.delete(f"/api/projects/{project_id}")
+    return WholeRun(
+        project=ready,
+        selection_json=selection_json,
+        transcript=transcript,
+        requests=stand_in.list_requests(),
+        frame_names=frame_names,
+        frames_left_by_delete=list_frame_names(data_folder, project_id),
+    )
+
+
+def list_frame_names(data_folder: DataFolder, project_id: str) -> list[str]:
+    return sorted(frame.name for frame in data_folder.project_dir(project_id).glob("frames/*"))
 
 
 def test_an_uploaded_talk_goes_through_the_whole_app_and_rests_ready_with_six_candidates(
@@ -128,6 +143,16 @@ def test_an_uploaded_talk_goes_through_the_whole_app_and_rests_ready_with_six_ca
         "Scoring 4 windows",
         "Cutting clips",
     ]
+
+
+def test_the_uploaded_talk_ends_ready_with_72_frames_in_its_folder_and_deleting_it_removes_them(
+    whole_run: WholeRun,
+) -> None:
+    expected = [f"c{clip:02d}-{frame:02d}.jpg" for clip in range(1, 7) for frame in range(1, 13)]
+
+    assert whole_run.frame_names == expected
+    assert len(whole_run.frame_names) == 72
+    assert whole_run.frames_left_by_delete == []
 
 
 def test_the_selection_of_the_run_gives_its_limits_its_windows_and_no_peak(

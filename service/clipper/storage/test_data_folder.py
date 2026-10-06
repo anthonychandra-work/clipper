@@ -43,6 +43,18 @@ def test_the_replay_graph_of_a_project_is_kept_in_its_folder(tmp_path: Path) -> 
     assert not graph_file.exists()
 
 
+def test_the_filmstrip_frames_of_a_project_are_kept_under_frames_in_its_folder(
+    tmp_path: Path,
+) -> None:
+    data_folder = open_data_folder(tmp_path / "data")
+    project_dir = tmp_path / "data" / "projects" / "a1b2c3"
+
+    assert data_folder.frames_dir("a1b2c3") == project_dir / "frames"
+    assert data_folder.frame_file("a1b2c3", "c04", 1) == project_dir / "frames" / "c04-01.jpg"
+    assert data_folder.frame_file("a1b2c3", "c12", 12) == project_dir / "frames" / "c12-12.jpg"
+    assert not data_folder.frames_dir("a1b2c3").exists()
+
+
 def test_each_model_has_a_folder_of_its_own_under_models(tmp_path: Path) -> None:
     data_folder = open_data_folder(tmp_path / "data")
 

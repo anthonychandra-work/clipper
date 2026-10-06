@@ -1,3 +1,4 @@
+import errno
 import logging
 import shutil
 import threading
@@ -6,7 +7,7 @@ from collections.abc import Callable
 
 import pytest
 
-from ..pipeline import QueueWorker, requeue_project
+from ..pipeline import QueueWorker, StageRun, requeue_project
 from ..projects import Project, ProjectQueue, ProjectRepository, ProjectStatus, StepKind, StepState
 from ..settings import (
     ApiKeyStore,
@@ -26,8 +27,8 @@ from .conftest import (
     RecordedClaude,
     StartSelection,
 )
-from .cut_stage import cut_each_window
-from .prepare_pass import PreparedPass
+from .cut_stage import CutStage, cut_each_window
+from .prepare_pass import ChosenClips, ClipWork, PreparedPass, StageDependencies
 from .score_stage import ScoreStage
 from .selection_reasons import NO_CANDIDATE, UNREADABLE_REPLY
 from .selection_records import Candidate, ClipFlag, ReplayPeak
@@ -395,3 +396,145 @@ def test_with_every_logger_at_debug_no_record_of_a_whole_run_of_the_two_steps_ho
     assert any("claude-opus-5-5" in line for line in logged)
     assert [line for line in logged if TEST_KEY in line] == []
     assert TEST_KEY not in caplog.text
+
+
+@pytest.fixture
+def scored_talk(
+    transcribed_talk: Project,
+    start_selection: StartSelection,
+    recorded_claude: RecordedClaude,
+    key_store: ApiKeyStore,
+    repository: ProjectRepository,
+) -> Project:
+    key_store.save(TEST_KEY)
+    scoring_worker = start_selection(recorded_claude.at("talk"), [ScoreStage])
+    scored = wait_for_status(repository, transcribed_talk.id, ProjectStatus.TRANSCRIBED)
+    scoring_worker.stop()
+    return scored
+
+
+@pytest.fixture
+def cut_with(
+    database: Database,
+    data_folder: DataFolder,
+    queue: ProjectQueue,
+    key_store: ApiKeyStore,
+    recorded_claude: RecordedClaude,
+) -> Callable[[ClipWork | None], CutStage]:
+    def build(work: ClipWork | None) -> CutStage:
+        dependencies = StageDependencies(
+            keys=key_store,
+            preferences=PreferenceStore(database),
+            data_folder=data_folder,
+            queue=queue,
+            store=SelectionStore(database),
+            anthropic_source=recorded_claude.at("talk"),
+            work_on_chosen_clips=work,
+        )
+        return CutStage(dependencies)
+
+    return build
+
+
+def test_handed_no_work_the_cut_step_fills_its_whole_bar_with_the_cut_requests(
+    scored_talk: Project, cut_with: Callable[[ClipWork | None], CutStage], database: Database
+) -> None:
+    reported: list[float] = []
+
+    cut_with(None).run(StageRun(scored_talk, threading.Event(), reported.append))
+
+    assert [round(percent) for percent in reported] == [33, 67, 100]
+    assert describe_ranks(SelectionStore(database).list_candidates(scored_talk.id)) == (
+        SIX_PARTS_BEST_FIRST
+    )
+
+
+def test_work_handed_to_the_cut_step_gets_the_chosen_clips_before_they_are_stored(
+    scored_talk: Project, cut_with: Callable[[ClipWork | None], CutStage], database: Database
+) -> None:
+    store = SelectionStore(database)
+    handed: list[ChosenClips] = []
+    stored_at_the_time: list[Candidate] = []
+    stop = threading.Event()
+
+    def keep_what_was_handed(chosen: ChosenClips) -> None:
+        handed.append(chosen)
+        stored_at_the_time.extend(store.list_candidates(chosen.project_id))
+
+    cut_with(keep_what_was_handed).run(StageRun(scored_talk, stop, lambda percent: None))
+
+    (chosen,) = handed
+    assert chosen.project_id == scored_talk.id
+    assert describe_ranks(list(chosen.candidates)) == SIX_PARTS_BEST_FIRST
+    assert [sentence.number for sentence in chosen.sentences] == list(range(1, 55))
+    assert chosen.stop is stop
+    assert stored_at_the_time == []
+    assert store.list_candidates(scored_talk.id) == list(chosen.candidates)
+
+
+def test_with_work_the_cut_requests_fill_nine_tenths_of_the_bar_and_the_work_the_rest(
+    scored_talk: Project, cut_with: Callable[[ClipWork | None], CutStage]
+) -> None:
+    reported: list[float] = []
+
+    def report_halfway_then_done(chosen: ChosenClips) -> None:
+        chosen.report_percent(50)
+        chosen.report_percent(100)
+
+    cut_with(report_halfway_then_done).run(
+        StageRun(scored_talk, threading.Event(), reported.append)
+    )
+
+    assert [round(percent) for percent in reported] == [30, 60, 90, 95, 100]
+
+
+def test_a_full_disk_during_the_work_fails_the_step_with_the_sentence_of_the_queue(
+    scored_talk: Project,
+    cut_with: Callable[[ClipWork | None], CutStage],
+    repository: ProjectRepository,
+    queue: ProjectQueue,
+    database: Database,
+) -> None:
+    def run_out_of_space(chosen: ChosenClips) -> None:
+        raise OSError(errno.ENOSPC, "No space left on device")
+
+    worker = QueueWorker(repository, queue, [cut_with(run_out_of_space)])
+    worker.start()
+    queue.requeue(scored_talk.id)
+    failed = wait_for_status(repository, scored_talk.id, ProjectStatus.FAILED)
+    worker.stop()
+
+    assert (
+        failed.halt_reason == "Not enough free disk space to finish. Free some space, then retry."
+    )
+    assert [step.state for step in failed.steps] == [DONE, DONE, DONE, PENDING]
+    assert SelectionStore(database).list_candidates(failed.id) == []
+    assert failed.candidate_count == 0
+
+
+def test_a_stop_during_the_work_ends_the_step_as_a_stop_and_stores_no_candidate(
+    scored_talk: Project,
+    cut_with: Callable[[ClipWork | None], CutStage],
+    repository: ProjectRepository,
+    queue: ProjectQueue,
+    database: Database,
+) -> None:
+    working = threading.Event()
+
+    def work_until_stopped(chosen: ChosenClips) -> None:
+        working.set()
+        chosen.stop.wait(WAIT_SECONDS)
+        raise RuntimeError("The work was stopped.")
+
+    worker = QueueWorker(repository, queue, [cut_with(work_until_stopped)])
+    worker.start()
+    queue.requeue(scored_talk.id)
+    assert working.wait(WAIT_SECONDS)
+    seconds_to_stop = stop_and_time(worker, scored_talk.id)
+    stopped = repository.get(scored_talk.id)
+    worker.stop()
+
+    assert seconds_to_stop < STOP_DEADLINE_SECONDS
+    assert stopped.status is ProjectStatus.STOPPED
+    assert stopped.halt_reason == "Stopped at “Cutting clips”. The stages before it are kept."
+    assert SelectionStore(database).list_candidates(stopped.id) == []

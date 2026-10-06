@@ -6,6 +6,7 @@ from .clip_points import (
     refuse_points_past_the_limits,
     time_clip,
 )
+from .filmstrip import FilmstripMaker
 from .review_records import (
     STARTING_LOOK,
     CaptionStyle,
@@ -30,6 +31,7 @@ __all__ = [
     "ClipReview",
     "ClipTimes",
     "Decision",
+    "FilmstripMaker",
     "Framing",
     "Look",
     "PreviewMissingError",

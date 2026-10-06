@@ -43,7 +43,12 @@ def create_app(startup: StartupSettings) -> FastAPI:
         FetchStage(stores.repository, data_folder, media_tools),
         ModelStage(stores.preferences, data_folder, startup.model_source),
         TranscribeStage(stores.preferences, data_folder, media_tools),
-        *list_selection_stages(stores, data_folder, startup.anthropic_source),
+        *list_selection_stages(
+            stores,
+            data_folder,
+            startup.anthropic_source,
+            review.FilmstripMaker(data_folder, media_tools),
+        ),
     ]
     worker = pipeline.QueueWorker(stores.repository, stores.queue, stages, planner.list_checks())
     queued = pipeline.PipelineDependencies(stores.repository, stores.queue, worker)
@@ -85,7 +90,10 @@ def open_stores(database: Database, key_file: Path) -> Stores:
 
 
 def list_selection_stages(
-    stores: Stores, data_folder: DataFolder, anthropic_source: str
+    stores: Stores,
+    data_folder: DataFolder,
+    anthropic_source: str,
+    filmstrip: review.FilmstripMaker,
 ) -> list[pipeline.PipelineStage]:
     dependencies = selection.StageDependencies(
         keys=stores.api_keys,
@@ -94,6 +102,7 @@ def list_selection_stages(
         queue=stores.queue,
         store=stores.selection_store,
         anthropic_source=anthropic_source,
+        work_on_chosen_clips=filmstrip.make_frames,
     )
     return [selection.ScoreStage(dependencies), selection.CutStage(dependencies)]
 

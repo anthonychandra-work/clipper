@@ -236,7 +236,7 @@ What the spec's file list leaves out
   from the in point and move with its nudge. On the committed transcript, the captions of the
   first part in each style hold that part's words in their order.
 
-- [ ] T5 — Make the filmstrip frames when the clips are cut
+- [x] T5 — Make the filmstrip frames when the clips are cut
   Files: `service/clipper/media/grab_frame.py`, `service/clipper/media/test_grab_frame.py`,
   `service/clipper/media/__init__.py`, `service/clipper/storage/data_folder.py`,
   `service/clipper/storage/test_data_folder.py`, `service/clipper/review/filmstrip.py`,

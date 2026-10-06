@@ -7,6 +7,7 @@ MODELS_DIR_NAME = "models"
 SOURCE_STEM = "source"
 PREVIEW_NAME = "preview.mp4"
 REPLAY_GRAPH_NAME = "replay-graph.json"
+FRAMES_DIR_NAME = "frames"
 
 
 @dataclass(frozen=True)
@@ -28,6 +29,12 @@ class DataFolder:
 
     def replay_graph_file(self, project_id: str) -> Path:
         return self.project_dir(project_id) / REPLAY_GRAPH_NAME
+
+    def frames_dir(self, project_id: str) -> Path:
+        return self.project_dir(project_id) / FRAMES_DIR_NAME
+
+    def frame_file(self, project_id: str, clip_id: str, number: int) -> Path:
+        return self.frames_dir(project_id) / f"{clip_id}-{number:02d}.jpg"
 
     def model_dir(self, choice: str) -> Path:
         return self.models_dir / choice

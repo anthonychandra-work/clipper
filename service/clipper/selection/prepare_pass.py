@@ -1,3 +1,5 @@
+import threading
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 
 from ..pipeline import StageFailedError, StageRun
@@ -8,10 +10,23 @@ from ..transcription import read_transcript
 from .ask_claude import ClaudeAccess
 from .clip_limits import find_clip_limits
 from .selection_reasons import MISSING_KEY
+from .selection_records import Candidate
 from .selection_store import SelectionStore
 from .selection_task import PassContext
 from .split_sentences import Sentence, split_sentences
 from .transcript_part import write_transcript_part
+
+
+@dataclass(frozen=True)
+class ChosenClips:
+    project_id: str
+    candidates: Sequence[Candidate]
+    sentences: Sequence[Sentence]
+    stop: threading.Event
+    report_percent: Callable[[float], None]
+
+
+type ClipWork = Callable[[ChosenClips], None]
 
 
 @dataclass(frozen=True)
@@ -22,6 +37,7 @@ class StageDependencies:
     queue: ProjectQueue
     store: SelectionStore
     anthropic_source: str
+    work_on_chosen_clips: ClipWork | None = None
 
 
 @dataclass(frozen=True)
