@@ -46,13 +46,7 @@ function ReviewWorkbench({ project, review }: { project: Project; review: Review
   }
   return (
     <ProjectFrame project={project} tab="review">
-      <ReviewSplit
-        projectId={project.id}
-        review={review}
-        shownClip={shownClip}
-        filter={filter}
-        onFilter={setFilter}
-      />
+      <ReviewSplit project={project} review={review} shownClip={shownClip} filter={filter} onFilter={setFilter} />
     </ProjectFrame>
   );
 }

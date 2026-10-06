@@ -24,6 +24,9 @@ export {
   openReview,
   readCandidateRows,
   readFilterCounts,
+  readTimelineBars,
+  readTimelinePins,
+  type TimelinePinText,
 } from './review-page';
 export {
   type EnvironmentChanges,

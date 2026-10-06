@@ -10,6 +10,8 @@ import {
   openReview,
   readCandidateRows,
   readFilterCounts,
+  readTimelineBars,
+  readTimelinePins,
   test,
 } from './support';
 
@@ -17,6 +19,17 @@ const PHONE = { width: 390, height: 844 };
 const DESKTOP = { width: 1360, height: 900 };
 const SHORT_DESKTOP = { width: 1360, height: 460 };
 const SCORE_SENTENCE = 'The score orders clips inside this video. It does not forecast views.';
+const TIMELINE_SENTENCE =
+  'Each bar is a window of about 90 seconds of the transcript. Highlighted bars scored highest and were searched for clips. Numbers are the clips, by rank.';
+const BARS_HEIGHT_PX = 56;
+const PINS_BY_START = [
+  { id: 'c01', number: '1', label: 'Clip ranked 1, at 00:00:11, not decided' },
+  { id: 'c03', number: '3', label: 'Clip ranked 3, at 00:00:45, not decided' },
+  { id: 'c02', number: '2', label: 'Clip ranked 2, at 00:01:26, not decided' },
+  { id: 'c04', number: '4', label: 'Clip ranked 4, at 00:02:00, not decided' },
+  { id: 'c05', number: '5', label: 'Clip ranked 5, at 00:02:41, not decided' },
+  { id: 'c06', number: '6', label: 'Clip ranked 6, at 00:03:13, not decided' },
+];
 const SIX_CLIPS_AS_CUT = [
   { rank: '01', title: 'The worst day my bakery ever had', tags: ['Story'], score: '88' },
   { rank: '02', title: 'Hire for the habits you cannot teach', tags: ['Contrarian'], score: '84' },
@@ -161,6 +174,70 @@ test.describe('at 1360 px', () => {
       expect(scrolledTo).toBeGreaterThan(0);
       expect(await readListPane(page)).toEqual({ keptSince: 'the list was opened', scrollTop: scrolledTo });
     });
+  });
+});
+
+test.describe('the source timeline at 1360 px', () => {
+  test.use({ viewport: DESKTOP });
+
+  test('“Source Video” stands above the candidates with a bar for each window, as high as its score', async ({
+    page,
+    readyTalk,
+  }) => {
+    await openReview(page, readyTalk.project.id);
+    const timeline = page.getByRole('region', { name: 'Where the clips sit in the source video' });
+
+    const bars = await readTimelineBars(page);
+    const scores = readyTalk.review.windows.map((scored) => scored.score);
+    const timelineTop = (await timeline.boundingBox())?.y ?? 0;
+    const candidatesTop = (await page.locator('#candidates-heading').boundingBox())?.y ?? 0;
+
+    await expect(timeline.locator('h2')).toHaveText('Source Video');
+    expect(scores).toEqual([72, 81, 64, 23]);
+    expect(bars.map((bar) => bar.isShortlisted)).toEqual([true, true, true, false]);
+    expect(bars.map((bar) => Math.round((bar.heightPx / BARS_HEIGHT_PX) * 100))).toEqual(scores);
+    await expect(timeline.locator('.timeline__axis span')).toHaveText([
+      '00:00:00',
+      '00:00:58',
+      '00:01:57',
+      '00:02:56',
+      '00:03:54',
+    ]);
+    await expect(timeline.locator('.list-footer')).toHaveText(TIMELINE_SENTENCE);
+    expect(timelineTop).toBeLessThan(candidatesTop);
+  });
+
+  test('six numbered pins stand in the order of the clips’ starts, over the middles of their clips', async ({
+    page,
+    readyTalk,
+  }) => {
+    await openReview(page, readyTalk.project.id);
+    const strip = await page.locator('.timeline__pins').boundingBox();
+
+    const pins = await readTimelinePins(page);
+    const middles = pins.map((pin) => pin.middlePx);
+    const first = readyTalk.review.clips[0];
+    const firstMiddle = (first.startSeconds + first.endSeconds) / 2 / (readyTalk.project.durationSeconds ?? 1);
+
+    expect(pins.map((pin) => ({ id: pin.id, number: pin.number, label: pin.label }))).toEqual(PINS_BY_START);
+    expect(pins.map((pin) => pin.isOnLowRow)).toEqual([false, true, false, true, false, true]);
+    expect(middles).toEqual([...middles].sort((left, right) => left - right));
+    expect(middles[0]).toBeCloseTo((strip?.x ?? 0) + (strip?.width ?? 0) * firstMiddle, 0);
+    expect(pins.filter((pin) => pin.isCurrent).map((pin) => pin.id)).toEqual(['c01']);
+    expect(pins.map((pin) => pin.address)).toEqual(
+      PINS_BY_START.map((pin) => `/projects/${readyTalk.project.id}/review/${pin.id}`),
+    );
+  });
+
+  test('a pin leads to its clip’s address, where the pin and the row are marked', async ({ page, readyTalk }) => {
+    await openReview(page, readyTalk.project.id);
+
+    await page.getByRole('link', { name: 'Clip ranked 4, at 00:02:00, not decided' }).click();
+
+    await expect(page).toHaveURL(`/projects/${readyTalk.project.id}/review/c04`);
+    await expect(page.locator('#pin-c04')).toHaveClass(/is-selected/);
+    expect((await readTimelinePins(page)).filter((pin) => pin.isCurrent).map((pin) => pin.id)).toEqual(['c04']);
+    expect(await listCurrentRows(page)).toEqual(['c04']);
   });
 });
 

@@ -14,7 +14,8 @@ a.sidebar__new,
 a.sidebar__link,
 a.project-row,
 a.segmented__option,
-a.candidate__open {
+a.candidate__open,
+a.timeline__pin {
   text-decoration: none;
 }
 
@@ -22,6 +23,16 @@ a.sidebar__link,
 a.project-row,
 a.candidate__open {
   color: inherit;
+}
+
+a.timeline__pin {
+  display: grid;
+  place-items: center;
+}
+
+/* With more windows than the card has room to space, the bars stand side by side. */
+.timeline__bars--tight {
+  gap: 0;
 }
 
 a.segmented__option {

@@ -47,3 +47,45 @@ export async function listCurrentRows(page: Page): Promise<string[]> {
   const rows = await readCandidateRows(page);
   return rows.filter((row) => row.isCurrent).map((row) => row.id);
 }
+
+export interface TimelineBar {
+  heightPx: number;
+  isShortlisted: boolean;
+}
+
+export interface TimelinePinText {
+  id: string;
+  number: string;
+  label: string | null;
+  address: string | null;
+  middlePx: number;
+  isOnLowRow: boolean;
+  isCurrent: boolean;
+}
+
+export function readTimelineBars(page: Page): Promise<TimelineBar[]> {
+  return page.locator('.timeline__bars .timeline__bar').evaluateAll((bars) =>
+    bars.map((bar) => ({
+      heightPx: bar.getBoundingClientRect().height,
+      isShortlisted: bar.classList.contains('is-shortlisted'),
+    })),
+  );
+}
+
+export async function readTimelinePins(page: Page): Promise<TimelinePinText[]> {
+  await expect(page.locator('.timeline__pin').first()).toBeVisible();
+  return page.locator('.timeline__pins .timeline__pin').evaluateAll((pins) =>
+    pins.map((pin) => {
+      const box = pin.getBoundingClientRect();
+      return {
+        id: pin.id.replace('pin-', ''),
+        number: (pin.textContent ?? '').trim(),
+        label: pin.getAttribute('aria-label'),
+        address: pin.getAttribute('href'),
+        middlePx: box.left + box.width / 2,
+        isOnLowRow: pin.classList.contains('timeline__pin--low'),
+        isCurrent: pin.classList.contains('is-selected'),
+      };
+    }),
+  );
+}

@@ -408,13 +408,14 @@ What the spec's file list leaves out
   review answer for the key. `pnpm test` exits 0, the tests that present a project without
   candidates as ready among them.
 
-- [ ] T11 — Draw the source timeline
+- [x] T11 — Draw the source timeline
   Files: `web/src/review/chart-source/index.ts`,
   `web/src/review/chart-source/components/SourceTimeline.tsx`,
   `web/src/review/chart-source/hooks/use-element-width.ts`,
   `web/src/review/chart-source/lib/place-pins.ts`,
   `web/src/review/chart-source/lib/place-pins.test.ts`,
-  `web/src/review/open-review/components/ReviewSplit.tsx`, `web/src/shared/styles/app.css`,
+  `web/src/review/open-review/components/ReviewSplit.tsx`,
+  `web/src/review/open-review/components/ReviewTab.tsx`, `web/src/shared/styles/app.css`,
   `web/e2e/support/review-page.ts`, `web/e2e/support/index.ts`, `web/e2e/review-list.spec.ts`
   Done: the list pane shows "Source Video" in the prototype's markup, above the candidates from
   720 px and below them on a phone. It draws one bar for each window in the order of their
