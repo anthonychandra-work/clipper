@@ -1,6 +1,16 @@
 export { expect } from '@playwright/test';
 export { probeTalkLength } from './build-fixtures';
 export { captureScreens } from './capture-screens';
+export {
+  type ExportRowText,
+  exportRows,
+  openExport,
+  type OutputText,
+  readExportRows,
+  readOutput,
+  saveDownload,
+  type SavedDownload,
+} from './export-page';
 export { KEYLESS_END, type KeylessEnd, waitForKeylessEnd } from './keyless-end';
 export { followBarUntil, newProjectSheet, projectRow, readRow, type RowText } from './library-page';
 export { findFaintTexts } from './measure-contrast';
@@ -16,6 +26,8 @@ export {
   readShownProblem,
 } from './new-project-sheet';
 export { presentAsReady } from './present-as-ready';
+export { type ProbedFile, probeSavedFile } from './probe-export';
+export { cancelRenders, keepClips, readExport, startRenders, waitForExport } from './read-export';
 export {
   listPointsAcross,
   nameColoursOfCapture,

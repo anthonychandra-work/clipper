@@ -50,6 +50,7 @@ const SHAPES = {
     </>
   ),
   chart: <path d="M5 19v-8M10 19V5M15 19v-6M20 19V8" />,
+  download: <path d="M12 4v10M7.5 10l4.5 4.5 4.5-4.5M5 19h14" />,
 } satisfies Record<string, ReactNode>;
 
 export type IconName = keyof typeof SHAPES;

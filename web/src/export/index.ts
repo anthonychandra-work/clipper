@@ -9,4 +9,4 @@ export type {
   ProjectExport,
   RenderState,
 } from './export.types';
-export { type OpenExport, useExport } from './open-export';
+export { ExportTab, type OpenExport, useExport } from './open-export';

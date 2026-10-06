@@ -16,9 +16,10 @@ interface ProjectScreenProps {
   projectId: string;
   tab?: ProjectTab;
   reviewTab?: ReactNode;
+  exportTab?: ReactNode;
 }
 
-export function ProjectScreen({ projectId, tab, reviewTab }: ProjectScreenProps) {
+export function ProjectScreen({ projectId, tab, reviewTab, exportTab }: ProjectScreenProps) {
   const router = useRouter();
   const { project, projects, isMissing } = useProject(projectId);
   const mustOpenReview = project !== null && hasTabs(project) && tab === undefined;
@@ -32,6 +33,6 @@ export function ProjectScreen({ projectId, tab, reviewTab }: ProjectScreenProps)
   if (tab === undefined || !hasTabs(project)) {
     return <StatusScreen project={project} projects={projects} actions={<ProjectMoreButton project={project} />} />;
   }
-  if (tab === 'review') return <OpenProjectContext value={project}>{reviewTab}</OpenProjectContext>;
-  return <ProjectTabs project={project} tab={tab} />;
+  if (tab === 'results') return <ProjectTabs project={project} />;
+  return <OpenProjectContext value={project}>{tab === 'review' ? reviewTab : exportTab}</OpenProjectContext>;
 }

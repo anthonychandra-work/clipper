@@ -475,7 +475,7 @@ What the spec's file list leaves out
   and no more once all are done; no asking with nobody watching; an answer put in place after
   Render and after Cancel; a refusal.
 
-- [ ] T12 — Open the Export tab: the output, the kept clips and the state of each
+- [x] T12 — Open the Export tab: the output, the kept clips and the state of each
   Files: `web/src/app/projects/[id]/export/page.tsx`,
   `web/src/project/open-project/components/ProjectScreen.tsx`,
   `web/src/project/open-project/components/ProjectTabs.tsx`,

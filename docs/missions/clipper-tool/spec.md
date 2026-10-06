@@ -1122,6 +1122,13 @@ From `intent.md`. Base `82df5ce`.
   since it imports nothing of the Review tab. With the source gone a row offers the download
   of any clip that has a finished file, whatever its render, and otherwise shows what its render
   says. A117 and A120 give the rules and leave these open. (executor, m5)
+- A134 — A rendering browser test takes its talk from a fixture named `ownTalk`, which also
+  deletes every project when the test ends, so no talk with renders is left for the Review
+  tests to take as theirs. The test of a reload keeps every answer the page is given about the
+  export and holds the rows against them, since a row may move on between two readings. The
+  project capability keeps the frame of the Results tab alone. With no kept clip the Export tab
+  asks the service like any other and draws the empty state from its answer. A122 gives the
+  talk and leaves these open. (executor, m5)
 
 ## Milestones
 

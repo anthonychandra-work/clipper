@@ -6,7 +6,14 @@ import type { Look, Review } from '@/review';
 import { changeClip, readReview, storeLook } from './read-review';
 import { removeSavedKey, saveTestKey } from './saved-key';
 import type { FixtureServer } from './serve-fixtures';
-import { createLinkProject, deleteProject, listProjects, readProject, waitForStatus } from './service-api';
+import {
+  createLinkProject,
+  deleteAllProjects,
+  deleteProject,
+  listProjects,
+  readProject,
+  waitForStatus,
+} from './service-api';
 
 const TALK_VIDEO = 'talk.mp4';
 const TALK_TITLE = 'talk';
@@ -28,6 +35,13 @@ export async function takeReadyTalk(request: APIRequestContext, server: FixtureS
   await deleteOtherProjects(request, kept.id);
   await putReviewBack(request, kept.id);
   return { project: await readProject(request, kept.id), review: await readReview(request, kept.id) };
+}
+
+// Nothing but deleting a project removes an export, so a test that renders takes a talk of its own.
+export async function makeOwnTalk(request: APIRequestContext, server: FixtureServer): Promise<ReadyTalk> {
+  await deleteAllProjects(request);
+  const made = await makeReadyTalk(request, server);
+  return { project: made, review: await readReview(request, made.id) };
 }
 
 async function findReadyTalk(request: APIRequestContext): Promise<Project | undefined> {

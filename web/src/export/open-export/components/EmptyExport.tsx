@@ -1,8 +1,7 @@
 import Link from 'next/link';
 
+import { tabAddress } from '@/project';
 import { Icon, PagePane } from '@/shared/ui';
-
-import { tabAddress } from '../lib/project-addresses';
 
 export function EmptyExport({ projectId }: { projectId: string }) {
   return (

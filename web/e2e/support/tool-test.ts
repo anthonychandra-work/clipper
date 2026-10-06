@@ -1,11 +1,12 @@
 import { test as base } from '@playwright/test';
 
 import { findOrBuildFixtures } from './build-fixtures';
-import { type ReadyTalk, takeReadyTalk } from './ready-talk';
+import { makeOwnTalk, type ReadyTalk, takeReadyTalk } from './ready-talk';
 import { ToolRun, readTestRunSettings } from './run-tool';
 import { removeSavedKey, saveTestKey, TEST_KEY } from './saved-key';
 import { type FixtureServer, serveFixtures } from './serve-fixtures';
 import { type RecordedClaude, serveRecordedClaude } from './serve-recorded-claude';
+import { deleteAllProjects } from './service-api';
 import { findOrFetchTestModel, placeAsDefaultModel } from './test-model';
 
 const TOOL_START_TIMEOUT_MS = 300_000;
@@ -17,6 +18,7 @@ interface TestFixtures {
   fixtureServer: FixtureServer;
   savedKey: string;
   readyTalk: ReadyTalk;
+  ownTalk: ReadyTalk;
 }
 
 interface WorkerFixtures {
@@ -73,6 +75,10 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
   },
   readyTalk: async ({ request, fixtureServer }, use) => {
     await use(await takeReadyTalk(request, fixtureServer));
+  },
+  ownTalk: async ({ request, fixtureServer }, use) => {
+    await use(await makeOwnTalk(request, fixtureServer));
+    await deleteAllProjects(request);
   },
   baseURL: async ({ tool }, use) => {
     await use(tool.address);
