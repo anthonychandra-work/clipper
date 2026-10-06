@@ -581,8 +581,9 @@ What the spec's file list leaves out
   at 1360 px, in the sidebar, and at 390 px, in the Library. Every place that builds a project
   for a test carries the count.
 
-- [ ] T16 — Fit the Export tab on a phone: 200% text, tap areas and contrast
-  Files: `web/e2e/support/export-screens.ts`, `web/e2e/support/index.ts`,
+- [x] T16 — Fit the Export tab on a phone: 200% text, tap areas and contrast
+  Files: `web/e2e/support/export-screens.ts`, `web/e2e/support/export-page.ts`,
+  `web/e2e/support/index.ts`,
   `web/e2e/export-fit.spec.ts`, `web/e2e/own-origin.spec.ts`, `web/src/shared/styles/app.css`,
   `web/src/export/open-export/components/ExportClip.tsx`,
   `web/src/export/render-clips/components/RenderActions.tsx`

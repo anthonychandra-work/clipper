@@ -5,6 +5,7 @@ import type { Page } from '@playwright/test';
 import {
   deleteAllProjects,
   expect,
+  finishFirstOfTwoClips,
   listEmptyScreens,
   listLowDiskScreens,
   listProjectScreens,
@@ -13,10 +14,12 @@ import {
   readPreview,
   readProjectList,
   removeSavedKey,
+  saveDownload,
   seedEveryState,
   test,
   visitScreens,
   type Walk,
+  walkExport,
   walkTalkReview,
 } from './support';
 
@@ -104,6 +107,30 @@ test('the Review screens of the talk ask nothing outside the tool, with the prev
   expect(asked.some((address) => address.endsWith('/preview'))).toBe(true);
   expect(asked.some((address) => /\/clips\/c01\/frames\/12$/.test(address))).toBe(true);
   expect(asked.some((address) => address.endsWith('/fonts/inter/InterVariable.ttf'))).toBe(true);
+  expect(findOutsideTheTool(asked, tool.address)).toEqual([]);
+});
+
+test('the Export tab of a talk with a finished clip asks nothing outside the tool, and saves its file from the tool', async ({
+  page,
+  request,
+  ownTalk,
+  tool,
+}, testInfo) => {
+  const asked = listenForRequests(page);
+  const walk = walkExport(ownTalk.project.id, await finishFirstOfTwoClips(request, ownTalk.project.id));
+  const withTheTalk = { ...walk, screens: walk.screens.filter((screen) => screen.name === 'export-talk') };
+  const fileAddress = `${tool.address}/api/projects/${ownTalk.project.id}/clips/c01/export`;
+  const saved: string[] = [];
+
+  for (const size of SIZES) {
+    await page.setViewportSize(size);
+    await visitScreens(page, withTheTalk, async () => page.waitForTimeout(SETTLE_MS));
+    const download = await saveDownload(page, 'c01', join(testInfo.outputDir, String(size.width)));
+    saved.push(`${download.name} from ${download.address}`);
+  }
+
+  expect(saved).toEqual(Array(SIZES.length).fill(`01 The worst day my bakery ever had.mp4 from ${fileAddress}`));
+  expect(asked.some((address) => address.endsWith(`/projects/${ownTalk.project.id}/export`))).toBe(true);
   expect(findOutsideTheTool(asked, tool.address)).toEqual([]);
 });
 

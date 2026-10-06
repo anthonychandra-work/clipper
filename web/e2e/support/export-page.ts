@@ -37,6 +37,7 @@ export interface TextRowText {
 export interface SavedDownload {
   name: string;
   path: string;
+  address: string;
 }
 
 export async function openExport(page: Page, projectId: string): Promise<void> {
@@ -118,5 +119,5 @@ export async function saveDownload(page: Page, clipId: string, folder: string): 
   const download = await started;
   const path = join(folder, download.suggestedFilename());
   await download.saveAs(path);
-  return { name: download.suggestedFilename(), path };
+  return { name: download.suggestedFilename(), path, address: download.url() };
 }

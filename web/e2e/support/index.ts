@@ -17,6 +17,7 @@ export {
   type TextRowText,
   waitForDownloads,
 } from './export-page';
+export { finishFirstOfTwoClips, type ShownExport, walkExport } from './export-screens';
 export { KEYLESS_END, type KeylessEnd, waitForKeylessEnd } from './keyless-end';
 export { followBarUntil, newProjectSheet, projectRow, readRow, type RowText } from './library-page';
 export { findFaintTexts } from './measure-contrast';

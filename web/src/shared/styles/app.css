@@ -170,11 +170,25 @@ label.row .menu-button {
   overflow-wrap: anywhere;
 }
 
-/* Three texts that the prototype's colours leave under 4.5 to 1 take the label colour. */
+/* Five texts that the prototype's colours leave under 4.5 to 1 take the label colour. */
 .app[data-layout="regular"] .candidate.is-selected .tag:not(.tag--warn, .tag--keep, .tag--reject),
 .flag .button,
-.segmented__option[aria-pressed="true"] .segmented__count {
+.empty .button:not(.button--prominent),
+.segmented__option[aria-pressed="true"] .segmented__count,
+.segmented__option[aria-current="page"] .segmented__count {
   color: var(--label);
+}
+
+/* The name of a row keeps its width beside a long value, which wraps. */
+dt.row__label {
+  flex: none;
+}
+
+/* On a phone the actions of a screen wrap onto lines of their own at a large text size. */
+.app[data-layout="compact"] .toolbar__trailing {
+  flex: 0 1 auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 /* The caption and the hook title are drawn in Inter, the typeface of the exported file. */

@@ -1142,6 +1142,18 @@ From `intent.md`. Base `82df5ce`.
   focus go back to where they were. The message is a toast, as in the prototype. The browser
   test of one platform makes a talk for TikTok alone and deletes it again. A118 gives the rules
   and leaves these open. (executor, m5)
+- A137 — Four rules depart from the prototype for R7, each measured on the Export tab. Two more
+  texts take the label colour: "Go to Review" in the empty state, at 4.37 to 1 in light, and the
+  number beside the tab that is open, at 3.01 to 1 in dark. The name of a row of "Output" keeps
+  its width beside a long value, where "Look" was cut. On a phone the actions of the top bar
+  wrap onto lines of their own, where Cancel and "Rendering…" were wider than the screen at 200%.
+  The export presented to the page is made from the talk's finished clip: twelve clips that go
+  through the five states in turn, each with the crowded review's title, the reason of a full
+  disk and descriptions of exactly 300 characters, in a project presented without its source.
+  The empty state is presented from the same talk with no clip. A talk has one clip finished
+  and one not rendered once its first clip is queued alone. The test of the tool's own requests
+  saves the finished file at each width and holds the download's address against the tool's.
+  R7 gives the measures and leaves these open. (executor, m5)
 
 ## Milestones
 
