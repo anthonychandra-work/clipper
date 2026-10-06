@@ -1161,6 +1161,14 @@ From `intent.md`. Base `82df5ce`.
   read once the first clip had finished. The output of the rendering tests that V3's command
   writes beside the frames is the validator's to save and is not among the committed files.
   A122 names the files and leaves these open. (executor, m5)
+- A139 — The times the README gives were measured on this Mac. The first `pnpm bootstrap`, which
+  compiles OpenCV, took 3 minutes 32 seconds, and a later one about a second: "about four
+  minutes". `pnpm test` took 1,703 seconds with all nine checks passed, 1,123 service tests in 6
+  minutes 30 seconds, 362 web unit tests and 173 browser tests in 21.4 minutes: "about 28
+  minutes, of which the browser tests take 21". The README also says what the Export tab does
+  when the fetched video is gone, and that Clipper posts nothing. `AGENTS.md` words the boundary
+  on model weights as A14 reads it. The plan asks for the measured times and leaves the wording
+  open. (executor, m5)
 
 ## Milestones
 

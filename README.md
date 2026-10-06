@@ -32,8 +32,8 @@ into `.cache/playwright`, and fetches the Whisper model the tests transcribe wit
 `.cache/whisper`.
 
 The first `pnpm bootstrap` compiles OpenCV, the library that finds faces, with the compiler of
-Apple's Command Line Tools. That takes about four minutes. A later `pnpm bootstrap` compiles
-nothing and ends within seconds.
+Apple's Command Line Tools, which Homebrew already requires. That takes about four minutes. A
+later `pnpm bootstrap` compiles nothing and ends within seconds.
 
 ## Start
 
@@ -88,9 +88,10 @@ when the clip needs context or is not recommended. Its title can be changed.
 
 The preview plays the clip from the fetched video inside an upright 9:16 frame, with captions
 timed to the spoken words. It is an approximation of the export, drawn by the browser: no clip
-file is made yet, and the framings do not look for faces. "Speaker" fills the frame with the
-middle of the picture, "Stacked" puts its left half above its right half, and "Full Frame" shows
-all of it over a blurred copy.
+file is made for it, and its framings do not look for faces. In the preview "Speaker" fills the
+frame with the middle of the picture, "Stacked" puts its left half above its right half, and
+"Full Frame" shows all of it over a blurred copy. The export places the first two by the faces
+it finds.
 
 "Look" sets the caption style and the framing, and switches the hook title and the platform safe
 zones on or off. The safe zones mark where a platform's buttons and captions cover the picture.
@@ -112,6 +113,53 @@ On a phone the list comes first and a clip opens as a screen of its own, with Re
 Next in a bar at the bottom. Scrolling past the preview pins it under the top bar, where it goes
 on playing.
 
+## Export the clips
+
+The Export tab lists the clips you kept, in the order of their ranks. The number beside the tab
+counts them. "Output" gives the look the clips are rendered with and their format: 1080 × 1920,
+30 frames a second, H.264 with AAC sound, in an MP4 file. The look is the one set on the Review
+tab. With no kept clip the tab says so and links back to Review.
+
+"Render 2 Clips", with the number of your kept clips, renders them one at a time. A row reads
+"Waiting" and then "Rendering" beside a bar, and offers "Download MP4" when its file is finished.
+A clip is cut from the fetched video between its in and out points. Its captions are burned into
+the picture, and so is the hook title over the first three seconds when the look has it switched
+on. Rendering goes on when you leave the tab, and it does not wait for another project that is
+being transcribed. A clip that was being rendered when the tool stopped is rendered at the next
+start.
+
+For the framing, the render looks for faces in the clip five times a second:
+
+- "Speaker" fills the frame with an upright part of the picture that follows the largest face.
+  Without a face it shows the middle of the picture.
+- "Stacked" shows two faces one above the other, the one further left above, when at least half
+  of the clip shows two faces. A clip with fewer is rendered as "Speaker" renders it.
+- "Full Frame" shows the whole picture over a blurred copy of itself, with faces or without.
+
+The preview on the Review tab stays an approximation of these files.
+
+Cancel stops the clip that is being rendered and takes the waiting clips out of the queue. Clips
+that had finished keep their files. A clip that could not be rendered shows the reason and Retry,
+which queues that clip again.
+
+"Download MP4" saves a clip's file under its rank and title, as in
+`01 The worst day my bakery ever had.mp4`. It is a link to the file, so the browser on the Mac
+and the browser on a phone each save it as they save any file.
+
+Under each clip are the title and the description written for every platform chosen with the
+project: TikTok, Reels and Shorts. Copy puts one text on the clipboard, on the Mac and on a
+phone. Clipper posts nothing. You upload a file to the platform yourself and paste its texts
+there.
+
+A finished file stays as it was rendered. After a change to the look or to a clip's in and out
+points, press Render again: every kept clip is rendered anew, and a file is replaced only when
+its new version is whole. The files are kept in the project's folder, under `exports`, and stay
+there until you delete the project. In the Library a project with a finished clip reads
+"Exported" with the number of its exported clips.
+
+When the fetched video is no longer in the project's folder, the tab says so and switches Render
+off. Finished clips still download.
+
 ## Open it on a phone
 
 Put the phone on the same Wi-Fi as the Mac. In Clipper on the Mac, open Settings and read the
@@ -128,7 +176,7 @@ pnpm test
 
 This runs every check: the Python linter, type checker and tests, then the web linter, build, type
 check and unit tests, then the browser tests. It prints each as passed or failed and takes about
-twenty minutes.
+28 minutes, of which the browser tests take 21.
 
 ```bash
 pnpm test:browser e2e/start-command.spec.ts
@@ -139,9 +187,10 @@ This runs the named browser test files alone. Their paths are relative to `web`.
 A test run starts its own copy of the tool on ports 3100 and 8865 and keeps its data in a
 temporary folder, which it removes at the end. A Clipper that is running and the `data` folder
 are left alone. The tests fetch nothing from a video site and call no paid service: they build
-their test videos on the Mac from the system voice and ffmpeg. They transcribe with the smallest
-Whisper model, which the run keeps under the default model's name, and a test that downloads a
-model gets it from a server on the Mac.
+their test videos on the Mac from the system voice, a public-domain portrait and ffmpeg. They
+transcribe with the smallest Whisper model, which the run keeps under the default model's name,
+and a test that downloads a model gets it from a server on the Mac. The tests that render clips
+render them from those videos, and their files are removed with the run's folder.
 
 The tests save no key of yours and do not read the file your key is kept in. Where a test needs
 clips, it saves a made-up key into a file of the run, and the requests for clips go to a stand-in
@@ -152,9 +201,12 @@ on the Mac that answers in place of the Anthropic API with replies recorded for 
 Clipper keeps everything but the API key in the `data` folder inside the repository folder: one
 database file, which also holds the clip candidates of every project, what you decided about each
 and the project's look; one folder per project with the fetched video, its preview copy, its
-transcript, the filmstrip frames of its clips and, for a link whose site gives one, the video's
-most-replayed graph; and a `models` folder with the transcription models. Deleting a project in
-Clipper removes its folder, its candidates and your decisions about them. Git ignores `data`.
+transcript, the filmstrip frames of its clips, its exported clips in `exports` and, for a link
+whose site gives one, the video's most-replayed graph; and a `models` folder with the
+transcription models. An exported clip is `data/projects/<project>/exports/<rank>-<clip>.mp4`,
+as in `exports/01-c01.mp4`, the path its row on the Export tab shows. Deleting a project in
+Clipper removes its folder with the exported clips, its candidates and your decisions about
+them. Git ignores `data`.
 
 A new project needs 5 GB free on the disk that holds the data folder. An uploaded file can be up
 to 4 GB.
@@ -206,14 +258,12 @@ Three more variables serve test runs.
 
 ## What this version does not do yet
 
-A project ends with its review. Kept clips cannot be exported yet: the number on the Export tab
-counts them, the tab itself still shows its empty screen, and the texts written for TikTok, Reels
-and Shorts with each clip are stored and not shown. The results of posted clips are not recorded.
-The reason of a rejection is stored, and it does not steer which clips are picked from the next
-video yet.
+A project ends with its exported clips. The results of posted clips are not recorded: the Results
+tab still shows its empty screen. The reason of a rejection is stored, and it does not steer which
+clips are picked from the next video yet.
 
-The clip length and the note given with a new project steer which clips are picked. The platforms
-chosen with it are stored for the export. In Settings, the API key, the two Claude models, the
-transcription model and the clips per video take effect. The clip length chosen in Settings is not
-yet the one a new project starts with, the days before source videos are deleted are stored and
-nothing acts on them, and "Forget All of It" is switched off.
+The clip length and the note given with a new project steer which clips are picked, and the
+platforms chosen with it decide which texts the Export tab shows. In Settings, the API key, the
+two Claude models, the transcription model and the clips per video take effect. The clip length
+chosen in Settings is not yet the one a new project starts with, the days before source videos
+are deleted are stored and nothing acts on them, and "Forget All of It" is switched off.

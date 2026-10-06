@@ -30,6 +30,13 @@ is Alexander Gardner's portrait of Abraham Lincoln of 1863, in the public domain
 `portrait-source.md` gives its source on Wikimedia Commons, its author, its date, its licence,
 the checksum of the original and how the original was reduced.
 
+The tests of the face finder read the photograph itself, and the fixture builder draws it into
+`portrait.mp4`. There the small portrait is 360 px high and lies 100 px from the left edge, and
+the large one is 640 px high and starts 660 px from the left edge. At these places the large
+face stays whole inside an upright part of the picture that follows it, neither portrait reaches
+into the other's half of the picture, and the small face is large enough to be found in a frame
+that shows the whole picture.
+
 ## The test model
 
 The tests transcribe with the smallest Whisper model, `mlx-community/whisper-tiny`, 74 MB.

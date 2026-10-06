@@ -619,7 +619,7 @@ What the spec's file list leaves out
   set and into the test output otherwise. The ten files of A122 are saved with the commands of
   validation blocks V3 and V17 and committed. No video is committed.
 
-- [ ] T18 — Bring the README and the agents' instructions up to date
+- [x] T18 — Bring the README and the agents' instructions up to date
   Files: `README.md`, `AGENTS.md`, `fixtures/README.md`
   Done: `README.md` says what the Export tab does: that kept clips render one at a time into
   1080 × 1920 files with the captions and the hook title burned in, what the three framings do

@@ -144,7 +144,7 @@ folders.
 - `service/clipper/review` is the package behind the tab. It gives a project's review in one
   answer, takes the changes to a clip and to the look, and serves the preview copy with byte
   ranges and the filmstrip frames. It works out where a clip's points can go and groups a clip's
-  words into captions, so the page and a later export draw the same groups. The cut step of
+  words into captions, so the page and the export draw the same groups. The cut step of
   `selection` is handed its frame maker by `main.py` and imports nothing from it.
 - `web/src/review/` is the capability, with nine use cases: `open-review` holds a project's
   review and the tab's addresses, `time-clips` the rules for a clip's times and steps,
@@ -167,8 +167,8 @@ folders.
   screen fails the text fit measure even where an ancestor cuts it off.
 - Inter 4.1's variable font is `web/public/fonts/inter/InterVariable.ttf`, with its licence, the
   SIL Open Font License 1.1, beside it in `LICENSE.txt`. The page declares the font face in its
-  own head, the caption and the hook title of the preview are drawn in it, and a later export
-  reads the same file. Keep both files, unchanged.
+  own head, the caption and the hook title of the preview are drawn in it, and the export reads
+  the same file. Keep both files, unchanged.
 
 ## The Review tab in tests
 
@@ -192,6 +192,65 @@ folders.
   a review presented to the page with twelve crowded clips, 180 windows and long titles. A rule
   a screen needs to pass goes into `app.css`.
 - `web/e2e/review-captures.spec.ts` saves the captures of the Review tab and the talk's review
+  into the folder `CLIPPER_EVIDENCE_DIR` names.
+
+## The Export tab
+
+- `service/clipper/rendering` is the package behind the tab. It gives a project's export in one
+  answer, queues and cancels renders, serves a finished file as an attachment, and renders a
+  kept clip into `exports/<rank>-<clip>.mp4` in the project's folder. It takes the clips as they
+  stand from `review`, with their points, their captions and the project's look, so an export
+  draws the caption groups the preview draws.
+- `render_clip.py` joins the steps of a render. ffmpeg writes pictures of the clip's stretch of
+  the source, five a second and at most 640 px on the longer side. The face finder searches each
+  one. The framing is chosen from what was found, and its crop is placed for every frame. The
+  captions and the hook title are drawn as pictures with Pillow, in the Inter file of the
+  preview. One ffmpeg run then encodes the clip.
+- A render works in `rendering-<clip>` beside `exports` and removes that folder when it ends,
+  however it ends. The clip is written there under another name and moved into `exports` when
+  it is whole, so `exports` holds finished files only.
+- The face finder is OpenCV's YuNet detector. Its model,
+  `service/clipper/rendering/yunet/face_detection_yunet_2026may.onnx`, comes from OpenCV's model
+  zoo under the MIT licence, which sits beside it. It is the one model file the repository
+  holds.
+- The render queue is a table and a worker of its own, beside the queue of the pipeline. One
+  clip renders at a time, the oldest in the queue first whatever its project, and an export
+  never waits for another project's transcription. A cancel takes the project's waiting renders
+  out of the queue, and the worker settles the render it is busy with once that render has
+  ended. When the tool stops, that render goes back to waiting. `main.py` starts and stops both
+  workers.
+- `web/src/export/` is the capability, with three use cases. `open-export` holds a project's
+  export and draws the tab: the output, the clips, the empty state and the notice of a missing
+  source. `render-clips` sends Render, Retry and Cancel and words what a row shows for each state
+  of a render. `copy-text` lists a clip's platform texts and copies one. `open-export` imports
+  the other two, and neither imports it back.
+- The store of an export asks the service again one second after each answer while a clip waits
+  or renders, and stops when none does.
+- Copy uses the clipboard interface where the page has one. A page opened at the Mac's network
+  address, as a phone opens it, is not a secure page and has none. There Copy selects the text
+  in a field of its own and uses the browser's older copy command.
+
+## The Export tab in tests
+
+- Nothing but deleting a project removes an export. A browser test that renders therefore takes
+  a talk of its own from the `ownTalk` fixture, which deletes every project, makes the talk from
+  a link to `talk.mp4`, and deletes every project again when the test ends. No talk with renders
+  is left for the Review tests to take as theirs.
+- A test makes a render fail by putting a file that is no video in the source's place, and makes
+  a source go missing by moving it aside in the run's data folder.
+  `web/e2e/support/source-file.ts` does both and gives back a function that puts the source
+  back.
+- `portrait.mp4` is the fixture with faces. It shows one public-domain portrait twice on a plain
+  ground: small and mirrored on the left, and large on the right, where it drifts further right.
+  The tests of the framings render it. The colour bars of `talk.mp4` hold no face, so the talk
+  is the fixture for the crop that stays in the middle.
+- The service's tests of the package take the cut talk with its source in place, and the clip of
+  the portrait video, from `service/clipper/rendering/conftest.py`.
+- `web/e2e/export-fit.spec.ts` runs the three measures over the Export tab: empty, with the
+  talk, and with an export presented to the page that holds twelve clips in every state of a
+  render under the notice of a missing source.
+- `web/e2e/export-captures.spec.ts` saves the captures of the tab, and the tests of the
+  rendering package save frames of rendered clips and what ffprobe reports for the talk's files,
   into the folder `CLIPPER_EVIDENCE_DIR` names.
 
 ## Rules every write passes through
@@ -275,6 +334,19 @@ Measured on ffmpeg 8.1.2:
 - A command that must end a video at a known moment states the length with `-t`. The fixture
   builder measures the speech with ffprobe and gives each video its length that way, and every
   build of a video then has the same picture length and the same sound length.
+- A render is one ffmpeg run, started in the render's work folder. Its filter graph names the
+  file of crop commands by name alone, and the list of overlay pictures names each picture the
+  same way. A path inside a filter graph would need escaping.
+- The crop of a framing moves through `sendcmd`, with one line of commands for each frame. Every
+  crop of the graph carries a name of its own: `crop@part` for the Speaker framing, `crop@upper`
+  and `crop@lower` for the Stacked, and `crop@ground` for the blurred copy of the Full Frame. A
+  command addressed to plain `crop` reaches every crop of the run.
+- A frame's commands start half a frame before the frame, so the frame's own time always lies
+  inside them.
+- The overlay pictures reach ffmpeg as one list for the concat demuxer, each with its length.
+  The list names its last picture twice, or that picture's length is lost.
+- An export is cut from the fetched source and not from the preview copy. A crop is given in
+  shares of the picture, so a video stored on its side is cropped as it plays.
 
 ## Dependencies
 
@@ -315,11 +387,16 @@ builds OpenCV with FFmpeg and video reading switched off:
 
 Clipper reads no video through OpenCV: ffmpeg writes the pictures it searches for faces.
 
+Pillow draws the captions and the hook title of an export. It installs from its ready-made
+package under the MIT-CMU licence. The libraries that package carries, FreeType, HarfBuzz and
+those of the picture formats, carry permissive licences; its licence file lists them.
+
 ## Boundaries
 
 - Leave `.researches/` and `docs/prototype/` as they are.
-- Commit no key, no video, no model weights and no database. Git ignores the data folder and any
-  file holding secrets.
+- Commit no key, no video, no model weights and no database. The boundary on weights covers the
+  Whisper models; the face detector's model, under 1 MB, is committed with its licence. Git
+  ignores the data folder and any file holding secrets.
 - The tool contacts three things only: the video source the user pasted, the Whisper model
   download, and the Anthropic API. No analytics and no telemetry.
 - Tests call neither the live Anthropic API nor YouTube.
