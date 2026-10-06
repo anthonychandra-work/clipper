@@ -4,6 +4,7 @@ from .locate_media_tools import MediaTools, MediaToolsMissingError, locate_media
 from .make_preview_copy import PreviewJob, RisingPercent, make_preview_copy
 from .probe_video import NotAVideoError, VideoFacts, probe_video
 from .run_media_tool import MediaToolFailedError, MediaWorkStoppedError, run_media_tool
+from .sample_frames import SampleJob, sample_frames
 
 __all__ = [
     "FrameJob",
@@ -16,6 +17,7 @@ __all__ = [
     "NotAVideoError",
     "PreviewJob",
     "RisingPercent",
+    "SampleJob",
     "VideoFacts",
     "extract_audio",
     "grab_frame",
@@ -24,4 +26,5 @@ __all__ = [
     "measure_sound_seconds",
     "probe_video",
     "run_media_tool",
+    "sample_frames",
 ]

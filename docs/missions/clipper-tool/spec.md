@@ -1053,6 +1053,13 @@ From `intent.md`. Base `82df5ce`.
   only a moment that shows two faces places the parts, and every other moment counts as one
   without a face. A clip whose moments never show two faces is not stacked, a clip with no
   moment among them. A114 gives the rules and leaves these open. (executor, m5)
+- A127 — The pictures a clip is searched in are JPEG files in a folder `moments` inside the
+  render's work folder, numbered from 1 and written by one ffmpeg run that is started in that
+  folder; the folder is removed when the search ends, however it ends. A stretch of the source
+  gives a picture for every fifth of a second that starts inside it. The search reports its
+  progress after each picture and none while ffmpeg writes them. The picture's shape is read
+  from the first of them. A stretch that holds no picture fails with ffmpeg's words. A112 gives
+  the rate and the size and leaves these open. (executor, m5)
 
 ## Milestones
 

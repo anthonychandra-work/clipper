@@ -11,15 +11,19 @@ from .render_plan import (
     TimedOverlay,
     WholePictureLayout,
 )
+from .sample_faces import FaceSearchJob, NoPictureError, SampledFaces, sample_faces
 
 __all__ = [
     "Face",
     "FaceFinder",
+    "FaceSearchJob",
     "Layout",
+    "NoPictureError",
     "PicturePart",
     "PictureShape",
     "Place",
     "RenderPlan",
+    "SampledFaces",
     "SpeakerLayout",
     "StackedLayout",
     "TimedOverlay",
@@ -28,4 +32,5 @@ __all__ = [
     "choose_framing",
     "encode_clip",
     "frame_picture",
+    "sample_faces",
 ]

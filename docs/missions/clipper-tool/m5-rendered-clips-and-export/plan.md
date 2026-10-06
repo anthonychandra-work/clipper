@@ -292,7 +292,7 @@ What the spec's file list leaves out
   a 16:9 picture; two faces in fewer than half give the Speaker layout; the Full Frame framing
   gives the whole-picture layout whatever the faces.
 
-- [ ] T5 — Find the faces of a clip's stretch of the source
+- [x] T5 — Find the faces of a clip's stretch of the source
   Files: `service/clipper/media/sample_frames.py`, `service/clipper/media/test_sample_frames.py`,
   `service/clipper/media/__init__.py`, `service/clipper/rendering/sample_faces.py`,
   `service/clipper/rendering/test_sample_faces.py`, `service/clipper/rendering/__init__.py`
