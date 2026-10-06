@@ -2,12 +2,14 @@ import os
 import sys
 import threading
 import time
+from pathlib import Path
 
 import pytest
 
 from .run_media_tool import MediaToolFailedError, MediaWorkStoppedError, run_media_tool
 
 PRINT_OWN_GROUP = "import os; print(os.getpgrp())"
+PRINT_OWN_FOLDER = "import os; print(os.getcwd())"
 PRINT_TWO_LINES = "print('first'); print('second')"
 FAIL_WITH_A_REASON = "import sys; sys.exit('the reason it failed')"
 WAIT_A_MINUTE = "import time; time.sleep(60)"
@@ -29,6 +31,15 @@ def test_a_program_runs_in_a_process_group_of_its_own() -> None:
     printed = run_python(PRINT_OWN_GROUP, threading.Event())
 
     assert int(printed[0]) != os.getpgrp()
+
+
+def test_a_program_is_started_in_the_folder_it_is_given(tmp_path: Path) -> None:
+    printed: list[str] = []
+    command = [sys.executable, "-c", PRINT_OWN_FOLDER]
+
+    run_media_tool(command, threading.Event(), printed.append, start_dir=tmp_path)
+
+    assert Path(printed[0]).resolve() == tmp_path.resolve()
 
 
 def test_a_program_that_ends_with_an_error_raises_it_with_what_it_printed() -> None:

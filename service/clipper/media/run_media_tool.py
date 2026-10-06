@@ -24,12 +24,20 @@ class MediaWorkStoppedError(Exception):
 
 
 def run_media_tool(
-    command: Sequence[str], stop: threading.Event, on_line: Callable[[str], None]
+    command: Sequence[str],
+    stop: threading.Event,
+    on_line: Callable[[str], None],
+    start_dir: Path | None = None,
 ) -> None:
     with tempfile.TemporaryFile("w+") as errors:
         # In a group of its own, the program ends on the stop signal and not with the service.
         process = subprocess.Popen(
-            command, stdout=subprocess.PIPE, stderr=errors, text=True, process_group=0
+            command,
+            stdout=subprocess.PIPE,
+            stderr=errors,
+            text=True,
+            process_group=0,
+            cwd=start_dir,
         )
         threading.Thread(target=end_when_stopped, args=(process, stop), daemon=True).start()
         with process:

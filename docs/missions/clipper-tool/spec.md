@@ -1037,6 +1037,16 @@ From `intent.md`. Base `82df5ce`.
   stays whole inside a 9:16 part that follows it, neither portrait reaches into the other's half
   of the picture, and the small face is large enough to be found in a frame that shows the whole
   picture. A121 gives what the video holds and leaves the sizes open. (executor, m5)
+- A125 — A part's place is where its left and its top edge lie, in shares of the picture. The
+  commands for a frame start half a frame before it, so the frame's own time always falls
+  inside them. The unfinished clip is `clip.partial.mp4` in the work folder, beside the file of
+  commands and the list of overlay pictures. An overlay is always a picture: where nothing
+  shows, the list names a clear one, and its first picture shows from the first frame whatever
+  moment it is listed with. The copy behind the whole picture is blurred at a quarter of the
+  frame's size by 13.5 px, the preview's blur of 5% of the width. The encoder runs at x264's own
+  speed setting; measured on the talk, a clip of 33 seconds renders in 4 seconds. A source's
+  first sound track is required, since no project reaches the export without one. A115 gives the
+  file and leaves these open. (executor, m5)
 
 ## Milestones
 

@@ -245,7 +245,7 @@ What the spec's file list leaves out
   and the smaller left of it; the larger face's middle lies between 5% and 9% of the picture's
   width further right at eleven seconds than at one.
 
-- [ ] T3 — Render a clip with ffmpeg from a given layout and given overlay pictures
+- [x] T3 — Render a clip with ffmpeg from a given layout and given overlay pictures
   Files: `service/clipper/media/run_media_tool.py`,
   `service/clipper/media/test_run_media_tool.py`, `service/clipper/media/__init__.py`,
   `service/clipper/rendering/render_plan.py`, `service/clipper/rendering/picture_filters.py`,
