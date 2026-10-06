@@ -240,7 +240,7 @@ What the spec's file list leaves out
   with an empty history none of the four tasks has the field, and each is otherwise the task it
   was before this milestone; after the history is emptied, a second run carries none.
 
-- [ ] T4 — Give the rejections with Settings and forget the history through the service
+- [x] T4 — Give the rejections with Settings and forget the history through the service
   Files: `AGENTS.md`, `service/clipper/settings/router.py`,
   `service/clipper/settings/describe_settings.py`, `service/clipper/settings/__init__.py`,
   `service/clipper/settings/test_router.py`, `service/clipper/main.py`,

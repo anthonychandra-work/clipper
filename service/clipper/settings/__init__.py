@@ -1,4 +1,5 @@
 from .api_key_store import ApiKeyStore
+from .describe_settings import SettingsDependencies
 from .preference_store import PreferenceStore
 from .preferences import (
     ClaudeModel,
@@ -8,7 +9,7 @@ from .preferences import (
     SourceRetention,
     WhisperModel,
 )
-from .router import SettingsDependencies, router
+from .router import router
 from .startup_settings import StartupSettings
 
 __all__ = [

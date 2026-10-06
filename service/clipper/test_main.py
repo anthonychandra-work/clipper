@@ -8,6 +8,7 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from .conftest import VideoRecipe
+from .learning import LAST_DECISIONS, ClipKey, HistoryStore, PastDecision, record_decision
 from .main import create_app
 from .media import MediaToolsMissingError
 from .projects import (
@@ -87,6 +88,20 @@ def test_the_export_of_a_new_project_is_answered_with_its_look_and_no_clips(app:
         "platforms": ["tiktok", "shorts"],
         "clips": [],
     }
+
+
+def test_settings_count_the_rejections_of_the_tool_s_own_history_and_forget_them(
+    client: TestClient, settings: StartupSettings
+) -> None:
+    database = open_database(settings.data_dir / "clipper.sqlite3")
+    with database.transaction() as connection:
+        record_decision(connection, PastDecision(ClipKey("a1b2c3", "c01"), True, "repeat"))
+
+    counted = client.get("/api/settings").json()["rejections"]
+    forgotten = client.delete("/api/settings/history").json()["rejections"]
+
+    assert (counted["repeat"], forgotten["repeat"]) == (1, 0)
+    assert HistoryStore(database).list_newest_decisions(LAST_DECISIONS) == []
 
 
 def test_the_render_worker_runs_with_the_app_and_ends_when_the_app_stops(app: FastAPI) -> None:

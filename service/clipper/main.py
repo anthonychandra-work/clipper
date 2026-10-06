@@ -154,6 +154,7 @@ def share_dependencies(app: FastAPI, grounds: Grounds, workers: Workers) -> None
     app.state.settings = settings.SettingsDependencies(
         store=stores.preferences,
         api_key_store=stores.api_keys,
+        history=stores.history,
         read_disk_space=measure_disk,
         web_port=startup.web_port,
     )

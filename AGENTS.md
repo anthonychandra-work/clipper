@@ -120,7 +120,8 @@ folders.
 - Service imports run one way: `fetching` and `transcription` import `pipeline`, `projects`,
   `media` and `storage`, and `transcription` also imports `settings`; `pipeline` imports
   `projects` and `media`; `projects` imports none of them. `learning`, the history the selector
-  learns from, imports `storage` alone. `selection` imports `transcription` for the stored
+  learns from, imports `storage` alone. `settings` imports `learning`, whose rejections it
+  counts and whose history it forgets, and `projects` and `storage`. `selection` imports `transcription` for the stored
   transcript, `learning` for the note each pass writes from the history, and `settings`,
   `pipeline`, `projects` and `storage`. `review`, the package behind the Review tab, imports
   `selection`, `transcription`, `projects`, `media`, `storage` and `learning`. `rendering`, the package behind the Export tab, imports `review`, `selection`,

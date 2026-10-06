@@ -1,5 +1,4 @@
 from collections.abc import Callable, Coroutine
-from dataclasses import dataclass
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Request, Response
@@ -9,13 +8,9 @@ from pydantic import BaseModel, ConfigDict
 from pydantic.alias_generators import to_camel
 
 from ..problems import RefusedError
-from ..storage import DiskSpace
-from .api_key_store import ApiKeyStore, show_ending
-from .describe_machine import describe_phone_address
-from .preference_store import PreferenceStore
-from .preferences import PreferenceChanges, Preferences
+from .describe_settings import SettingsDependencies, SettingsResponse, describe_settings
+from .preferences import PreferenceChanges
 
-DISK_DECIMALS = 1
 UNREADABLE_CHANGE = "Clipper could not read this change to Settings. Reload the page and try again."
 
 
@@ -34,22 +29,6 @@ class RouteThatRepeatsNothing(APIRoute):
 
 
 router = APIRouter(prefix="/api/settings", route_class=RouteThatRepeatsNothing)
-
-
-@dataclass(frozen=True)
-class SettingsDependencies:
-    store: PreferenceStore
-    api_key_store: ApiKeyStore
-    read_disk_space: Callable[[], DiskSpace]
-    web_port: int
-
-
-class SettingsResponse(Preferences):
-    free_disk_gb: float
-    total_disk_gb: float
-    phone_address: str
-    has_api_key: bool
-    api_key_ending: str | None
 
 
 class ApiKeyRequest(BaseModel):
@@ -90,14 +69,7 @@ def remove_api_key(settings: Settings) -> SettingsResponse:
     return describe_settings(settings.store.read(), settings)
 
 
-def describe_settings(preferences: Preferences, settings: SettingsDependencies) -> SettingsResponse:
-    disk = settings.read_disk_space()
-    saved_key = settings.api_key_store.read()
-    return SettingsResponse(
-        **preferences.model_dump(),
-        free_disk_gb=round(disk.free_gb(), DISK_DECIMALS),
-        total_disk_gb=round(disk.total_gb(), DISK_DECIMALS),
-        phone_address=describe_phone_address(settings.web_port),
-        has_api_key=saved_key is not None,
-        api_key_ending=show_ending(saved_key),
-    )
+@router.delete("/history")
+def forget_history(settings: Settings) -> SettingsResponse:
+    settings.history.forget_all()
+    return describe_settings(settings.store.read(), settings)
