@@ -396,7 +396,7 @@ What the spec's file list leaves out
   its views. At 390 px the tab lists the same rows, and a number typed there is stored.
   `pnpm test` exits 0.
 
-- [ ] T9 — Show logged results in the Library
+- [x] T9 — Show logged results in the Library
   Files: `web/src/library/library.types.ts`,
   `web/src/library/list-projects/lib/describe-row-status.ts`,
   `web/src/library/list-projects/lib/describe-row-status.test.ts`,

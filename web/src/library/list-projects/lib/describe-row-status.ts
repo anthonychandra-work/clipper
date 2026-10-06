@@ -43,7 +43,8 @@ function describeReadyRow(project: Project): RowNote {
 
 function describeExportedRow(project: Project): RowNote {
   const clips = project.exportedCount === 1 ? '1 clip' : `${project.exportedCount} clips`;
-  return { kind: 'note', status: project.status, text: `Exported · ${clips} exported`, hasWarning: false };
+  const results = project.loggedCount > 0 ? ', results logged' : '';
+  return { kind: 'note', status: project.status, text: `Exported · ${clips} exported${results}`, hasWarning: false };
 }
 
 export function describeCandidateCount(candidateCount: number): string {

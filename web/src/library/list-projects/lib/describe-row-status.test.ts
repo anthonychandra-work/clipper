@@ -33,10 +33,11 @@ function describeProject(status: ProjectStatus, steps: ProjectStep[]): Project {
     keptCount: 0,
     rejectedCount: 0,
     exportedCount: 0,
+    loggedCount: 0,
   };
 }
 
-type ClipCounts = Pick<Project, 'candidateCount' | 'keptCount' | 'rejectedCount' | 'exportedCount'>;
+type ClipCounts = Pick<Project, 'candidateCount' | 'keptCount' | 'rejectedCount' | 'exportedCount' | 'loggedCount'>;
 
 function describeReadyProject(counts: Partial<ClipCounts>): Project {
   const steps = planSteps('done', 'Fetching video').map((step) => ({ ...step, state: 'done' as const, percent: 100 }));
@@ -128,6 +129,22 @@ describe('describeRowStatus', () => {
       text,
       hasWarning: false,
     });
+  });
+
+  it.each([
+    [1, 1, 'Exported · 1 clip exported, results logged'],
+    [3, 1, 'Exported · 3 clips exported, results logged'],
+    [3, 3, 'Exported · 3 clips exported, results logged'],
+  ])('reads the row of a project with %i exports and %i logged as exported with results logged', (exported, logged, text) => {
+    const project = { ...describeExportedProject(exported), loggedCount: logged };
+
+    expect(describeRowStatus(project)).toEqual({ kind: 'note', status: 'exported', text, hasWarning: false });
+  });
+
+  it('reads the row of an exported project without a logged clip as before', () => {
+    const project = { ...describeExportedProject(3), loggedCount: 0 };
+
+    expect(describeRowStatus(project)).toMatchObject({ text: 'Exported · 3 clips exported' });
   });
 
   it('keeps the row of a ready project its own, whatever its exports count', () => {

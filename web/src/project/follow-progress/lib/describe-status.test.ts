@@ -27,6 +27,7 @@ function describeProject(status: ProjectStatus, fetch: Partial<ProjectStep> = {}
     keptCount: 0,
     rejectedCount: 0,
     exportedCount: 0,
+    loggedCount: 0,
   };
 }
 

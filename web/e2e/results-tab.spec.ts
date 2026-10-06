@@ -7,8 +7,10 @@ import {
   keepClips,
   openResults,
   type OutcomeText,
+  projectRow,
   readOutcome,
   readResults,
+  readRow,
   readViewsRows,
   storeViews,
   test,
@@ -32,6 +34,8 @@ const FOOTER =
   'Enter each clip’s views a week after posting. The selector compares them with its own ranking and adjusts what it favours on your next video.';
 const WAITING_FOR_TWO: OutcomeText = { line: 'Enter views for at least two clips.', rows: [] };
 const SEEDED_SENTENCE = 'The best performer was the selector’s pick number 3. Ranks in order of views: 3, 2, 1.';
+const EXPORTED_ROW = 'Exported · 3 clips exported';
+const LOGGED_ROW = 'Exported · 3 clips exported, results logged';
 const SEEDED_ORDER = [
   [THIRD_TITLE, '48,000'],
   [SECOND_TITLE, '5,400'],
@@ -52,6 +56,14 @@ async function typeSeededViews(page: Page): Promise<void> {
 
 function listTitlesAndViews(outcome: OutcomeText): string[][] {
   return outcome.rows.map((row) => [row.title, row.views]);
+}
+
+function expectTheLongestBarFirst(seeded: OutcomeText): void {
+  const [most, middle, fewest] = seeded.rows.map((row) => row.shareOfTrack);
+  expect(most).toBeCloseTo(1, 2);
+  expect(middle).toBeCloseTo(0.1125, 2);
+  expect(fewest).toBeGreaterThan(0.02);
+  expect(fewest).toBeLessThan(0.03);
 }
 
 async function expectTheTwoGroupsOfThePrototype(page: Page): Promise<void> {
@@ -131,7 +143,7 @@ test.describe('at 1360 px', () => {
     expect(storedMeanwhile.clips.map((clip) => clip.views)).toEqual([1200, null, null]);
   });
 
-  test('the seeded views are listed by their views under the sentence with the longest bar first, and are all there after a reload', async ({
+  test('the seeded views are listed by their views under the sentence with the longest bar first, are all there after a reload, and the row in the sidebar reads results logged', async ({
     page,
     request,
     ownTalk,
@@ -139,8 +151,10 @@ test.describe('at 1360 px', () => {
     const projectId = ownTalk.project.id;
     await exportClips(request, projectId, THREE_CLIPS);
     await openResults(page, projectId);
+    const rowBefore = await readRow(page, projectId);
 
     await typeSeededViews(page);
+    await expect(projectRow(page, projectId).locator('.project-row__status')).toHaveText(LOGGED_ROW);
     const typed = await readOutcome(page);
     await page.reload();
     await expect(viewsField(page, 'c03')).toHaveValue('48000');
@@ -148,12 +162,10 @@ test.describe('at 1360 px', () => {
     const fields = (await readViewsRows(page)).map((row) => row.views);
     const stored = await readResults(request, projectId);
 
+    expect(rowBefore.status).toBe(EXPORTED_ROW);
     expect(typed.line).toBe(SEEDED_SENTENCE);
     expect(listTitlesAndViews(typed)).toEqual(SEEDED_ORDER);
-    expect(typed.rows[0].shareOfTrack).toBeCloseTo(1, 2);
-    expect(typed.rows[1].shareOfTrack).toBeCloseTo(0.1125, 2);
-    expect(typed.rows[2].shareOfTrack).toBeGreaterThan(0.02);
-    expect(typed.rows[2].shareOfTrack).toBeLessThan(0.03);
+    expectTheLongestBarFirst(typed);
     expect([reloaded.line, listTitlesAndViews(reloaded)]).toEqual([SEEDED_SENTENCE, SEEDED_ORDER]);
     expect(fields).toEqual(['1200', '5400', '48000']);
     expect(stored.clips.map((clip) => clip.views)).toEqual(SEEDED_VIEWS);
@@ -215,16 +227,21 @@ test.describe('at 390 px', () => {
     ownTalk,
   }) => {
     const projectId = ownTalk.project.id;
+    const rowStatus = projectRow(page, projectId).locator('.project-row__status');
     await exportClips(request, projectId, THREE_CLIPS);
+    await page.goto('/');
+    await expect(rowStatus).toHaveText(EXPORTED_ROW);
     await openResults(page, projectId);
     const rows = await readViewsRows(page);
 
     await typeViews(page, 'c02', '5400');
     await page.reload();
     await expect(viewsField(page, 'c02')).toHaveValue('5400');
-
-    expect(rows).toEqual(THREE_EMPTY_ROWS);
     await expect(page.locator('#outcome .list-footer')).toHaveText(WAITING_FOR_TWO.line);
+    await page.goto('/');
+
+    await expect(rowStatus).toHaveText(LOGGED_ROW);
+    expect(rows).toEqual(THREE_EMPTY_ROWS);
     expect((await readResults(request, projectId)).clips.map((clip) => clip.views)).toEqual([null, 5400, null]);
   });
 });

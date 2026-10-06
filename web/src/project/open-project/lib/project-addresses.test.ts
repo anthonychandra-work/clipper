@@ -20,6 +20,7 @@ function describeProject(status: ProjectStatus): Project {
     keptCount: 0,
     rejectedCount: 0,
     exportedCount: 0,
+    loggedCount: 0,
   };
 }
 
