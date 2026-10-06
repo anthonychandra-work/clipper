@@ -1,5 +1,7 @@
 'use client';
 
+import type { ReactNode } from 'react';
+
 import type { Project } from '@/library';
 import { useShell } from '@/shell';
 
@@ -14,9 +16,10 @@ interface ReviewSplitProps {
   shownClip: ReviewClip | null;
   filter: ClipFilter;
   onFilter: (filter: ClipFilter) => void;
+  detail: ReactNode;
 }
 
-export function ReviewSplit({ project, review, shownClip, filter, onFilter }: ReviewSplitProps) {
+export function ReviewSplit({ project, review, shownClip, filter, onFilter, detail }: ReviewSplitProps) {
   const { layout } = useShell();
   const shownClipId = shownClip?.id ?? null;
   const hrefOfClip = (clipId: string) => clipAddress(project.id, clipId);
@@ -45,11 +48,7 @@ export function ReviewSplit({ project, review, shownClip, filter, onFilter }: Re
       <div className="pane pane--list" data-keep-scroll="clips">
         {layout === 'compact' ? [candidates, timeline] : [timeline, candidates]}
       </div>
-      {shownClip === null ? null : (
-        <div className="pane pane--detail" id="clip-detail" data-keep-scroll={`clip-${shownClip.id}`}>
-          <div className="detail" />
-        </div>
-      )}
+      {detail}
     </div>
   );
 }

@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 import { ScreenFrame } from '@/shell';
 
 import type { ReviewClip } from '../../review.types';
@@ -7,9 +9,10 @@ interface ClipScreenProps {
   projectId: string;
   clip: ReviewClip;
   clipCount: number;
+  children: ReactNode;
 }
 
-export function ClipScreen({ projectId, clip, clipCount }: ClipScreenProps) {
+export function ClipScreen({ projectId, clip, clipCount, children }: ClipScreenProps) {
   return (
     <ScreenFrame
       screenKey="clip"
@@ -18,11 +21,7 @@ export function ClipScreen({ projectId, clip, clipCount }: ClipScreenProps) {
       title={`Clip ${clip.rank} of ${clipCount}`}
       back={{ label: 'Clips', href: reviewAddress(projectId) }}
     >
-      <div className="split is-detail-open">
-        <div className="pane pane--detail" id="clip-detail" data-keep-scroll={`clip-${clip.id}`}>
-          <div className="detail" />
-        </div>
-      </div>
+      <div className="split is-detail-open">{children}</div>
     </ScreenFrame>
   );
 }

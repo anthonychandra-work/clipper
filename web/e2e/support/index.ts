@@ -20,10 +20,12 @@ export type { ReadyTalk } from './ready-talk';
 export {
   candidateRow,
   type CandidateRowText,
+  type InspectorText,
   listCurrentRows,
   openReview,
   readCandidateRows,
   readFilterCounts,
+  readInspector,
   readTimelineBars,
   readTimelinePins,
   type TimelinePinText,

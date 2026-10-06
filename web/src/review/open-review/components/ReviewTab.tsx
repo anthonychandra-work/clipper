@@ -11,13 +11,15 @@ import type { ClipFilter } from '../../list-candidates';
 import type { Review } from '../../review.types';
 import { useReview } from '../hooks/use-review';
 import { findShownClip, namesNoClip, reviewAddress } from '../lib/review-addresses';
+import type { ReviewStore } from '../lib/review-store';
+import { ClipDetail } from './ClipDetail';
 import { ClipScreen } from './ClipScreen';
 import { EmptyReview } from './EmptyReview';
 import { ReviewSplit } from './ReviewSplit';
 
 export function ReviewTab() {
   const project = useOpenProject();
-  const { review } = useReview(project.id);
+  const { review, store } = useReview(project.id);
   if (review === null || review.clips.length === 0) {
     return (
       <ProjectFrame project={project} tab="review">
@@ -25,10 +27,16 @@ export function ReviewTab() {
       </ProjectFrame>
     );
   }
-  return <ReviewWorkbench project={project} review={review} />;
+  return <ReviewWorkbench project={project} review={review} store={store} />;
 }
 
-function ReviewWorkbench({ project, review }: { project: Project; review: Review }) {
+interface ReviewWorkbenchProps {
+  project: Project;
+  review: Review;
+  store: ReviewStore;
+}
+
+function ReviewWorkbench({ project, review, store }: ReviewWorkbenchProps) {
   const router = useRouter();
   const { layout } = useShell();
   const { clip: clipId } = useParams<{ clip?: string }>();
@@ -41,12 +49,25 @@ function ReviewWorkbench({ project, review }: { project: Project; review: Review
     if (mustLeadToList) router.replace(reviewAddress(project.id));
   }, [mustLeadToList, project.id, router]);
 
+  const clipCount = review.clips.length;
+  const detail = shownClip === null ? null : <ClipDetail clip={shownClip} clipCount={clipCount} store={store} />;
   if (isPhone && shownClip !== null) {
-    return <ClipScreen projectId={project.id} clip={shownClip} clipCount={review.clips.length} />;
+    return (
+      <ClipScreen projectId={project.id} clip={shownClip} clipCount={clipCount}>
+        {detail}
+      </ClipScreen>
+    );
   }
   return (
     <ProjectFrame project={project} tab="review">
-      <ReviewSplit project={project} review={review} shownClip={shownClip} filter={filter} onFilter={setFilter} />
+      <ReviewSplit
+        project={project}
+        review={review}
+        shownClip={shownClip}
+        filter={filter}
+        onFilter={setFilter}
+        detail={detail}
+      />
     </ProjectFrame>
   );
 }

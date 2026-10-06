@@ -48,6 +48,40 @@ export async function listCurrentRows(page: Page): Promise<string[]> {
   return rows.filter((row) => row.isCurrent).map((row) => row.id);
 }
 
+export interface InspectorText {
+  title: string;
+  flag: string | null;
+  reason: string;
+  scores: string[];
+  scoreShares: number[];
+  replayNote: string | null;
+  standing: string;
+}
+
+export async function readInspector(page: Page): Promise<InspectorText> {
+  const inspector = page.locator('section.inspector[aria-label="Clip details"]');
+  const why = inspector.locator('.group-section', { has: page.getByRole('heading', { name: 'Why This Clip' }) });
+  const readOrNull = async (part: Locator) => ((await part.count()) > 0 ? squeeze(await part.innerText()) : null);
+  return {
+    title: await inspector.locator('#clip-title').inputValue(),
+    flag: await readOrNull(inspector.locator('.flag[role="note"] .flag__message')),
+    reason: squeeze(await why.locator('.group--padded > p').first().innerText()),
+    scores: (await why.locator('.score').allInnerTexts()).map(squeeze),
+    scoreShares: await why.locator('.score__track').evaluateAll((tracks) =>
+      tracks.map((track) => {
+        const fill = track.querySelector('.score__fill');
+        return (fill?.getBoundingClientRect().width ?? 0) / track.getBoundingClientRect().width;
+      }),
+    ),
+    replayNote: await readOrNull(why.locator('.replay-note')),
+    standing: squeeze(await why.locator('.list-footer').innerText()),
+  };
+}
+
+function squeeze(text: string): string {
+  return text.trim().replace(/\s+/g, ' ');
+}
+
 export interface TimelineBar {
   heightPx: number;
   isShortlisted: boolean;

@@ -430,7 +430,7 @@ What the spec's file list leaves out
   tests on the talk: four bars, three of them highlighted, with heights in the order of the
   stored scores; six pins in the order of the clips' starts; a pin leads to its clip's address.
 
-- [ ] T12 — Show why a clip was picked, its flag and its title
+- [x] T12 — Show why a clip was picked, its flag and its title
   Files: `web/src/review/inspect-clip/index.ts`,
   `web/src/review/inspect-clip/components/TitleField.tsx`,
   `web/src/review/inspect-clip/components/ClipFlag.tsx`,
@@ -438,7 +438,8 @@ What the spec's file list leaves out
   `web/src/review/inspect-clip/hooks/use-title-draft.ts`,
   `web/src/review/open-review/components/ClipDetail.tsx`,
   `web/src/review/open-review/components/ReviewSplit.tsx`,
-  `web/src/review/open-review/components/ClipScreen.tsx`, `web/e2e/support/review-page.ts`,
+  `web/src/review/open-review/components/ClipScreen.tsx`,
+  `web/src/review/open-review/components/ReviewTab.tsx`, `web/e2e/support/review-page.ts`,
   `web/e2e/support/index.ts`, `web/e2e/review-inspect.spec.ts`
   Done: the detail pane holds the inspector in the prototype's markup, for the clip the address
   shows. The title field holds the clip's title and saves it by A92; the list shows the new title
