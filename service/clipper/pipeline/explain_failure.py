@@ -16,9 +16,9 @@ class Explanation(NamedTuple):
 
 
 def explain_failure(failure: BaseException, step_label: str) -> Explanation:
-    causes = list(walk_causes(failure))
-    if any(is_disk_full(cause) for cause in causes):
+    if comes_from_a_full_disk(failure):
         return Explanation(DISK_FULL)
+    causes = list(walk_causes(failure))
     stated = next((cause for cause in causes if isinstance(cause, StageFailedError)), None)
     if stated is not None:
         return Explanation(stated.reason, stated.opens_settings)
@@ -29,6 +29,10 @@ def explain_failure(failure: BaseException, step_label: str) -> Explanation:
 
 def describe_stop(step_label: str) -> str:
     return f"Stopped at “{step_label}”. The stages before it are kept."
+
+
+def comes_from_a_full_disk(failure: BaseException) -> bool:
+    return any(is_disk_full(cause) for cause in walk_causes(failure))
 
 
 def walk_causes(failure: BaseException) -> Iterator[BaseException]:

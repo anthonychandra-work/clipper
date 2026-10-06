@@ -1,8 +1,9 @@
 import errno
 from pathlib import Path
 
+from .. import pipeline
 from ..media import MediaToolFailedError, NotAVideoError
-from .explain_failure import describe_stop, explain_failure
+from .explain_failure import comes_from_a_full_disk, describe_stop, explain_failure
 from .pipeline_stage import StageFailedError
 
 DISK_FULL = "Not enough free disk space to finish. Free some space, then retry."
@@ -81,6 +82,22 @@ def test_anything_else_names_the_step_suggests_a_retry_and_carries_no_mark() -> 
         "“Transcribing on this Mac” did not finish. Retry to run this step again.",
         UNMARKED,
     )
+
+
+def test_a_failure_comes_from_a_full_disk_when_any_of_its_causes_is_one() -> None:
+    full_disk = OSError(errno.ENOSPC, "No space left on device")
+    by_ffmpeg = MediaToolFailedError("ffmpeg", 1, "Error writing trailer: No space left on device")
+
+    assert comes_from_a_full_disk(full_disk)
+    assert comes_from_a_full_disk(by_ffmpeg)
+    assert comes_from_a_full_disk(chain(RuntimeError("write failed"), full_disk))
+    assert not comes_from_a_full_disk(OSError(errno.EACCES, "Permission denied"))
+    assert not comes_from_a_full_disk(RuntimeError("unexpected"))
+
+
+def test_the_sentence_for_a_full_disk_is_the_one_other_packages_are_given() -> None:
+    assert pipeline.DISK_FULL == DISK_FULL
+    assert pipeline.comes_from_a_full_disk is comes_from_a_full_disk
 
 
 def test_a_stop_names_the_step_and_says_the_earlier_stages_are_kept() -> None:

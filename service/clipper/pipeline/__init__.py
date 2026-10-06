@@ -1,4 +1,4 @@
-from .explain_failure import describe_stop, explain_failure
+from .explain_failure import DISK_FULL, comes_from_a_full_disk, describe_stop, explain_failure
 from .halt_project import NotHaltedError, NotProcessingError, requeue_project, stop_project
 from .pipeline_stage import PipelineStage, StageFailedError, StageRun
 from .recover_interrupted import recover_interrupted
@@ -7,6 +7,7 @@ from .router import PipelineDependencies, router
 from .run_queue import QueueWorker, StepCheck
 
 __all__ = [
+    "DISK_FULL",
     "NotHaltedError",
     "NotProcessingError",
     "PipelineDependencies",
@@ -15,6 +16,7 @@ __all__ = [
     "StageFailedError",
     "StageRun",
     "StepCheck",
+    "comes_from_a_full_disk",
     "describe_stop",
     "explain_failure",
     "recover_interrupted",

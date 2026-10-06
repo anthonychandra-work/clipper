@@ -1094,6 +1094,13 @@ From `intent.md`. Base `82df5ce`.
   of a project's exports is the count of its clips with a finished file, kept or not. The
   rendering package stays one flat folder, as the plan names its files and as A79, A85 and A106
   record for other folders. A116 and A119 give the rules and leave these open. (executor, m5)
+- A131 — The render worker is handed one function that renders a clip, and learns from it that
+  a clip is no longer kept. It looks for a waiting render four times a second while it is idle.
+  A stop of a project's render waits up to ten seconds for that render to end. At a shutdown the
+  worker puts its render back to waiting itself, and the next start does the same for a tool
+  that was killed. A render whose project was deleted before its turn is passed over. The cause
+  of a failed render is logged with its clip and its project. A116 and A120 give the rules and
+  leave these open. (executor, m5)
 
 ## Milestones
 

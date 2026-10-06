@@ -392,7 +392,7 @@ What the spec's file list leaves out
   a render put back after a restart is taken before a later one; deleting the project leaves no
   render; a project that is not ready keeps its status.
 
-- [ ] T9 — Run the render queue
+- [x] T9 — Run the render queue
   Files: `service/clipper/pipeline/explain_failure.py`,
   `service/clipper/pipeline/test_explain_failure.py`, `service/clipper/pipeline/__init__.py`,
   `service/clipper/rendering/render_worker.py`, `service/clipper/rendering/test_render_worker.py`,
