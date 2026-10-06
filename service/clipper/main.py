@@ -9,7 +9,17 @@ from fastapi import FastAPI
 from fastapi.concurrency import run_in_threadpool
 from fastapi.telemetry import TelemetryConfig
 
-from . import learning, pipeline, projects, rendering, results, review, selection, settings
+from . import (
+    learning,
+    pipeline,
+    projects,
+    rendering,
+    results,
+    retention,
+    review,
+    selection,
+    settings,
+)
 from .fetching import FetchStage
 from .media import MediaTools, locate_media_tools
 from .problems import handle_app_errors
@@ -71,14 +81,17 @@ class Workers:
     queue: pipeline.QueueWorker
     renders: rendering.RenderWorker
     render_store: rendering.RenderStore
+    cleaner: retention.SourceCleaner
 
     def start(self) -> None:
+        self.cleaner.start()
         self.queue.start()
         self.renders.start()
 
     def stop(self) -> None:
         self.renders.stop()
         self.queue.stop()
+        self.cleaner.stop()
 
     def stop_project(self, project_id: str) -> None:
         self.queue.stop_project(project_id)
@@ -112,6 +125,12 @@ def make_workers(grounds: Grounds) -> Workers:
         *list_selection_stages(grounds),
     ]
     render_work = rendering.RenderWork(grounds.review_sources, media_tools)
+    old_sources = retention.RetentionSources(
+        repository=stores.repository,
+        preferences=stores.preferences,
+        data_folder=data_folder,
+        has_queued_clip=stores.render_store.has_queued_clip,
+    )
     return Workers(
         stages=stages,
         queue=pipeline.QueueWorker(stores.repository, stores.queue, stages, planner.list_checks()),
@@ -121,6 +140,9 @@ def make_workers(grounds: Grounds) -> Workers:
             partial(rendering.render_clip, work=render_work),
         ),
         render_store=stores.render_store,
+        cleaner=retention.SourceCleaner(
+            old_sources, retention.run_clock_ahead(startup.clock_ahead_days)
+        ),
     )
 
 

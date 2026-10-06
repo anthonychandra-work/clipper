@@ -29,6 +29,11 @@ class DataFolder:
     def preview_file(self, project_id: str) -> Path:
         return self.project_dir(project_id) / PREVIEW_NAME
 
+    def remove_source_and_preview(self, project_id: str) -> None:
+        sources = self.project_dir(project_id).glob(f"{SOURCE_STEM}.*")
+        for copy in (*sources, self.preview_file(project_id)):
+            copy.unlink(missing_ok=True)
+
     def replay_graph_file(self, project_id: str) -> Path:
         return self.project_dir(project_id) / REPLAY_GRAPH_NAME
 

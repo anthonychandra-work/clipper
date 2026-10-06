@@ -25,6 +25,7 @@ from .projects import (
     create_project,
     receive_upload_part,
 )
+from .retention import CLEANER_THREAD
 from .settings import StartupSettings
 from .storage import BYTES_PER_GB, DiskSpace, open_data_folder, open_database
 
@@ -42,8 +43,8 @@ LINK_DRAFT = {
 RENDER_THREAD = "clipper-renders"
 
 
-def count_render_threads() -> int:
-    return sum(1 for thread in threading.enumerate() if thread.name == RENDER_THREAD)
+def count_threads(name: str) -> int:
+    return sum(1 for thread in threading.enumerate() if thread.name == name)
 
 
 @pytest.fixture
@@ -117,12 +118,21 @@ def test_settings_count_the_rejections_of_the_tool_s_own_history_and_forget_them
 
 
 def test_the_render_worker_runs_with_the_app_and_ends_when_the_app_stops(app: FastAPI) -> None:
-    before = count_render_threads()
+    before = count_threads(RENDER_THREAD)
 
     with TestClient(app):
-        while_running = count_render_threads()
+        while_running = count_threads(RENDER_THREAD)
 
-    assert (before, while_running, count_render_threads()) == (0, 1, 0)
+    assert (before, while_running, count_threads(RENDER_THREAD)) == (0, 1, 0)
+
+
+def test_the_source_cleaner_runs_with_the_app_and_ends_when_the_app_stops(app: FastAPI) -> None:
+    before = count_threads(CLEANER_THREAD)
+
+    with TestClient(app):
+        while_running = count_threads(CLEANER_THREAD)
+
+    assert (before, while_running, count_threads(CLEANER_THREAD)) == (0, 1, 0)
 
 
 def test_starting_without_the_media_tools_fails_before_anything_is_created(tmp_path: Path) -> None:

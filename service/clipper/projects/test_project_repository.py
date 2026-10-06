@@ -43,6 +43,24 @@ def test_a_stored_project_is_read_back_unchanged(repository: ProjectRepository) 
     assert repository.get(project.id) == project
 
 
+def test_the_moment_a_project_was_imported_is_read_back_as_stored(
+    repository: ProjectRepository,
+) -> None:
+    last_year, last_week = (
+        replace(plan_link_project("Last year"), imported_at=1_728_000_000),
+        replace(plan_link_project("Last week"), imported_at=1_759_000_000),
+    )
+
+    repository.add(last_year)
+    repository.add(last_week)
+
+    assert repository.get(last_year.id).imported_at == 1_728_000_000
+    assert [project.imported_at for project in repository.list_newest_first()] == [
+        1_759_000_000,
+        1_728_000_000,
+    ]
+
+
 def test_a_new_project_has_no_candidate_and_a_stored_count_is_read_back(
     repository: ProjectRepository,
 ) -> None:

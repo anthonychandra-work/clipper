@@ -52,6 +52,9 @@ UPDATE renders SET state = 'done', percent = 100, reason = NULL WHERE has_export
 FORGET_WITHOUT_EXPORT = "DELETE FROM renders WHERE has_export = 0 AND "
 PUT_BACK_INTERRUPTED = "UPDATE renders SET state = 'waiting', percent = 0 WHERE state = 'rendering'"
 LIST_RENDERS = "SELECT * FROM renders WHERE project_id = ?"
+COUNT_QUEUED = """
+SELECT COUNT(*) FROM renders WHERE project_id = ? AND state IN ('waiting', 'rendering')
+"""
 
 
 class RenderStore:
@@ -95,6 +98,11 @@ class RenderStore:
         with self._database.transaction() as connection:
             rows = connection.execute(LIST_RENDERS, [project_id])
             return {row["clip_id"]: read_render(row) for row in rows}
+
+    def has_queued_clip(self, project_id: str) -> bool:
+        with self._database.transaction() as connection:
+            queued: int = connection.execute(COUNT_QUEUED, [project_id]).fetchone()[0]
+            return queued > 0
 
     def _leave_queue(self, leaving: str, named: dict[str, str]) -> None:
         with self._database.transaction() as connection:

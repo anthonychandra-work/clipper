@@ -22,3 +22,4 @@ class StartupSettings(BaseSettings):
     reported_free_bytes: int | None = None
     model_source: str = HUGGING_FACE
     anthropic_source: str = ANTHROPIC_API
+    clock_ahead_days: int = 0

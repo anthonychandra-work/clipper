@@ -249,3 +249,35 @@ def test_deleting_the_project_leaves_no_render(
 
     assert store.list_renders(deleted) == {}
     assert store.take_oldest_waiting() == QueuedRender(kept, "c01")
+
+
+def test_a_project_has_a_queued_clip_while_one_waits_or_renders_and_none_once_it_is_done(
+    store: RenderStore, cut_the_talk: CutTheTalk
+) -> None:
+    busy, idle = cut_the_talk().project.id, cut_the_talk().project.id
+    answers = [store.has_queued_clip(busy)]
+
+    store.queue_clips(busy, ["c01"])
+    answers.append(store.has_queued_clip(busy))
+    taken = store.take_oldest_waiting()
+    answers.append(store.has_queued_clip(busy))
+    assert taken is not None
+    store.mark_done(taken)
+    answers.append(store.has_queued_clip(busy))
+
+    assert answers == [False, True, True, False]
+    assert store.has_queued_clip(idle) is False
+
+
+def test_a_project_whose_render_failed_or_was_cancelled_has_no_queued_clip(
+    store: RenderStore, cut_talk: CutTalk
+) -> None:
+    project_id = cut_talk.project.id
+    store.queue_clips(project_id, ["c01", "c02"])
+    taken = store.take_oldest_waiting()
+    assert taken is not None
+
+    store.mark_failed(taken, "This clip could not be rendered.")
+    store.cancel_waiting(project_id)
+
+    assert store.has_queued_clip(project_id) is False

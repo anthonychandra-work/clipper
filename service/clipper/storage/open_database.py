@@ -161,6 +161,11 @@ CREATE TABLE clip_views (
 ALTER TABLE projects ADD COLUMN logged_count INTEGER NOT NULL DEFAULT 0;
 """
 
+ADD_IMPORT_MOMENT = """
+ALTER TABLE projects ADD COLUMN imported_at INTEGER NOT NULL DEFAULT 0;
+UPDATE projects SET imported_at = unixepoch();
+"""
+
 MIGRATIONS: tuple[str, ...] = (
     CREATE_PROJECTS,
     CREATE_PREFERENCES,
@@ -171,6 +176,7 @@ MIGRATIONS: tuple[str, ...] = (
     CREATE_RENDERS,
     CREATE_HISTORY,
     CREATE_VIEWS,
+    ADD_IMPORT_MOMENT,
 )
 
 

@@ -13,6 +13,7 @@ SETTING_VARIABLES = [
     "CLIPPER_REPORTED_FREE_BYTES",
     "CLIPPER_MODEL_SOURCE",
     "CLIPPER_ANTHROPIC_SOURCE",
+    "CLIPPER_CLOCK_AHEAD_DAYS",
 ]
 CLOSED_LOCAL_PORT = "http://127.0.0.1:9"
 
@@ -63,6 +64,16 @@ def test_selection_asks_anthropic_unless_another_source_is_named(
     clean_environment.setenv("CLIPPER_ANTHROPIC_SOURCE", "http://127.0.0.1:4001/talk")
 
     assert StartupSettings().anthropic_source == "http://127.0.0.1:4001/talk"
+
+
+def test_the_clock_of_the_cleanup_runs_on_time_unless_days_ahead_are_named(
+    clean_environment: pytest.MonkeyPatch,
+) -> None:
+    assert StartupSettings().clock_ahead_days == 0
+
+    clean_environment.setenv("CLIPPER_CLOCK_AHEAD_DAYS", "8")
+
+    assert StartupSettings().clock_ahead_days == 8
 
 
 def test_a_test_session_names_a_closed_local_port_in_place_of_anthropic() -> None:

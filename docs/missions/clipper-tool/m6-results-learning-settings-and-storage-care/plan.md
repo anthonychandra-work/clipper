@@ -430,7 +430,7 @@ What the spec's file list leaves out
   output without it. When it ends it removes the key, the projects and the history, whatever its
   result.
 
-- [ ] T11 — Remove the sources of old projects
+- [x] T11 — Remove the sources of old projects
   Files: `service/.coding-standards-structure`, `AGENTS.md`, `README.md`,
   `service/clipper/storage/open_database.py`, `service/clipper/storage/test_open_database.py`,
   `service/clipper/storage/data_folder.py`, `service/clipper/storage/test_data_folder.py`,

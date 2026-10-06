@@ -1,4 +1,5 @@
 import sqlite3
+import time
 from pathlib import Path
 
 import pytest
@@ -319,13 +320,31 @@ def test_a_database_made_by_m5_keeps_its_rows_and_copies_its_decisions_into_the_
         kept = [[tuple(row) for row in connection.execute(read)] for read in READ_M5_ROWS]
         decisions = [tuple(row) for row in connection.execute(READ_DECISION_HISTORY)]
         outcomes = connection.execute("SELECT COUNT(*) FROM outcome_history").fetchone()[0]
-        assert read_schema_version(connection) == len(MIGRATIONS) == 9
+        assert read_schema_version(connection) == len(MIGRATIONS) == 10
     assert [tuple(project)[: len(projects_before[0])] for project in projects] == projects_before
     assert [project["logged_count"] for project in projects] == [0]
     assert kept == kept_before
     assert [len(rows) for rows in kept] == [3, 3, 1, 1]
     assert decisions == [("d4e5f6", "c02", 0, None), ("d4e5f6", "c01", 1, "cut-off")]
     assert outcomes == 0
+
+
+def test_a_database_made_by_m5_opens_with_its_projects_imported_at_the_moment_of_the_upgrade(
+    tmp_path: Path,
+) -> None:
+    database_file = tmp_path / "clipper.sqlite3"
+    with open_database(database_file, MIGRATIONS_OF_M5).transaction() as connection:
+        connection.execute(ADD_M2_PROJECT)
+        connection.execute(ADD_FAILED_PROJECT)
+    before_the_upgrade = int(time.time())
+
+    database = open_database(database_file)
+
+    after_the_upgrade = int(time.time())
+    with database.transaction() as connection:
+        moments = [row["imported_at"] for row in connection.execute("SELECT * FROM projects")]
+    assert len(moments) == 2
+    assert all(before_the_upgrade <= moment <= after_the_upgrade for moment in moments)
 
 
 def test_the_views_of_a_clip_go_with_its_candidate_and_the_count_starts_at_0(

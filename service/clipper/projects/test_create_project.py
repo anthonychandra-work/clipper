@@ -1,4 +1,5 @@
 import re
+import time
 
 import pytest
 
@@ -39,6 +40,17 @@ def test_a_link_project_waits_in_the_queue_under_a_placeholder_title(
     assert project.link == "https://www.youtube.com/watch?v=abc123"
     assert project.upload is None
     assert repository.get(project.id) == project
+
+
+def test_a_new_project_is_imported_at_the_moment_it_is_created(
+    repository: ProjectRepository,
+) -> None:
+    before = int(time.time())
+
+    project = create_project(link_draft(), repository, PLENTY)
+
+    assert before <= project.imported_at <= int(time.time())
+    assert repository.get(project.id).imported_at == project.imported_at
 
 
 def test_a_file_project_starts_uploading_under_its_file_name(

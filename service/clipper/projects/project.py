@@ -86,6 +86,7 @@ class Project:
     steps: tuple[Step, ...]
     halt_reason: str | None
     upload: Upload | None
+    imported_at: int
     candidate_count: int = 0
     halt_opens_settings: bool = False
     kept_count: int = 0

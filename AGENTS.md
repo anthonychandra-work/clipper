@@ -34,11 +34,12 @@ fixture in `web/e2e/support`, which can stop it and start it again inside a test
 Seven environment variables change where a run keeps its files, which ports it uses, where it
 downloads models from and where it sends its requests for clips: `CLIPPER_DATA_DIR`,
 `CLIPPER_FFMPEG_DIR`, `CLIPPER_KEY_FILE`, `CLIPPER_WEB_PORT`, `CLIPPER_SERVICE_PORT`,
-`CLIPPER_MODEL_SOURCE` and `CLIPPER_ANTHROPIC_SOURCE`. Three more serve test
+`CLIPPER_MODEL_SOURCE` and `CLIPPER_ANTHROPIC_SOURCE`. Four more serve test
 runs: `CLIPPER_WEB_BUILD_DIR` names the folder the web app is built into,
-`CLIPPER_REPORTED_FREE_BYTES` replaces the measured free disk space, and `CLIPPER_EVIDENCE_DIR`
-names the folder the tests save their evidence into. `README.md` gives what each is without the
-variable.
+`CLIPPER_REPORTED_FREE_BYTES` replaces the measured free disk space, `CLIPPER_EVIDENCE_DIR`
+names the folder the tests save their evidence into, and `CLIPPER_CLOCK_AHEAD_DAYS` adds that
+many days to the clock the cleanup of old sources reads. `README.md` gives what each is without
+the variable.
 
 Commit messages read `<type>(<scope>): <summary>`.
 
@@ -116,8 +117,8 @@ folders.
 - `web/e2e/` holds the browser tests, with their shared code in `support/`.
 - `service/clipper/` holds one package per capability: `problems`, `settings`, `storage`,
   `learning`, `media`, `projects`, `pipeline`, `fetching`, `transcription`, `selection`,
-  `review`, `rendering` and `results`. Each exports through its `__init__.py` and has at most
-  one router. `main.py` joins them.
+  `review`, `rendering`, `results` and `retention`. Each exports through its `__init__.py` and
+  has at most one router. `main.py` joins them.
 - Service imports run one way: `fetching` and `transcription` import `pipeline`, `projects`,
   `media` and `storage`, and `transcription` also imports `settings`; `pipeline` imports
   `projects` and `media`; `projects` imports none of them. `learning`, the history the selector
@@ -128,11 +129,14 @@ folders.
   the Review tab, imports `selection`, `transcription`, `projects`, `media`, `storage` and
   `learning`. `rendering`, the package behind the Export tab, imports `review`, `selection`,
   `projects`, `pipeline`, `media` and `storage`. `results`, the package behind the Results tab,
-  imports `learning`, `rendering`, `review`, `projects` and `storage`. Nothing but `main.py`
-  imports `fetching` or `results`, nothing but `main.py` and `results` imports `rendering`,
-  nothing but `main.py`, `rendering` and `results` imports `review`, nothing but `main.py`,
-  `review` and `rendering` imports `selection`, and nothing but `main.py`, `selection` and
-  `review` imports `transcription`. `main.py` hands `projects` what it needs from `pipeline`.
+  imports `learning`, `rendering`, `review`, `projects` and `storage`. `retention`, the cleanup
+  of old sources, imports `projects`, `settings` and `storage`, and `main.py` hands it what it
+  needs of `rendering`: whether a project has a clip in the render queue. Nothing but `main.py`
+  imports `fetching`, `results` or `retention`, nothing but `main.py` and `results` imports
+  `rendering`, nothing but `main.py`, `rendering` and `results` imports `review`, nothing but
+  `main.py`, `review` and `rendering` imports `selection`, and nothing but `main.py`,
+  `selection` and `review` imports `transcription`. `main.py` hands `projects` what it needs
+  from `pipeline`.
 - The transcriber, `service/clipper/transcription/transcribe_audio.py`, is a program of its own.
   The service starts it by its file path once for each transcription and imports nothing from
   it, and it imports nothing from the service. MLX and the model are loaded in that program

@@ -85,6 +85,53 @@ def test_a_render_s_work_folder_is_not_taken_for_the_source(tmp_path: Path) -> N
     assert data_folder.find_source_file("a1b2c3") is None
 
 
+def test_removing_the_source_and_the_preview_copy_leaves_everything_else_of_the_project(
+    tmp_path: Path,
+) -> None:
+    data_folder = open_data_folder(tmp_path / "data")
+    project_dir = data_folder.project_dir("a1b2c3")
+    kept = ["transcript.json", "replay-graph.json", "frames/c01-01.jpg", "exports/01-c01.mp4"]
+    for name in ("source.mp4", "preview.mp4", *kept):
+        (project_dir / name).parent.mkdir(parents=True, exist_ok=True)
+        (project_dir / name).write_bytes(b"kept")
+
+    data_folder.remove_source_and_preview("a1b2c3")
+
+    left = sorted(file.relative_to(project_dir).as_posix() for file in project_dir.rglob("*.*"))
+    assert left == sorted(kept)
+    assert data_folder.find_source_file("a1b2c3") is None
+    assert not data_folder.preview_file("a1b2c3").exists()
+
+
+def test_a_source_of_any_ending_is_removed_and_another_project_keeps_its_own(
+    tmp_path: Path,
+) -> None:
+    data_folder = open_data_folder(tmp_path / "data")
+    for project_id, name in (("a1b2c3", "source.video"), ("d4e5f6", "source.webm")):
+        data_folder.project_dir(project_id).mkdir()
+        (data_folder.project_dir(project_id) / name).write_bytes(b"video")
+
+    data_folder.remove_source_and_preview("a1b2c3")
+
+    assert data_folder.find_source_file("a1b2c3") is None
+    assert (
+        data_folder.find_source_file("d4e5f6") == data_folder.project_dir("d4e5f6") / "source.webm"
+    )
+
+
+def test_removing_the_source_of_a_project_that_holds_none_changes_nothing(tmp_path: Path) -> None:
+    data_folder = open_data_folder(tmp_path / "data")
+    data_folder.project_dir("a1b2c3").mkdir()
+    (data_folder.project_dir("a1b2c3") / "transcript.json").write_text("{}")
+
+    data_folder.remove_source_and_preview("a1b2c3")
+    data_folder.remove_source_and_preview("no-such-project")
+
+    assert [file.name for file in data_folder.project_dir("a1b2c3").iterdir()] == [
+        "transcript.json"
+    ]
+
+
 def test_each_model_has_a_folder_of_its_own_under_models(tmp_path: Path) -> None:
     data_folder = open_data_folder(tmp_path / "data")
 

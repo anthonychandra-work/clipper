@@ -1,5 +1,6 @@
 import re
 import secrets
+import time
 from urllib.parse import urlsplit
 
 from ..problems import RefusedError
@@ -74,6 +75,7 @@ def plan_project(draft: CreateProjectRequest) -> Project:
         steps=plan_steps(first_state=StepState.PENDING if is_link else StepState.RUNNING),
         halt_reason=None,
         upload=None if is_link else Upload(draft.file_name, draft.file_size_bytes, 0),
+        imported_at=int(time.time()),
     )
 
 

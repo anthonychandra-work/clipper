@@ -248,13 +248,14 @@ A relative path in the first three counts from the folder the command was starte
 Clipper hands Anthropic's library the saved key and this address itself. A key, a token or an
 address for Anthropic that is set in the shell is not used.
 
-Three more variables serve test runs.
+Four more variables serve test runs.
 
 | Variable | What it sets | Without it |
 | --- | --- | --- |
 | `CLIPPER_WEB_BUILD_DIR` | The folder inside `web` that the web app is built into | `.next` |
 | `CLIPPER_REPORTED_FREE_BYTES` | A free disk space figure that replaces the measured one | The measured figure |
 | `CLIPPER_EVIDENCE_DIR` | The folder the tests save their evidence into | The test output folder |
+| `CLIPPER_CLOCK_AHEAD_DAYS` | Days added to the clock that the cleanup of old source videos reads | 0 |
 
 ## What this version does not do yet
 
