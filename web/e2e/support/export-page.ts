@@ -27,6 +27,13 @@ export interface RenderActionsText {
   order: string[];
 }
 
+export interface TextRowText {
+  label: string;
+  text: string;
+  copyId: string;
+  copyName: string | null;
+}
+
 export interface SavedDownload {
   name: string;
   path: string;
@@ -63,6 +70,21 @@ export async function readOutput(page: Page): Promise<OutputText> {
   const output = page.locator('.group-section', { has: page.getByRole('heading', { name: 'Output' }) });
   const [look, format] = await output.locator('.row__value').allInnerTexts();
   return { look, format, footer: await output.locator('.list-footer').innerText() };
+}
+
+export function readTextRows(page: Page, clipPlace: number): Promise<TextRowText[]> {
+  const textRows = exportRows(page).nth(clipPlace).locator('.copy-row');
+  return textRows.evaluateAll((rows) =>
+    rows.map((row) => {
+      const copy = row.querySelector('button');
+      return {
+        label: (row.querySelector('dt')?.textContent ?? '').trim(),
+        text: (row.querySelector<HTMLElement>('.copy-row__text')?.innerText ?? '').trim(),
+        copyId: copy?.id ?? '',
+        copyName: copy?.getAttribute('aria-label') ?? null,
+      };
+    }),
+  );
 }
 
 export async function readRenderActions(page: Page): Promise<RenderActionsText> {

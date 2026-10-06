@@ -1,3 +1,4 @@
+import { PlatformTexts } from '../../copy-text';
 import type { ExportClip as KeptClip } from '../../export.types';
 import { RenderStatus } from '../../render-clips';
 import { describeFile } from '../lib/describe-output';
@@ -20,6 +21,7 @@ export function ExportClip({ clip, hasSource, onRetry }: ExportClipProps) {
           <RenderStatus clip={clip} hasSource={hasSource} onRetry={onRetry} />
         </div>
       </div>
+      <PlatformTexts clip={clip} />
     </li>
   );
 }

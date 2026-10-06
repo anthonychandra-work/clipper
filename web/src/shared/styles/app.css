@@ -182,3 +182,17 @@ label.row .menu-button {
 .player__hook {
   font-family: Inter, var(--font);
 }
+
+/* The field a text is selected in for the older copy command stays out of sight and out of the layout. */
+.copy-field {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  pointer-events: none;
+  font-size: 16px;
+}

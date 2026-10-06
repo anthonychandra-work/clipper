@@ -10,9 +10,11 @@ export {
   readExportRows,
   readOutput,
   readRenderActions,
+  readTextRows,
   type RenderActionsText,
   saveDownload,
   type SavedDownload,
+  type TextRowText,
   waitForDownloads,
 } from './export-page';
 export { KEYLESS_END, type KeylessEnd, waitForKeylessEnd } from './keyless-end';

@@ -1135,6 +1135,13 @@ From `intent.md`. Base `82df5ce`.
   through one helper that also puts it back, and they list the files of a project's exports
   from the test's data folder. On a phone the test renders the shortest clip, the sixth. A116
   and A120 give the rules and leave these open. (executor, m5)
+- A136 — A Copy control is named `copy-<clip>-<platform>-title` or `-description`, the
+  prototype's id with the text it copies. When the clipboard interface refuses a text, Copy
+  tries the older command before it says that copying is blocked. For the older command the
+  text is selected in a field of one pixel that is taken out again, and the selection and the
+  focus go back to where they were. The message is a toast, as in the prototype. The browser
+  test of one platform makes a talk for TikTok alone and deletes it again. A118 gives the rules
+  and leaves these open. (executor, m5)
 
 ## Milestones
 

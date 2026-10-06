@@ -545,7 +545,7 @@ What the spec's file list leaves out
   source moved aside, Render is switched off under the notice. At 390 px the same actions are in
   the top bar, Render queues the clips, and "Download MP4" saves the file.
 
-- [ ] T14 — Show each platform's title and description with Copy
+- [x] T14 — Show each platform's title and description with Copy
   Files: `web/src/export/copy-text/index.ts`, `web/src/export/copy-text/lib/copy-text.ts`,
   `web/src/export/copy-text/lib/copy-text.test.ts`, `web/src/export/copy-text/lib/text-rows.ts`,
   `web/src/export/copy-text/lib/text-rows.test.ts`,
