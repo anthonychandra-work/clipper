@@ -9,7 +9,7 @@ const CLIP_COUNT = 12;
 const KEPT_COUNT = 10;
 const FIRST_START_SECONDS = 100;
 const SECONDS_BETWEEN_STARTS = 5;
-const LONG_TITLE =
+export const LONG_TITLE =
   'The supplier called at four in the morning, and what happened in the next hour changed how we hire, pay and train';
 const LONG_HOOK_TITLE = 'Nobody at the bakery expected the supplier to call that early in the morning';
 

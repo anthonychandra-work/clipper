@@ -210,3 +210,35 @@ dt.row__label {
   pointer-events: none;
   font-size: 16px;
 }
+
+/* On a phone a field in a row is as tall as a tap area, and the row of a clip's views keeps its height. */
+.app[data-layout="compact"] .number-field,
+.app[data-layout="compact"] .row__field {
+  min-height: var(--control);
+}
+
+.app[data-layout="compact"] .views-row {
+  padding-block: 2px;
+}
+
+/* A long word of a clip's title breaks where its row ends, on the Results tab too. */
+.views-row label,
+.outcome__head > :first-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* With large text the views of a clip move under its title, in the list and beside its bar. */
+@container (max-width: 18rem) {
+  .views-row {
+    grid-template-columns: 2rem minmax(0, 1fr);
+  }
+
+  .views-row .number-field {
+    grid-column: 2;
+  }
+
+  .outcome__head {
+    flex-wrap: wrap;
+  }
+}

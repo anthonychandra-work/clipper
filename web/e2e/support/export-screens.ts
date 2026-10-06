@@ -3,6 +3,7 @@ import { type APIRequestContext, expect, type Page } from '@playwright/test';
 import type { ExportClip, ProjectExport, RenderState } from '@/export';
 import type { Project, ProjectList } from '@/library';
 
+import { LONG_TITLE } from './crowded-review';
 import { exportRows } from './export-page';
 import { keepClips, readExport, waitForExport } from './read-export';
 import { holdProjectList, type ScreenVisit, type Walk } from './walk-screens';
@@ -12,8 +13,6 @@ const FIRST_TWO_CLIPS = ['c01', 'c02'];
 const CROWD_COUNT = 12;
 const EVERY_STATE: readonly RenderState[] = ['none', 'waiting', 'rendering', 'failed', 'done'];
 const RENDERED_PERCENT = 41.3;
-const LONG_TITLE =
-  'The supplier called at four in the morning, and what happened in the next hour changed how we hire, pay and train';
 const LONG_REASON = 'Not enough free disk space to finish. Free some space, then retry.';
 const LONG_DESCRIPTION = [
   'The oven broke before sunrise on the busiest Saturday of the winter, with a line of customers at the door.',

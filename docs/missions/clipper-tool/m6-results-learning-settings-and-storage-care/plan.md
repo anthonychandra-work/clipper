@@ -515,8 +515,9 @@ What the spec's file list leaves out
   what the Mac gives for the data folder's disk, and Settings and the sidebar show that free
   space rounded down to whole gigabytes. `pnpm test` exits 0.
 
-- [ ] T14 — Fit the Results tab and Settings on a phone: 200% text, tap areas and contrast
-  Files: `web/e2e/support/results-screens.ts`, `web/e2e/support/index.ts`,
+- [x] T14 — Fit the Results tab and Settings on a phone: 200% text, tap areas and contrast
+  Files: `web/e2e/support/results-screens.ts`, `web/e2e/support/crowded-review.ts`,
+  `web/e2e/support/export-screens.ts`, `web/e2e/support/index.ts`,
   `web/e2e/results-fit.spec.ts`, `web/e2e/own-origin.spec.ts`, `web/src/shared/styles/app.css`,
   `web/src/results/log-views/components/ViewsList.tsx`,
   `web/src/results/compare-outcome/components/OutcomeSection.tsx`,

@@ -6,10 +6,12 @@ import {
   deleteAllProjects,
   expect,
   finishFirstOfTwoClips,
+  forgetHistory,
   listEmptyScreens,
   listLowDiskScreens,
   listProjectScreens,
   listSheetScreens,
+  makeSeededSet,
   openPreview,
   readPreview,
   readProjectList,
@@ -20,6 +22,7 @@ import {
   visitScreens,
   type Walk,
   walkExport,
+  walkResults,
   walkTalkReview,
 } from './support';
 
@@ -69,6 +72,7 @@ test.beforeEach(async ({ request }) => {
 test.afterEach(async ({ request }) => {
   await removeSavedKey(request);
   await deleteAllProjects(request);
+  await forgetHistory(request);
 });
 
 test('with projects, every request of every screen is addressed to the tool', async ({
@@ -131,6 +135,23 @@ test('the Export tab of a talk with a finished clip asks nothing outside the too
 
   expect(saved).toEqual(Array(SIZES.length).fill(`01 The worst day my bakery ever had.mp4 from ${fileAddress}`));
   expect(asked.some((address) => address.endsWith(`/projects/${ownTalk.project.id}/export`))).toBe(true);
+  expect(findOutsideTheTool(asked, tool.address)).toEqual([]);
+});
+
+test('the Results tab of a talk with the seeded set asks nothing outside the tool, at both widths', async ({
+  page,
+  request,
+  ownTalk,
+  tool,
+}) => {
+  const asked = listenForRequests(page);
+  const walk = walkResults(ownTalk.project.id, await makeSeededSet(request, ownTalk.project.id));
+  const withTheSeededSet = { ...walk, screens: walk.screens.filter((screen) => screen.name === 'results-seeded') };
+
+  const visited = await walkAtBothWidths(page, withTheSeededSet);
+
+  expect(visited).toEqual(['results-seeded at 390', 'results-seeded at 1360']);
+  expect(asked.some((address) => address.endsWith(`/projects/${ownTalk.project.id}/results`))).toBe(true);
   expect(findOutsideTheTool(asked, tool.address)).toEqual([]);
 });
 

@@ -1299,6 +1299,17 @@ From `intent.md`. Base `82df5ce`.
   the tab shows what is typed until it is left and then the views that are stored, so "1200.9"
   becomes 1200 and "0" an empty field. A140 and A141 give the rules and leave these open.
   (executor, m6)
+- A152 — The Results tab and Settings took three rules in the app's stylesheet to meet the
+  measures of A148, and no change of a colour. On a phone the number field of a clip's views and
+  the key field of Settings are as tall as a tap area, 44 px, and the row of a clip's views has
+  2 px above and below its field, so it keeps the height of a row. A long word of a clip's title
+  breaks where its row ends, in the list of views and beside its bar. With large text the number
+  field moves under the clip's title, and in the outcome a clip's views move under its title.
+  The fit test presents the Results tab with twelve clips that carry the crowded review's title
+  and views from 9,999,999,999 downward, and Settings with the counts 128, 204, 317 and 100,
+  once without a key and once with a key that ends in "4f2a". The empty Results tab is
+  presented from the seeded talk with no clip. A148 names the screens and leaves these open.
+  (executor, m6)
 
 ## Milestones
 
