@@ -356,7 +356,7 @@ What the spec's file list leaves out
   performed best."; equal views put rank 1 before rank 2; clips of the ranks 2, 4 and 5 are
   named by those ranks.
 
-- [ ] T8 — Open the Results tab
+- [x] T8 — Open the Results tab
   Files: `web/src/app/projects/[id]/results/page.tsx`,
   `web/src/project/open-project/components/ProjectScreen.tsx`,
   `web/src/project/open-project/components/ProjectTabs.tsx`,
@@ -370,7 +370,7 @@ What the spec's file list leaves out
   `web/src/results/compare-outcome/components/OutcomeSection.tsx`,
   `web/src/shared/styles/app.css`, `web/e2e/support/read-results.ts`,
   `web/e2e/support/results-page.ts`, `web/e2e/support/index.ts`, `web/e2e/results-tab.spec.ts`,
-  `web/e2e/api-key.spec.ts`
+  `web/e2e/api-key.spec.ts`, `docs/missions/clipper-tool/spec.md`
   Done: the project screen takes the Results tab from its route and shows it inside the open
   project, as it takes the two other tabs. The empty state leaves the project capability, whose
   two files for it are removed, and the results capability draws it by A141, with its control

@@ -43,10 +43,21 @@ export {
   type PicturePoint,
   TALK_COLOUR_BARS,
 } from './read-picture';
+export { exportClips, readResults, storeViews } from './read-results';
 export { changeClip, readReview, storeLook } from './read-review';
 export { readSelection, type Selection } from './read-selection';
 export { countWordsWrongInHundred, readTranscript, type StoredTranscript, type StoredWord } from './read-transcript';
 export type { ReadyTalk } from './ready-talk';
+export {
+  openResults,
+  type OutcomeRowText,
+  type OutcomeText,
+  readOutcome,
+  readViewsRows,
+  typeViews,
+  viewsField,
+  type ViewsRowText,
+} from './results-page';
 export {
   type DecisionButtons,
   openRejectMenu,

@@ -1,6 +1,7 @@
 import { ProjectScreen } from '@/project';
+import { ResultsTab } from '@/results';
 
 export default async function ResultsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  return <ProjectScreen projectId={id} tab="results" />;
+  return <ProjectScreen projectId={id} tab="results" resultsTab={<ResultsTab />} />;
 }

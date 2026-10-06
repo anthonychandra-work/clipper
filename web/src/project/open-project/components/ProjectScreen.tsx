@@ -8,7 +8,6 @@ import { useProject } from '../hooks/use-project';
 import { OpenProjectContext } from '../lib/open-project-context';
 import { hasTabs, type ProjectTab, tabAddress } from '../lib/project-addresses';
 import { ProjectMoreButton } from './ProjectMoreButton';
-import { ProjectTabs } from './ProjectTabs';
 
 const LIBRARY_ADDRESS = '/';
 
@@ -17,9 +16,10 @@ interface ProjectScreenProps {
   tab?: ProjectTab;
   reviewTab?: ReactNode;
   exportTab?: ReactNode;
+  resultsTab?: ReactNode;
 }
 
-export function ProjectScreen({ projectId, tab, reviewTab, exportTab }: ProjectScreenProps) {
+export function ProjectScreen({ projectId, tab, reviewTab, exportTab, resultsTab }: ProjectScreenProps) {
   const router = useRouter();
   const { project, projects, isMissing } = useProject(projectId);
   const mustOpenReview = project !== null && hasTabs(project) && tab === undefined;
@@ -33,6 +33,6 @@ export function ProjectScreen({ projectId, tab, reviewTab, exportTab }: ProjectS
   if (tab === undefined || !hasTabs(project)) {
     return <StatusScreen project={project} projects={projects} actions={<ProjectMoreButton project={project} />} />;
   }
-  if (tab === 'results') return <ProjectTabs project={project} />;
-  return <OpenProjectContext value={project}>{tab === 'review' ? reviewTab : exportTab}</OpenProjectContext>;
+  const tabs = { review: reviewTab, export: exportTab, results: resultsTab };
+  return <OpenProjectContext value={project}>{tabs[tab]}</OpenProjectContext>;
 }

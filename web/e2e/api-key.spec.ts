@@ -73,7 +73,8 @@ async function openEveryScreen(page: Page, projectId: string): Promise<void> {
 
 async function askTheService(request: APIRequestContext, projectId: string): Promise<string[]> {
   const project = `/api/projects/${projectId}`;
-  const addresses = ['/api/settings', '/api/projects', project, `${project}/selection`, `${project}/review`];
+  const tabs = [`${project}/selection`, `${project}/review`, `${project}/results`];
+  const addresses = ['/api/settings', '/api/projects', project, ...tabs];
   const answers: string[] = [];
   for (const address of addresses) {
     const answer = await request.get(address);

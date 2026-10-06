@@ -1283,6 +1283,22 @@ From `intent.md`. Base `82df5ce`.
   moves its out point at once read "Keep" where it had pressed Keep. R40 and M4 ask for every
   change to be stored, and the history of A142 is written from the stored decision.
   (planner, m6)
+- A150 — The paragraph the instructions of both passes gain reads: "The task may carry a note.
+  It tells what this user did with clips of earlier videos: how many they rejected and for which
+  reasons, and which hooks and lengths did best and worst once posted. Let the note tip a close
+  call. The rules of this task and the brief come first." A length in the note is rounded to the
+  nearest whole second, a half upward. Clips with equal views keep the order their views were
+  last stored in, and hook types with equal numbers keep the order of their clips. The first
+  line keeps A143's words at every number, so one rejection reads "1 were rejected". A143 says
+  what the instructions tell and how the thirds are formed, and leaves these open.
+  (executor, m6)
+- A151 — Views for a clip the project does not have are refused with A91's sentence, as views
+  for a clip without a finished export are, and the results and the views of an unknown project
+  answer 404. The control of the Results tab's empty state has the prototype's id,
+  `results-go-review`, while no clip is kept and `results-go-export` once one is. A field of
+  the tab shows what is typed until it is left and then the views that are stored, so "1200.9"
+  becomes 1200 and "0" an empty field. A140 and A141 give the rules and leave these open.
+  (executor, m6)
 
 ## Milestones
 
