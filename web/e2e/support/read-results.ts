@@ -4,6 +4,8 @@ import type { ProjectResults } from '@/results';
 
 import { keepClips, startRenders, waitForExport } from './read-export';
 
+export const SEEDED_VIEWS: Readonly<Record<string, number>> = { c01: 1200, c02: 5400, c03: 48000 };
+
 export async function readResults(request: APIRequestContext, projectId: string): Promise<ProjectResults> {
   return readAnswer(await request.get(`/api/projects/${projectId}/results`));
 }
@@ -24,6 +26,10 @@ export async function exportClips(request: APIRequestContext, projectId: string,
     const finished = shown.clips.filter((clip) => clip.render.state === 'done').map((clip) => clip.id);
     return clipIds.every((clipId) => finished.includes(clipId));
   });
+}
+
+export function exportSeededClips(request: APIRequestContext, projectId: string): Promise<void> {
+  return exportClips(request, projectId, Object.keys(SEEDED_VIEWS));
 }
 
 async function readAnswer(answer: APIResponse): Promise<ProjectResults> {

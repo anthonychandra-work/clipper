@@ -414,10 +414,10 @@ What the spec's file list leaves out
   without. The browser test of T8 that types the seeded views reads the row before and after, in
   the sidebar at 1360 px and in the Library at 390 px.
 
-- [ ] T10 — Check in a browser that rejections and results reach the next selection, and that
+- [x] T10 — Check in a browser that rejections and results reach the next selection, and that
   forgetting ends it
   Files: `web/e2e/learning.spec.ts`, `web/e2e/support/learned-history.ts`,
-  `web/e2e/support/read-results.ts`, `web/e2e/support/index.ts`
+  `web/e2e/support/read-results.ts`, `web/e2e/support/index.ts`, `web/e2e/settings.spec.ts`
   Done: one browser test at 1360 px, with a time limit of its own, forgets the history and then
   makes the seeded set of the Findings on a talk of its own: the three clips kept and rendered
   through the service, the two rejections chosen from the reject menu of the Review tab, and the

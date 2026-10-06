@@ -9,7 +9,7 @@ import {
   readCandidateRows,
   readReview,
   readSettings,
-  rejectAs,
+  rejectOnTheReviewTab,
   test,
 } from './support';
 
@@ -53,13 +53,6 @@ function readLearnedRows(page: Page): Promise<string[][]> {
   return learned.locator('li.row').evaluateAll((rows) =>
     rows.map((row) => [...row.querySelectorAll('.row__label, .memory-count')].map((part) => part.textContent ?? '')),
   );
-}
-
-async function rejectOnTheReviewTab(page: Page, clipAddress: string, reason: string): Promise<void> {
-  await page.goto(clipAddress);
-  const stored = page.waitForResponse((answer) => answer.request().method() === 'PATCH' && answer.ok());
-  await rejectAs(page, reason);
-  await stored;
 }
 
 async function chooseTheDefaults(request: APIRequestContext): Promise<void> {

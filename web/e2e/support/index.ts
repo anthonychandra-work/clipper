@@ -19,7 +19,17 @@ export {
 } from './export-page';
 export { finishFirstOfTwoClips, type ShownExport, walkExport } from './export-screens';
 export { KEYLESS_END, type KeylessEnd, waitForKeylessEnd } from './keyless-end';
-export { forgetHistory, readSettings } from './learned-history';
+export {
+  cutTalkAndKeepRequests,
+  forgetHistory,
+  type LearnedRequests,
+  nameSentTasks,
+  readSentNotes,
+  readSettings,
+  rejectOnTheReviewTab,
+  SEEDED_NOTE,
+  SEEDED_REJECTIONS,
+} from './learned-history';
 export { followBarUntil, newProjectSheet, projectRow, readRow, type RowText } from './library-page';
 export { findFaintTexts } from './measure-contrast';
 export { findTextUnderBottomBar } from './measure-screen-end';
@@ -43,7 +53,7 @@ export {
   type PicturePoint,
   TALK_COLOUR_BARS,
 } from './read-picture';
-export { exportClips, readResults, storeViews } from './read-results';
+export { exportClips, exportSeededClips, readResults, SEEDED_VIEWS, storeViews } from './read-results';
 export { changeClip, readReview, storeLook } from './read-review';
 export { readSelection, type Selection } from './read-selection';
 export { countWordsWrongInHundred, readTranscript, type StoredTranscript, type StoredWord } from './read-transcript';
