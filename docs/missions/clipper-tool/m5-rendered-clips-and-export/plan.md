@@ -600,7 +600,7 @@ What the spec's file list leaves out
   to the tool also opens the Export tab of a talk with a finished clip at both widths and saves
   its file.
 
-- [ ] T17 — Save the frames, the probed files and the captures as evidence
+- [x] T17 — Save the frames, the probed files and the captures as evidence
   Files: `web/e2e/export-captures.spec.ts`, `web/e2e/support/export-screens.ts`,
   `web/e2e/support/index.ts`,
   `docs/missions/clipper-tool/m5-rendered-clips-and-export/evidence/talk-exports.json`,

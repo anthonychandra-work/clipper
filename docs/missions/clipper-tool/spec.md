@@ -1154,6 +1154,13 @@ From `intent.md`. Base `82df5ce`.
   and one not rendered once its first clip is queued alone. The test of the tool's own requests
   saves the finished file at each width and holds the download's address against the tool's.
   R7 gives the measures and leaves these open. (executor, m5)
+- A138 — The test that captures the Export tab also reads each capture's screen before the
+  picture is taken: the two rows with their titles, file lines and states, "Render 2 Clips",
+  six Copy controls in each group, and at 1360 px the sidebar's "Exported · 1 clip exported".
+  The capture shows the screen of the talk as the fit test opens it, with the list of projects
+  read once the first clip had finished. The output of the rendering tests that V3's command
+  writes beside the frames is the validator's to save and is not among the committed files.
+  A122 names the files and leaves these open. (executor, m5)
 
 ## Milestones
 
