@@ -10,6 +10,7 @@ export interface Draft {
   link: string;
   file: File | null;
   length: ClipLength;
+  isLengthChosen: boolean;
   platforms: Platform[];
   brief: string;
   problem: Problem | null;
@@ -27,8 +28,17 @@ export function createDraft(): Draft {
     link: '',
     file: null,
     length: 'standard',
+    isLengthChosen: false,
     platforms: ['tiktok', 'reels', 'shorts'],
     brief: '',
     problem: null,
   };
+}
+
+export function chooseLength(draft: Draft, length: ClipLength): Draft {
+  return { ...draft, length, isLengthChosen: true };
+}
+
+export function takeDefaultLength(draft: Draft, defaultLength: ClipLength): Draft {
+  return draft.isLengthChosen ? draft : { ...draft, length: defaultLength };
 }

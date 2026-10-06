@@ -491,13 +491,14 @@ What the spec's file list leaves out
   test puts the retention back to 7 days and starts the tool again without the variable when it
   ends, whatever its result.
 
-- [ ] T13 — Start a new project with the clip length chosen in Settings, and check that every
+- [x] T13 — Start a new project with the clip length chosen in Settings, and check that every
   choice takes effect
   Files: `web/src/library/create-project/api/fetch-default-length.ts`,
   `web/src/library/create-project/hooks/use-draft.ts`,
   `web/src/library/create-project/lib/create-draft.ts`,
   `web/src/library/create-project/lib/create-draft.test.ts`,
-  `web/e2e/settings-effect.spec.ts`, `web/e2e/support/index.ts`
+  `web/e2e/settings-effect.spec.ts`, `web/e2e/support/settings-choices.ts`,
+  `web/e2e/support/learned-history.ts`, `web/e2e/support/index.ts`
   Done: the new project sheet follows A145. The library capability reads the default from the
   settings address itself, since `settings` imports `library`. Unit tests: a draft takes a
   default while no length was chosen, keeps a chosen length, and starts at 25–60 s. Browser

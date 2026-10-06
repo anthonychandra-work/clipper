@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import type { Problem } from '@/shared/lib/read-problem';
 
 import type { SourceKind } from '../../library.types';
+import { fetchDefaultLength } from '../api/fetch-default-length';
 import type { ClipLength } from '../lib/clip-lengths';
-import { createDraft, type Draft, type Platform } from '../lib/create-draft';
+import { chooseLength, createDraft, type Draft, type Platform, takeDefaultLength } from '../lib/create-draft';
 import { findInvalidFieldId } from '../lib/find-draft-problem';
 
 export interface DraftEditor {
@@ -24,6 +25,16 @@ export function useDraft(): DraftEditor {
   const [draft, setDraft] = useState(createDraft);
   const change = (changes: Partial<Draft>) => setDraft((current) => ({ ...current, problem: null, ...changes }));
 
+  useEffect(() => {
+    let isCurrent = true;
+    void fetchDefaultLength().then((defaultLength) => {
+      if (isCurrent && defaultLength !== null) setDraft((current) => takeDefaultLength(current, defaultLength));
+    });
+    return () => {
+      isCurrent = false;
+    };
+  }, []);
+
   function showProblem(problem: Problem): void {
     setDraft((current) => ({ ...current, problem }));
     const invalidFieldId = findInvalidFieldId({ ...draft, problem });
@@ -33,7 +44,7 @@ export function useDraft(): DraftEditor {
   return {
     draft,
     setSourceKind: (sourceKind) => change({ sourceKind }),
-    setLength: (length) => setDraft((current) => ({ ...current, length })),
+    setLength: (length) => setDraft((current) => chooseLength(current, length)),
     togglePlatform: (platform) => change({ platforms: toggle(draft.platforms, platform) }),
     editLink: (link) => change({ link }),
     editBrief: (brief) => change({ brief }),

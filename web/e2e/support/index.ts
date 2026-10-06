@@ -25,10 +25,12 @@ export {
   type LearnedRequests,
   nameSentTasks,
   readSentNotes,
+  readSentTask,
   readSettings,
   rejectOnTheReviewTab,
   SEEDED_NOTE,
   SEEDED_REJECTIONS,
+  type SentTask,
 } from './learned-history';
 export { followBarUntil, newProjectSheet, projectRow, readRow, type RowText } from './library-page';
 export { findFaintTexts } from './measure-contrast';
@@ -125,6 +127,7 @@ export {
 export { removeSavedKey, saveTestKey, TEST_KEY } from './saved-key';
 export { seedEveryState, type SeededProjects } from './seed-projects';
 export type { FixtureServer } from './serve-fixtures';
+export { type Choices, chooseInSettings, chooseTheDefaults, DEFAULT_CHOICES, saveChoices } from './settings-choices';
 export type { KeptRequest, RecordedClaude } from './serve-recorded-claude';
 export {
   createFileProject,

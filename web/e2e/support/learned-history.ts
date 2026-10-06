@@ -26,9 +26,10 @@ export interface LearnedRequests {
   requests: KeptRequest[];
 }
 
-interface SentTask {
+export interface SentTask {
   task: string;
   window?: { id: string };
+  clipCount?: number;
   note?: string;
 }
 
@@ -63,7 +64,7 @@ export function readSentNotes(requests: KeptRequest[]): (string | null)[] {
   return requests.map(readSentTask).map((sent) => sent.note ?? null);
 }
 
-function readSentTask(kept: KeptRequest): SentTask {
+export function readSentTask(kept: KeptRequest): SentTask {
   const messages = kept.body.messages as { content: { text: string }[] }[];
   const parts = messages[0].content;
   return JSON.parse(parts[parts.length - 1].text);
