@@ -275,7 +275,7 @@ What the spec's file list leaves out
   renders the same; a stop set during the run leaves no file; a source that is no video fails
   with ffmpeg's words.
 
-- [ ] T4 — Work out the picture of each framing from a clip's faces
+- [x] T4 — Work out the picture of each framing from a clip's faces
   Files: `service/clipper/rendering/follow_faces.py`,
   `service/clipper/rendering/test_follow_faces.py`, `service/clipper/rendering/frame_picture.py`,
   `service/clipper/rendering/test_frame_picture.py`, `service/clipper/rendering/__init__.py`

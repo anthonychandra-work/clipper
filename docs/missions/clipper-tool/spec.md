@@ -1047,6 +1047,12 @@ From `intent.md`. Base `82df5ce`.
   speed setting; measured on the talk, a clip of 33 seconds renders in 4 seconds. A source's
   first sound track is required, since no project reaches the export without one. A115 gives the
   file and leaves these open. (executor, m5)
+- A126 — The second around a moment is that moment and the two before and after it, fewer at
+  the clip's ends. Between two moments the place moves in equal steps, six to a moment. Of two
+  moments as near to one without a face, the earlier gives its place. In the Stacked framing
+  only a moment that shows two faces places the parts, and every other moment counts as one
+  without a face. A clip whose moments never show two faces is not stacked, a clip with no
+  moment among them. A114 gives the rules and leaves these open. (executor, m5)
 
 ## Milestones
 

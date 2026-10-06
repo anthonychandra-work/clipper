@@ -1,5 +1,6 @@
 from .encode_clip import encode_clip
 from .find_faces import Face, FaceFinder, UnreadablePictureError
+from .frame_picture import PictureShape, choose_framing, frame_picture
 from .render_plan import (
     Layout,
     PicturePart,
@@ -16,6 +17,7 @@ __all__ = [
     "FaceFinder",
     "Layout",
     "PicturePart",
+    "PictureShape",
     "Place",
     "RenderPlan",
     "SpeakerLayout",
@@ -23,5 +25,7 @@ __all__ = [
     "TimedOverlay",
     "UnreadablePictureError",
     "WholePictureLayout",
+    "choose_framing",
     "encode_clip",
+    "frame_picture",
 ]
