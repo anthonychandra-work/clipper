@@ -225,7 +225,7 @@ What the spec's file list leaves out
   the out point, a sentence outside the reach, a start before the video begins, an end after it
   ends, and a clip left shorter than one second.
 
-- [ ] T4 — Group a clip's words into captions
+- [x] T4 — Group a clip's words into captions
   Files: `service/clipper/review/caption_groups.py`,
   `service/clipper/review/test_caption_groups.py`, `service/clipper/review/__init__.py`
   Done: a clip's words become captions in the three styles by A97. Tests with made-up words:

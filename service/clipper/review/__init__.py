@@ -1,3 +1,4 @@
+from .caption_groups import Caption, CaptionWord, group_captions
 from .clip_points import (
     ChangeRefusedError,
     ClipTimes,
@@ -21,7 +22,9 @@ from .trim_reach import TrimReach, find_trim_reach, list_reach
 
 __all__ = [
     "STARTING_LOOK",
+    "Caption",
     "CaptionStyle",
+    "CaptionWord",
     "ChangeRefusedError",
     "ClipPoint",
     "ClipReview",
@@ -36,6 +39,7 @@ __all__ = [
     "TrimLimits",
     "TrimReach",
     "find_trim_reach",
+    "group_captions",
     "list_reach",
     "refuse_points_past_the_limits",
     "router",
