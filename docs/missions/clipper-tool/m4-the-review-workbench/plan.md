@@ -454,7 +454,7 @@ What the spec's file list leaves out
   brings back the title selection gave; a clip presented to the page as lying under a replay peak
   shows the tag in the list and the note in the inspector.
 
-- [ ] T13 — Keep, Reject with a reason, Undo Reject and Next
+- [x] T13 — Keep, Reject with a reason, Undo Reject and Next
   Files: `web/src/shell/present-menu/components/Menu.tsx`, `web/src/shell/present-menu/index.ts`,
   `web/src/shell/index.ts`, `web/src/review/decide-clip/index.ts`,
   `web/src/review/decide-clip/components/DecisionControls.tsx`,
@@ -464,7 +464,7 @@ What the spec's file list leaves out
   `web/src/review/decide-clip/lib/apply-decision.test.ts`,
   `web/src/review/open-review/components/ReviewTab.tsx`,
   `web/src/review/open-review/components/ClipScreen.tsx`, `web/e2e/support/review-page.ts`,
-  `web/e2e/support/index.ts`, `web/e2e/review-decide.spec.ts`
+  `web/e2e/support/review-decision.ts`, `web/e2e/support/index.ts`, `web/e2e/review-decide.spec.ts`
   Done: the shell's menu can show a title, a divider, and items that carry a tick when chosen.
   Reject, Keep and Next follow the prototype's markup and states: from 720 px in the toolbar
   after the More button, and on a phone's clip screen in a bar at the bottom in place of the tab

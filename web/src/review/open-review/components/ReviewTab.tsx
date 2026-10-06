@@ -3,14 +3,15 @@
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import type { Project } from '@/library';
+import { type Project, refreshProjects } from '@/library';
 import { ProjectFrame, useOpenProject } from '@/project';
 import { useShell } from '@/shell';
 
-import type { ClipFilter } from '../../list-candidates';
-import type { Review } from '../../review.types';
+import { DecisionControls } from '../../decide-clip';
+import { type ClipFilter, filterClips } from '../../list-candidates';
+import type { ClipChange, Review, ReviewClip } from '../../review.types';
 import { useReview } from '../hooks/use-review';
-import { findShownClip, namesNoClip, reviewAddress } from '../lib/review-addresses';
+import { clipAddress, findNextClip, findShownClip, namesNoClip, reviewAddress } from '../lib/review-addresses';
 import type { ReviewStore } from '../lib/review-store';
 import { ClipDetail } from './ClipDetail';
 import { ClipScreen } from './ClipScreen';
@@ -37,29 +38,33 @@ interface ReviewWorkbenchProps {
 }
 
 function ReviewWorkbench({ project, review, store }: ReviewWorkbenchProps) {
-  const router = useRouter();
   const { layout } = useShell();
   const { clip: clipId } = useParams<{ clip?: string }>();
   const [filter, setFilter] = useState<ClipFilter>('all');
   const isPhone = layout === 'compact';
   const shownClip = findShownClip({ clips: review.clips, clipId, isPhone });
-  const mustLeadToList = namesNoClip(review.clips, clipId);
+  useListForUnknownClip(project.id, namesNoClip(review.clips, clipId));
+  useShownRowInView(isPhone ? null : (shownClip?.id ?? null));
 
-  useEffect(() => {
-    if (mustLeadToList) router.replace(reviewAddress(project.id));
-  }, [mustLeadToList, project.id, router]);
-
-  const clipCount = review.clips.length;
-  const detail = shownClip === null ? null : <ClipDetail clip={shownClip} clipCount={clipCount} store={store} />;
-  if (isPhone && shownClip !== null) {
+  if (shownClip === null) {
     return (
-      <ClipScreen projectId={project.id} clip={shownClip} clipCount={clipCount}>
+      <ProjectFrame project={project} tab="review">
+        <ReviewSplit project={project} review={review} shownClip={null} filter={filter} onFilter={setFilter} detail={null} />
+      </ProjectFrame>
+    );
+  }
+  const clipCount = review.clips.length;
+  const decision = <ClipDecision project={project} review={review} clip={shownClip} filter={filter} store={store} />;
+  const detail = <ClipDetail clip={shownClip} clipCount={clipCount} store={store} />;
+  if (isPhone) {
+    return (
+      <ClipScreen projectId={project.id} clip={shownClip} clipCount={clipCount} bottomBar={decision}>
         {detail}
       </ClipScreen>
     );
   }
   return (
-    <ProjectFrame project={project} tab="review">
+    <ProjectFrame project={project} tab="review" actions={decision}>
       <ReviewSplit
         project={project}
         review={review}
@@ -70,4 +75,32 @@ function ReviewWorkbench({ project, review, store }: ReviewWorkbenchProps) {
       />
     </ProjectFrame>
   );
+}
+
+interface ClipDecisionProps extends ReviewWorkbenchProps {
+  clip: ReviewClip;
+  filter: ClipFilter;
+}
+
+function ClipDecision({ project, review, clip, filter, store }: ClipDecisionProps) {
+  const group = filterClips(review.clips, filter);
+  const next = findNextClip(group.length > 0 ? group : review.clips, clip.id) ?? clip;
+  const decide = (change: ClipChange) => {
+    void store.changeClip(clip.id, change).then(refreshProjects);
+  };
+  return <DecisionControls clip={clip} nextHref={clipAddress(project.id, next.id)} onDecide={decide} />;
+}
+
+function useListForUnknownClip(projectId: string, isClipUnknown: boolean): void {
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isClipUnknown) router.replace(reviewAddress(projectId));
+  }, [isClipUnknown, projectId, router]);
+}
+
+function useShownRowInView(shownClipId: string | null): void {
+  useEffect(() => {
+    if (shownClipId !== null) document.getElementById(`candidate-${shownClipId}`)?.scrollIntoView({ block: 'nearest' });
+  }, [shownClipId]);
 }

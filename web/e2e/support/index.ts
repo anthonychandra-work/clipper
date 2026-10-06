@@ -18,6 +18,14 @@ export { readSelection, type Selection } from './read-selection';
 export { countWordsWrongInHundred, readTranscript, type StoredTranscript } from './read-transcript';
 export type { ReadyTalk } from './ready-talk';
 export {
+  type DecisionButtons,
+  openRejectMenu,
+  readDecisionButtons,
+  readRejectMenu,
+  rejectAs,
+  rejectMenu,
+} from './review-decision';
+export {
   candidateRow,
   type CandidateRowText,
   type InspectorText,

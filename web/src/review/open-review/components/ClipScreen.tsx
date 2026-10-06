@@ -9,10 +9,11 @@ interface ClipScreenProps {
   projectId: string;
   clip: ReviewClip;
   clipCount: number;
+  bottomBar: ReactNode;
   children: ReactNode;
 }
 
-export function ClipScreen({ projectId, clip, clipCount, children }: ClipScreenProps) {
+export function ClipScreen({ projectId, clip, clipCount, bottomBar, children }: ClipScreenProps) {
   return (
     <ScreenFrame
       screenKey="clip"
@@ -20,6 +21,7 @@ export function ClipScreen({ projectId, clip, clipCount, children }: ClipScreenP
       section="library"
       title={`Clip ${clip.rank} of ${clipCount}`}
       back={{ label: 'Clips', href: reviewAddress(projectId) }}
+      bottomBar={bottomBar}
     >
       <div className="split is-detail-open">{children}</div>
     </ScreenFrame>
