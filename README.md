@@ -31,6 +31,10 @@ pnpm bootstrap
 into `.cache/playwright`, and fetches the Whisper model the tests transcribe with, 74 MB, into
 `.cache/whisper`.
 
+The first `pnpm bootstrap` compiles OpenCV, the library that finds faces, with the compiler of
+Apple's Command Line Tools. That takes about four minutes. A later `pnpm bootstrap` compiles
+nothing and ends within seconds.
+
 ## Start
 
 ```bash

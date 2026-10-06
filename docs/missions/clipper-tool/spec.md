@@ -1023,6 +1023,14 @@ From `intent.md`. Base `82df5ce`.
   export; the Review checks go on sharing theirs (A103). A render is made to fail by putting a
   file that is no video in the source's place, and the source is made to be gone by moving it
   aside in the test's data folder; the test puts it back. (planner, m5)
+- A123 — A face's box is given as the detector found it, in shares of the picture, so the box of
+  a face cut by the picture's edge reaches below 0 or above 1 and a check can tell a whole face
+  from a cut one. One face finder serves every picture of a clip: OpenCV takes about seven
+  thousandths of a second to make a detector. From the first finder on, OpenCV logs errors only,
+  for the whole service. A file that cannot be read as a picture fails with its name. The
+  portrait is reduced with an even height, which gives 774 px. Bootstrap prints the sentence
+  about the OpenCV build at every run, since it speaks of the first setup. A111, A112 and A121
+  give the rules and leave these open. (executor, m5)
 
 ## Milestones
 

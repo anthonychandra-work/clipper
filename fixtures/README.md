@@ -21,6 +21,13 @@ the speech's length and the long talk five times it. The build takes about fifte
 | `long-talk.mp4` | The speech five times over, about twenty minutes, over a 320 × 180 picture at 10 frames a second. It is long enough for a test to stop a transcription that is under way. |
 | `silence.mp4` | Twenty seconds of the colour bars over a silent sound track. |
 
+## The portrait
+
+`portrait.jpg` is a photograph of a face, 600 × 774 pixels, for the tests that look for faces. It
+is Alexander Gardner's portrait of Abraham Lincoln of 1863, in the public domain.
+`portrait-source.md` gives its source on Wikimedia Commons, its author, its date, its licence,
+the checksum of the original and how the original was reduced.
+
 ## The test model
 
 The tests transcribe with the smallest Whisper model, `mlx-community/whisper-tiny`, 74 MB.

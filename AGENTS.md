@@ -11,7 +11,8 @@ Run every command from the repository root.
 - `pnpm bootstrap` creates the Python environment in `service/.venv` with
   `/opt/homebrew/bin/python3.12`, installs the pinned Python packages without following their
   declared dependencies, installs the browser the tests drive into `.cache/playwright`, and
-  fetches the test model into `.cache/whisper`.
+  fetches the test model into `.cache/whisper`. Its first run compiles OpenCV, which takes about
+  four minutes. A later run builds nothing.
 - `pnpm start` starts the service on `127.0.0.1:8765` and the web app on port 3000, then prints
   the address to open. It builds the web app when the build is missing or older than the sources.
   Ctrl-C stops both parts: the service first, and the web app once the service's process has
@@ -111,16 +112,19 @@ folders.
   hands the project screen the Review tab.
 - `web/e2e/` holds the browser tests, with their shared code in `support/`.
 - `service/clipper/` holds one package per capability: `problems`, `settings`, `storage`,
-  `media`, `projects`, `pipeline`, `fetching`, `transcription`, `selection` and `review`. Each
-  exports through its `__init__.py` and has at most one router. `main.py` joins them.
+  `media`, `projects`, `pipeline`, `fetching`, `transcription`, `selection`, `review` and
+  `rendering`. Each exports through its `__init__.py` and has at most one router. `main.py`
+  joins them.
 - Service imports run one way: `fetching` and `transcription` import `pipeline`, `projects`,
   `media` and `storage`, and `transcription` also imports `settings`; `pipeline` imports
   `projects` and `media`; `projects` imports none of them. `selection` imports `transcription`
   for the stored transcript, and `settings`, `pipeline`, `projects` and `storage`. `review`, the
   package behind the Review tab, imports `selection`, `transcription`, `projects`, `media` and
-  `storage`. Nothing but `main.py` imports `fetching` or `review`, nothing but `main.py` and
-  `review` imports `selection`, and nothing but `main.py`, `selection` and `review` imports
-  `transcription`. `main.py` hands `projects` what it needs from `pipeline`.
+  `storage`. `rendering`, the package behind the Export tab, imports `review`, `selection`,
+  `projects`, `pipeline`, `media` and `storage`. Nothing but `main.py` imports `fetching` or
+  `rendering`, nothing but `main.py` and `rendering` imports `review`, nothing but `main.py`,
+  `review` and `rendering` imports `selection`, and nothing but `main.py`, `selection` and
+  `review` imports `transcription`. `main.py` hands `projects` what it needs from `pipeline`.
 - The transcriber, `service/clipper/transcription/transcribe_audio.py`, is a program of its own.
   The service starts it by its file path once for each transcription and imports nothing from
   it, and it imports nothing from the service. MLX and the model are loaded in that program
@@ -285,6 +289,29 @@ Two packages that mlx-whisper declares are left out because transcription never 
 under the MPL. `pip check` names both as missing, and that is intended. `tqdm` is the one
 installed package under the MPL, "MPL-2.0 AND MIT". mlx-whisper cannot be imported without it;
 it is used unchanged and nothing of it is copied into the app.
+
+OpenCV is `opencv-python-headless`, compiled on the Mac from its source release. Its ready-made
+package carries 99 libraries inside it, FFmpeg, x264 and x265 among them, under the LGPL and the
+GPL. `service/requirements.txt` therefore forbids the ready-made package, and `pnpm bootstrap`
+builds OpenCV with FFmpeg and video reading switched off:
+
+- The settings of the build are in `scripts/bootstrap-project.mjs`. They also keep the build
+  from linking Homebrew's picture libraries and switch off the two downloads OpenCV makes while
+  it is configured, a library from Arm's server and a font it builds in.
+- The result links Apple's own frameworks only. What it compiles in beside OpenCV, libjpeg-turbo,
+  libpng, zlib and Protocol Buffers, carries permissive licences.
+- The tools pip fetches for the build are pinned in `service/build-constraints.txt`. They serve
+  the build alone and are no part of the app.
+- Install OpenCV with `pnpm bootstrap` and no other way. A pip command without the settings
+  builds OpenCV with its own defaults, video reading among them.
+- pip keeps the package it built in its cache and reuses it for the same release. After a build
+  with other settings, take that package out of pip's cache and uninstall it before the next
+  bootstrap.
+- After any reinstall, `service/clipper/rendering/test_opencv_build.py` must pass. It fails when
+  the installed OpenCV names FFmpeg in its build information, reads video, has a font built in
+  or carries a folder of bundled libraries.
+
+Clipper reads no video through OpenCV: ffmpeg writes the pictures it searches for faces.
 
 ## Boundaries
 

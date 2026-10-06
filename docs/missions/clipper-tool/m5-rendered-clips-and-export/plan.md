@@ -202,7 +202,7 @@ What the spec's file list leaves out
 
 ## Tasks
 
-- [ ] T1 — Add OpenCV built without FFmpeg, Pillow and the face detector, and find the faces in
+- [x] T1 — Add OpenCV built without FFmpeg, Pillow and the face detector, and find the faces in
   a picture
   Files: `service/requirements.txt`, `service/build-constraints.txt`,
   `scripts/bootstrap-project.mjs`, `service/clipper/rendering/__init__.py`,
