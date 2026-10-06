@@ -168,7 +168,7 @@ What the spec's file list leaves out
 
 ## Tasks
 
-- [ ] T1 — Serve the preview copy with byte ranges, and play it through the web app
+- [x] T1 — Serve the preview copy with byte ranges, and play it through the web app
   Files: `service/clipper/storage/data_folder.py`, `service/clipper/storage/test_data_folder.py`,
   `service/clipper/fetching/fetch_stage.py`, `service/clipper/review/__init__.py`,
   `service/clipper/review/router.py`, `service/clipper/review/test_router.py`,

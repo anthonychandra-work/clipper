@@ -109,13 +109,15 @@ folders.
   otherwise import each other.
 - `web/e2e/` holds the browser tests, with their shared code in `support/`.
 - `service/clipper/` holds one package per capability: `problems`, `settings`, `storage`,
-  `media`, `projects`, `pipeline`, `fetching`, `transcription` and `selection`. Each exports
-  through its `__init__.py` and has at most one router. `main.py` joins them.
+  `media`, `projects`, `pipeline`, `fetching`, `transcription`, `selection` and `review`. Each
+  exports through its `__init__.py` and has at most one router. `main.py` joins them.
 - Service imports run one way: `fetching` and `transcription` import `pipeline`, `projects`,
   `media` and `storage`, and `transcription` also imports `settings`; `pipeline` imports
   `projects` and `media`; `projects` imports none of them. `selection` imports `transcription`
-  for the stored transcript, and `settings`, `pipeline`, `projects` and `storage`. Nothing but
-  `main.py` imports `fetching` or `selection`, and nothing but `main.py` and `selection` imports
+  for the stored transcript, and `settings`, `pipeline`, `projects` and `storage`. `review`, the
+  package behind the Review tab, imports `selection`, `transcription`, `projects`, `media` and
+  `storage`. Nothing but `main.py` imports `fetching` or `review`, nothing but `main.py` and
+  `review` imports `selection`, and nothing but `main.py`, `selection` and `review` imports
   `transcription`. `main.py` hands `projects` what it needs from `pipeline`.
 - The transcriber, `service/clipper/transcription/transcribe_audio.py`, is a program of its own.
   The service starts it by its file path once for each transcription and imports nothing from

@@ -25,6 +25,15 @@ def test_each_project_has_a_folder_of_its_own_under_projects(tmp_path: Path) -> 
     assert data_folder.project_dir("a1b2c3") == tmp_path / "data" / "projects" / "a1b2c3"
 
 
+def test_the_preview_copy_of_a_project_is_kept_in_its_folder(tmp_path: Path) -> None:
+    data_folder = open_data_folder(tmp_path / "data")
+
+    preview = data_folder.preview_file("a1b2c3")
+
+    assert preview == tmp_path / "data" / "projects" / "a1b2c3" / "preview.mp4"
+    assert not preview.exists()
+
+
 def test_the_replay_graph_of_a_project_is_kept_in_its_folder(tmp_path: Path) -> None:
     data_folder = open_data_folder(tmp_path / "data")
 

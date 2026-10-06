@@ -11,7 +11,6 @@ from .read_replay_graph import ReplayPoint
 DOWNLOAD_FAILED = (
     "The video could not be downloaded. Check the link and your connection, then retry."
 )
-PREVIEW_NAME = "preview.mp4"
 PREVIEW_PATTERN = "preview*"
 PARTIAL_SUFFIX = ".partial"
 ENCODING = "utf-8"
@@ -42,8 +41,9 @@ class FetchStage:
         source = self._bring_source(stage_run)
         facts = probe_video(source, self._tools)
         self._repository.record_duration(stage_run.project.id, facts.duration_seconds)
+        preview = self._data_folder.preview_file(stage_run.project.id)
         make_preview_copy(
-            PreviewJob(source, project_dir / PREVIEW_NAME, facts.duration_seconds),
+            PreviewJob(source, preview, facts.duration_seconds),
             self._tools,
             stage_run.stop,
             lambda percent: stage_run.report_percent(preparation_as_step_percent(percent)),

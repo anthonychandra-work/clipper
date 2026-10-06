@@ -8,7 +8,7 @@ from fastapi import FastAPI
 from fastapi.concurrency import run_in_threadpool
 from fastapi.telemetry import TelemetryConfig
 
-from . import pipeline, projects, selection, settings
+from . import pipeline, projects, review, selection, settings
 from .fetching import FetchStage
 from .media import locate_media_tools
 from .problems import handle_app_errors
@@ -64,8 +64,11 @@ def create_app(startup: StartupSettings) -> FastAPI:
     app.state.selection = selection.SelectionDependencies(
         repository=stores.repository, store=stores.selection_store
     )
+    app.state.review = review.ReviewDependencies(
+        repository=stores.repository, data_folder=data_folder
+    )
     handle_app_errors(app)
-    for feature in (projects, pipeline, settings, selection):
+    for feature in (projects, pipeline, settings, selection, review):
         app.include_router(feature.router)
     app.add_api_route("/api/health", report_health, methods=["GET"])
     return app
