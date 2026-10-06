@@ -1,4 +1,5 @@
 import hashlib
+import threading
 from pathlib import Path
 
 import numpy as np
@@ -6,6 +7,7 @@ import numpy.typing as npt
 import pytest
 from PIL import Image
 
+from ..media import MediaWorkStoppedError
 from ..review import CaptionStyle, CaptionWord, Framing
 from .draw_overlays import OverlayLook, draw_overlay, draw_overlays
 from .load_typeface import ARIAL_UNICODE_FILE, INTER_FILE, load_inter
@@ -29,6 +31,7 @@ SIX_LONG_WORDS = (
     "extraordinarily complicated circumstances notwithstanding everything happened".split()
 )
 THIRTY_LETTERS = "Pneumonoultramicroscopicsilico"
+STACKED_KEYWORDS = OverlayLook(CaptionStyle.KEYWORD, Framing.STACK_TWO)
 needs_arial_unicode = pytest.mark.skipif(
     not ARIAL_UNICODE_FILE.is_file(), reason="This Mac has no Arial Unicode."
 )
@@ -232,7 +235,7 @@ def test_each_distinct_overlay_is_drawn_once_into_the_work_folder_and_listed_wit
         OverlayChange(2.2, said),
     ]
 
-    timed = draw_overlays(changes, OverlayLook(CaptionStyle.KEYWORD, Framing.STACK_TWO), tmp_path)
+    timed = draw_overlays(changes, STACKED_KEYWORDS, tmp_path, threading.Event())
 
     assert timed == [
         TimedOverlay("overlay-000.png", 0.0),
@@ -248,3 +251,14 @@ def test_each_distinct_overlay_is_drawn_once_into_the_work_folder_and_listed_wit
     with Image.open(tmp_path / "overlay-001.png") as written:
         assert (written.size, written.mode) == ((1080, 1920), "RGBA")
         assert np.array_equal(np.asarray(written), draw(said, framing=Framing.STACK_TWO))
+
+
+def test_a_stop_ends_the_drawing_as_stopped_before_the_next_picture(tmp_path: Path) -> None:
+    stop = threading.Event()
+    stop.set()
+    changes = [OverlayChange(0.0, Overlay()), OverlayChange(0.5, caption("tell", "you"))]
+
+    with pytest.raises(MediaWorkStoppedError):
+        draw_overlays(changes, STACKED_KEYWORDS, tmp_path, stop)
+
+    assert list(tmp_path.iterdir()) == []

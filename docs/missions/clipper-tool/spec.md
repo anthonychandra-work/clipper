@@ -1072,6 +1072,19 @@ From `intent.md`. Base `82df5ce`.
   title with no picture of its own. The pictures are named `overlay-000.png` and up, in the
   order they first show; a caption-only picture is drawn in about 35 thousandths of a second.
   A113 gives the look and leaves these open. (executor, m5)
+- A129 — The review package gives the clips as they stand from a file of its own, since the
+  file behind the Review tab's answer already holds the ten functions the hooks allow, and that
+  file is unchanged. A render's work folder is `rendering-<clip>` in the project's folder,
+  beside `exports` and never inside it, so the exports folder holds finished files only. A
+  render searches for faces whatever the framing. The caption lies where the framing that was
+  rendered puts it: a Stacked clip that falls back to the Speaker picture has its caption 60%
+  down. Drawing the overlays ends on a stop before the next picture, so a cancel never waits for
+  a clip's whole set. A clip that is not kept fails by name before any file is made, and so does
+  a project without a source. The project of the portrait tests is the cut talk with one clip
+  over its three opening sentences, which the portrait video speaks, in place of made-up words:
+  the service's tests of this package write no transcript of their own, because the package
+  does not import the transcription package. A115 and A116 give the rules and leave these open.
+  (executor, m5)
 
 ## Milestones
 

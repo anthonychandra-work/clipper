@@ -8,6 +8,8 @@ SOURCE_STEM = "source"
 PREVIEW_NAME = "preview.mp4"
 REPLAY_GRAPH_NAME = "replay-graph.json"
 FRAMES_DIR_NAME = "frames"
+EXPORTS_DIR_NAME = "exports"
+RENDER_WORK_PREFIX = "rendering-"
 
 
 @dataclass(frozen=True)
@@ -35,6 +37,15 @@ class DataFolder:
 
     def frame_file(self, project_id: str, clip_id: str, number: int) -> Path:
         return self.frames_dir(project_id) / f"{clip_id}-{number:02d}.jpg"
+
+    def exports_dir(self, project_id: str) -> Path:
+        return self.project_dir(project_id) / EXPORTS_DIR_NAME
+
+    def export_file(self, project_id: str, rank: int, clip_id: str) -> Path:
+        return self.exports_dir(project_id) / f"{rank:02d}-{clip_id}.mp4"
+
+    def render_work_dir(self, project_id: str, clip_id: str) -> Path:
+        return self.project_dir(project_id) / f"{RENDER_WORK_PREFIX}{clip_id}"
 
     def model_dir(self, choice: str) -> Path:
         return self.models_dir / choice

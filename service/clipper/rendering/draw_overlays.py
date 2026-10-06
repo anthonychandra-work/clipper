@@ -1,3 +1,4 @@
+import threading
 from collections.abc import Sequence
 from dataclasses import dataclass, replace
 from pathlib import Path
@@ -5,6 +6,7 @@ from pathlib import Path
 from PIL import Image, ImageChops, ImageDraw, ImageFilter
 from PIL.ImageFont import FreeTypeFont
 
+from ..media import MediaWorkStoppedError
 from ..review import CaptionStyle, CaptionWord, Framing
 from .overlay_timeline import Overlay, OverlayChange
 from .render_plan import FRAME_HEIGHT, FRAME_WIDTH, TimedOverlay
@@ -48,13 +50,16 @@ class OverlayLook:
 
 
 def draw_overlays(
-    changes: Sequence[OverlayChange], look: OverlayLook, work_dir: Path
+    changes: Sequence[OverlayChange], look: OverlayLook, work_dir: Path, stop: threading.Event
 ) -> list[TimedOverlay]:
     names: dict[Overlay, str] = {}
     for change in changes:
-        if change.overlay not in names:
-            names[change.overlay] = f"overlay-{len(names):03d}.png"
-            draw_overlay(change.overlay, look).save(work_dir / names[change.overlay])
+        if change.overlay in names:
+            continue
+        if stop.is_set():
+            raise MediaWorkStoppedError()
+        names[change.overlay] = f"overlay-{len(names):03d}.png"
+        draw_overlay(change.overlay, look).save(work_dir / names[change.overlay])
     return [TimedOverlay(names[change.overlay], change.start_seconds) for change in changes]
 
 

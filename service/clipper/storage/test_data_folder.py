@@ -55,6 +55,36 @@ def test_the_filmstrip_frames_of_a_project_are_kept_under_frames_in_its_folder(
     assert not data_folder.frames_dir("a1b2c3").exists()
 
 
+def test_the_export_of_a_clip_is_kept_under_exports_by_its_rank_and_its_name(
+    tmp_path: Path,
+) -> None:
+    data_folder = open_data_folder(tmp_path / "data")
+    project_dir = tmp_path / "data" / "projects" / "a1b2c3"
+
+    assert data_folder.exports_dir("a1b2c3") == project_dir / "exports"
+    assert data_folder.export_file("a1b2c3", 1, "c01") == project_dir / "exports" / "01-c01.mp4"
+    assert data_folder.export_file("a1b2c3", 12, "c07") == project_dir / "exports" / "12-c07.mp4"
+    assert not data_folder.exports_dir("a1b2c3").exists()
+
+
+def test_the_work_folder_of_a_render_is_the_clip_s_own_and_outside_the_exports(
+    tmp_path: Path,
+) -> None:
+    data_folder = open_data_folder(tmp_path / "data")
+    project_dir = tmp_path / "data" / "projects" / "a1b2c3"
+
+    assert data_folder.render_work_dir("a1b2c3", "c01") == project_dir / "rendering-c01"
+    assert data_folder.render_work_dir("a1b2c3", "c02") == project_dir / "rendering-c02"
+    assert not data_folder.render_work_dir("a1b2c3", "c01").exists()
+
+
+def test_a_render_s_work_folder_is_not_taken_for_the_source(tmp_path: Path) -> None:
+    data_folder = open_data_folder(tmp_path / "data")
+    data_folder.render_work_dir("a1b2c3", "c01").mkdir(parents=True)
+
+    assert data_folder.find_source_file("a1b2c3") is None
+
+
 def test_each_model_has_a_folder_of_its_own_under_models(tmp_path: Path) -> None:
     data_folder = open_data_folder(tmp_path / "data")
 

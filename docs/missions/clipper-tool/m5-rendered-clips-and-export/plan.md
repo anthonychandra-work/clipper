@@ -332,12 +332,16 @@ What the spec's file list leaves out
   weight and wider than at weight 400; a caption in Japanese is drawn in other shapes than
   Inter's missing-character box; the file the drawing reads has the checksum of M4's Findings.
 
-- [ ] T7 — Render a kept clip of a project
+- [x] T7 — Render a kept clip of a project
   Files: `service/clipper/review/describe_review.py`,
-  `service/clipper/review/test_describe_review.py`, `service/clipper/review/__init__.py`,
+  `service/clipper/review/test_describe_review.py`,
+  `service/clipper/review/read_standing_review.py`,
+  `service/clipper/review/test_read_standing_review.py`, `service/clipper/review/__init__.py`,
   `service/clipper/storage/data_folder.py`, `service/clipper/storage/test_data_folder.py`,
   `service/clipper/rendering/render_clip.py`, `service/clipper/rendering/test_render_clip.py`,
-  `service/clipper/rendering/conftest.py`, `service/clipper/rendering/__init__.py`
+  `service/clipper/rendering/draw_overlays.py`,
+  `service/clipper/rendering/test_draw_overlays.py`, `service/clipper/rendering/conftest.py`,
+  `service/clipper/rendering/__init__.py`
   Done: the data folder knows where a project's exports, a clip's export and a render's work
   folder are kept (A115). The review package gives a project's clips as they stand to another
   package: for each its decision, its title, its times and its captions in a style, with the
