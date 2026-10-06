@@ -9,6 +9,7 @@ from ..review import ReviewSources
 from ..review.conftest import CutTalk
 from ..review.conftest import cut_talk as cut_talk
 from ..review.conftest import cut_the_talk as cut_the_talk
+from ..review.conftest import recorded_claude_address as recorded_claude_address
 from ..review.conftest import sources as sources
 from ..review.conftest import talk_candidates as talk_candidates
 from ..review.conftest import talk_sentences as talk_sentences

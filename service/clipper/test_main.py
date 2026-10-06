@@ -1,3 +1,4 @@
+import threading
 import time
 from collections.abc import Callable, Iterator
 from pathlib import Path
@@ -32,6 +33,16 @@ MODEL_DOWNLOAD_FAILED = (
     "The transcription model could not be downloaded. Check your connection, then retry."
 )
 NO_KEY = "No Anthropic API key is saved. Add one in Settings, then retry."
+LINK_DRAFT = {
+    "sourceKind": "link",
+    "link": "https://video.example/talk",
+    "platforms": ["shorts", "tiktok"],
+}
+RENDER_THREAD = "clipper-renders"
+
+
+def count_render_threads() -> int:
+    return sum(1 for thread in threading.enumerate() if thread.name == RENDER_THREAD)
 
 
 @pytest.fixture
@@ -61,6 +72,30 @@ def test_starting_creates_the_data_folder_and_its_database(
     app: FastAPI, settings: StartupSettings
 ) -> None:
     assert (settings.data_dir / "clipper.sqlite3").is_file()
+
+
+def test_the_export_of_a_new_project_is_answered_with_its_look_and_no_clips(app: FastAPI) -> None:
+    not_started = TestClient(app)
+    created = not_started.post("/api/projects", json=LINK_DRAFT).json()
+
+    export = not_started.get(f"/api/projects/{created['id']}/export")
+
+    assert export.status_code == 200
+    assert export.json() == {
+        "look": {"captionStyle": "keyword", "framing": "follow-speaker", "showHookTitle": True},
+        "hasSource": False,
+        "platforms": ["tiktok", "shorts"],
+        "clips": [],
+    }
+
+
+def test_the_render_worker_runs_with_the_app_and_ends_when_the_app_stops(app: FastAPI) -> None:
+    before = count_render_threads()
+
+    with TestClient(app):
+        while_running = count_render_threads()
+
+    assert (before, while_running, count_render_threads()) == (0, 1, 0)
 
 
 def test_starting_without_the_media_tools_fails_before_anything_is_created(tmp_path: Path) -> None:

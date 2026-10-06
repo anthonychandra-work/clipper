@@ -1101,6 +1101,18 @@ From `intent.md`. Base `82df5ce`.
   that was killed. A render whose project was deleted before its turn is passed over. The cause
   of a failed render is logged with its clip and its project. A116 and A120 give the rules and
   leave these open. (executor, m5)
+- A132 — Render queues every kept clip again, a finished one among them, so a change of the
+  look or of a clip reaches its file. A clip has a download address whenever a finished file of
+  it is on the Mac, also while it waits, renders or has failed again; a file on the Mac that no
+  render accounts for is no export. A clip that is not kept and a clip that does not exist are
+  both refused with A91's sentence when queued. A file's name leaves out the characters
+  `\ / : * ? " < > |` and control characters, and a title made of nothing else gives the rank
+  alone. A finished file downloads whether or not its clip is still kept. A percent is given to
+  one decimal. Deleting a project takes its waiting renders out of the queue before it stops the
+  running one. `main.py` holds what the tool is built on, its stores and its two workers as
+  three small records, with the stores opened by a method of their record, so the file stays at
+  the ten functions the hooks allow. A117 gives the addresses and leaves these open.
+  (executor, m5)
 
 ## Milestones
 

@@ -411,10 +411,11 @@ What the spec's file list leaves out
   out and not rendered; a shutdown during a render leaves it waiting, and a new worker on the
   same database renders it.
 
-- [ ] T10 — Serve the export, and start, retry, cancel and download through the service
+- [x] T10 — Serve the export, and start, retry, cancel and download through the service
   Files: `service/clipper/rendering/export_schemas.py`,
   `service/clipper/rendering/describe_export.py`,
   `service/clipper/rendering/test_describe_export.py`,
+  `service/clipper/rendering/find_download.py`,
   `service/clipper/rendering/queue_renders.py`, `service/clipper/rendering/test_queue_renders.py`,
   `service/clipper/rendering/router.py`, `service/clipper/rendering/test_router.py`,
   `service/clipper/rendering/test_whole_app.py`, `service/clipper/rendering/conftest.py`,
