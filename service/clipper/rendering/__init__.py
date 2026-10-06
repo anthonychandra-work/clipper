@@ -1,6 +1,8 @@
+from .draw_overlays import OverlayLook, draw_overlays
 from .encode_clip import encode_clip
 from .find_faces import Face, FaceFinder, UnreadablePictureError
 from .frame_picture import PictureShape, choose_framing, frame_picture
+from .overlay_timeline import Overlay, OverlayChange, time_overlays
 from .render_plan import (
     Layout,
     PicturePart,
@@ -19,6 +21,9 @@ __all__ = [
     "FaceSearchJob",
     "Layout",
     "NoPictureError",
+    "Overlay",
+    "OverlayChange",
+    "OverlayLook",
     "PicturePart",
     "PictureShape",
     "Place",
@@ -30,7 +35,9 @@ __all__ = [
     "UnreadablePictureError",
     "WholePictureLayout",
     "choose_framing",
+    "draw_overlays",
     "encode_clip",
     "frame_picture",
     "sample_faces",
+    "time_overlays",
 ]

@@ -1060,6 +1060,18 @@ From `intent.md`. Base `82df5ce`.
   progress after each picture and none while ffmpeg writes them. The picture's shape is read
   from the first of them. A stretch that holds no picture fails with ffmpeg's words. A112 gives
   the rate and the size and leaves these open. (executor, m5)
+- A128 — The drawing is three files, because one would hold more than the ten functions the
+  hooks allow: one chooses the typeface, one sets a text in lines, one draws the pictures. Inter
+  is drawn at the largest optical size it holds, 32, since every text here is larger. A line's
+  letters are centred between top and bottom in a line as high as the type size times the line
+  height. A caption's shadow is the preview's, scaled to the frame: a
+  black copy 7 px lower and a copy blurred by 18 px. A word too wide for its box makes the whole
+  text smaller, down to 12 px. Inter lacks a character when it draws it as the box it draws for
+  a character no typeface holds. Several captions that start before the in point leave the last
+  of them at the first frame. A caption that starts exactly at the third second ends the hook
+  title with no picture of its own. The pictures are named `overlay-000.png` and up, in the
+  order they first show; a caption-only picture is drawn in about 35 thousandths of a second.
+  A113 gives the look and leaves these open. (executor, m5)
 
 ## Milestones
 

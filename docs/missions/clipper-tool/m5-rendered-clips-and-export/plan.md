@@ -307,11 +307,12 @@ What the spec's file list leaves out
   video stored on its side gives an upright shape; a stop set during the work ends it and leaves
   the folder empty.
 
-- [ ] T6 — Draw the captions and the hook title as pictures, and say when each shows
+- [x] T6 — Draw the captions and the hook title as pictures, and say when each shows
   Files: `service/clipper/rendering/overlay_timeline.py`,
   `service/clipper/rendering/test_overlay_timeline.py`,
   `service/clipper/rendering/draw_overlays.py`, `service/clipper/rendering/test_draw_overlays.py`,
-  `service/clipper/rendering/__init__.py`
+  `service/clipper/rendering/load_typeface.py`, `service/clipper/rendering/set_type.py`,
+  `service/clipper/rendering/test_set_type.py`, `service/clipper/rendering/__init__.py`
   Done: from a clip's captions in one style (A97), its length and the hook title switch comes
   the list of moments at which the overlay changes: nothing before the first caption starts
   (A107), each caption from its start until the next one starts, the last until the clip ends,
