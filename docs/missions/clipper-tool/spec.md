@@ -884,6 +884,145 @@ From `intent.md`. Base `82df5ce`.
   rejected as "Not Interesting". The capture test names the colours at five points across the
   preview, three tenths of the way down, and asks for more than one. A103 names the captures
   and leaves these open. (executor, m4)
+- A111 — OpenCV is `opencv-python-headless` 5.0.0.93, its newest release, built on the Mac from
+  its source release with video reading and FFmpeg switched off. Measured: the ready-made package
+  for this Mac carries 99 libraries inside it, FFmpeg, x264 and x265 among them, under the LGPL
+  and the GPL, and the package's own notes say every ready-made package ships FFmpeg. D63 names
+  OpenCV and the boundaries allow permissive licences only; the build keeps both. It links
+  nothing but Apple's own frameworks, and what it compiles in beside OpenCV (libjpeg-turbo,
+  libpng, zlib, Protocol Buffers, FlatBuffers and OpenCV's ARM routines) carries permissive
+  licences. Two things OpenCV would otherwise fetch while it is built, a library from Arm's
+  server and a font it builds in, are switched off, so the build fetches nothing beyond what pip
+  downloads. `pnpm bootstrap` builds it once, in about four minutes, with the compiler of Apple's
+  Command Line Tools, which Homebrew already requires. The tools pip fetches for the build
+  (CMake, scikit-build, setuptools, wheel, packaging, distro and pip) are pinned in a file of
+  their own, serve the build alone and are not part of the app. Clipper reads no video through
+  OpenCV: ffmpeg writes the pictures it searches. (planner, m5)
+- A112 — The face detector's model is `face_detection_yunet_2026may.onnx` from OpenCV's model zoo,
+  which names it as its default for OpenCV 5. It is 229,738 bytes, under the MIT licence, and sits
+  with that licence inside the rendering package (A14). Its notes give faces of about 10 to 300
+  pixels as what it finds, so a picture is reduced to 640 pixels on its longer side before it is
+  searched. A face counts from a score of 0.6. Faces are looked for when a clip is rendered, five
+  times a second over that clip's stretch of the source. The preview on the Review tab keeps A98's
+  framings without faces: D33 calls it an approximation, and searching every candidate when the
+  clips are cut would lengthen that step for clips that are never kept. (planner, m5)
+- A113 — Captions and the hook title are drawn with Pillow 12.3.0, its newest release, under the
+  MIT-CMU licence, from the Inter file of A15, with the sizes, places and colours of the preview
+  on a frame 1080 px wide. A caption is centred in a box that leaves 8% of the width free on each
+  side, with lines 1.1 times the type size apart; its top edge lies 60% down the frame in the
+  Speaker framing, 45% in the Stacked and 68% in the Full Frame. Keyword captions are 79 px at
+  weight 900, in capitals, white with the highlighted word in `#FFD600`; Each Word captions are
+  114 px at weight 900, in capitals; Plain captions are 60 px at weight 700, written as spoken.
+  Each has a black shadow under it and a soft one around it. A caption too long for one line
+  wraps, and a word wider than the box is drawn smaller until it fits. The hook title is 54 px
+  at weight 800 in `#111318`, centred with lines 1.15 times the type size apart, in a white box
+  that starts 10% down the frame, leaves 9% of the width free on each side, has corners rounded
+  by 43 px and keeps 29 px above and below the text and 36 px beside it. A text with a character
+  Inter lacks is drawn whole in Arial Unicode, a typeface macOS carries, and in Inter where the
+  Mac has no such file: Inter holds Latin, Greek and Cyrillic letters, D60 names it as the one
+  typeface, and D8 allows any language. Each distinct overlay, a caption with or without the hook
+  title, is one picture the size of the frame, clear everywhere else. (planner, m5)
+- A114 — The Speaker framing shows the largest 9:16 part of the picture. Its middle follows the
+  middle of the largest face, averaged over the second around each moment, so the picture
+  glides. A moment with no face takes the place of the nearest moment that has one, and a clip
+  with no face at all shows the middle of the picture. The crop stays with the face nearest the
+  one it followed a moment before until another face covers at least a quarter more area, so two
+  people of one size do not pull it back and forth. The Stacked framing is used when at least
+  half of the clip's moments show two faces: the two largest are shown one above the other, the
+  one further left above, each in a 9:8 part of the picture that is half the picture's width
+  wide where its height allows, centred on its face with the same averaging. With fewer such
+  moments the clip is rendered in the Speaker framing. The Full Frame framing shows the whole
+  picture as large as the frame allows, in the middle, over a blurred copy of itself that fills
+  the frame. Every part is kept inside the picture. Places are handed to ffmpeg as shares of the
+  picture, so a video stored on its side is cropped as it plays. D36 and D63 give the framings
+  and leave these rules open. (planner, m5)
+- A115 — An export is cut from the fetched source and not from the preview copy, so a 1080p
+  source keeps its detail. It is an MP4 of 1080 × 1920 at 30 frames a second: H.264 in the High
+  profile with 4:2:0 colour at a constant quality of 20, AAC stereo sound at 48 kHz and 160 kb/s,
+  and its index at the front of the file. It starts at the in point and lasts the clip's length,
+  to the next whole frame. A clip's file is `exports/<rank>-<clip>.mp4` in the project's folder,
+  as in `exports/01-c01.mp4`, the form the prototype's row shows. It is written under another
+  name and moved into place when it is whole. It downloads as `video/mp4`, marked as an
+  attachment, under the clip's rank and title, as in `01 The worst day my bakery ever had.mp4`,
+  with the characters a file name cannot hold left out. (planner, m5)
+- A116 — A clip's render is waiting, rendering, done or failed, and a clip that was never queued
+  has none. Render puts every kept clip that is not already waiting or rendering at the end of
+  one queue, in the order of the ranks. One worker renders one clip at a time, the oldest in the
+  queue first, whatever its project, and beside the queue of D12, so an export does not wait for
+  another project's transcription. A render reads the clip's points, its title and the project's
+  look when its turn comes; a clip that is no longer kept by then leaves the queue. The bar of a
+  render counts the search for faces as its first tenth. Cancel stops the project's clip that is
+  being rendered and takes its waiting clips out of the queue; each goes back to done when an
+  earlier export of it is on the Mac, which stays in place, and to no render otherwise. A failed
+  render stays failed until Retry queues that clip again. A finished export stays as it was
+  rendered: a later change to the clip or to the look reaches the file at the next Render, which
+  replaces the file only when the new one is whole. The file of a clip that is no longer kept
+  stays on the Mac (D42). When the tool stops, the clip being rendered goes back into the queue
+  and is rendered at the next start. Deleting a project stops its render first. (planner, m5)
+- A117 — The Export tab reads one address, `GET /api/projects/<id>/export`. It gives the look
+  without the safe zones, whether the source is on the Mac, the platforms chosen for the project
+  and the kept clips in the order of their ranks (`look` with `captionStyle`, `framing` and
+  `showHookTitle`, `hasSource`, `platforms`, `clips`). A clip holds `id`, `rank`, `title`,
+  `seconds`, `file`, `render` with `state` (`none`, `waiting`, `rendering`, `done` or `failed`),
+  `percent` and `reason`, `download`, the address of its finished file or none, and `texts`, for
+  each chosen platform in the order TikTok, Reels, Shorts its `platform`, `title` and
+  `description`. A project with no kept clip answers with no clips, whatever its state, and
+  reads no transcript. `POST /api/projects/<id>/renders` queues the kept clips,
+  `POST /api/projects/<id>/clips/<clip>/render` queues one, and
+  `DELETE /api/projects/<id>/renders` cancels; each answers with the export.
+  `GET /api/projects/<id>/clips/<clip>/export` gives the finished file. Queueing is refused with
+  status 409 and "The source video was deleted to free space. New clips cannot be rendered." when
+  the source is gone, and a clip that is not kept is refused with the sentence of A91. A clip
+  without a finished file answers 404 with "This clip has no export on this Mac." (planner, m5)
+- A118 — The Export tab shows a title and a description for each platform chosen for the project
+  (A16), each in a row of its own with its own Copy control: "TikTok title", "TikTok
+  description", "Reels title", "Reels caption", "Shorts title" and "Shorts description". The
+  prototype has one text for each platform and words three of these labels; D21 asks for both
+  texts, and a platform's upload form takes them in separate fields. Copy shows "Copied". A page
+  opened at the Mac's network address, as the phone opens it, is not a secure page, and the
+  browser gives such a page no clipboard interface (measured); there Copy selects the text and
+  uses the browser's older copy command. When neither works it shows "Copying is blocked here.
+  Select the text and copy it.", as the prototype does. Download is a link to the file's address,
+  so the phone's browser saves it as it saves any file. (planner, m5)
+- A119 — A project reads `exported` from the moment its first clip has finished rendering, and
+  its JSON carries the number of its clips that have a finished file as `exportedCount`. Its row
+  in the Library then reads "Exported · 2 clips exported", or "1 clip exported", with the
+  prototype's tick. The prototype's row adds "results logged", which M6 builds. Exports stay
+  until the project is deleted (D42), so the project stays exported. (planner, m5)
+- A120 — A render that fails for a full disk reads "Not enough free disk space to finish. Free
+  some space, then retry.", the sentence of the queue and of the prototype's sample failure. A
+  render whose source has gone since it was queued reads "The source video is no longer on this
+  Mac, so this clip cannot be rendered." Any other failure reads "This clip could not be
+  rendered. Retry to render it again.", and its cause goes to the log. With the source gone the
+  Export tab shows the prototype's notice, "The source video was deleted to free space. Finished
+  exports are still here. New clips cannot be rendered.", switches Render off, and still offers
+  Download for every clip that has a finished file. While clips are queued or rendering, the tab
+  asks for the export once a second (D64). A row reads "Not rendered", "Waiting" or "Rendering"
+  with its bar, shows the reason with Retry, or offers "Download MP4". (planner, m5)
+- A121 — The portrait is Alexander Gardner's photograph of Abraham Lincoln of 8 November 1863,
+  in the public domain, taken from Wikimedia Commons
+  (`File:Abraham_Lincoln_O-77_matte_collodion_print.jpg`, SHA-1
+  `61bb61bed8175f8f669c288bf1ecba02b3a33a9e`) and committed 600 px wide, about 55 KB, with a
+  note beside it that gives its source, its author, its date and its licence. The fixture
+  builder makes `portrait.mp4` from it: twelve seconds at 1280 × 720 over the first twelve
+  seconds of the talk's speech, with the photograph twice on a plain ground, small and mirrored
+  on the left, and large on the right, where it drifts 100 px further right over the twelve
+  seconds. One video so holds a face that moves, for the Speaker framing, and two faces, for the
+  Stacked. `talk.mp4`, whose picture is colour bars, is the fixture with no face (measured on
+  that picture: the detector finds no face at a score of 0.3 or more). (planner, m5)
+- A122 — The checks of this milestone save their evidence into the folder `CLIPPER_EVIDENCE_DIR`
+  names: `talk-exports.json`, with each kept clip of the talk as the export gives it and what
+  ffprobe reports for its file (`clips` with `id`, `seconds` and `probe`); `talk-c01-at-1s.jpg`
+  and `talk-c01-at-4s.jpg`, frames of the talk's first clip rendered with keyword captions and
+  the hook title on; `framing-follow-speaker.jpg`, `framing-stack-two.jpg` and
+  `framing-whole-frame.jpg`, the frame three seconds into one clip of the portrait video in each
+  framing; and `export-<width>-<theme>.png`, the Export tab at 390 and 1360 px in light and in
+  dark, with one clip finished and one not rendered. A frame counts as showing an overlay when
+  its pixels match the overlay's picture where that picture is solid. A browser check that
+  renders takes a talk made for it alone, because nothing but deleting a project removes an
+  export; the Review checks go on sharing theirs (A103). A render is made to fail by putting a
+  file that is no video in the source's place, and the source is made to be gone by moving it
+  aside in the test's data folder; the test puts it back. (planner, m5)
 
 ## Milestones
 
