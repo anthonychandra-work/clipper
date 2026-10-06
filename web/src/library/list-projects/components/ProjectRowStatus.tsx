@@ -9,6 +9,7 @@ export function ProjectRowStatus({ project }: { project: Project }) {
     return (
       <span className={`project-row__status project-row__status--${status.status}`}>
         {status.hasWarning ? <Icon name="warning" /> : null}
+        {status.status === 'exported' ? <Icon name="checkmark" /> : null}
         {status.text}
       </span>
     );

@@ -17,6 +17,7 @@ const TALK: Project = {
   candidateCount: 0,
   keptCount: 0,
   rejectedCount: 0,
+  exportedCount: 0,
 };
 
 function buildStore(answers: () => Promise<ProjectList>) {

@@ -9,7 +9,7 @@ import type { ScreenVisit } from './walk-screens';
 const DECLINED =
   'Claude declined to read this transcript. Retry, or choose another model for this step in Settings.';
 const SCORING_THREE_HOURS = 'Scoring 180 windows';
-const MOST_CLIPS = { candidateCount: 12, keptCount: 10, rejectedCount: 2 };
+const MOST_CLIPS = { candidateCount: 12, keptCount: 10, rejectedCount: 2, exportedCount: 0 };
 const READY_ROW = 'Ready to review · 12 candidates, 10 kept, 2 rejected';
 
 export function presentSelectionStates(seeded: SeededProjects): PresentedStates {

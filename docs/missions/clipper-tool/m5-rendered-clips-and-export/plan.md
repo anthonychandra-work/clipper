@@ -564,7 +564,7 @@ What the spec's file list leaves out
   rows; with the page's clipboard interface taken away, as at the Mac's network address, Copy
   still leaves the text on the clipboard, read from a second page.
 
-- [ ] T15 — Show an exported project in the Library
+- [x] T15 — Show an exported project in the Library
   Files: `web/src/library/library.types.ts`,
   `web/src/library/list-projects/lib/describe-row-status.ts`,
   `web/src/library/list-projects/lib/describe-row-status.test.ts`,

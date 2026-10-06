@@ -19,6 +19,7 @@ function describeProject(status: ProjectStatus): Project {
     candidateCount: 0,
     keptCount: 0,
     rejectedCount: 0,
+    exportedCount: 0,
   };
 }
 

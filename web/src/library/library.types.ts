@@ -45,6 +45,7 @@ export interface Project {
   candidateCount: number;
   keptCount: number;
   rejectedCount: number;
+  exportedCount: number;
 }
 
 export interface ProjectList {

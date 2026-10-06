@@ -32,14 +32,19 @@ function describeProject(status: ProjectStatus, steps: ProjectStep[]): Project {
     candidateCount: 0,
     keptCount: 0,
     rejectedCount: 0,
+    exportedCount: 0,
   };
 }
 
-type ClipCounts = Pick<Project, 'candidateCount' | 'keptCount' | 'rejectedCount'>;
+type ClipCounts = Pick<Project, 'candidateCount' | 'keptCount' | 'rejectedCount' | 'exportedCount'>;
 
 function describeReadyProject(counts: Partial<ClipCounts>): Project {
   const steps = planSteps('done', 'Fetching video').map((step) => ({ ...step, state: 'done' as const, percent: 100 }));
   return { ...describeProject('ready', steps), ...counts };
+}
+
+function describeExportedProject(exportedCount: number): Project {
+  return { ...describeReadyProject({ candidateCount: 6, keptCount: 2, exportedCount }), status: 'exported' };
 }
 
 describe('describeRowStatus', () => {
@@ -110,6 +115,28 @@ describe('describeRowStatus', () => {
     [{ candidateCount: 12, keptCount: 10, rejectedCount: 2 }, 'Ready to review · 12 candidates, 10 kept, 2 rejected'],
   ])('counts the kept and the rejected clips of a ready project in its row', (counts, text) => {
     expect(describeRowStatus(describeReadyProject(counts))).toMatchObject({ kind: 'note', status: 'ready', text });
+  });
+
+  it.each([
+    [1, 'Exported · 1 clip exported'],
+    [2, 'Exported · 2 clips exported'],
+    [12, 'Exported · 12 clips exported'],
+  ])('reads the row of an exported project with %i exports as a note', (exportedCount, text) => {
+    expect(describeRowStatus(describeExportedProject(exportedCount))).toEqual({
+      kind: 'note',
+      status: 'exported',
+      text,
+      hasWarning: false,
+    });
+  });
+
+  it('keeps the row of a ready project its own, whatever its exports count', () => {
+    const ready = describeReadyProject({ candidateCount: 6, keptCount: 2, rejectedCount: 1, exportedCount: 2 });
+
+    expect(describeRowStatus(ready)).toMatchObject({
+      status: 'ready',
+      text: 'Ready to review · 6 candidates, 2 kept, 1 rejected',
+    });
   });
 });
 

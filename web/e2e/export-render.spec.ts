@@ -1,5 +1,7 @@
 import { statSync } from 'node:fs';
 
+import type { Locator, Page } from '@playwright/test';
+
 import {
   expect,
   followRisingBar,
@@ -25,6 +27,20 @@ const RENDERING = {
 const SHORTEST_CLIP = 'c06';
 const SHORTEST_TITLE = 'The smallest lesson is to write things down';
 const SMALLEST_CLIP_BYTES = 100_000;
+const EXPORTED_ROW = { status: 'Exported · 2 clips exported', ticks: 1 };
+
+async function readExportedRow(place: Locator, projectId: string) {
+  const status = place.locator(`[id="project-${projectId}"] .project-row__status--exported`);
+  await expect(status).toBeVisible();
+  return { status: (await status.innerText()).trim(), ticks: await status.locator('svg.icon').count() };
+}
+
+async function readExportedRowAtBothWidths(page: Page, projectId: string) {
+  const inTheSidebar = await readExportedRow(page.locator('[id="sidebar"]'), projectId);
+  await page.setViewportSize(PHONE);
+  await page.goto('/');
+  return { inTheSidebar, inTheLibrary: await readExportedRow(page.locator('main'), projectId) };
+}
 
 test.describe('at 1360 px', () => {
   test.use({ viewport: DESKTOP });
@@ -44,13 +60,17 @@ test.describe('at 1360 px', () => {
     const [earlier, later] = await followRisingBar(page);
     await waitForDownloads(page, 2);
     await expect(page.getByRole('button', { name: 'Render 2 Clips' })).toBeEnabled();
+    const actionsWhenDone = await readRenderActions(page);
+    const rowsWhenDone = await readExportRows(page);
+    const libraryRows = await readExportedRowAtBothWidths(page, ownTalk.project.id);
 
     expect(before).toEqual({ render: 'Render 2 Clips', ...IDLE });
     expect(during).toEqual(RENDERING);
     expect(earlier.map((row) => row.barLabel)).toEqual(['Rendering', 'Waiting']);
     expect(later[0].barValue).toBeGreaterThan(earlier[0].barValue ?? 0);
-    expect(await readRenderActions(page)).toEqual({ render: 'Render 2 Clips', ...IDLE });
-    expect((await readExportRows(page)).map((row) => row.status)).toEqual(['Download MP4', 'Download MP4']);
+    expect(actionsWhenDone).toEqual({ render: 'Render 2 Clips', ...IDLE });
+    expect(rowsWhenDone.map((row) => row.status)).toEqual(['Download MP4', 'Download MP4']);
+    expect(libraryRows).toEqual({ inTheSidebar: EXPORTED_ROW, inTheLibrary: EXPORTED_ROW });
   });
 });
 

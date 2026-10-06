@@ -29,6 +29,7 @@ export function presentCrowdedReview(talk: ReadyTalk): CrowdedReview {
       candidateCount: CLIP_COUNT,
       keptCount: KEPT_COUNT,
       rejectedCount: CLIP_COUNT - KEPT_COUNT,
+      exportedCount: 0,
     },
     review: {
       ...talk.review,
