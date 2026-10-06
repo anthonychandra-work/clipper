@@ -56,6 +56,23 @@ def test_a_new_project_has_no_candidate_and_a_stored_count_is_read_back(
     assert [project.candidate_count for project in repository.list_newest_first()] == [6, 0]
 
 
+def test_a_new_project_has_no_kept_or_rejected_clip_and_stored_counts_are_read_back(
+    repository: ProjectRepository,
+) -> None:
+    new = plan_link_project("New")
+    reviewed = replace(
+        plan_link_project("Reviewed"), candidate_count=6, kept_count=2, rejected_count=1
+    )
+
+    repository.add(new)
+    repository.add(reviewed)
+
+    assert (repository.get(new.id).kept_count, repository.get(new.id).rejected_count) == (0, 0)
+    assert repository.get(reviewed.id) == reviewed
+    assert [project.kept_count for project in repository.list_newest_first()] == [2, 0]
+    assert [project.rejected_count for project in repository.list_newest_first()] == [1, 0]
+
+
 def test_a_failure_that_points_to_settings_is_read_back_with_its_mark(
     repository: ProjectRepository,
 ) -> None:

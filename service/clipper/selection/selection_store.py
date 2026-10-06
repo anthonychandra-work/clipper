@@ -39,7 +39,10 @@ LIST_CANDIDATES = "SELECT * FROM candidates WHERE project_id = ? ORDER BY rank"
 DELETE_PEAKS = "DELETE FROM replay_peaks WHERE project_id = ?"
 INSERT_PEAK = "INSERT INTO replay_peaks (project_id, start_seconds, end_seconds) VALUES (?, ?, ?)"
 LIST_PEAKS = "SELECT * FROM replay_peaks WHERE project_id = ? ORDER BY start_seconds"
-SET_CANDIDATE_COUNT = "UPDATE projects SET candidate_count = ? WHERE id = ?"
+# Deleting a candidate removes its review with it, so no clip of the new cut is kept or rejected.
+SET_COUNTS_OF_NEW_CUT = """
+UPDATE projects SET candidate_count = ?, kept_count = 0, rejected_count = 0 WHERE id = ?
+"""
 
 
 class SelectionStore:
@@ -66,7 +69,7 @@ class SelectionStore:
             connection.execute(DELETE_PEAKS, [project_id])
             connection.executemany(INSERT_CANDIDATE, candidate_rows)
             connection.executemany(INSERT_PEAK, peak_rows)
-            connection.execute(SET_CANDIDATE_COUNT, [len(candidate_rows), project_id])
+            connection.execute(SET_COUNTS_OF_NEW_CUT, [len(candidate_rows), project_id])
 
     def list_candidates(self, project_id: str) -> list[Candidate]:
         with self._database.transaction() as connection:

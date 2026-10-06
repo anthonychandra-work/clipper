@@ -85,12 +85,38 @@ ALTER TABLE projects ADD COLUMN candidate_count INTEGER NOT NULL DEFAULT 0;
 
 ADD_HALT_MARK = "ALTER TABLE projects ADD COLUMN halt_opens_settings INTEGER NOT NULL DEFAULT 0;"
 
+CREATE_REVIEW = """
+CREATE TABLE clip_reviews (
+    project_id TEXT NOT NULL,
+    clip_id TEXT NOT NULL,
+    decision TEXT NOT NULL,
+    reject_reason TEXT,
+    title TEXT,
+    start_sentence INTEGER NOT NULL,
+    start_nudge INTEGER NOT NULL,
+    end_sentence INTEGER NOT NULL,
+    end_nudge INTEGER NOT NULL,
+    PRIMARY KEY (project_id, clip_id),
+    FOREIGN KEY (project_id, clip_id) REFERENCES candidates (project_id, id) ON DELETE CASCADE
+);
+CREATE TABLE project_looks (
+    project_id TEXT PRIMARY KEY REFERENCES projects (id) ON DELETE CASCADE,
+    caption_style TEXT NOT NULL,
+    framing TEXT NOT NULL,
+    show_hook_title INTEGER NOT NULL,
+    show_safe_zones INTEGER NOT NULL
+);
+ALTER TABLE projects ADD COLUMN kept_count INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE projects ADD COLUMN rejected_count INTEGER NOT NULL DEFAULT 0;
+"""
+
 MIGRATIONS: tuple[str, ...] = (
     CREATE_PROJECTS,
     CREATE_PREFERENCES,
     ADD_STEP_LABEL,
     CREATE_SELECTION,
     ADD_HALT_MARK,
+    CREATE_REVIEW,
 )
 
 

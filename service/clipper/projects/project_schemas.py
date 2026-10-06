@@ -48,6 +48,8 @@ class ProjectResponse(ApiModel):
     halt: HaltResponse | None
     upload: UploadResponse | None
     candidate_count: int
+    kept_count: int
+    rejected_count: int
 
 
 class ProjectListResponse(ApiModel):

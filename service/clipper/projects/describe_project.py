@@ -17,6 +17,8 @@ def describe_project(project: Project) -> ProjectResponse:
         halt=describe_halt(project),
         upload=describe_upload(project.upload) if project.upload else None,
         candidate_count=project.candidate_count,
+        kept_count=project.kept_count,
+        rejected_count=project.rejected_count,
     )
 
 

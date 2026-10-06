@@ -187,7 +187,7 @@ What the spec's file list leaves out
   address reports the project's length, plays so that its time advances, and plays on from a
   later moment after a jump there. `pnpm test` exits 0.
 
-- [ ] T2 — Store a clip's review and a project's look, and count kept and rejected clips
+- [x] T2 — Store a clip's review and a project's look, and count kept and rejected clips
   Files: `service/clipper/storage/open_database.py`,
   `service/clipper/storage/test_open_database.py`, `service/clipper/review/review_records.py`,
   `service/clipper/review/review_store.py`, `service/clipper/review/test_review_store.py`,

@@ -10,6 +10,17 @@ ADD_AUTHOR = "ALTER TABLE notes ADD COLUMN author TEXT;"
 MIGRATIONS_OF_M1 = MIGRATIONS[:2]
 MIGRATIONS_OF_M2 = MIGRATIONS[:3]
 MIGRATIONS_BEFORE_THE_HALT_MARK = MIGRATIONS[:4]
+MIGRATIONS_OF_M3 = MIGRATIONS[:5]
+ADD_REVIEW = """
+INSERT INTO clip_reviews (
+    project_id, clip_id, decision, reject_reason, start_sentence, start_nudge, end_sentence,
+    end_nudge
+) VALUES ('d4e5f6', 'c01', 'reject', 'cut-off', 4, 0, 12, -2)
+"""
+ADD_LOOK = """
+INSERT INTO project_looks (project_id, caption_style, framing, show_hook_title, show_safe_zones)
+VALUES ('d4e5f6', 'plain', 'whole-frame', 0, 1)
+"""
 ADD_FAILED_PROJECT = """
 INSERT INTO projects (
     id, title, source_kind, source_label, clip_length, platforms, brief, status, halt_reason
@@ -161,6 +172,59 @@ def test_the_rows_of_the_selection_tables_go_with_their_project(tmp_path: Path) 
     with database.transaction() as connection:
         for table in ("selection_windows", "replay_peaks", "candidates"):
             assert connection.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0] == 0
+
+
+def test_a_database_made_by_m3_keeps_its_projects_and_candidates_and_counts_no_decision(
+    tmp_path: Path,
+) -> None:
+    database_file = tmp_path / "clipper.sqlite3"
+    with open_database(database_file, MIGRATIONS_OF_M3).transaction() as connection:
+        connection.execute(ADD_M2_PROJECT)
+        connection.execute(ADD_WINDOW)
+        connection.execute(ADD_CANDIDATE)
+        connection.execute("UPDATE projects SET candidate_count = 1, status = 'ready'")
+        projects_before = [tuple(row) for row in connection.execute("SELECT * FROM projects")]
+        candidates_before = [tuple(row) for row in connection.execute("SELECT * FROM candidates")]
+
+    database = open_database(database_file)
+
+    with database.transaction() as connection:
+        projects = connection.execute("SELECT * FROM projects").fetchall()
+        candidates = [tuple(row) for row in connection.execute("SELECT * FROM candidates")]
+        reviews = connection.execute("SELECT COUNT(*) FROM clip_reviews").fetchone()[0]
+        looks = connection.execute("SELECT COUNT(*) FROM project_looks").fetchone()[0]
+        assert read_schema_version(connection) == len(MIGRATIONS)
+    assert [tuple(project)[: len(projects_before[0])] for project in projects] == projects_before
+    assert [(project["kept_count"], project["rejected_count"]) for project in projects] == [(0, 0)]
+    assert candidates == candidates_before
+    assert (reviews, looks) == (0, 0)
+
+
+def test_a_review_goes_with_its_candidate_and_a_look_with_its_project(tmp_path: Path) -> None:
+    database = open_database(tmp_path / "clipper.sqlite3")
+    with database.transaction() as connection:
+        for added in (ADD_M2_PROJECT, ADD_CANDIDATE, ADD_REVIEW, ADD_LOOK):
+            connection.execute(added)
+
+    with database.transaction() as connection:
+        connection.execute("DELETE FROM candidates WHERE project_id = 'd4e5f6'")
+        reviews_without_candidate = connection.execute("SELECT COUNT(*) FROM clip_reviews")
+        looks_without_candidate = connection.execute("SELECT COUNT(*) FROM project_looks")
+        counts = (reviews_without_candidate.fetchone()[0], looks_without_candidate.fetchone()[0])
+        connection.execute("DELETE FROM projects WHERE id = 'd4e5f6'")
+        looks_without_project = connection.execute("SELECT COUNT(*) FROM project_looks")
+
+        assert counts == (0, 1)
+        assert looks_without_project.fetchone()[0] == 0
+
+
+def test_a_review_of_a_clip_that_is_not_a_candidate_cannot_be_stored(tmp_path: Path) -> None:
+    database = open_database(tmp_path / "clipper.sqlite3")
+    with database.transaction() as connection:
+        connection.execute(ADD_M2_PROJECT)
+
+    with pytest.raises(sqlite3.IntegrityError), database.transaction() as connection:
+        connection.execute(ADD_REVIEW)
 
 
 def test_the_schema_version_counts_the_migrations_applied(tmp_path: Path) -> None:

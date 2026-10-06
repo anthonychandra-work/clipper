@@ -27,6 +27,11 @@ from .split_windows import Window
 
 PLENTY = DiskSpace(free_bytes=50 * BYTES_PER_GB, total_bytes=460 * BYTES_PER_GB)
 TABLES = ("selection_windows", "replay_peaks", "candidates")
+ADD_REVIEW = """
+INSERT INTO clip_reviews (
+    project_id, clip_id, decision, start_sentence, start_nudge, end_sentence, end_nudge
+) VALUES (?, ?, ?, 4, 0, 12, 0)
+"""
 FIRST_WINDOW = WindowRecord(Window("w01", 1, 23, 0.0, 89.92), score=72, is_shortlisted=True)
 SECOND_WINDOW = WindowRecord(Window("w02", 17, 38, 63.84, 151.02), score=81, is_shortlisted=True)
 THIRD_WINDOW = WindowRecord(Window("w03", 32, 49, 125.3, 199.66), score=0, is_shortlisted=False)
@@ -70,6 +75,22 @@ def make_candidate(rank: int) -> Candidate:
         flag_note=None,
         is_replay_peak=False,
     )
+
+
+def keep_first_and_reject_second(database: Database, project_id: str) -> None:
+    with database.transaction() as connection:
+        connection.executemany(
+            ADD_REVIEW, [(project_id, "c01", "keep"), (project_id, "c02", "reject")]
+        )
+        connection.execute(
+            "UPDATE projects SET kept_count = 1, rejected_count = 1 WHERE id = ?", [project_id]
+        )
+
+
+def count_reviews(database: Database) -> int:
+    with database.transaction() as connection:
+        count: int = connection.execute("SELECT COUNT(*) FROM clip_reviews").fetchone()[0]
+        return count
 
 
 def count_rows(database: Database) -> dict[str, int]:
@@ -170,6 +191,33 @@ def test_replacing_the_candidates_replaces_the_peaks_and_the_count_with_them(
     assert store.list_candidates(project.id) == [make_candidate(1)]
     assert store.list_peaks(project.id) == []
     assert repository.get(project.id).candidate_count == 1
+
+
+def test_replacing_the_candidates_removes_their_reviews_and_counts_no_decision(
+    store: SelectionStore, project: Project, repository: ProjectRepository, database: Database
+) -> None:
+    store.replace_candidates(project.id, [make_candidate(rank) for rank in (1, 2)], [])
+    keep_first_and_reject_second(database, project.id)
+
+    store.replace_candidates(project.id, [make_candidate(rank) for rank in (1, 2)], [])
+
+    recut = repository.get(project.id)
+    assert count_reviews(database) == 0
+    assert (recut.candidate_count, recut.kept_count, recut.rejected_count) == (2, 0, 0)
+
+
+def test_candidates_that_cannot_be_stored_leave_the_reviews_and_their_counts(
+    store: SelectionStore, project: Project, repository: ProjectRepository, database: Database
+) -> None:
+    store.replace_candidates(project.id, [make_candidate(rank) for rank in (1, 2)], [])
+    keep_first_and_reject_second(database, project.id)
+
+    with pytest.raises(sqlite3.IntegrityError):
+        store.replace_candidates(project.id, [make_candidate(3), make_candidate(3)], [])
+
+    kept = repository.get(project.id)
+    assert count_reviews(database) == 2
+    assert (kept.candidate_count, kept.kept_count, kept.rejected_count) == (2, 1, 1)
 
 
 def test_candidates_that_cannot_be_stored_leave_the_earlier_ones_and_their_count(

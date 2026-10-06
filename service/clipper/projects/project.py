@@ -88,6 +88,8 @@ class Project:
     upload: Upload | None
     candidate_count: int = 0
     halt_opens_settings: bool = False
+    kept_count: int = 0
+    rejected_count: int = 0
 
     def percent(self) -> float:
         shares = self._share_out_steps()
