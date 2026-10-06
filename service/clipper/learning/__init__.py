@@ -13,6 +13,7 @@ from .history_store import (
     remove_decision,
     remove_outcome,
 )
+from .write_note import write_note
 
 __all__ = [
     "LAST_DECISIONS",
@@ -26,4 +27,5 @@ __all__ = [
     "record_outcome",
     "remove_decision",
     "remove_outcome",
+    "write_note",
 ]

@@ -5,14 +5,21 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 from .ask_claude import ClaudeQuestion, Effort, ask_claude
-from .selection_task import ClipSeconds, PassContext, TaskModel, TaskWindow, describe_task_window
+from .selection_task import (
+    NOTE_INSTRUCTIONS,
+    ClipSeconds,
+    PassContext,
+    TaskModel,
+    TaskWindow,
+    describe_task_window,
+)
 from .split_windows import Window
 
 MAX_WINDOWS_PER_QUESTION = 60
 SCORING_EFFORT: Effort = "medium"
 ALL_ASKED_PERCENT = 100.0
 
-SCORE_INSTRUCTIONS = """\
+SCORE_INSTRUCTIONS = f"""\
 You help pick short vertical clips from a long spoken video. You receive its transcript as
 numbered sentences. Each line holds the number of a sentence, the second it starts at in square
 brackets, and its text. After the transcript comes one task as a JSON object.
@@ -32,6 +39,8 @@ The task also gives the shortest and longest length of a clip in seconds, the la
 transcript and a brief. A brief that is not empty says what the user is looking for, and windows
 that hold it deserve a higher score.
 
+{NOTE_INSTRUCTIONS}
+
 Reply with a whole number for each window, named by its id. Score every window of the task once,
 and no window the task does not list.
 """
@@ -43,6 +52,7 @@ class ScoreTask(TaskModel):
     clip_seconds: ClipSeconds
     language: str
     brief: str
+    note: str | None = None
 
 
 class ScoredWindow(BaseModel):
@@ -84,6 +94,7 @@ def write_score_question(
         clip_seconds=context.clip_seconds,
         language=context.language,
         brief=context.brief,
+        note=context.note,
     )
     return ClaudeQuestion(
         model=context.model,

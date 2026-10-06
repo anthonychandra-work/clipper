@@ -5,12 +5,14 @@ from collections.abc import Callable
 import pytest
 
 from ..conftest import CLOSED_LOCAL_PORT
+from ..learning import HistoryStore
 from ..pipeline import requeue_project
 from ..projects import Project, ProjectQueue, ProjectRepository, ProjectStatus, StepKind, StepState
 from ..settings import ApiKeyStore, ClaudeModel, PreferenceChanges, PreferenceStore
 from ..storage import Database
-from .conftest import TEST_KEY, RecordedClaude, StartSelection
+from .conftest import SEEDED_NOTE, TALK_BRIEF, TEST_KEY, RecordedClaude, StartSelection
 from .score_stage import ScoreStage, label_scoring
+from .score_windows import SCORE_INSTRUCTIONS
 from .selection_reasons import (
     DECLINED_REPLY,
     MISSING_KEY,
@@ -253,3 +255,52 @@ def test_with_every_logger_at_debug_no_record_of_a_run_that_a_refused_key_fails_
     assert "A step of project" in caplog.text
     assert not any(TEST_KEY in line for line in logged)
     assert TEST_KEY not in caplog.text
+
+
+def test_with_a_history_the_score_request_carries_the_note_in_its_task_and_nowhere_else(
+    seeded_history: HistoryStore,
+    transcribed_talk: Project,
+    start_selection: StartSelection,
+    recorded_claude: RecordedClaude,
+    key_store: ApiKeyStore,
+    repository: ProjectRepository,
+) -> None:
+    key_store.save(TEST_KEY)
+
+    start_selection(recorded_claude.at("talk"), [ScoreStage])
+    wait_for_status(repository, transcribed_talk.id, ProjectStatus.TRANSCRIBED)
+
+    (request,) = recorded_claude.list_requests()
+    outside_the_task = f"{request.body['system']}\n{request.parts[0]['text']}"
+    assert seeded_history.count_rejections().cut_off == 1
+    assert request.read_task()["note"] == SEEDED_NOTE
+    assert request.body["system"] == SCORE_INSTRUCTIONS
+    assert len(request.parts) == 2
+    assert [line for line in SEEDED_NOTE.splitlines() if line in outside_the_task] == []
+
+
+def test_with_an_empty_history_the_score_task_is_the_task_it_was_and_has_no_note(
+    transcribed_talk: Project,
+    start_selection: StartSelection,
+    recorded_claude: RecordedClaude,
+    key_store: ApiKeyStore,
+    repository: ProjectRepository,
+) -> None:
+    key_store.save(TEST_KEY)
+
+    start_selection(recorded_claude.at("talk"), [ScoreStage])
+    wait_for_status(repository, transcribed_talk.id, ProjectStatus.TRANSCRIBED)
+
+    (request,) = recorded_claude.list_requests()
+    assert request.read_task() == {
+        "task": "score",
+        "windows": [
+            {"id": "w01", "firstSentence": 1, "lastSentence": 23},
+            {"id": "w02", "firstSentence": 17, "lastSentence": 38},
+            {"id": "w03", "firstSentence": 32, "lastSentence": 49},
+            {"id": "w04", "firstSentence": 44, "lastSentence": 54},
+        ],
+        "clipSeconds": {"min": 25, "max": 60},
+        "language": "en",
+        "brief": TALK_BRIEF,
+    }

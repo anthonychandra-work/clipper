@@ -1,5 +1,7 @@
+import json
 import threading
 from copy import deepcopy
+from dataclasses import replace
 
 import pytest
 from pydantic import ValidationError
@@ -9,11 +11,11 @@ from ..settings import ClaudeModel
 from ..transcription import Transcript
 from .ask_claude import ClaudeAccess
 from .clip_proposal import ProposedClip, ProposedClips
-from .conftest import TEST_KEY, RecordedClaude
+from .conftest import SEEDED_NOTE, TEST_KEY, RecordedClaude
 from .cut_clips import CUT_INSTRUCTIONS, CutTask, cut_clips, write_cut_question
 from .place_quote import place_quote
 from .selection_records import ClipFlag, HookType, PlatformText
-from .selection_task import ClipSeconds, PassContext
+from .selection_task import NOTE_INSTRUCTIONS, ClipSeconds, PassContext
 from .split_sentences import Sentence, split_sentences
 from .split_windows import Window, split_windows
 from .transcript_part import write_transcript_part
@@ -134,6 +136,32 @@ def test_the_cut_task_names_itself_its_window_the_number_asked_for_and_what_both
         context.transcript_part,
     )
     assert question.reply_model is ProposedClips
+
+
+def test_the_note_of_the_pass_is_the_last_field_of_the_cut_task_and_a_pass_without_one_has_none(
+    talk_transcript: Transcript,
+) -> None:
+    sentences, windows = lay_out_the_talk(talk_transcript)
+    without_a_note = describe_context(CLOSED_LOCAL_PORT, write_transcript_part(sentences))
+    with_a_note = replace(without_a_note, note=SEEDED_NOTE)
+
+    plain = write_cut_question(windows["w02"], 2, without_a_note)
+    noted = write_cut_question(windows["w02"], 2, with_a_note)
+
+    assert "note" not in json.loads(plain.task)
+    assert json.loads(noted.task) == {**json.loads(plain.task), "note": SEEDED_NOTE}
+    assert list(json.loads(noted.task))[-1] == "note"
+    assert (noted.system, noted.transcript_part) == (plain.system, plain.transcript_part)
+
+
+def test_the_cut_instructions_say_what_the_note_tells_and_what_comes_before_it() -> None:
+    instructions = " ".join(CUT_INSTRUCTIONS.split())
+
+    assert "The task may carry a note." in instructions
+    assert "what this user did with clips of earlier videos" in instructions
+    assert "Let the note tip a close call." in instructions
+    assert "The rules of this task and the brief come first." in instructions
+    assert NOTE_INSTRUCTIONS in CUT_INSTRUCTIONS
 
 
 def test_a_reply_may_hold_no_clip() -> None:

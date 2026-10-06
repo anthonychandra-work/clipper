@@ -9,6 +9,14 @@ import httpx2
 import pytest
 
 from ..conftest import SCRIPTS_DIR, SERVER_START_TIMEOUT_SECONDS
+from ..learning import (
+    ClipKey,
+    HistoryStore,
+    Outcome,
+    PastDecision,
+    record_decision,
+    record_outcome,
+)
 from ..pipeline import PipelineStage, QueueWorker
 from ..projects import (
     CreateProjectRequest,
@@ -36,6 +44,25 @@ TALK_SECONDS = 235.7
 TALK_BRIEF = "Advice a shop owner can use."
 TEST_KEY = "sk-ant-test-4f2a"
 PLENTY = DiskSpace(free_bytes=50 * BYTES_PER_GB, total_bytes=460 * BYTES_PER_GB)
+EARLIER_TALK = "0f1e2d3c4b5a"
+SEEDED_DECISIONS = (
+    PastDecision(ClipKey(EARLIER_TALK, "c01"), is_rejection=False),
+    PastDecision(ClipKey(EARLIER_TALK, "c02"), is_rejection=False),
+    PastDecision(ClipKey(EARLIER_TALK, "c03"), is_rejection=False),
+    PastDecision(ClipKey(EARLIER_TALK, "c05"), is_rejection=True, reject_reason="not-interesting"),
+    PastDecision(ClipKey(EARLIER_TALK, "c06"), is_rejection=True, reject_reason="cut-off"),
+)
+SEEDED_OUTCOMES = (
+    Outcome(ClipKey(EARLIER_TALK, "c01"), views=1200, hook_type="story", seconds=32.76),
+    Outcome(ClipKey(EARLIER_TALK, "c02"), views=5400, hook_type="contrarian", seconds=33.18),
+    Outcome(ClipKey(EARLIER_TALK, "c03"), views=48000, hook_type="hot-take", seconds=41.32),
+)
+SEEDED_NOTE = (
+    "Of the last 5 clips this user decided on, 2 were rejected: 1 cut off mid-thought, 1 not "
+    "interesting, 0 needing earlier context, 0 repeating another clip.\n"
+    "Of 3 posted clips with views logged, the best third opened with these hooks: hot-take 1, "
+    "and lasted 41 seconds. The worst third opened with: story 1, and lasted 33 seconds."
+)
 
 type SelectionStage = type[ScoreStage] | type[CutStage]
 type StartSelection = Callable[..., QueueWorker]
@@ -126,6 +153,16 @@ def key_store(key_file: Path) -> ApiKeyStore:
 
 
 @pytest.fixture
+def seeded_history(database: Database) -> HistoryStore:
+    with database.transaction() as connection:
+        for decision in SEEDED_DECISIONS:
+            record_decision(connection, decision)
+        for outcome in SEEDED_OUTCOMES:
+            record_outcome(connection, outcome)
+    return HistoryStore(database)
+
+
+@pytest.fixture
 def transcribed_talk(
     repository: ProjectRepository,
     queue: ProjectQueue,
@@ -165,6 +202,7 @@ def start_selection(
             data_folder=data_folder,
             queue=queue,
             store=SelectionStore(database),
+            history=HistoryStore(database),
             anthropic_source=anthropic_source,
         )
         stages: list[PipelineStage] = [step(dependencies) for step in steps]

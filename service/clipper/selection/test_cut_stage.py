@@ -7,6 +7,7 @@ from collections.abc import Callable
 
 import pytest
 
+from ..learning import HistoryStore
 from ..pipeline import QueueWorker, StageRun, requeue_project
 from ..projects import Project, ProjectQueue, ProjectRepository, ProjectStatus, StepKind, StepState
 from ..settings import (
@@ -20,6 +21,7 @@ from ..storage import Database, DataFolder
 from ..transcription import Transcript
 from .ask_claude import ClaudeAccess
 from .conftest import (
+    SEEDED_NOTE,
     TALK_BRIEF,
     TALK_REPLAY_GRAPH_FILE,
     TALK_SECONDS,
@@ -27,9 +29,11 @@ from .conftest import (
     RecordedClaude,
     StartSelection,
 )
+from .cut_clips import CUT_INSTRUCTIONS
 from .cut_stage import CutStage, cut_each_window
 from .prepare_pass import ChosenClips, ClipWork, PreparedPass, StageDependencies
 from .score_stage import ScoreStage
+from .score_windows import SCORE_INSTRUCTIONS
 from .selection_reasons import NO_CANDIDATE, UNREADABLE_REPLY
 from .selection_records import Candidate, ClipFlag, ReplayPeak
 from .selection_store import SelectionStore
@@ -51,6 +55,17 @@ SIX_PARTS_BEST_FIRST = [
     ("c06", 6, 193.4, 222.92, 55),
 ]
 ALL_FOUR_REQUESTS = ["score", "cut w01", "cut w02", "cut w03"]
+TALK_TASK_WINDOWS = [
+    {"id": "w01", "firstSentence": 1, "lastSentence": 23},
+    {"id": "w02", "firstSentence": 17, "lastSentence": 38},
+    {"id": "w03", "firstSentence": 32, "lastSentence": 49},
+    {"id": "w04", "firstSentence": 44, "lastSentence": 54},
+]
+SHARED_BY_BOTH_PASSES = {
+    "clipSeconds": {"min": 25, "max": 60},
+    "language": "en",
+    "brief": TALK_BRIEF,
+}
 
 
 def wait_until(condition: Callable[[], bool]) -> None:
@@ -428,6 +443,7 @@ def cut_with(
             data_folder=data_folder,
             queue=queue,
             store=SelectionStore(database),
+            history=HistoryStore(database),
             anthropic_source=recorded_claude.at("talk"),
             work_on_chosen_clips=work,
         )
@@ -538,3 +554,73 @@ def test_a_stop_during_the_work_ends_the_step_as_a_stop_and_stores_no_candidate(
     assert stopped.status is ProjectStatus.STOPPED
     assert stopped.halt_reason == "Stopped at “Cutting clips”. The stages before it are kept."
     assert SelectionStore(database).list_candidates(stopped.id) == []
+
+
+def test_with_a_history_the_score_request_and_each_cut_request_carry_the_same_note_in_their_task(
+    seeded_history: HistoryStore,
+    transcribed_talk: Project,
+    start_selection: StartSelection,
+    recorded_claude: RecordedClaude,
+    key_store: ApiKeyStore,
+    repository: ProjectRepository,
+) -> None:
+    key_store.save(TEST_KEY)
+
+    start_selection(recorded_claude.at("talk"))
+    wait_for_status(repository, transcribed_talk.id, ProjectStatus.READY)
+
+    requests = recorded_claude.list_requests()
+    outside_the_tasks = [f"{sent.body['system']}\n{sent.parts[0]['text']}" for sent in requests]
+    assert len(seeded_history.list_outcomes()) == 3
+    assert name_requests(recorded_claude) == ALL_FOUR_REQUESTS
+    assert [sent.read_task()["note"] for sent in requests] == [SEEDED_NOTE] * 4
+    assert [sent.body["system"] for sent in requests] == [SCORE_INSTRUCTIONS] + [
+        CUT_INSTRUCTIONS
+    ] * 3
+    assert [len(sent.parts) for sent in requests] == [2] * 4
+    for line in SEEDED_NOTE.splitlines():
+        assert [line in text for text in outside_the_tasks] == [False] * 4
+
+
+def test_with_an_empty_history_each_of_the_four_tasks_is_the_task_it_was_and_has_no_note(
+    transcribed_talk: Project,
+    start_selection: StartSelection,
+    recorded_claude: RecordedClaude,
+    key_store: ApiKeyStore,
+    repository: ProjectRepository,
+) -> None:
+    key_store.save(TEST_KEY)
+
+    start_selection(recorded_claude.at("talk"))
+    wait_for_status(repository, transcribed_talk.id, ProjectStatus.READY)
+
+    tasks = [request.read_task() for request in recorded_claude.list_requests()]
+    assert ["note" in task for task in tasks] == [False] * 4
+    assert tasks == [
+        {"task": "score", "windows": TALK_TASK_WINDOWS, **SHARED_BY_BOTH_PASSES},
+        *(
+            {"task": "cut", "window": window, "clipCount": 2, **SHARED_BY_BOTH_PASSES}
+            for window in TALK_TASK_WINDOWS[:3]
+        ),
+    ]
+
+
+def test_after_the_history_is_emptied_a_second_run_of_the_cut_step_carries_no_note(
+    seeded_history: HistoryStore,
+    scored_talk: Project,
+    cut_with: Callable[[ClipWork | None], CutStage],
+    recorded_claude: RecordedClaude,
+) -> None:
+    cut = cut_with(None)
+    cut.run(StageRun(scored_talk, threading.Event(), lambda percent: None))
+    notes_with_the_history = [
+        request.read_task().get("note") for request in recorded_claude.list_requests()
+    ]
+    recorded_claude.forget_requests()
+
+    seeded_history.forget_all()
+    cut.run(StageRun(scored_talk, threading.Event(), lambda percent: None))
+
+    assert notes_with_the_history == [SEEDED_NOTE] * 4
+    assert name_requests(recorded_claude) == ALL_FOUR_REQUESTS[1:]
+    assert ["note" in sent.read_task() for sent in recorded_claude.list_requests()] == [False] * 3

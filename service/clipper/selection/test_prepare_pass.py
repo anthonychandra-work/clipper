@@ -4,12 +4,13 @@ from dataclasses import replace
 import pytest
 
 from ..conftest import CLOSED_LOCAL_PORT
+from ..learning import HistoryStore
 from ..pipeline import StageFailedError, StageRun
 from ..projects import ClipLength, Project, ProjectQueue
 from ..settings import ApiKeyStore, ClaudeModel, PreferenceStore
 from ..storage import Database, DataFolder
 from .ask_claude import ClaudeAccess
-from .conftest import TALK_BRIEF, TALK_SECONDS, TEST_KEY
+from .conftest import SEEDED_NOTE, TALK_BRIEF, TALK_SECONDS, TEST_KEY
 from .prepare_pass import StageDependencies, prepare_pass
 from .selection_reasons import MISSING_KEY
 from .selection_store import SelectionStore
@@ -29,6 +30,7 @@ def dependencies(
         data_folder=data_folder,
         queue=queue,
         store=SelectionStore(database),
+        history=HistoryStore(database),
         anthropic_source=CLOSED_LOCAL_PORT,
     )
 
@@ -105,3 +107,29 @@ def test_a_video_whose_length_was_never_recorded_lasts_until_its_last_sentence_e
     prepared = prepare_pass(run_step_of(project), ClaudeModel.SONNET, dependencies)
 
     assert prepared.duration_seconds == LAST_WORD_ENDS_AT
+
+
+def test_with_an_empty_history_a_prepared_pass_carries_no_note(
+    transcribed_talk: Project, dependencies: StageDependencies, key_store: ApiKeyStore
+) -> None:
+    key_store.save(TEST_KEY)
+
+    prepared = prepare_pass(run_step_of(transcribed_talk), ClaudeModel.SONNET, dependencies)
+
+    assert prepared.context.note is None
+
+
+def test_a_prepared_pass_carries_the_note_written_from_the_history_as_it_stands(
+    transcribed_talk: Project,
+    dependencies: StageDependencies,
+    key_store: ApiKeyStore,
+    seeded_history: HistoryStore,
+) -> None:
+    key_store.save(TEST_KEY)
+
+    with_the_history = prepare_pass(run_step_of(transcribed_talk), ClaudeModel.OPUS, dependencies)
+    seeded_history.forget_all()
+    once_forgotten = prepare_pass(run_step_of(transcribed_talk), ClaudeModel.OPUS, dependencies)
+
+    assert with_the_history.context.note == SEEDED_NOTE
+    assert once_forgotten.context.note is None

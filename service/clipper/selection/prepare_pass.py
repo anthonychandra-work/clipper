@@ -2,6 +2,7 @@ import threading
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 
+from ..learning import LAST_DECISIONS, HistoryStore, write_note
 from ..pipeline import StageFailedError, StageRun
 from ..projects import ProjectQueue
 from ..settings import ApiKeyStore, ClaudeModel, PreferenceStore
@@ -36,6 +37,7 @@ class StageDependencies:
     data_folder: DataFolder
     queue: ProjectQueue
     store: SelectionStore
+    history: HistoryStore
     anthropic_source: str
     work_on_chosen_clips: ClipWork | None = None
 
@@ -64,5 +66,10 @@ def prepare_pass(
         language=transcript.language,
         brief=project.brief,
         stop=stage_run.stop,
+        note=write_note_from(dependencies.history),
     )
     return PreparedPass(sentences, context, project.duration_seconds or sentences[-1].end)
+
+
+def write_note_from(history: HistoryStore) -> str | None:
+    return write_note(history.list_newest_decisions(LAST_DECISIONS), history.list_outcomes())

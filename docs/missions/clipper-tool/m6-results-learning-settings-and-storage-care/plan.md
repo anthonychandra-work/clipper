@@ -213,7 +213,7 @@ What the spec's file list leaves out
   `pnpm test:browser e2e/review-preview.spec.ts --repeat-each=20 -g "preview copy moved aside"`
   passes 20 times of 20.
 
-- [ ] T3 — Write the note and send it with both passes
+- [x] T3 — Write the note and send it with both passes
   Files: `AGENTS.md`, `service/clipper/learning/write_note.py`,
   `service/clipper/learning/test_write_note.py`, `service/clipper/learning/__init__.py`,
   `service/clipper/selection/selection_task.py`, `service/clipper/selection/prepare_pass.py`,

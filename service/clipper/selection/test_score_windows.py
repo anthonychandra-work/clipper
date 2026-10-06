@@ -1,6 +1,8 @@
+import json
 import math
 import sys
 import threading
+from dataclasses import replace
 
 import pytest
 from pydantic import ValidationError
@@ -10,7 +12,7 @@ from ..settings import ClaudeModel
 from ..transcription import Transcript, TranscriptWord
 from .ask_claude import ClaudeAccess, ClaudeQuestion
 from .claude_errors import UnreadableReplyError
-from .conftest import TEST_KEY, RecordedClaude
+from .conftest import SEEDED_NOTE, TEST_KEY, RecordedClaude
 from .form_shortlist import form_shortlist
 from .score_windows import (
     SCORE_INSTRUCTIONS,
@@ -21,7 +23,7 @@ from .score_windows import (
     scores_each_window_once,
     write_score_questions,
 )
-from .selection_task import ClipSeconds, PassContext
+from .selection_task import NOTE_INSTRUCTIONS, ClipSeconds, PassContext
 from .split_sentences import Sentence, split_sentences
 from .split_windows import Window, split_windows
 from .transcript_part import write_transcript_part
@@ -119,6 +121,34 @@ def test_the_task_names_itself_its_windows_the_limits_the_language_and_the_brief
         '"clipSeconds":{"min":25,"max":60},"language":"en",'
         '"brief":"Advice a shop owner can use."}'
     )
+
+
+def test_the_note_of_the_pass_is_the_last_field_of_the_task_and_a_pass_without_one_has_no_field(
+    talk_transcript: Transcript,
+) -> None:
+    windows, transcript_part = lay_out_the_talk(talk_transcript)
+    without_a_note = describe_context(CLOSED_LOCAL_PORT, transcript_part)
+    with_a_note = replace(without_a_note, note=SEEDED_NOTE)
+
+    (plain,) = write_score_questions(windows, without_a_note)
+    (noted,) = write_score_questions(windows, with_a_note)
+
+    assert "note" not in json.loads(plain.task)
+    assert json.loads(noted.task) == {**json.loads(plain.task), "note": SEEDED_NOTE}
+    assert list(json.loads(noted.task))[-1] == "note"
+    assert (noted.system, noted.transcript_part) == (plain.system, plain.transcript_part)
+
+
+def test_the_instructions_say_what_the_note_tells_and_that_the_task_and_the_brief_come_first() -> (
+    None
+):
+    instructions = " ".join(SCORE_INSTRUCTIONS.split())
+
+    assert "The task may carry a note." in instructions
+    assert "what this user did with clips of earlier videos" in instructions
+    assert "Let the note tip a close call." in instructions
+    assert "The rules of this task and the brief come first." in instructions
+    assert NOTE_INSTRUCTIONS in SCORE_INSTRUCTIONS
 
 
 def test_the_questions_are_asked_one_after_another_and_a_percent_is_reported_after_each(

@@ -9,7 +9,7 @@ from fastapi import FastAPI
 from fastapi.concurrency import run_in_threadpool
 from fastapi.telemetry import TelemetryConfig
 
-from . import pipeline, projects, rendering, review, selection, settings
+from . import learning, pipeline, projects, rendering, review, selection, settings
 from .fetching import FetchStage
 from .media import MediaTools, locate_media_tools
 from .problems import handle_app_errors
@@ -34,6 +34,7 @@ class Stores:
     selection_store: selection.SelectionStore
     review_store: review.ReviewStore
     render_store: rendering.RenderStore
+    history: learning.HistoryStore
 
     @classmethod
     def open(cls, database: Database, key_file: Path) -> Self:
@@ -45,6 +46,7 @@ class Stores:
             selection_store=selection.SelectionStore(database),
             review_store=review.ReviewStore(database),
             render_store=rendering.RenderStore(database),
+            history=learning.HistoryStore(database),
         )
 
 
@@ -129,6 +131,7 @@ def list_selection_stages(grounds: Grounds) -> list[pipeline.PipelineStage]:
         data_folder=grounds.data_folder,
         queue=stores.queue,
         store=stores.selection_store,
+        history=stores.history,
         anthropic_source=grounds.startup.anthropic_source,
         work_on_chosen_clips=filmstrip.make_frames,
     )

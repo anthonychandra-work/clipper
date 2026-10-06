@@ -2,12 +2,19 @@ from typing import Literal
 
 from .ask_claude import ClaudeQuestion, Effort, ask_claude
 from .clip_proposal import ProposedClip, ProposedClips
-from .selection_task import ClipSeconds, PassContext, TaskModel, TaskWindow, describe_task_window
+from .selection_task import (
+    NOTE_INSTRUCTIONS,
+    ClipSeconds,
+    PassContext,
+    TaskModel,
+    TaskWindow,
+    describe_task_window,
+)
 from .split_windows import Window
 
 CUTTING_EFFORT: Effort = "high"
 
-CUT_INSTRUCTIONS = """\
+CUT_INSTRUCTIONS = f"""\
 You cut short vertical clips from a long spoken video. You receive its transcript as numbered
 sentences. Each line holds the number of a sentence, the second it starts at in square brackets,
 and its text. After the transcript comes one task as a JSON object.
@@ -30,6 +37,8 @@ clipCount is how many clips the whole video should yield at least, when it holds
 window is one of several, so do not reach for the number here. Return the clips this window
 really holds, the best first, and an empty list when it holds none. language is the language of
 the transcript. A brief that is not empty says what the user is looking for.
+
+{NOTE_INSTRUCTIONS}
 
 For each clip give:
 - openingWords and closingWords: the first and the last five to ten words of the clip, quoted
@@ -62,6 +71,7 @@ class CutTask(TaskModel):
     clip_seconds: ClipSeconds
     language: str
     brief: str
+    note: str | None = None
 
 
 def cut_clips(window: Window, clip_count: int, context: PassContext) -> list[ProposedClip]:
@@ -78,6 +88,7 @@ def write_cut_question(
         clip_seconds=context.clip_seconds,
         language=context.language,
         brief=context.brief,
+        note=context.note,
     )
     return ClaudeQuestion(
         model=context.model,
