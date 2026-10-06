@@ -140,37 +140,78 @@ describe('the review store', () => {
     expect(readClip(store, 'c02').decision).toBe('keep');
   });
 
-  it('keeps a newer change of a clip when the answer to an older one arrives after it', async () => {
-    const { store, clipAnswers } = await openStore();
+  it('shows a second change of a clip at once and sends it only once the first is answered', async () => {
+    const { store, service, clipAnswers } = await openStore();
     const first = store.changeClip('c01', { decision: 'keep' });
-    const second = store.changeClip('c01', { decision: 'reject', rejectReason: 'cut-off' });
+    void store.changeClip('c01', { endNudge: 3 });
+    const shownAtOnce = readClip(store);
+    const sentBeforeTheAnswer = service.changeClip.mock.calls.length;
 
     clipAnswers[0].answer(describeTalkClip({ decision: 'keep' }));
     await first;
-    const afterTheFirstAnswer = readClip(store);
-    clipAnswers[1].answer(describeTalkClip({ decision: 'reject', rejectReason: 'cut-off' }));
-    await second;
 
-    expect(afterTheFirstAnswer).toMatchObject({ decision: 'reject', rejectReason: 'cut-off' });
-    expect(readClip(store)).toMatchObject({ decision: 'reject', rejectReason: 'cut-off' });
+    expect(shownAtOnce).toMatchObject({ decision: 'keep', endNudge: 3, endSeconds: 45.3 });
+    expect(sentBeforeTheAnswer).toBe(1);
+    expect(service.changeClip).toHaveBeenCalledTimes(2);
+    expect(service.changeClip).toHaveBeenLastCalledWith(PROJECT_ID, 'c01', { endNudge: 3 });
   });
 
-  it('keeps the answer to the newer change when the answer to the older one arrives last', async () => {
+  it('sends three changes of a clip in the order they were made', async () => {
+    const { store, service, clipAnswers } = await openStore();
+    const changes: ClipChange[] = [{ decision: 'keep' }, { title: 'The morning the oven broke' }, { endNudge: 2 }];
+    const sent = changes.map((change) => store.changeClip('c01', change));
+    const sentAtOnce = service.changeClip.mock.calls.length;
+
+    for (const [place, answered] of sent.entries()) {
+      clipAnswers[place].answer(describeTalkClip());
+      await answered;
+    }
+
+    expect(sentAtOnce).toBe(1);
+    expect(service.changeClip.mock.calls.map(([, , change]) => change)).toEqual(changes);
+  });
+
+  it('sends a change of another clip while the first clip’s change waits for its answer', async () => {
+    const clips = [describeTalkClip(), describeTalkClip({ id: 'c02', rank: 2 })];
+    const { store, service } = await openStore(describeTalkReview(clips));
+
+    void store.changeClip('c01', { decision: 'keep' });
+    void store.changeClip('c02', { decision: 'reject', rejectReason: 'repeat' });
+
+    expect(service.changeClip.mock.calls.map(([, clipId]) => clipId)).toEqual(['c01', 'c02']);
+  });
+
+  it('keeps showing the newer change after the first answer, and shows the last answer of the service after it', async () => {
     const { store, clipAnswers } = await openStore();
-    const first = store.changeClip('c01', { title: 'First' });
-    const second = store.changeClip('c01', { title: 'Second' });
+    const first = store.changeClip('c01', { decision: 'keep' });
+    const second = store.changeClip('c01', { endNudge: 3 });
 
-    clipAnswers[1].answer(describeTalkClip({ title: 'Second, as stored' }));
-    await second;
-    clipAnswers[0].answer(describeTalkClip({ title: 'First, as stored' }));
+    clipAnswers[0].answer(describeTalkClip({ decision: 'keep', title: 'As stored after the first' }));
     await first;
-    const titleAfterBothAnswers = readClip(store).title;
-    const refused = store.changeClip('c01', { decision: 'keep' });
-    clipAnswers[2].fail(refuse());
-    await refused;
+    const afterTheFirstAnswer = readClip(store);
+    clipAnswers[1].answer(describeTalkClip({ decision: 'keep', endNudge: 3, title: 'As stored after the second' }));
+    await second;
 
-    expect(titleAfterBothAnswers).toBe('Second, as stored');
-    expect(readClip(store)).toMatchObject({ title: 'Second, as stored', decision: 'undecided' });
+    expect(afterTheFirstAnswer).toMatchObject({ decision: 'keep', endNudge: 3, title: describeTalkClip().title });
+    expect(readClip(store)).toEqual(
+      describeTalkClip({ decision: 'keep', endNudge: 3, title: 'As stored after the second' }),
+    );
+  });
+
+  it('gives the problem of a refused change and still sends the change made after it', async () => {
+    const { store, service, clipAnswers } = await openStore();
+    const first = store.changeClip('c01', { startSentence: 1, startNudge: 0, endSentence: 12, endNudge: 0 });
+    const second = store.changeClip('c01', { decision: 'keep' });
+
+    clipAnswers[0].fail(refuse());
+    await first;
+    const problemAfterTheRefusal = store.read().problem;
+    clipAnswers[1].answer(describeTalkClip({ decision: 'keep' }));
+    await second;
+
+    expect(problemAfterTheRefusal).toEqual({ section: null, message: REFUSED });
+    expect(service.changeClip).toHaveBeenLastCalledWith(PROJECT_ID, 'c01', { decision: 'keep' });
+    expect(readClip(store)).toEqual(describeTalkClip({ decision: 'keep' }));
   });
 
   it('does not let an answer undo a title typed after the change was sent', async () => {

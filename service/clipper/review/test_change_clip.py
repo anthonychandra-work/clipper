@@ -1,14 +1,36 @@
+import threading
+from collections.abc import Callable
+from dataclasses import replace
+from functools import partial
+
 import pytest
 
 from ..projects import ProjectRepository
+from ..storage import Database
 from .change_clip import ClipAddress, ClipChange, ClipNotFoundError, change_clip
 from .clip_points import ChangeRefusedError
 from .conftest import CutTalk
 from .describe_review import ReviewSources, describe_review
-from .review_records import ClipPoint, Decision, RejectReason
+from .review_records import ClipPoint, ClipReview, Decision, RejectReason
 from .review_schemas import ClipResponse
+from .review_store import ReviewStore
 
 FIRST_TITLE = "The worst day my bakery ever had"
+ANSWER_TIMEOUT_SECONDS = 20
+HELD_SECONDS = 0.3
+PAIRS_SENT_TOGETHER = 100
+
+
+class ReviewStoreThatWaitsToStore(ReviewStore):
+    def __init__(self, database: Database) -> None:
+        super().__init__(database)
+        self.has_read = threading.Event()
+        self.may_store = threading.Event()
+
+    def save_review(self, project_id: str, clip_id: str, review: ClipReview) -> None:
+        self.has_read.set()
+        assert self.may_store.wait(timeout=ANSWER_TIMEOUT_SECONDS)
+        super().save_review(project_id, clip_id, review)
 
 
 class ChangeTheTalk:
@@ -27,6 +49,9 @@ class ChangeTheTalk:
     def count_reviews(self) -> int:
         return len(self._sources.reviews.list_reviews(self._cut_talk.project.id))
 
+    def read_stored(self, clip_id: str) -> ClipReview:
+        return self._sources.reviews.list_reviews(self._cut_talk.project.id)[clip_id]
+
 
 @pytest.fixture
 def change(cut_talk: CutTalk, sources: ReviewSources) -> ChangeTheTalk:
@@ -36,6 +61,20 @@ def change(cut_talk: CutTalk, sources: ReviewSources) -> ChangeTheTalk:
 def count_decisions(repository: ProjectRepository, cut_talk: CutTalk) -> tuple[int, int]:
     project = repository.get(cut_talk.project.id)
     return project.kept_count, project.rejected_count
+
+
+def send_together(*sends: Callable[[], object]) -> None:
+    start_line = threading.Barrier(len(sends))
+
+    def send_from_the_start_line(send: Callable[[], object]) -> None:
+        start_line.wait(timeout=ANSWER_TIMEOUT_SECONDS)
+        send()
+
+    senders = [threading.Thread(target=send_from_the_start_line, args=[send]) for send in sends]
+    for sender in senders:
+        sender.start()
+    for sender in senders:
+        sender.join(timeout=ANSWER_TIMEOUT_SECONDS)
 
 
 def test_a_kept_clip_is_answered_kept_and_read_kept(change: ChangeTheTalk) -> None:
@@ -243,3 +282,45 @@ def test_an_unknown_clip_is_not_found_and_stores_nothing(change: ChangeTheTalk) 
     assert missing.value.status_code == 404
     assert missing.value.message == "This clip does not exist."
     assert change.count_reviews() == 0
+
+
+def test_a_change_that_arrives_while_another_waits_to_be_stored_is_applied_to_what_that_one_stored(
+    cut_talk: CutTalk, sources: ReviewSources, database: Database
+) -> None:
+    reviews = ReviewStoreThatWaitsToStore(database)
+    change = ChangeTheTalk(cut_talk, replace(sources, reviews=reviews))
+    keeping = threading.Thread(target=partial(change, "c01", decision="keep"))
+    moving = threading.Thread(target=partial(change, "c01", end_sentence=13, end_nudge=3))
+
+    keeping.start()
+    assert reviews.has_read.wait(timeout=ANSWER_TIMEOUT_SECONDS)
+    moving.start()
+    moving.join(timeout=HELD_SECONDS)
+    is_the_move_waiting = moving.is_alive()
+    reviews.may_store.set()
+    keeping.join(timeout=ANSWER_TIMEOUT_SECONDS)
+    moving.join(timeout=ANSWER_TIMEOUT_SECONDS)
+
+    stored = change.read_stored("c01")
+    assert is_the_move_waiting
+    assert (stored.decision, stored.end) == (Decision.KEEP, ClipPoint(13, 3))
+
+
+def test_a_hundred_pairs_of_changes_sent_from_two_threads_at_the_same_moment_are_all_stored_whole(
+    change: ChangeTheTalk,
+) -> None:
+    sent = [
+        (Decision.KEEP if number % 2 == 0 else Decision.REJECT, ClipPoint(12, number % 5))
+        for number in range(PAIRS_SENT_TOGETHER)
+    ]
+    stored: list[tuple[Decision, ClipPoint]] = []
+
+    for decision, end in sent:
+        send_together(
+            partial(change, "c01", decision=decision.value),
+            partial(change, "c01", end_nudge=end.nudge),
+        )
+        review = change.read_stored("c01")
+        stored.append((review.decision, review.end))
+
+    assert stored == sent

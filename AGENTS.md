@@ -153,8 +153,13 @@ folders.
   title, the flag and the scores, `decide-clip` Keep, Reject and Next, `trim-clip` the in and out
   points, `preview-clip` the player and `set-look` the look. `open-review` imports the others and
   hands each what it shows as properties. None imports it back; several import `time-clips`.
-- The store of a review shows a change at once, sends it, and puts the service's answer in its
-  place. An answer that arrives after a newer change of the same clip does not undo that change.
+- The store of a review shows every change at once. It sends the changes of one clip one after
+  another, each when the one before it is answered, and a change of another clip does not wait.
+  After the last answer it shows the clip as the service holds it. A refused change gives its
+  problem and does not hold back the changes after it.
+- The service changes one clip at a time. Reading the stored review, judging the change and
+  storing it happen under one lock, as the parts of an upload are appended under one, so a
+  change that arrives while another is being stored is applied to what that one stored.
 - The Review addresses, `/projects/<id>/review` and `/projects/<id>/review/<clip>`, share one
   layout that holds the tab, and their pages draw nothing. Next.js keeps a layout mounted while
   the address moves between its pages, so the list's place and the playing video stay as they

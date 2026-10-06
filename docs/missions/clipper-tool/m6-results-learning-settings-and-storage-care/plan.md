@@ -188,7 +188,7 @@ What the spec's file list leaves out
   outcome recorded twice for one clip is held once with the later values, and is gone once it is
   taken out. `pnpm test` exits 0.
 
-- [ ] T2 — Store two changes of one clip that arrive together
+- [x] T2 — Store two changes of one clip that arrive together
   Files: `AGENTS.md`, `service/clipper/review/change_clip.py`,
   `service/clipper/review/test_change_clip.py`,
   `web/src/review/open-review/lib/review-store.ts`,

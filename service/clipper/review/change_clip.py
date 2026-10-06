@@ -1,3 +1,4 @@
+import threading
 from dataclasses import dataclass, replace
 
 from pydantic import StrictInt, StrictStr
@@ -12,6 +13,9 @@ from .review_schemas import ClipResponse, ReviewModel
 from .trim_reach import find_trim_reach
 
 POINT_FIELDS = {"start_sentence", "start_nudge", "end_sentence", "end_nudge"}
+
+# A change is applied to the stored review, so two changes of one clip must not read it together.
+change_lock = threading.Lock()
 
 
 class ClipNotFoundError(NotFoundError):
@@ -39,11 +43,12 @@ def change_clip(address: ClipAddress, change: ClipChange, sources: ReviewSources
     project = address.project
     candidate = find_candidate(address, sources)
     cut = read_cut_project(project, sources.data_folder)
-    stored = sources.reviews.list_reviews(project.id).get(candidate.id)
-    wanted = apply_change(read_review(stored, candidate, cut), change)
-    if POINT_FIELDS & change.model_fields_set:
-        refuse_points_past_the_limits(wanted, describe_limits(candidate, cut))
-    sources.reviews.save_review(project.id, candidate.id, wanted)
+    with change_lock:
+        stored = sources.reviews.list_reviews(project.id).get(candidate.id)
+        wanted = apply_change(read_review(stored, candidate, cut), change)
+        if POINT_FIELDS & change.model_fields_set:
+            refuse_points_past_the_limits(wanted, describe_limits(candidate, cut))
+        sources.reviews.save_review(project.id, candidate.id, wanted)
     return describe_clip(candidate, wanted, cut)
 
 

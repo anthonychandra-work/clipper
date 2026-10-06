@@ -24,6 +24,7 @@ export class ReviewStore {
   private readonly listeners = new Set<() => void>();
   private readonly changeCounts = new Map<string, number>();
   private readonly heldCounts = new Map<string, number>();
+  private readonly unanswered = new Map<string, Promise<void>>();
 
   constructor(
     private readonly projectId: string,
@@ -53,16 +54,16 @@ export class ReviewStore {
     this.showClip(clipId, (clip) => applyChange(clip, change));
   };
 
-  changeClip = async (clipId: string, change: ClipChange): Promise<void> => {
+  changeClip = (clipId: string, change: ClipChange): Promise<void> => {
     this.showChange(clipId, change);
     const sent = this.changeCounts.get(clipId) ?? 0;
-    try {
-      const answered = await this.service.changeClip(this.projectId, clipId, change);
-      this.holdNewest(clipId, sent, (held) => ({ ...held, clips: replaceClip(held.clips, clipId, () => answered) }));
-    } catch (error) {
-      this.publish({ ...this.snapshot, problem: readProblem(error) });
-    }
-    if (this.changeCounts.get(clipId) === sent) this.showClip(clipId, (clip) => this.findHeldClip(clipId) ?? clip);
+    const before = this.unanswered.get(clipId);
+    const send = () => this.sendChange(clipId, change, sent);
+    const answered = before === undefined ? send() : before.then(send);
+    this.unanswered.set(clipId, answered);
+    return answered.then(() => {
+      if (this.unanswered.get(clipId) === answered) this.unanswered.delete(clipId);
+    });
   };
 
   changeLook = async (look: Look): Promise<void> => {
@@ -76,6 +77,16 @@ export class ReviewStore {
     }
     if (this.changeCounts.get(LOOK) === sent && this.held !== null) this.showLook(this.held.look);
   };
+
+  private async sendChange(clipId: string, change: ClipChange, sent: number): Promise<void> {
+    try {
+      const answered = await this.service.changeClip(this.projectId, clipId, change);
+      this.holdNewest(clipId, sent, (held) => ({ ...held, clips: replaceClip(held.clips, clipId, () => answered) }));
+    } catch (error) {
+      this.publish({ ...this.snapshot, problem: readProblem(error) });
+    }
+    if (this.changeCounts.get(clipId) === sent) this.showClip(clipId, (clip) => this.findHeldClip(clipId) ?? clip);
+  }
 
   private countChange(name: string): number {
     const count = (this.changeCounts.get(name) ?? 0) + 1;
