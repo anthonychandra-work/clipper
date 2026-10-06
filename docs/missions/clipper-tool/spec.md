@@ -849,6 +849,14 @@ From `intent.md`. Base `82df5ce`.
   `service/clipper/review` and `web/e2e/support` hold more source files flat than the coding
   standards advise, as A79 and A85 record for other folders; the plan names each file at its flat
   path. The plan fixes what the tab does and leaves these open. (executor, m4)
+- A107 — Before a clip's first caption starts, the preview shows no caption. The prototype shows
+  the first one early, and A97 lets a caption show from the start of its first word. The preview
+  plays with the video's sound. In the stacked framing the playing video is the upper picture
+  and the picture drawn from it the lower one; in the full frame the picture drawn from it is
+  the blurred copy behind. A source taller than the 9:16 frame is drawn narrower than the frame
+  in the full frame, so all of it shows. The controls of the look are named after A96's values,
+  as in `captions-word-by-word` and `framing-stack-two`, and the picture keeps the prototype's
+  class names. A97 and A98 give the rules and leave these open. (executor, m4)
 
 ## Milestones
 

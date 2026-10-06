@@ -11,7 +11,6 @@ import { DecisionControls } from '../../decide-clip';
 import { type ClipFilter, filterClips } from '../../list-candidates';
 import type { ClipChange, Review, ReviewClip } from '../../review.types';
 import { useReview } from '../hooks/use-review';
-import { measureVideo } from '../lib/measure-video';
 import { clipAddress, findNextClip, findShownClip, namesNoClip, reviewAddress } from '../lib/review-addresses';
 import type { ReviewStore } from '../lib/review-store';
 import { ClipDetail } from './ClipDetail';
@@ -56,15 +55,7 @@ function ReviewWorkbench({ project, review, store }: ReviewWorkbenchProps) {
   }
   const clipCount = review.clips.length;
   const decision = <ClipDecision project={project} review={review} clip={shownClip} filter={filter} store={store} />;
-  const detail = (
-    <ClipDetail
-      clip={shownClip}
-      clipCount={clipCount}
-      clipSeconds={review.clipSeconds}
-      videoSeconds={measureVideo(project, review)}
-      store={store}
-    />
-  );
+  const detail = <ClipDetail project={project} review={review} clip={shownClip} store={store} />;
   if (isPhone) {
     return (
       <ClipScreen projectId={project.id} clip={shownClip} clipCount={clipCount} bottomBar={decision}>

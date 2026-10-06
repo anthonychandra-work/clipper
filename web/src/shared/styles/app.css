@@ -121,6 +121,33 @@ label.row .menu-button {
   background: var(--frame);
 }
 
+/* The video, and a second picture drawn from it, take the place of the figures the prototype draws in the preview. */
+.scene__picture,
+.scene__backdrop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.scene video {
+  position: absolute;
+  max-width: none;
+  object-fit: fill;
+}
+
+.scene canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Enlarged, so the soft edge of the blur lies outside the frame. */
+.scene__backdrop canvas {
+  filter: blur(5cqw);
+  transform: scale(1.25);
+}
+
 /* The caption and the hook title are drawn in Inter, the typeface of the exported file. */
 .player__caption,
 .player__hook {

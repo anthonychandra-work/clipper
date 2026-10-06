@@ -108,7 +108,7 @@ test('a title typed into the field is in the list at once, and in the field and 
   readyTalk,
 }) => {
   await page.goto(`/projects/${readyTalk.project.id}/review/c02`);
-  const field = page.getByLabel('Title');
+  const field = page.getByLabel('Title', { exact: true });
   await expect(field).toHaveValue('Hire for the habits you cannot teach');
   const saved = waitForSavedClip(page, 'c02');
 
@@ -116,7 +116,7 @@ test('a title typed into the field is in the list at once, and in the field and 
   const inTheListAtOnce = await readRowTitle(page, 'c02');
   await saved;
   await page.reload();
-  await expect(page.getByLabel('Title')).toHaveValue('Hire the calm one');
+  await expect(field).toHaveValue('Hire the calm one');
 
   const stored = await readReview(request, readyTalk.project.id);
   expect(inTheListAtOnce).toBe(TYPED_TITLE.trim());
@@ -133,7 +133,7 @@ test('a title is saved when the field is left, without waiting, and emptying the
   readyTalk,
 }) => {
   await page.goto(`/projects/${readyTalk.project.id}/review/c02`);
-  const field = page.getByLabel('Title');
+  const field = page.getByLabel('Title', { exact: true });
   await expect(field).toHaveValue('Hire for the habits you cannot teach');
   const savedOnLeaving = waitForSavedClip(page, 'c02');
   await field.fill('Hire the calm one');

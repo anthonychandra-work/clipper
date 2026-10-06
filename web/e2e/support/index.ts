@@ -22,7 +22,7 @@ export {
 } from './read-picture';
 export { changeClip, readReview, storeLook } from './read-review';
 export { readSelection, type Selection } from './read-selection';
-export { countWordsWrongInHundred, readTranscript, type StoredTranscript } from './read-transcript';
+export { countWordsWrongInHundred, readTranscript, type StoredTranscript, type StoredWord } from './read-transcript';
 export type { ReadyTalk } from './ready-talk';
 export {
   type DecisionButtons,
@@ -55,6 +55,19 @@ export {
   readTimelinePins,
   type TimelinePinText,
 } from './review-page';
+export {
+  capturePlayer,
+  changeLook,
+  type LookText,
+  openPreview,
+  type PreviewText,
+  readCaptionDuring,
+  readLook,
+  readPreview,
+  seekPreview,
+  type SpokenCaption,
+  waitForPicture,
+} from './review-preview';
 export {
   type EnvironmentChanges,
   isPortOpen,

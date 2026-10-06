@@ -533,7 +533,7 @@ What the spec's file list leaves out
   length and the handle's own words changed to match; a moved point is still there after a
   reload.
 
-- [ ] T15 — Play the clip: the footage in a 9:16 frame, the framings, the captions and the look
+- [x] T15 — Play the clip: the footage in a 9:16 frame, the framings, the captions and the look
   Files: `web/src/review/preview-clip/index.ts`,
   `web/src/review/preview-clip/components/ClipPreview.tsx`,
   `web/src/review/preview-clip/components/PlayerPicture.tsx`,
@@ -548,7 +548,10 @@ What the spec's file list leaves out
   `web/src/review/set-look/components/LookControls.tsx`,
   `web/src/review/set-look/lib/look-options.ts`,
   `web/src/review/open-review/components/ClipDetail.tsx`, `web/src/shared/styles/app.css`,
-  `web/e2e/support/review-page.ts`, `web/e2e/support/index.ts`, `web/e2e/review-preview.spec.ts`
+  `web/e2e/support/review-page.ts`, `web/e2e/support/index.ts`, `web/e2e/review-preview.spec.ts`,
+  `web/src/review/open-review/components/ReviewTab.tsx`, `web/e2e/support/review-preview.ts`,
+  `web/e2e/review-decide.spec.ts`, `web/e2e/review-inspect.spec.ts`,
+  `docs/missions/clipper-tool/spec.md`
   Done: the preview follows the prototype's markup with the video in place of the drawn figures.
   It plays the preview copy by A98: Play and Pause, a slider over the clip's length, and a clock
   that reads the place and the length, as `0:07 / 0:33`. The picture is drawn by A98 for each

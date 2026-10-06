@@ -81,8 +81,8 @@ async function keepFirstRejectSecondRenameThird(page: Page, projectId: string): 
   await chooseClip(page, 'c02');
   await pressAndStore(page, () => rejectAs(page, 'Not Interesting'));
   await chooseClip(page, 'c03');
-  await page.getByLabel('Title').fill('Price by your own costs');
-  await pressAndStore(page, () => page.getByLabel('Title').blur());
+  await page.getByLabel('Title', { exact: true }).fill('Price by your own costs');
+  await pressAndStore(page, () => page.getByLabel('Title', { exact: true }).blur());
 }
 
 test.use({ viewport: DESKTOP });
