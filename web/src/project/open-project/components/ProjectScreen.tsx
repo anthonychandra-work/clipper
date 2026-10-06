@@ -1,10 +1,11 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { type ReactNode, useEffect } from 'react';
 
 import { StatusScreen } from '../../follow-progress';
 import { useProject } from '../hooks/use-project';
+import { OpenProjectContext } from '../lib/open-project-context';
 import { hasTabs, type ProjectTab, tabAddress } from '../lib/project-addresses';
 import { ProjectMoreButton } from './ProjectMoreButton';
 import { ProjectTabs } from './ProjectTabs';
@@ -14,9 +15,10 @@ const LIBRARY_ADDRESS = '/';
 interface ProjectScreenProps {
   projectId: string;
   tab?: ProjectTab;
+  reviewTab?: ReactNode;
 }
 
-export function ProjectScreen({ projectId, tab }: ProjectScreenProps) {
+export function ProjectScreen({ projectId, tab, reviewTab }: ProjectScreenProps) {
   const router = useRouter();
   const { project, projects, isMissing } = useProject(projectId);
   const mustOpenReview = project !== null && hasTabs(project) && tab === undefined;
@@ -27,9 +29,9 @@ export function ProjectScreen({ projectId, tab }: ProjectScreenProps) {
   }, [isMissing, mustOpenReview, projectId, router]);
 
   if (project === null || mustOpenReview) return null;
-  const more = <ProjectMoreButton project={project} />;
   if (tab === undefined || !hasTabs(project)) {
-    return <StatusScreen project={project} projects={projects} actions={more} />;
+    return <StatusScreen project={project} projects={projects} actions={<ProjectMoreButton project={project} />} />;
   }
-  return <ProjectTabs project={project} tab={tab} actions={more} />;
+  if (tab === 'review') return <OpenProjectContext value={project}>{reviewTab}</OpenProjectContext>;
+  return <ProjectTabs project={project} tab={tab} />;
 }

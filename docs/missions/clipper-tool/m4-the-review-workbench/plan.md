@@ -351,7 +351,7 @@ What the spec's file list leaves out
   above, the times of the talk's first clip after one sentence step and after five nudges, the
   two orders in which two answers can arrive, and a refusal.
 
-- [ ] T10 — Open the Review tab at its addresses, with the candidate list and its filters
+- [x] T10 — Open the Review tab at its addresses, with the candidate list and its filters
   Files: `web/src/app/projects/[id]/review/layout.tsx`,
   `web/src/app/projects/[id]/review/page.tsx`, `web/src/app/projects/[id]/review/[clip]/page.tsx`,
   `web/src/app/page.tsx`, `web/src/app/new/page.tsx`, `web/src/project/index.ts`,
@@ -374,7 +374,8 @@ What the spec's file list leaves out
   `web/src/review/list-candidates/lib/filter-clips.test.ts`, `web/src/shared/styles/app.css`,
   `AGENTS.md`, `web/e2e/support/ready-talk.ts`, `web/e2e/support/read-review.ts`,
   `web/e2e/support/review-page.ts`, `web/e2e/support/tool-test.ts`, `web/e2e/support/index.ts`,
-  `web/e2e/review-list.spec.ts`, `web/e2e/api-key.spec.ts`
+  `web/e2e/review-list.spec.ts`, `web/e2e/api-key.spec.ts`,
+  `web/src/project/open-project/lib/open-project-context.ts`, `docs/missions/clipper-tool/spec.md`
   Done: the Review addresses share one layout that holds the tab, and their pages draw nothing of
   their own, so the screen stays in place while the address moves between the list and the
   clips. The project screen takes the Review tab from the route and shows it for a project that

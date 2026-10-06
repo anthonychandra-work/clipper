@@ -1,4 +1,4 @@
-export { clipAddress, type OpenReview, reviewAddress, useReview } from './open-review';
+export { clipAddress, NewestProjectReview, type OpenReview, reviewAddress, ReviewTab, useReview } from './open-review';
 export type {
   Caption,
   CaptionStyle,

@@ -1,6 +1,7 @@
 import { test as base } from '@playwright/test';
 
 import { findOrBuildFixtures } from './build-fixtures';
+import { type ReadyTalk, takeReadyTalk } from './ready-talk';
 import { ToolRun, readTestRunSettings } from './run-tool';
 import { removeSavedKey, saveTestKey, TEST_KEY } from './saved-key';
 import { type FixtureServer, serveFixtures } from './serve-fixtures';
@@ -15,6 +16,7 @@ const SCENARIO_OF_THE_TOOL = 'talk';
 interface TestFixtures {
   fixtureServer: FixtureServer;
   savedKey: string;
+  readyTalk: ReadyTalk;
 }
 
 interface WorkerFixtures {
@@ -68,6 +70,9 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
     await saveTestKey(request);
     await use(TEST_KEY);
     await removeSavedKey(request);
+  },
+  readyTalk: async ({ request, fixtureServer }, use) => {
+    await use(await takeReadyTalk(request, fixtureServer));
   },
   baseURL: async ({ tool }, use) => {
     await use(tool.address);

@@ -13,12 +13,14 @@ a.tab-bar__tab,
 a.sidebar__new,
 a.sidebar__link,
 a.project-row,
-a.segmented__option {
+a.segmented__option,
+a.candidate__open {
   text-decoration: none;
 }
 
 a.sidebar__link,
-a.project-row {
+a.project-row,
+a.candidate__open {
   color: inherit;
 }
 

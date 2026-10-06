@@ -822,6 +822,33 @@ From `intent.md`. Base `82df5ce`.
   `review-clip`, each at 390 and 1360 px, in light and in dark, and a file `talk-review.json`
   holds the talk's project, its review and its stored transcript (`project`, `review`,
   `transcript`). (planner, m4)
+- A104 — A review is stored for a clip once something about it changes; until then the clip
+  stands as selection cut it. A change to a clip names only what it changes: `decision`,
+  `rejectReason`, `title`, `startSentence`, `startNudge`, `endSentence` and `endNudge`. A reason
+  sent without a decision is kept only for a clip that is rejected. A point sent to another
+  sentence without a nudge loses the nudge it had. The points are judged as they would stand
+  after the change, whatever step led there, and a change that names no point is stored without
+  that judgement. A request to a Review address that the service cannot read, a number where a
+  word belongs or a field it does not know among them, gets the refusal of A91. A frame that is
+  not on disk answers 404 with "This clip has no such frame on this Mac." A91 to A93 fix the
+  rules and leave these forms open. (executor, m4)
+- A105 — A caption word is shown without the straight and curly quotation marks and the
+  guillemets before it, and without the full stops, commas, question marks, exclamation marks,
+  colons, semicolons, ellipses, closing brackets and quotation marks after it. A frame is named
+  after its clip and its place in the strip, as in `c04-07.jpg`. A frame that ffmpeg cannot write
+  is left out whatever the cause, a moment after the picture's end among them; a full disk is the
+  one exception and fails the step. The cut step hands the filmstrip maker the clips it chose, the
+  transcript's sentences, the stop signal and the last tenth of its bar. A95 and A97 give the
+  rules and leave these open. (executor, m4)
+- A106 — The page declares Inter in its own head and not in a stylesheet, so the browser asks
+  for the font at the one address the export reads it from and no build step renames the file.
+  The web app shows a change before it is sent in two cases: a title while it is typed and a
+  point while its handle is dragged. The Review tests find the shared project again by its title,
+  its state and its six candidates, delete every other project first, and leave it in place for
+  the next Review test; the test files that run after them delete every project after each test.
+  `service/clipper/review` and `web/e2e/support` hold more source files flat than the coding
+  standards advise, as A79 and A85 record for other folders; the plan names each file at its flat
+  path. The plan fixes what the tab does and leaves these open. (executor, m4)
 
 ## Milestones
 

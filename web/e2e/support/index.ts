@@ -13,8 +13,18 @@ export {
   readShownProblem,
 } from './new-project-sheet';
 export { presentAsReady } from './present-as-ready';
+export { changeClip, readReview, storeLook } from './read-review';
 export { readSelection, type Selection } from './read-selection';
 export { countWordsWrongInHundred, readTranscript, type StoredTranscript } from './read-transcript';
+export type { ReadyTalk } from './ready-talk';
+export {
+  candidateRow,
+  type CandidateRowText,
+  listCurrentRows,
+  openReview,
+  readCandidateRows,
+  readFilterCounts,
+} from './review-page';
 export {
   type EnvironmentChanges,
   isPortOpen,

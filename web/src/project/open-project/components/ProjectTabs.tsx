@@ -1,64 +1,18 @@
-import Link from 'next/link';
-import type { ReactNode } from 'react';
+import type { Project } from '@/library';
 
-import { describeCandidateCount, type Project } from '@/library';
-import { formatTimecode } from '@/shared/lib/format-timecode';
-import { ScreenFrame } from '@/shell';
-
-import { PROJECT_TABS, type ProjectTab, tabAddress } from '../lib/project-addresses';
 import { EmptyExport } from './EmptyExport';
 import { EmptyResults } from './EmptyResults';
-import { EmptyReview } from './EmptyReview';
-
-const BACK_TO_LIBRARY = { label: 'Library', href: '/' };
+import { ProjectFrame } from './ProjectFrame';
 
 interface ProjectTabsProps {
   project: Project;
-  tab: ProjectTab;
-  actions: ReactNode;
+  tab: 'export' | 'results';
 }
 
-export function ProjectTabs({ project, tab, actions }: ProjectTabsProps) {
+export function ProjectTabs({ project, tab }: ProjectTabsProps) {
   return (
-    <ScreenFrame
-      screenKey="project"
-      depth={1}
-      section="library"
-      title={project.title}
-      subtitle={describeProject(project)}
-      titleStyle="title"
-      hasLargeTitle
-      back={BACK_TO_LIBRARY}
-      centre={<TabLinks project={project} current={tab} />}
-      actions={actions}
-    >
-      {tab === 'review' ? <EmptyReview /> : null}
-      {tab === 'export' ? <EmptyExport projectId={project.id} /> : null}
-      {tab === 'results' ? <EmptyResults projectId={project.id} /> : null}
-    </ScreenFrame>
+    <ProjectFrame project={project} tab={tab}>
+      {tab === 'export' ? <EmptyExport projectId={project.id} /> : <EmptyResults projectId={project.id} />}
+    </ProjectFrame>
   );
-}
-
-function TabLinks({ project, current }: { project: Project; current: ProjectTab }) {
-  return (
-    <div className="segmented" role="group" aria-label="Project steps">
-      {PROJECT_TABS.map((tab) => (
-        <Link
-          key={tab.value}
-          className="segmented__option"
-          id={`tab-${tab.value}`}
-          href={tabAddress(project.id, tab.value)}
-          aria-current={tab.value === current ? 'page' : 'false'}
-        >
-          {tab.label}
-          {tab.value === 'export' ? <span className="segmented__count">{project.keptCount}</span> : null}
-        </Link>
-      ))}
-    </div>
-  );
-}
-
-function describeProject(project: Project): string {
-  const length = project.durationSeconds === null ? '' : ` · ${formatTimecode(project.durationSeconds)}`;
-  return `${project.sourceLabel}${length} · ${describeCandidateCount(project.candidateCount)}`;
 }

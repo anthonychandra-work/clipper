@@ -1,6 +1,6 @@
 import { LibraryScreen } from '@/library';
-import { NewestProject } from '@/project';
+import { NewestProjectReview } from '@/review';
 
 export default function LibraryPage() {
-  return <LibraryScreen whenRegular={<NewestProject />} />;
+  return <LibraryScreen whenRegular={<NewestProjectReview />} />;
 }

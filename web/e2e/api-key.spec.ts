@@ -72,10 +72,13 @@ async function openEveryScreen(page: Page, projectId: string): Promise<void> {
 }
 
 async function askTheService(request: APIRequestContext, projectId: string): Promise<string[]> {
-  const addresses = ['/api/settings', '/api/projects', `/api/projects/${projectId}`, `/api/projects/${projectId}/selection`];
+  const project = `/api/projects/${projectId}`;
+  const addresses = ['/api/settings', '/api/projects', project, `${project}/selection`, `${project}/review`];
   const answers: string[] = [];
   for (const address of addresses) {
-    answers.push(await (await request.get(address)).text());
+    const answer = await request.get(address);
+    if (!answer.ok()) throw new Error(`${address} was not answered: ${answer.status()}`);
+    answers.push(await answer.text());
   }
   return answers;
 }

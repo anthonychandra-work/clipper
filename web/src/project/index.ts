@@ -1,1 +1,8 @@
-export { NewestProject, ProjectScreen, type ProjectTab, tabAddress } from './open-project';
+export {
+  NewestProject,
+  ProjectFrame,
+  ProjectScreen,
+  type ProjectTab,
+  tabAddress,
+  useOpenProject,
+} from './open-project';
