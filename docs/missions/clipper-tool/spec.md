@@ -1169,6 +1169,120 @@ From `intent.md`. Base `82df5ce`.
   when the fetched video is gone, and that Clipper posts nothing. `AGENTS.md` words the boundary
   on model weights as A14 reads it. The plan asks for the measured times and leaves the wording
   open. (executor, m5)
+- A140 — The Results tab lists the project's clips that have a finished export on the Mac, kept or
+  not, in the order of their ranks. D39 speaks of exported clips; the prototype renders nothing
+  and lists the kept ones. The tab reads one address, `GET /api/projects/<id>/results`, which
+  gives each such clip with its rank, its title as it stands and its views, a whole number or none
+  (`clips` with `id`, `rank`, `title` and `views`). `PUT /api/projects/<id>/clips/<clip>/views`
+  stores a clip's views or, sent none, clears them (`views`), and answers with the results. Views
+  are a whole number from 1 to 9,999,999,999. Views for a clip without a finished export, a number
+  outside that range and a body the service cannot read are refused with A91's sentence. A project
+  without candidates answers with no clips, whatever its state. Views are records of the project
+  and are removed with it. A project's JSON carries the number of its clips with views as
+  `loggedCount`, and the row of an exported project with at least one reads "Exported · 2 clips
+  exported, results logged", which completes A119. (planner, m6)
+- A141 — The Results tab keeps the prototype's two groups, with their markup and wording. "Views
+  After 7 Days" has a row for each listed clip: its rank in two digits, its title as the label of
+  the field, and a number field. The footer under it is the prototype's without its last sentence,
+  "These figures are examples." A typed number shows in "Ranking Against Outcome" at once and is
+  saved half a second after the last keystroke and when the field is left, as a title is (A92). An
+  empty field, zero and a negative number clear the clip's views, and the fraction of a number is
+  dropped. "Ranking Against Outcome" reads "Enter views for at least two clips." until two clips
+  have views. From then on it lists those clips by their views, the highest first and rank 1
+  before rank 2 between equal views, each with its title, its views written as in `48,000` and a
+  bar as long as its share of the highest views. Above them stands the prototype's sentence: "The
+  selector’s first pick performed best." when the first of them has rank 1, and otherwise "The
+  best performer was the selector’s pick number 3.", each followed by the ranks, as in "Ranks in
+  order of views: 3, 2, 1." A rank is the clip's rank among all candidates of the project. With no
+  listed clip the tab is the prototype's "No Results Yet" with its sentence. Its control reads "Go
+  to Review" while no clip is kept, and "Go to Export", which leads to the Export tab, once one is:
+  in the prototype a kept clip always has a row here. (planner, m6)
+- A142 — The history of D40 is two lists in the database that belong to no project, so deleting a
+  project leaves them (D65). The first holds one entry for each clip that stands kept or rejected:
+  the decision, the reason of a rejection, and its place in the order the decisions were made. A
+  change of a clip's decision or of its reason moves its entry to the end, a clip set back to
+  undecided leaves the list, and a change of a title or of a point changes nothing in it. The last
+  50 decisions are the 50 newest entries. The second list holds one entry for each clip with
+  views: the views, the clip's hook type and its length in seconds as it stood when the views were
+  stored. Cleared views take the entry out. An entry is written in the same transaction as the
+  decision or the views it records. Decisions stored before this milestone are copied into the
+  first list when the database is upgraded, in the order they are stored. (planner, m6)
+- A143 — Each selection pass writes the note when it starts, from the history as it stands, and
+  every request of the pass carries it in its task as `note`. With nothing to say, the task has no
+  `note`. The note is plain English of at most two lines. The first is written when one of the
+  last 50 decisions is a rejection: "Of the last 50 clips this user decided on, 14 were rejected:
+  6 cut off mid-thought, 4 not interesting, 3 needing earlier context, 1 repeating another clip.",
+  with the number of decisions there are, up to 50, and all four reasons named, also at 0. A
+  rejection without a reason counts in the total alone. The second line is written when three or
+  more clips have views. The clips are ordered by their views; the best third is a third of them,
+  rounded down, from the top, and the worst third as many from the bottom. It reads "Of 9 posted
+  clips with views logged, the best third opened with these hooks: story 2, number 1, and lasted
+  28 to 41 seconds. The worst third opened with: none 2, list 1, and lasted 49 to 58 seconds." A
+  third's hook types are named as the cut instructions name them, each with the number of its
+  clips, the most frequent first. Its lengths are its shortest and its longest clip in whole
+  seconds, and one number when the two are equal. The instructions of both passes say that the
+  note tells what this user did with clips of earlier videos, that it tips close calls, and that
+  the rules of the task and the brief come first. D40 gives what the note holds and leaves its
+  form open. (planner, m6)
+- A144 — Settings answers with the rejections of each reason among the last 50 decisions, the
+  numbers the note's first line gives (`rejections` with `cutOff`, `notInteresting`,
+  `needsContext` and `repeat`), and "What the Selector Has Learned" shows them. "Forget All of It"
+  is switched on and asks for no confirmation, as in the prototype. It sends
+  `DELETE /api/settings/history`, which empties both lists of A142 and answers with the settings,
+  and shows "The selector forgot what it had learned", where the prototype's message describes the
+  real app. Forgetting changes no project: clips stay kept or rejected, and the Results tabs keep
+  their views. A decision or views changed afterwards enter the history again. (planner, m6)
+- A145 — The new project sheet starts with the clip length chosen in Settings. It opens at once
+  with 25–60 s and takes the default when Settings answers, unless a length was chosen in the
+  sheet by then. When Settings cannot be read, 25–60 s stays. The two models and the clips per
+  video are read when a pass starts (A69), the transcription model when a transcription starts,
+  and the retention at each cleanup (A146), so a change reaches the next project without a
+  restart. The free disk space Settings shows is the space the Mac gives as available to the user
+  on the disk that holds the data folder, the figure `df` prints, in gigabytes of 1024³ bytes and
+  rounded down. Finder also counts space that macOS can purge, and its figure can be larger.
+  (planner, m6)
+- A146 — A project's import is the moment it was created. It is stored with the project from this
+  milestone on, and a project made before counts from the moment its database is upgraded. The
+  cleanup runs once when the tool starts, before the service answers, and then once an hour. Each
+  time it reads the retention chosen in Settings, and with "Never" it removes nothing. It removes
+  the source and the preview copy of a project that is ready or exported, was imported more than
+  that many days before, and has no clip waiting or rendering. A project that has not reached its
+  clips keeps its source whatever its age, because Retry and Resume need it; the user deletes
+  such a project. The transcript, the filmstrip frames, the candidates, the decisions, the views
+  and the exports stay. `CLIPPER_CLOCK_AHEAD_DAYS` serves test runs: it adds that many days to the
+  clock the cleanup reads, so a check ages a project by starting the tool again. (planner, m6)
+- A147 — The check of the README from a fresh copy clones the repository into a temporary folder
+  outside it, follows the README there and removes the folder. Its setup downloads what every
+  first setup downloads: the packages, the browser the tests drive, 94 MB, and the test model.
+  D48 rules out larger downloads for a check of a tool that is set up; M6 asks for the setup
+  itself to be repeated. The clone's run of `pnpm test` is this milestone's run of the test
+  command, because a clone holds what is committed and nothing else. The clone is started on the
+  ports and the data folder the README names. Its key file is named in a temporary folder, so the
+  check never opens the user's key (A10). The request to the phone address is sent from the Mac
+  itself, as M6 words that check. (planner, m6)
+- A148 — The three measures of A103, the text fit at both sizes, the tap areas and the contrast,
+  run on the Results tab and on Settings, the two screens this milestone completes: all three at
+  390 px, and the contrast at 1360 px. The Results tab is measured empty, with the talk's three
+  exported clips and their views, and as results presented to the page with twelve clips, titles
+  of 110 characters and views of ten digits. Settings is measured without a key and with one
+  saved, with counts of three digits presented to the page. A rule a screen needs goes into the
+  app's stylesheet, and where a colour of the prototype and the ratio disagree, the ratio wins
+  (A102). The captures are `results-<width>-<theme>.png` and `settings-<width>-<theme>.png`, at
+  390 and 1360 px, in light and in dark. `learning-requests.json` holds what the stand-in kept of
+  the selection requests of two projects, one made with a history and one made after "Forget All
+  of It", with the rejections Settings gave before each (`withHistory` and `afterForgetting`, each
+  with `rejections` and `requests`). (planner, m6)
+- A149 — The service changes one clip at a time. Reading a clip's stored review, judging the
+  change and storing it happen under one lock, so a change that arrives while another is being
+  stored is applied to what that one stored. The page still shows every change at once, and it
+  sends the changes of one clip one after another, each when the one before it is answered, so
+  the last answer it shows is the clip as the service holds it. Changes of different clips go
+  out together. Measured on this Mac: of two changes of one clip that reached the service at the
+  same moment, a decision and a moved point, only one was stored in 43 rounds of 300. In a run of
+  the test command on a Mac busy after a wake from sleep, the browser test that keeps a clip and
+  moves its out point at once read "Keep" where it had pressed Keep. R40 and M4 ask for every
+  change to be stored, and the history of A142 is written from the stored decision.
+  (planner, m6)
 
 ## Milestones
 
