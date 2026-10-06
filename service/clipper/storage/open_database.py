@@ -125,6 +125,31 @@ CREATE TABLE renders (
 ALTER TABLE projects ADD COLUMN exported_count INTEGER NOT NULL DEFAULT 0;
 """
 
+CREATE_HISTORY = """
+CREATE TABLE decision_history (
+    place INTEGER PRIMARY KEY AUTOINCREMENT,
+    project_id TEXT NOT NULL,
+    clip_id TEXT NOT NULL,
+    is_rejection INTEGER NOT NULL,
+    reject_reason TEXT,
+    UNIQUE (project_id, clip_id)
+);
+CREATE TABLE outcome_history (
+    place INTEGER PRIMARY KEY AUTOINCREMENT,
+    project_id TEXT NOT NULL,
+    clip_id TEXT NOT NULL,
+    views INTEGER NOT NULL,
+    hook_type TEXT NOT NULL,
+    seconds REAL NOT NULL,
+    UNIQUE (project_id, clip_id)
+);
+INSERT INTO decision_history (project_id, clip_id, is_rejection, reject_reason)
+SELECT project_id, clip_id, decision = 'reject', reject_reason
+FROM clip_reviews
+WHERE decision IN ('keep', 'reject')
+ORDER BY rowid;
+"""
+
 MIGRATIONS: tuple[str, ...] = (
     CREATE_PROJECTS,
     CREATE_PREFERENCES,
@@ -133,6 +158,7 @@ MIGRATIONS: tuple[str, ...] = (
     ADD_HALT_MARK,
     CREATE_REVIEW,
     CREATE_RENDERS,
+    CREATE_HISTORY,
 )
 
 

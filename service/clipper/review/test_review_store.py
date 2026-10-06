@@ -2,6 +2,7 @@ from dataclasses import replace
 
 import pytest
 
+from ..learning import LAST_DECISIONS, ClipKey, HistoryStore, PastDecision
 from ..projects import ProjectRepository
 from ..selection import SelectionStore
 from ..storage import Database
@@ -40,6 +41,16 @@ REVIEW_TABLES = ("clip_reviews", "project_looks")
 @pytest.fixture
 def store(database: Database) -> ReviewStore:
     return ReviewStore(database)
+
+
+@pytest.fixture
+def history(database: Database) -> HistoryStore:
+    return HistoryStore(database)
+
+
+def list_history(history: HistoryStore) -> list[tuple[str, bool, str | None]]:
+    decisions = history.list_newest_decisions(LAST_DECISIONS)
+    return [(entry.clip.clip_id, entry.is_rejection, entry.reject_reason) for entry in decisions]
 
 
 def count_decisions(repository: ProjectRepository, project_id: str) -> tuple[int, int]:
@@ -166,3 +177,110 @@ def test_cutting_again_leaves_no_review_and_both_counts_at_0_and_keeps_the_look(
     assert count_decisions(repository, project_id) == (0, 0)
     assert repository.get(project_id).candidate_count == 2
     assert store.read_look(project_id) == PLAIN_LOOK
+
+
+def test_a_kept_clip_enters_the_history_under_its_project_and_its_name(
+    store: ReviewStore, cut_talk: CutTalk, history: HistoryStore
+) -> None:
+    store.save_review(cut_talk.project.id, "c01", KEPT)
+
+    assert history.list_newest_decisions(LAST_DECISIONS) == [
+        PastDecision(ClipKey(cut_talk.project.id, "c01"), is_rejection=False)
+    ]
+
+
+def test_a_rejection_enters_the_history_with_its_reason(
+    store: ReviewStore, cut_talk: CutTalk, history: HistoryStore
+) -> None:
+    without_a_reason = replace(REJECTED, reject_reason=None)
+
+    store.save_review(cut_talk.project.id, "c01", REJECTED)
+    store.save_review(cut_talk.project.id, "c02", without_a_reason)
+
+    assert list_history(history) == [("c02", True, None), ("c01", True, "not-interesting")]
+    assert history.count_rejections().not_interesting == 1
+
+
+def test_rejecting_a_kept_clip_leaves_one_entry_for_it_and_makes_it_the_newest(
+    store: ReviewStore, cut_talk: CutTalk, history: HistoryStore
+) -> None:
+    store.save_review(cut_talk.project.id, "c01", KEPT)
+    store.save_review(cut_talk.project.id, "c02", KEPT)
+
+    store.save_review(cut_talk.project.id, "c01", REJECTED)
+
+    assert list_history(history) == [("c01", True, "not-interesting"), ("c02", False, None)]
+
+
+def test_a_changed_reason_leaves_one_entry_for_the_clip_and_makes_it_the_newest(
+    store: ReviewStore, cut_talk: CutTalk, history: HistoryStore
+) -> None:
+    repeats_another = replace(REJECTED, reject_reason=RejectReason.REPEAT)
+    store.save_review(cut_talk.project.id, "c01", REJECTED)
+    store.save_review(cut_talk.project.id, "c02", KEPT)
+
+    store.save_review(cut_talk.project.id, "c01", repeats_another)
+
+    assert list_history(history) == [("c01", True, "repeat"), ("c02", False, None)]
+
+
+def test_a_clip_set_back_to_undecided_leaves_the_history(
+    store: ReviewStore, cut_talk: CutTalk, history: HistoryStore
+) -> None:
+    store.save_review(cut_talk.project.id, "c01", REJECTED)
+    store.save_review(cut_talk.project.id, "c02", KEPT)
+
+    store.save_review(cut_talk.project.id, "c01", AS_CUT)
+
+    assert list_history(history) == [("c02", False, None)]
+
+
+def test_a_change_of_the_title_or_of_a_point_leaves_the_history_as_it_was(
+    store: ReviewStore, cut_talk: CutTalk, history: HistoryStore
+) -> None:
+    store.save_review(cut_talk.project.id, "c01", REJECTED)
+    store.save_review(cut_talk.project.id, "c02", KEPT)
+    before = history.list_newest_decisions(LAST_DECISIONS)
+
+    store.save_review(cut_talk.project.id, "c01", replace(REJECTED, title="A new title"))
+    store.save_review(cut_talk.project.id, "c01", replace(REJECTED, end=ClipPoint(11, -2)))
+    store.save_review(cut_talk.project.id, "c03", replace(AS_CUT, start=ClipPoint(3)))
+
+    assert history.list_newest_decisions(LAST_DECISIONS) == before
+    assert list_history(history) == [("c02", False, None), ("c01", True, "not-interesting")]
+
+
+def test_deleting_the_project_leaves_its_entries_in_the_history(
+    store: ReviewStore, cut_talk: CutTalk, repository: ProjectRepository, history: HistoryStore
+) -> None:
+    store.save_review(cut_talk.project.id, "c01", KEPT)
+    store.save_review(cut_talk.project.id, "c02", REJECTED)
+
+    repository.delete(cut_talk.project.id)
+
+    assert list_history(history) == [("c02", True, "not-interesting"), ("c01", False, None)]
+    assert history.count_rejections().not_interesting == 1
+
+
+def test_emptying_the_history_leaves_the_clip_rejected_in_its_review(
+    store: ReviewStore, cut_talk: CutTalk, repository: ProjectRepository, history: HistoryStore
+) -> None:
+    store.save_review(cut_talk.project.id, "c01", REJECTED)
+
+    history.forget_all()
+    store.save_review(cut_talk.project.id, "c01", replace(REJECTED, title="Still rejected"))
+
+    assert store.list_reviews(cut_talk.project.id)["c01"].decision is Decision.REJECT
+    assert count_decisions(repository, cut_talk.project.id) == (0, 1)
+    assert list_history(history) == []
+
+
+def test_a_decision_changed_after_the_history_was_emptied_enters_it_again(
+    store: ReviewStore, cut_talk: CutTalk, history: HistoryStore
+) -> None:
+    store.save_review(cut_talk.project.id, "c01", REJECTED)
+    history.forget_all()
+
+    store.save_review(cut_talk.project.id, "c01", KEPT)
+
+    assert list_history(history) == [("c01", False, None)]

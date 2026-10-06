@@ -1,5 +1,6 @@
 import sqlite3
 
+from ..learning import ClipKey, PastDecision, record_decision, remove_decision
 from ..storage import Database
 from .review_records import (
     STARTING_LOOK,
@@ -13,6 +14,9 @@ from .review_records import (
 )
 
 LIST_REVIEWS = "SELECT * FROM clip_reviews WHERE project_id = ?"
+READ_DECISION = """
+SELECT decision, reject_reason FROM clip_reviews WHERE project_id = ? AND clip_id = ?
+"""
 SAVE_REVIEW = """
 INSERT OR REPLACE INTO clip_reviews (
     project_id, clip_id, decision, reject_reason, title, start_sentence, start_nudge,
@@ -52,8 +56,11 @@ class ReviewStore:
     def save_review(self, project_id: str, clip_id: str, review: ClipReview) -> None:
         row = describe_review_row(project_id, clip_id, review)
         with self._database.transaction() as connection:
+            stored = connection.execute(READ_DECISION, [project_id, clip_id]).fetchone()
             connection.execute(SAVE_REVIEW, row)
             connection.execute(COUNT_DECISIONS, {"project_id": project_id})
+            if read_stored_decision(stored) != (review.decision, review.reject_reason):
+                remember_decision(connection, ClipKey(project_id, clip_id), review)
 
     def read_look(self, project_id: str) -> Look:
         with self._database.transaction() as connection:
@@ -86,6 +93,20 @@ def describe_review_row(
         "end_sentence": review.end.sentence,
         "end_nudge": review.end.nudge,
     }
+
+
+def read_stored_decision(stored: sqlite3.Row | None) -> tuple[str, str | None]:
+    if stored is None:
+        return Decision.UNDECIDED, None
+    return stored["decision"], stored["reject_reason"]
+
+
+def remember_decision(connection: sqlite3.Connection, clip: ClipKey, review: ClipReview) -> None:
+    if review.decision is Decision.UNDECIDED:
+        remove_decision(connection, clip)
+        return
+    is_rejection = review.decision is Decision.REJECT
+    record_decision(connection, PastDecision(clip, is_rejection, review.reject_reason))
 
 
 def read_review(row: sqlite3.Row) -> ClipReview:

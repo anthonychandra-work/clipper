@@ -12,11 +12,32 @@ MIGRATIONS_OF_M2 = MIGRATIONS[:3]
 MIGRATIONS_BEFORE_THE_HALT_MARK = MIGRATIONS[:4]
 MIGRATIONS_OF_M3 = MIGRATIONS[:5]
 MIGRATIONS_OF_M4 = MIGRATIONS[:6]
+MIGRATIONS_OF_M5 = MIGRATIONS[:7]
 READ_M4_ROWS = (
     "SELECT * FROM candidates",
     "SELECT * FROM clip_reviews",
     "SELECT * FROM project_looks",
 )
+READ_M5_ROWS = (*READ_M4_ROWS, "SELECT * FROM renders")
+READ_DECISION_HISTORY = """
+SELECT project_id, clip_id, is_rejection, reject_reason FROM decision_history ORDER BY place
+"""
+ADD_TWO_MORE_CANDIDATES = """
+INSERT INTO candidates (
+    project_id, id, rank, start_seconds, end_seconds, hook_score, arc_score, value_score,
+    share_score, reason, title, hook_title, hook_type, platforms, is_replay_peak
+)
+SELECT
+    project_id, 'c0' || (rank + added), rank + added, start_seconds, end_seconds, hook_score,
+    arc_score, value_score, share_score, reason, title, hook_title, hook_type, platforms,
+    is_replay_peak
+FROM candidates, (SELECT 1 AS added UNION ALL SELECT 2)
+"""
+ADD_REVIEWS_OF_THE_OTHER_TWO = """
+INSERT INTO clip_reviews (
+    project_id, clip_id, decision, start_sentence, start_nudge, end_sentence, end_nudge
+) VALUES ('d4e5f6', 'c03', 'undecided', 4, 0, 12, 0), ('d4e5f6', 'c02', 'keep', 4, 0, 12, 0)
+"""
 ADD_RENDER = """
 INSERT INTO renders (project_id, clip_id, state, percent, queue_place)
 VALUES ('d4e5f6', 'c01', 'waiting', 0, 1)
@@ -74,6 +95,24 @@ INSERT INTO candidates (
     'The oven broke before sunrise', 'story', '{}', 0
 )
 """
+ADD_PAST_DECISION = """
+INSERT INTO decision_history (project_id, clip_id, is_rejection, reject_reason)
+VALUES ('d4e5f6', 'c01', 1, 'cut-off')
+"""
+ADD_OUTCOME = """
+INSERT INTO outcome_history (project_id, clip_id, views, hook_type, seconds)
+VALUES ('d4e5f6', 'c01', 1200, 'story', 32.76)
+"""
+ROWS_OF_M5 = (
+    ADD_M2_PROJECT,
+    ADD_CANDIDATE,
+    ADD_TWO_MORE_CANDIDATES,
+    ADD_LOOK,
+    ADD_RENDER,
+    ADD_REVIEWS_OF_THE_OTHER_TWO,
+    ADD_REVIEW,
+    "UPDATE projects SET candidate_count = 3, kept_count = 1, rejected_count = 1",
+)
 ADD_M1_PROJECT = """
 INSERT INTO projects (id, title, source_kind, source_label, clip_length, platforms, brief, status)
 VALUES ('a1b2c3', 'talk', 'link', 'Video link', 'standard', '["reels"]', '', 'fetched')
@@ -254,12 +293,62 @@ def test_a_database_made_by_m4_keeps_its_projects_candidates_and_reviews_and_cou
         projects = connection.execute("SELECT * FROM projects").fetchall()
         kept = [[tuple(row) for row in connection.execute(read)] for read in READ_M4_ROWS]
         renders = connection.execute("SELECT COUNT(*) FROM renders").fetchone()[0]
-        assert read_schema_version(connection) == len(MIGRATIONS) == 7
+        assert read_schema_version(connection) == len(MIGRATIONS)
     assert [tuple(project)[: len(projects_before[0])] for project in projects] == projects_before
     assert [project["exported_count"] for project in projects] == [0]
     assert kept == kept_before
     assert [len(rows) for rows in kept] == [1, 1, 1]
     assert renders == 0
+
+
+def test_a_database_made_by_m5_keeps_its_rows_and_copies_its_decisions_into_the_history(
+    tmp_path: Path,
+) -> None:
+    database_file = tmp_path / "clipper.sqlite3"
+    with open_database(database_file, MIGRATIONS_OF_M5).transaction() as connection:
+        for added in ROWS_OF_M5:
+            connection.execute(added)
+        projects_before = [tuple(row) for row in connection.execute("SELECT * FROM projects")]
+        kept_before = [[tuple(row) for row in connection.execute(read)] for read in READ_M5_ROWS]
+
+    database = open_database(database_file)
+
+    with database.transaction() as connection:
+        projects = connection.execute("SELECT * FROM projects").fetchall()
+        kept = [[tuple(row) for row in connection.execute(read)] for read in READ_M5_ROWS]
+        decisions = [tuple(row) for row in connection.execute(READ_DECISION_HISTORY)]
+        outcomes = connection.execute("SELECT COUNT(*) FROM outcome_history").fetchone()[0]
+        assert read_schema_version(connection) == len(MIGRATIONS) == 8
+    assert [tuple(project)[: len(projects_before[0])] for project in projects] == projects_before
+    assert kept == kept_before
+    assert [len(rows) for rows in kept] == [3, 3, 1, 1]
+    assert decisions == [("d4e5f6", "c02", 0, None), ("d4e5f6", "c01", 1, "cut-off")]
+    assert outcomes == 0
+
+
+def test_a_new_database_has_an_empty_history(tmp_path: Path) -> None:
+    database = open_database(tmp_path / "clipper.sqlite3")
+
+    with database.transaction() as connection:
+        decisions = connection.execute("SELECT COUNT(*) FROM decision_history").fetchone()[0]
+        outcomes = connection.execute("SELECT COUNT(*) FROM outcome_history").fetchone()[0]
+
+    assert (decisions, outcomes) == (0, 0)
+
+
+def test_the_history_stays_when_its_project_is_deleted(tmp_path: Path) -> None:
+    database = open_database(tmp_path / "clipper.sqlite3")
+    with database.transaction() as connection:
+        for added in (ADD_M2_PROJECT, ADD_CANDIDATE, ADD_PAST_DECISION, ADD_OUTCOME):
+            connection.execute(added)
+
+    with database.transaction() as connection:
+        connection.execute("DELETE FROM projects WHERE id = 'd4e5f6'")
+
+    with database.transaction() as connection:
+        decisions = connection.execute("SELECT COUNT(*) FROM decision_history").fetchone()[0]
+        outcomes = connection.execute("SELECT COUNT(*) FROM outcome_history").fetchone()[0]
+    assert (decisions, outcomes) == (1, 1)
 
 
 def test_a_render_goes_with_its_candidate(tmp_path: Path) -> None:

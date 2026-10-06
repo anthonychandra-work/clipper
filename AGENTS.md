@@ -114,15 +114,16 @@ folders.
   tab and the Export tab.
 - `web/e2e/` holds the browser tests, with their shared code in `support/`.
 - `service/clipper/` holds one package per capability: `problems`, `settings`, `storage`,
-  `media`, `projects`, `pipeline`, `fetching`, `transcription`, `selection`, `review` and
-  `rendering`. Each exports through its `__init__.py` and has at most one router. `main.py`
+  `learning`, `media`, `projects`, `pipeline`, `fetching`, `transcription`, `selection`, `review`
+  and `rendering`. Each exports through its `__init__.py` and has at most one router. `main.py`
   joins them.
 - Service imports run one way: `fetching` and `transcription` import `pipeline`, `projects`,
   `media` and `storage`, and `transcription` also imports `settings`; `pipeline` imports
-  `projects` and `media`; `projects` imports none of them. `selection` imports `transcription`
-  for the stored transcript, and `settings`, `pipeline`, `projects` and `storage`. `review`, the
-  package behind the Review tab, imports `selection`, `transcription`, `projects`, `media` and
-  `storage`. `rendering`, the package behind the Export tab, imports `review`, `selection`,
+  `projects` and `media`; `projects` imports none of them. `learning`, the history the selector
+  learns from, imports `storage` alone. `selection` imports `transcription` for the stored
+  transcript, and `settings`, `pipeline`, `projects` and `storage`. `review`, the package behind
+  the Review tab, imports `selection`, `transcription`, `projects`, `media`, `storage` and
+  `learning`. `rendering`, the package behind the Export tab, imports `review`, `selection`,
   `projects`, `pipeline`, `media` and `storage`. Nothing but `main.py` imports `fetching` or
   `rendering`, nothing but `main.py` and `rendering` imports `review`, nothing but `main.py`,
   `review` and `rendering` imports `selection`, and nothing but `main.py`, `selection` and

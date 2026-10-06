@@ -162,7 +162,7 @@ What the spec's file list leaves out
 
 ## Tasks
 
-- [ ] T1 — Keep a history of decisions that outlives its project
+- [x] T1 — Keep a history of decisions that outlives its project
   Files: `service/.coding-standards-structure`, `AGENTS.md`,
   `service/clipper/storage/open_database.py`, `service/clipper/storage/test_open_database.py`,
   `service/clipper/learning/__init__.py`, `service/clipper/learning/history_records.py`,
