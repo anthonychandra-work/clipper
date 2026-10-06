@@ -11,6 +11,16 @@ MIGRATIONS_OF_M1 = MIGRATIONS[:2]
 MIGRATIONS_OF_M2 = MIGRATIONS[:3]
 MIGRATIONS_BEFORE_THE_HALT_MARK = MIGRATIONS[:4]
 MIGRATIONS_OF_M3 = MIGRATIONS[:5]
+MIGRATIONS_OF_M4 = MIGRATIONS[:6]
+READ_M4_ROWS = (
+    "SELECT * FROM candidates",
+    "SELECT * FROM clip_reviews",
+    "SELECT * FROM project_looks",
+)
+ADD_RENDER = """
+INSERT INTO renders (project_id, clip_id, state, percent, queue_place)
+VALUES ('d4e5f6', 'c01', 'waiting', 0, 1)
+"""
 ADD_REVIEW = """
 INSERT INTO clip_reviews (
     project_id, clip_id, decision, reject_reason, start_sentence, start_nudge, end_sentence,
@@ -225,6 +235,55 @@ def test_a_review_of_a_clip_that_is_not_a_candidate_cannot_be_stored(tmp_path: P
 
     with pytest.raises(sqlite3.IntegrityError), database.transaction() as connection:
         connection.execute(ADD_REVIEW)
+
+
+def test_a_database_made_by_m4_keeps_its_projects_candidates_and_reviews_and_counts_no_export(
+    tmp_path: Path,
+) -> None:
+    database_file = tmp_path / "clipper.sqlite3"
+    with open_database(database_file, MIGRATIONS_OF_M4).transaction() as connection:
+        for added in (ADD_M2_PROJECT, ADD_CANDIDATE, ADD_REVIEW, ADD_LOOK):
+            connection.execute(added)
+        connection.execute("UPDATE projects SET candidate_count = 1, rejected_count = 1")
+        projects_before = [tuple(row) for row in connection.execute("SELECT * FROM projects")]
+        kept_before = [[tuple(row) for row in connection.execute(read)] for read in READ_M4_ROWS]
+
+    database = open_database(database_file)
+
+    with database.transaction() as connection:
+        projects = connection.execute("SELECT * FROM projects").fetchall()
+        kept = [[tuple(row) for row in connection.execute(read)] for read in READ_M4_ROWS]
+        renders = connection.execute("SELECT COUNT(*) FROM renders").fetchone()[0]
+        assert read_schema_version(connection) == len(MIGRATIONS) == 7
+    assert [tuple(project)[: len(projects_before[0])] for project in projects] == projects_before
+    assert [project["exported_count"] for project in projects] == [0]
+    assert kept == kept_before
+    assert [len(rows) for rows in kept] == [1, 1, 1]
+    assert renders == 0
+
+
+def test_a_render_goes_with_its_candidate(tmp_path: Path) -> None:
+    database = open_database(tmp_path / "clipper.sqlite3")
+    with database.transaction() as connection:
+        for added in (ADD_M2_PROJECT, ADD_CANDIDATE, ADD_RENDER):
+            connection.execute(added)
+
+    with database.transaction() as connection:
+        stored = connection.execute("SELECT * FROM renders").fetchall()
+        connection.execute("DELETE FROM candidates WHERE project_id = 'd4e5f6'")
+        left = connection.execute("SELECT COUNT(*) FROM renders").fetchone()[0]
+
+    assert [tuple(render) for render in stored] == [("d4e5f6", "c01", "waiting", 0.0, None, 1, 0)]
+    assert left == 0
+
+
+def test_a_render_of_a_clip_that_is_not_a_candidate_cannot_be_stored(tmp_path: Path) -> None:
+    database = open_database(tmp_path / "clipper.sqlite3")
+    with database.transaction() as connection:
+        connection.execute(ADD_M2_PROJECT)
+
+    with pytest.raises(sqlite3.IntegrityError), database.transaction() as connection:
+        connection.execute(ADD_RENDER)
 
 
 def test_the_schema_version_counts_the_migrations_applied(tmp_path: Path) -> None:

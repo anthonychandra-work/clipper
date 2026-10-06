@@ -1085,6 +1085,15 @@ From `intent.md`. Base `82df5ce`.
   the service's tests of this package write no transcript of their own, because the package
   does not import the transcription package. A115 and A116 give the rules and leave these open.
   (executor, m5)
+- A130 — A render's place in the queue is a number one above the highest in the table when the
+  clip is queued, and a clip queued again after it ended takes a new place at the end. The store
+  cancels a project's waiting renders, and the worker settles the one it is rendering once that
+  render has ended: taken out when it was stopped, done when it had already finished. Settled
+  the other way round, a clip that finished in the instant of the cancel would leave a file
+  with no render to show it. A failed render keeps the mark of an earlier export, so the count
+  of a project's exports is the count of its clips with a finished file, kept or not. The
+  rendering package stays one flat folder, as the plan names its files and as A79, A85 and A106
+  record for other folders. A116 and A119 give the rules and leave these open. (executor, m5)
 
 ## Milestones
 

@@ -77,6 +77,7 @@ def test_a_created_link_project_is_returned_in_its_json_form(client: TestClient)
         "candidateCount": 0,
         "keptCount": 0,
         "rejectedCount": 0,
+        "exportedCount": 0,
     }
 
 
@@ -106,6 +107,24 @@ def test_a_project_carries_the_numbers_of_its_kept_and_rejected_clips(
     listed = client.get("/api/projects").json()["projects"][0]
     assert (read["keptCount"], read["rejectedCount"]) == (2, 1)
     assert (listed["keptCount"], listed["rejectedCount"]) == (2, 1)
+
+
+def test_an_exported_project_carries_the_number_of_its_exports(
+    client: TestClient, tmp_path: Path
+) -> None:
+    created = client.post("/api/projects", json=LINK_DRAFT).json()
+    database = open_database(tmp_path / "data" / "clipper.sqlite3")
+
+    with database.transaction() as connection:
+        connection.execute(
+            "UPDATE projects SET status = 'exported', exported_count = 2 WHERE id = ?",
+            [created["id"]],
+        )
+
+    read = client.get(f"/api/projects/{created['id']}").json()
+    listed = client.get("/api/projects").json()["projects"][0]
+    assert (read["status"], read["exportedCount"]) == ("exported", 2)
+    assert (listed["status"], listed["exportedCount"]) == ("exported", 2)
 
 
 def test_a_halt_gives_its_reason_and_whether_it_points_to_settings(

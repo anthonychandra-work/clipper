@@ -50,6 +50,7 @@ class ProjectResponse(ApiModel):
     candidate_count: int
     kept_count: int
     rejected_count: int
+    exported_count: int
 
 
 class ProjectListResponse(ApiModel):

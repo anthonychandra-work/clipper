@@ -14,6 +14,8 @@ from .render_plan import (
     TimedOverlay,
     WholePictureLayout,
 )
+from .render_records import QueuedRender, Render, RenderState
+from .render_store import RenderStore
 from .sample_faces import FaceSearchJob, NoPictureError, SampledFaces, sample_faces
 
 __all__ = [
@@ -30,7 +32,11 @@ __all__ = [
     "PicturePart",
     "PictureShape",
     "Place",
+    "QueuedRender",
+    "Render",
     "RenderPlan",
+    "RenderState",
+    "RenderStore",
     "RenderWork",
     "SampledFaces",
     "SourceGoneError",

@@ -73,6 +73,22 @@ def test_a_new_project_has_no_kept_or_rejected_clip_and_stored_counts_are_read_b
     assert [project.rejected_count for project in repository.list_newest_first()] == [1, 0]
 
 
+def test_a_new_project_has_no_export_and_a_stored_count_is_read_back(
+    repository: ProjectRepository,
+) -> None:
+    new = plan_link_project("New")
+    exported = replace(
+        plan_link_project("Exported"), status=ProjectStatus.EXPORTED, exported_count=2
+    )
+
+    repository.add(new)
+    repository.add(exported)
+
+    assert repository.get(new.id).exported_count == 0
+    assert repository.get(exported.id) == exported
+    assert [project.exported_count for project in repository.list_newest_first()] == [2, 0]
+
+
 def test_a_failure_that_points_to_settings_is_read_back_with_its_mark(
     repository: ProjectRepository,
 ) -> None:

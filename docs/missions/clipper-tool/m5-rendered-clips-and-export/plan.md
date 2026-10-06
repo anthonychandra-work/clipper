@@ -366,7 +366,7 @@ What the spec's file list leaves out
   folder; a source moved away fails as A120 says. The test of the three framings saves A122's
   three frames when `CLIPPER_EVIDENCE_DIR` is set.
 
-- [ ] T8 — Store the renders and count a project's exports
+- [x] T8 — Store the renders and count a project's exports
   Files: `service/clipper/storage/open_database.py`,
   `service/clipper/storage/test_open_database.py`, `service/clipper/rendering/render_records.py`,
   `service/clipper/rendering/render_store.py`, `service/clipper/rendering/test_render_store.py`,

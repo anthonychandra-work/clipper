@@ -110,6 +110,21 @@ ALTER TABLE projects ADD COLUMN kept_count INTEGER NOT NULL DEFAULT 0;
 ALTER TABLE projects ADD COLUMN rejected_count INTEGER NOT NULL DEFAULT 0;
 """
 
+CREATE_RENDERS = """
+CREATE TABLE renders (
+    project_id TEXT NOT NULL,
+    clip_id TEXT NOT NULL,
+    state TEXT NOT NULL,
+    percent REAL NOT NULL,
+    reason TEXT,
+    queue_place INTEGER NOT NULL,
+    has_export INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (project_id, clip_id),
+    FOREIGN KEY (project_id, clip_id) REFERENCES candidates (project_id, id) ON DELETE CASCADE
+);
+ALTER TABLE projects ADD COLUMN exported_count INTEGER NOT NULL DEFAULT 0;
+"""
+
 MIGRATIONS: tuple[str, ...] = (
     CREATE_PROJECTS,
     CREATE_PREFERENCES,
@@ -117,6 +132,7 @@ MIGRATIONS: tuple[str, ...] = (
     CREATE_SELECTION,
     ADD_HALT_MARK,
     CREATE_REVIEW,
+    CREATE_RENDERS,
 )
 
 
