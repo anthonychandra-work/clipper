@@ -1,0 +1,375 @@
+
+ RUN  v5.0.3 /Users/Work/Documents/_my-projects/clipper/.worktrees/clipper-tool/web
+
+ ✓ src/shell/show-toast/lib/toast-store.test.ts > the toast store > shows a message and hides it after three and a half seconds 2ms
+ ✓ src/shell/show-toast/lib/toast-store.test.ts > the toast store > replaces the message and restarts the time when another toast arrives 1ms
+ ✓ src/shell/show-toast/lib/toast-store.test.ts > the toast store > tells its watchers when a message appears and when it goes 1ms
+ ✓ src/library/list-projects/lib/projects-store.test.ts > the projects store > holds nothing and asks nothing until a component reads it 2ms
+ ✓ src/library/list-projects/lib/projects-store.test.ts > the projects store > asks at once and then once a second, however many components read it 2ms
+ ✓ src/library/list-projects/lib/projects-store.test.ts > the projects store > stops asking when the last component stops reading 1ms
+ ✓ src/library/list-projects/lib/projects-store.test.ts > the projects store > does not ask while the page is hidden and asks at once when it shows again 2ms
+ ✓ src/library/list-projects/lib/projects-store.test.ts > the projects store > tells its readers only when the answer changes 2ms
+ ✓ src/library/list-projects/lib/projects-store.test.ts > the projects store > keeps what it has when the tool does not answer, and recovers 1ms
+ ✓ src/library/list-projects/lib/projects-store.test.ts > the projects store > does not ask again while an answer is still on its way 2ms
+ ✓ src/shared/lib/request-json.test.ts > requestJson > asks under the /api prefix and returns the parsed answer 13ms
+ ✓ src/shared/lib/request-json.test.ts > requestJson > sends a JSON body with its content type 0ms
+ ✓ src/shared/lib/request-json.test.ts > requestJson > sends a raw body untouched 0ms
+ ✓ src/shared/lib/request-json.test.ts > requestJson > returns null for an empty answer 1ms
+ ✓ src/shared/lib/request-json.test.ts > requestJson > throws the status and the body when the service refuses 1ms
+ ✓ src/shared/lib/request-json.test.ts > requestJson > keeps an answer that is not JSON as text 2ms
+ ✓ src/shared/lib/request-json.test.ts > requestJson > reports an unreachable service by name 1ms
+ ✓ src/shared/lib/request-json.test.ts > requestJson > lets a cancelled request end as cancelled 1ms
+ ✓ src/library/upload-video/lib/uploads-store.test.ts > the uploads store > tells a screen how many bytes of a project have gone, and forgets it when all have 6ms
+ ✓ src/library/upload-video/lib/uploads-store.test.ts > the uploads store > keeps the upload listed until the Library has been asked for the new state 1ms
+ ✓ src/library/upload-video/lib/uploads-store.test.ts > the uploads store > sends each part to the project it belongs to 3ms
+ ✓ src/library/upload-video/lib/uploads-store.test.ts > the uploads store > follows two uploads at once 2ms
+ ✓ src/library/upload-video/lib/uploads-store.test.ts > the uploads store > says the upload stopped when a part keeps failing 10ms
+ ✓ src/library/upload-video/lib/uploads-store.test.ts > the uploads store > ends the upload of a deleted project without a word 1ms
+ ✓ src/library/upload-video/lib/send-in-parts.test.ts > sendInParts > cuts a file into 8 MiB parts and sends them in order 8ms
+ ✓ src/library/upload-video/lib/send-in-parts.test.ts > sendInParts > sends a file smaller than one part in a single request 1ms
+ ✓ src/library/upload-video/lib/send-in-parts.test.ts > sendInParts > carries on from the count the service holds when a part arrives out of step 7ms
+ ✓ src/library/upload-video/lib/send-in-parts.test.ts > sendInParts > sends a part again from the same count when the tool does not answer 5ms
+ ✓ src/library/upload-video/lib/send-in-parts.test.ts > sendInParts > stops after a part has failed and been sent again three times 5ms
+ ✓ src/library/upload-video/lib/send-in-parts.test.ts > sendInParts > counts the failures of each part on their own 7ms
+ ✓ src/library/upload-video/lib/send-in-parts.test.ts > sendInParts > ends as sent when the service has the whole file but its answer was lost 1ms
+ ✓ src/library/upload-video/lib/send-in-parts.test.ts > sendInParts > ends quietly when the project was deleted 6ms
+ ✓ src/review/open-review/lib/review-store.test.ts > the review store > holds nothing until the review is fetched, then shows it and tells its readers 2ms
+ ✓ src/review/open-review/lib/review-store.test.ts > the review store > gives the problem to be shown when the review cannot be fetched 0ms
+ ✓ src/review/open-review/lib/review-store.test.ts > the review store > stops telling a reader that stopped watching 1ms
+ ✓ src/review/open-review/lib/review-store.test.ts > the review store > applies a decision at once, sends it, and takes the service’s answer in its place 1ms
+ ✓ src/review/open-review/lib/review-store.test.ts > the review store > shows no reason for a clip that is no longer rejected 0ms
+ ✓ src/review/open-review/lib/review-store.test.ts > the review store > works out the new times of a clip at once when a point is moved 0ms
+ ✓ src/review/open-review/lib/review-store.test.ts > the review store > shows a change that is not sent, such as a title while it is typed 0ms
+ ✓ src/review/open-review/lib/review-store.test.ts > the review store > changes one clip and leaves the others as they were 0ms
+ ✓ src/review/open-review/lib/review-store.test.ts > the review store > keeps a newer change of a clip when the answer to an older one arrives after it 1ms
+ ✓ src/review/open-review/lib/review-store.test.ts > the review store > keeps the answer to the newer change when the answer to the older one arrives last 0ms
+ ✓ src/review/open-review/lib/review-store.test.ts > the review store > does not let an answer undo a title typed after the change was sent 0ms
+ ✓ src/review/open-review/lib/review-store.test.ts > the review store > shows what the service holds again and gives the problem when the service refuses 1ms
+ ✓ src/review/open-review/lib/review-store.test.ts > the review store > goes back to the last answer of the service, not to the first, after a later refusal 0ms
+ ✓ src/review/open-review/lib/review-store.test.ts > the review store > gives a new problem each time, so the same sentence is shown twice 0ms
+ ✓ src/review/open-review/lib/review-store.test.ts > the review store > applies a change of the look at once, sends it, and takes the answer 0ms
+ ✓ src/review/open-review/lib/review-store.test.ts > the review store > keeps a newer look when the answer to an older one arrives 0ms
+ ✓ src/review/open-review/lib/review-store.test.ts > the review store > shows the look the service holds again when it refuses a look 0ms
+ ✓ src/review/list-candidates/lib/filter-clips.test.ts > countFilters > names the four filters All, To Do, Kept and Rejected, in that order 1ms
+ ✓ src/review/list-candidates/lib/filter-clips.test.ts > countFilters > counts six clips without a decision as 6, 6, 0 and 0 0ms
+ ✓ src/review/list-candidates/lib/filter-clips.test.ts > countFilters > counts one kept and one rejected clip of six as 6, 4, 1 and 1 0ms
+ ✓ src/review/list-candidates/lib/filter-clips.test.ts > countFilters > counts every clip under All, whatever its decision 0ms
+ ✓ src/review/list-candidates/lib/filter-clips.test.ts > filterClips > shows every clip under All, in the order of the ranks 0ms
+ ✓ src/review/list-candidates/lib/filter-clips.test.ts > filterClips > shows the clips without a decision under To Do 0ms
+ ✓ src/review/list-candidates/lib/filter-clips.test.ts > filterClips > shows the kept clips under Kept 0ms
+ ✓ src/review/list-candidates/lib/filter-clips.test.ts > filterClips > shows the rejected clips under Rejected 0ms
+ ✓ src/review/list-candidates/lib/filter-clips.test.ts > filterClips > shows no clip in a group that holds none 0ms
+ ✓ src/library/list-projects/lib/describe-row-status.test.ts > describeRowStatus > shows the bar and the step label while a link is fetched 1ms
+ ✓ src/library/list-projects/lib/describe-row-status.test.ts > describeRowStatus > shows the bar and the step label while a file uploads 0ms
+ ✓ src/library/list-projects/lib/describe-row-status.test.ts > describeRowStatus > shows the bar and Fetched for a project that rests after its first step 0ms
+ ✓ src/library/list-projects/lib/describe-row-status.test.ts > describeRowStatus > shows the bar and Transcribed for a project that rests after its transcription 0ms
+ ✓ src/library/list-projects/lib/describe-row-status.test.ts > describeRowStatus > shows the label the service sent while a model is downloaded 0ms
+ ✓ src/library/list-projects/lib/describe-row-status.test.ts > describeRowStatus > shows a note for a queued project 0ms
+ ✓ src/library/list-projects/lib/describe-row-status.test.ts > describeRowStatus > shows a note for a failed project 0ms
+ ✓ src/library/list-projects/lib/describe-row-status.test.ts > describeRowStatus > shows a note for a stopped project 0ms
+ ✓ src/library/list-projects/lib/describe-row-status.test.ts > describeRowStatus > reads the row of a ready project with 0 candidates and no decision as a note 0ms
+ ✓ src/library/list-projects/lib/describe-row-status.test.ts > describeRowStatus > reads the row of a ready project with 1 candidates and no decision as a note 0ms
+ ✓ src/library/list-projects/lib/describe-row-status.test.ts > describeRowStatus > reads the row of a ready project with 6 candidates and no decision as a note 0ms
+ ✓ src/library/list-projects/lib/describe-row-status.test.ts > describeRowStatus > counts the kept and the rejected clips of a ready project in its row 0ms
+ ✓ src/library/list-projects/lib/describe-row-status.test.ts > describeRowStatus > counts the kept and the rejected clips of a ready project in its row 0ms
+ ✓ src/library/list-projects/lib/describe-row-status.test.ts > describeRowStatus > counts the kept and the rejected clips of a ready project in its row 0ms
+ ✓ src/library/list-projects/lib/describe-row-status.test.ts > describeRowStatus > counts the kept and the rejected clips of a ready project in its row 0ms
+ ✓ src/library/list-projects/lib/describe-row-status.test.ts > describeRowStatus > reads the row of an exported project with 1 exports as a note 0ms
+ ✓ src/library/list-projects/lib/describe-row-status.test.ts > describeRowStatus > reads the row of an exported project with 2 exports as a note 0ms
+ ✓ src/library/list-projects/lib/describe-row-status.test.ts > describeRowStatus > reads the row of an exported project with 12 exports as a note 0ms
+ ✓ src/library/list-projects/lib/describe-row-status.test.ts > describeRowStatus > keeps the row of a ready project its own, whatever its exports count 0ms
+ ✓ src/library/list-projects/lib/describe-row-status.test.ts > describeCandidateCount > words 0 as “0 candidates” 0ms
+ ✓ src/library/list-projects/lib/describe-row-status.test.ts > describeCandidateCount > words 1 as “1 candidate” 0ms
+ ✓ src/library/list-projects/lib/describe-row-status.test.ts > describeCandidateCount > words 12 as “12 candidates” 0ms
+ ✓ src/library/list-projects/lib/describe-row-status.test.ts > nameRestingState > gives the fetched state one word 0ms
+ ✓ src/library/list-projects/lib/describe-row-status.test.ts > nameRestingState > gives the transcribed state one word 0ms
+ ✓ src/library/list-projects/lib/describe-row-status.test.ts > nameRestingState > has no word for a uploading project, which does not rest 0ms
+ ✓ src/library/list-projects/lib/describe-row-status.test.ts > nameRestingState > has no word for a queued project, which does not rest 0ms
+ ✓ src/library/list-projects/lib/describe-row-status.test.ts > nameRestingState > has no word for a processing project, which does not rest 0ms
+ ✓ src/library/list-projects/lib/describe-row-status.test.ts > nameRestingState > has no word for a failed project, which does not rest 0ms
+ ✓ src/library/list-projects/lib/describe-row-status.test.ts > nameRestingState > has no word for a stopped project, which does not rest 0ms
+ ✓ src/library/list-projects/lib/describe-row-status.test.ts > findCurrentStep > is the first step that has not finished 0ms
+ ✓ src/project/open-project/lib/project-addresses.test.ts > project addresses > gives every project an address of its own 1ms
+ ✓ src/project/open-project/lib/project-addresses.test.ts > project addresses > gives every tab of a project an address of its own 0ms
+ ✓ src/project/open-project/lib/project-addresses.test.ts > project addresses > lists the tabs in the order Review, Export, Results 0ms
+ ✓ src/project/open-project/lib/project-addresses.test.ts > hasTabs > shows the tabs of a ready project 0ms
+ ✓ src/project/open-project/lib/project-addresses.test.ts > hasTabs > shows the tabs of a exported project 0ms
+ ✓ src/project/open-project/lib/project-addresses.test.ts > hasTabs > shows the status screen of a uploading project 0ms
+ ✓ src/project/open-project/lib/project-addresses.test.ts > hasTabs > shows the status screen of a queued project 0ms
+ ✓ src/project/open-project/lib/project-addresses.test.ts > hasTabs > shows the status screen of a processing project 0ms
+ ✓ src/project/open-project/lib/project-addresses.test.ts > hasTabs > shows the status screen of a failed project 0ms
+ ✓ src/project/open-project/lib/project-addresses.test.ts > hasTabs > shows the status screen of a stopped project 0ms
+ ✓ src/project/open-project/lib/project-addresses.test.ts > hasTabs > shows the status screen of a fetched project 0ms
+ ✓ src/review/time-clips/lib/move-edge.test.ts > moving a point > reads the two points of a clip as its two sentences and its two nudges, and nothing else of it 1ms
+ ✓ src/review/time-clips/lib/move-edge.test.ts > moving a point > moves the in point by one sentence and leaves the out point 0ms
+ ✓ src/review/time-clips/lib/move-edge.test.ts > moving a point > moves the out point by one sentence and leaves the in point 0ms
+ ✓ src/review/time-clips/lib/move-edge.test.ts > moving a point > sets the nudge of a point back to none when the point goes to another sentence 0ms
+ ✓ src/review/time-clips/lib/move-edge.test.ts > moving a point > nudges a point by one step and keeps its sentence 0ms
+ ✓ src/review/time-clips/lib/move-edge.test.ts > edgeLimits > allows every step of both points of a clip in the middle of its reach 0ms
+ ✓ src/review/time-clips/lib/move-edge.test.ts > edgeLimits > allows five nudge steps either way and switches the sixth off 1ms
+ ✓ src/review/time-clips/lib/move-edge.test.ts > edgeLimits > switches the sentence steps off at the two ends of the reach 0ms
+ ✓ src/review/time-clips/lib/move-edge.test.ts > edgeLimits > switches off the steps that would put the in point after the out point 0ms
+ ✓ src/review/time-clips/lib/move-edge.test.ts > edgeLimits > switches off the nudge that would start the clip before the video begins 0ms
+ ✓ src/review/time-clips/lib/move-edge.test.ts > edgeLimits > switches off the nudge that would end the clip after the video ends 0ms
+ ✓ src/review/time-clips/lib/move-edge.test.ts > edgeLimits > switches off the steps that would leave the clip shorter than one second 0ms
+ ✓ src/review/time-clips/lib/move-edge.test.ts > arePointsAllowed > refuses { startSentence: 10, endSentence: 9 }: an in point after the out point 0ms
+ ✓ src/review/time-clips/lib/move-edge.test.ts > arePointsAllowed > refuses { endSentence: 16 }: a sentence after the reach 0ms
+ ✓ src/review/time-clips/lib/move-edge.test.ts > arePointsAllowed > refuses { startSentence: 0 }: a sentence before the reach 0ms
+ ✓ src/review/time-clips/lib/move-edge.test.ts > arePointsAllowed > refuses { startNudge: -6 }: a sixth nudge step earlier 0ms
+ ✓ src/review/time-clips/lib/move-edge.test.ts > arePointsAllowed > refuses { endNudge: 6 }: a sixth nudge step later 0ms
+ ✓ src/review/time-clips/lib/move-edge.test.ts > arePointsAllowed > refuses { startSentence: 1, startNudge: -1 }: a start before the video begins 0ms
+ ✓ src/review/time-clips/lib/move-edge.test.ts > arePointsAllowed > refuses { startSentence: 10, …(2) }: a clip shorter than one second 0ms
+ ✓ src/review/time-clips/lib/move-edge.test.ts > arePointsAllowed > allows a move to another sentence of the reach with no nudge 0ms
+ ✓ src/export/render-clips/lib/describe-render.test.ts > the Render button > counts one kept clip 1ms
+ ✓ src/export/render-clips/lib/describe-render.test.ts > the Render button > counts several kept clips, finished ones among them 0ms
+ ✓ src/export/render-clips/lib/describe-render.test.ts > the Render button > reads Rendering… and is switched off while a clip is waiting 0ms
+ ✓ src/export/render-clips/lib/describe-render.test.ts > the Render button > reads Rendering… and is switched off while a clip is rendering 0ms
+ ✓ src/export/render-clips/lib/describe-render.test.ts > the Render button > keeps its words and is switched off when the source is gone 0ms
+ ✓ src/export/render-clips/lib/describe-render.test.ts > whether a project is rendering > is not, before its export is fetched 0ms
+ ✓ src/export/render-clips/lib/describe-render.test.ts > whether a project is rendering > with a clip whose render is none: false 0ms
+ ✓ src/export/render-clips/lib/describe-render.test.ts > whether a project is rendering > with a clip whose render is waiting: true 0ms
+ ✓ src/export/render-clips/lib/describe-render.test.ts > whether a project is rendering > with a clip whose render is rendering: true 0ms
+ ✓ src/export/render-clips/lib/describe-render.test.ts > whether a project is rendering > with a clip whose render is done: false 0ms
+ ✓ src/export/render-clips/lib/describe-render.test.ts > whether a project is rendering > with a clip whose render is failed: false 0ms
+ ✓ src/export/render-clips/lib/describe-render.test.ts > what the row of a clip shows > reads Not rendered for a clip that was never queued 0ms
+ ✓ src/export/render-clips/lib/describe-render.test.ts > what the row of a clip shows > shows a bar labelled Waiting for a waiting clip 0ms
+ ✓ src/export/render-clips/lib/describe-render.test.ts > what the row of a clip shows > shows a bar labelled Rendering with the percent of a rendering clip 0ms
+ ✓ src/export/render-clips/lib/describe-render.test.ts > what the row of a clip shows > shows the reason of a failed clip 0ms
+ ✓ src/export/render-clips/lib/describe-render.test.ts > what the row of a clip shows > gives a failed clip without a reason the sentence for any other failure 0ms
+ ✓ src/export/render-clips/lib/describe-render.test.ts > what the row of a clip shows > offers the download of a finished clip 0ms
+ ✓ src/export/render-clips/lib/describe-render.test.ts > what the row of a clip shows > with the source gone, offers the download of a clip that has a finished file, whatever its render: none 0ms
+ ✓ src/export/render-clips/lib/describe-render.test.ts > what the row of a clip shows > with the source gone, offers the download of a clip that has a finished file, whatever its render: waiting 0ms
+ ✓ src/export/render-clips/lib/describe-render.test.ts > what the row of a clip shows > with the source gone, offers the download of a clip that has a finished file, whatever its render: rendering 0ms
+ ✓ src/export/render-clips/lib/describe-render.test.ts > what the row of a clip shows > with the source gone, offers the download of a clip that has a finished file, whatever its render: done 0ms
+ ✓ src/export/render-clips/lib/describe-render.test.ts > what the row of a clip shows > with the source gone, offers the download of a clip that has a finished file, whatever its render: failed 0ms
+ ✓ src/export/render-clips/lib/describe-render.test.ts > what the row of a clip shows > with the source gone, a clip without a finished file reads Not rendered or shows its reason 0ms
+ ✓ src/export/open-export/lib/export-store.test.ts > the export store > holds nothing and asks nothing until a component reads it, then fetches the export 3ms
+ ✓ src/export/open-export/lib/export-store.test.ts > the export store > does not ask again while no clip is waiting or rendering 1ms
+ ✓ src/export/open-export/lib/export-store.test.ts > the export store > asks again every second while a clip renders, and no more once all are done 4ms
+ ✓ src/export/open-export/lib/export-store.test.ts > the export store > tells its readers only when the answer differs from the one it holds 1ms
+ ✓ src/export/open-export/lib/export-store.test.ts > the export store > stops asking when nobody is watching, and asks afresh when somebody watches again 1ms
+ ✓ src/export/open-export/lib/export-store.test.ts > the export store > does not start asking after a fetch that nobody watches 1ms
+ ✓ src/export/open-export/lib/export-store.test.ts > the export store > puts the answer of Render in place and then follows the renders 1ms
+ ✓ src/export/open-export/lib/export-store.test.ts > the export store > puts the answer of Retry in place for the clip it names 1ms
+ ✓ src/export/open-export/lib/export-store.test.ts > the export store > puts the answer of Cancel in place and stops asking 1ms
+ ✓ src/export/open-export/lib/export-store.test.ts > the export store > gives the problem of a refusal to be shown and keeps the export the service holds 1ms
+ ✓ src/export/open-export/lib/export-store.test.ts > the export store > clears a shown problem with the next answer, even an unchanged one 0ms
+ ✓ src/export/open-export/lib/export-store.test.ts > the export store > gives the problem of a first fetch that failed, with nothing held 0ms
+ ✓ src/export/open-export/lib/export-store.test.ts > the export store > keeps what it holds and asks again when a later fetch fails while a clip renders 1ms
+ ✓ src/export/open-export/lib/export-store.test.ts > the export store > drops a fetch that was on its way while Render was sent, since it may show the queue as it stood 1ms
+ ✓ src/review/chart-source/lib/place-pins.test.ts > placePins > puts the pins in two rows by turns, in the order of their clips 1ms
+ ✓ src/review/chart-source/lib/place-pins.test.ts > placePins > leaves pins that are far apart where their clips are 0ms
+ ✓ src/review/chart-source/lib/place-pins.test.ts > placePins > leaves two pins a tap area apart on a row where they are 0ms
+ ✓ src/review/chart-source/lib/place-pins.test.ts > placePins > moves two pins that crowd on a row apart by no more than a tap area needs 0ms
+ ✓ src/review/chart-source/lib/place-pins.test.ts > placePins > keeps a pin that crowds nobody in place beside a pair that was moved apart 0ms
+ ✓ src/review/chart-source/lib/place-pins.test.ts > placePins > keeps the tap area of a pin at either end inside the card 0ms
+ ✓ src/review/chart-source/lib/place-pins.test.ts > placePins > gives twelve clips within one minute of a three-hour video each a place of their own in a card 326 px wide 0ms
+ ✓ src/review/chart-source/lib/place-pins.test.ts > placePins > centres a crowd of pins on the place their clips share 0ms
+ ✓ src/review/chart-source/lib/place-pins.test.ts > placePins > draws the pins closer than a tap area only when the row is too narrow to hold them apart 0ms
+ ✓ src/export/copy-text/lib/copy-text.test.ts > copying a text > hands the text to the clipboard interface when the page has one, and says Copied 2ms
+ ✓ src/export/copy-text/lib/copy-text.test.ts > copying a text > uses the older copy command on the selected text when the page has no clipboard interface 0ms
+ ✓ src/export/copy-text/lib/copy-text.test.ts > copying a text > falls back on the older copy command when the clipboard interface refuses 1ms
+ ✓ src/export/copy-text/lib/copy-text.test.ts > copying a text > says that copying is blocked when both ways fail, and still puts the selection back 0ms
+ ✓ src/export/copy-text/lib/copy-text.test.ts > copying a text > says that copying is blocked when the older copy command throws 0ms
+ ✓ src/shared/lib/format-timecode.test.ts > formatTimecode > gives 0 seconds as hours, minutes and seconds 1ms
+ ✓ src/shared/lib/format-timecode.test.ts > formatTimecode > gives 59.9 seconds as hours, minutes and seconds 0ms
+ ✓ src/shared/lib/format-timecode.test.ts > formatTimecode > gives 236 seconds as hours, minutes and seconds 0ms
+ ✓ src/shared/lib/format-timecode.test.ts > formatTimecode > gives 235.6 seconds as hours, minutes and seconds 0ms
+ ✓ src/shared/lib/format-timecode.test.ts > formatTimecode > gives 3600 seconds as hours, minutes and seconds 0ms
+ ✓ src/shared/lib/format-timecode.test.ts > formatTimecode > gives 4360 seconds as hours, minutes and seconds 0ms
+ ✓ src/shared/lib/format-timecode.test.ts > formatTimecode > gives 10800 seconds as hours, minutes and seconds 0ms
+ ✓ src/shared/lib/format-timecode.test.ts > formatPreciseTimecode > writes 0 seconds with its tenths cut off 0ms
+ ✓ src/shared/lib/format-timecode.test.ts > formatPreciseTimecode > writes 11.94 seconds with its tenths cut off 0ms
+ ✓ src/shared/lib/format-timecode.test.ts > formatPreciseTimecode > writes 11.99 seconds with its tenths cut off 0ms
+ ✓ src/shared/lib/format-timecode.test.ts > formatPreciseTimecode > writes 5.3 seconds with its tenths cut off 0ms
+ ✓ src/shared/lib/format-timecode.test.ts > formatPreciseTimecode > writes 44.7 seconds with its tenths cut off 0ms
+ ✓ src/shared/lib/format-timecode.test.ts > formatPreciseTimecode > writes 120.16 seconds with its tenths cut off 0ms
+ ✓ src/shared/lib/format-timecode.test.ts > formatPreciseTimecode > writes 3725.05 seconds with its tenths cut off 0ms
+ ✓ src/shared/lib/format-timecode.test.ts > formatPreciseTimecode > counts a time one hundredth short of a second by its hundredths, not by its binary fraction 0ms
+ ✓ src/shared/lib/format-timecode.test.ts > formatClock > writes 0 seconds as a clock of minutes and seconds 0ms
+ ✓ src/shared/lib/format-timecode.test.ts > formatClock > writes 7 seconds as a clock of minutes and seconds 0ms
+ ✓ src/shared/lib/format-timecode.test.ts > formatClock > writes 7.9 seconds as a clock of minutes and seconds 0ms
+ ✓ src/shared/lib/format-timecode.test.ts > formatClock > writes 32.76 seconds as a clock of minutes and seconds 0ms
+ ✓ src/shared/lib/format-timecode.test.ts > formatClock > writes 65.3 seconds as a clock of minutes and seconds 0ms
+ ✓ src/shared/lib/format-timecode.test.ts > formatClock > writes 600 seconds as a clock of minutes and seconds 0ms
+ ✓ src/shared/lib/format-timecode.test.ts > formatDuration > writes a length of 32.76 seconds to a tenth of a second 0ms
+ ✓ src/shared/lib/format-timecode.test.ts > formatDuration > writes a length of 4.7 seconds to a tenth of a second 0ms
+ ✓ src/shared/lib/format-timecode.test.ts > formatDuration > writes a length of 52.6 seconds to a tenth of a second 0ms
+ ✓ src/shared/lib/format-timecode.test.ts > formatDuration > writes a length of 65.3 seconds to a tenth of a second 0ms
+ ✓ src/shared/lib/format-timecode.test.ts > formatDuration > writes a length of 41 seconds to a tenth of a second 0ms
+ ✓ src/library/create-project/lib/find-draft-problem.test.ts > findDraftProblem > finds nothing wrong with a full link and a platform 1ms
+ ✓ src/library/create-project/lib/find-draft-problem.test.ts > findDraftProblem > finds nothing wrong with a chosen file and a platform 0ms
+ ✓ src/library/create-project/lib/find-draft-problem.test.ts > findDraftProblem > asks for the full link when it is "" 0ms
+ ✓ src/library/create-project/lib/find-draft-problem.test.ts > findDraftProblem > asks for the full link when it is "   " 0ms
+ ✓ src/library/create-project/lib/find-draft-problem.test.ts > findDraftProblem > asks for the full link when it is "youtube.com/watch?v=abc123" 0ms
+ ✓ src/library/create-project/lib/find-draft-problem.test.ts > findDraftProblem > asks for the full link when it is "https://nodots" 0ms
+ ✓ src/library/create-project/lib/find-draft-problem.test.ts > findDraftProblem > asks for the full link when it is "not a link" 0ms
+ ✓ src/library/create-project/lib/find-draft-problem.test.ts > findDraftProblem > accepts a link with spaces around it 0ms
+ ✓ src/library/create-project/lib/find-draft-problem.test.ts > findDraftProblem > asks for a file when none was chosen 0ms
+ ✓ src/library/create-project/lib/find-draft-problem.test.ts > findDraftProblem > asks for a platform when every one is off 0ms
+ ✓ src/library/create-project/lib/find-draft-problem.test.ts > findDraftProblem > reports the source before the platforms when both are wrong 0ms
+ ✓ src/library/create-project/lib/find-draft-problem.test.ts > findInvalidFieldId > points at the link field for a problem with a link 0ms
+ ✓ src/library/create-project/lib/find-draft-problem.test.ts > findInvalidFieldId > points at the file field for a problem with a file 0ms
+ ✓ src/library/create-project/lib/find-draft-problem.test.ts > findInvalidFieldId > points at the first platform switch for a problem with the platforms 0ms
+ ✓ src/library/create-project/lib/find-draft-problem.test.ts > findInvalidFieldId > points nowhere when the draft has no problem 0ms
+ ✓ src/review/decide-clip/lib/apply-decision.test.ts > pressKeep > keeps a clip that is not decided 1ms
+ ✓ src/review/decide-clip/lib/apply-decision.test.ts > pressKeep > keeps a clip that was rejected 0ms
+ ✓ src/review/decide-clip/lib/apply-decision.test.ts > pressKeep > leaves a kept clip undecided when it is pressed again 0ms
+ ✓ src/review/decide-clip/lib/apply-decision.test.ts > chooseReason > rejects the clip with the reason “cut-off” 0ms
+ ✓ src/review/decide-clip/lib/apply-decision.test.ts > chooseReason > rejects the clip with the reason “not-interesting” 0ms
+ ✓ src/review/decide-clip/lib/apply-decision.test.ts > chooseReason > rejects the clip with the reason “needs-context” 0ms
+ ✓ src/review/decide-clip/lib/apply-decision.test.ts > chooseReason > rejects the clip with the reason “repeat” 0ms
+ ✓ src/review/decide-clip/lib/apply-decision.test.ts > chooseReason > rejects the clip with no reason, and says so, so that an earlier reason is not kept 0ms
+ ✓ src/review/decide-clip/lib/apply-decision.test.ts > undoReject > leaves the clip undecided 0ms
+ ✓ src/review/decide-clip/lib/apply-decision.test.ts > the reasons of the reject menu > names the four reasons in the order of the menu, and “No Reason” after them 0ms
+ ✓ src/review/time-clips/lib/clip-range.test.ts > clipRange > starts where the first word of the in sentence starts and ends where the last word of the out sentence ends 1ms
+ ✓ src/review/time-clips/lib/clip-range.test.ts > clipRange > gives the times of the talk’s first clip after one sentence step of its in point 0ms
+ ✓ src/review/time-clips/lib/clip-range.test.ts > clipRange > gives the times of the talk’s first clip after five nudges of its out point 0ms
+ ✓ src/review/time-clips/lib/clip-range.test.ts > clipRange > moves a point by two tenths of a second for each nudge step, in hundredths 0ms
+ ✓ src/review/time-clips/lib/clip-range.test.ts > clipRange > works out the length as the difference of the two times 0ms
+ ✓ src/review/time-clips/lib/clip-range.test.ts > clipRange > refuses to time a point on a sentence outside the reach 0ms
+ ✓ src/review/time-clips/lib/clip-range.test.ts > findSentence > finds a sentence of the reach by its number in the transcript 0ms
+ ✓ src/review/time-clips/lib/rate-length.test.ts > rateLength > rates a clip of 4.7 seconds against the 25–60 s preset as short 1ms
+ ✓ src/review/time-clips/lib/rate-length.test.ts > rateLength > rates a clip of 24.99 seconds against the 25–60 s preset as short 0ms
+ ✓ src/review/time-clips/lib/rate-length.test.ts > rateLength > rates a clip of 25 seconds against the 25–60 s preset as ideal 0ms
+ ✓ src/review/time-clips/lib/rate-length.test.ts > rateLength > rates a clip of 32.76 seconds against the 25–60 s preset as ideal 0ms
+ ✓ src/review/time-clips/lib/rate-length.test.ts > rateLength > rates a clip of 50 seconds against the 25–60 s preset as ideal 0ms
+ ✓ src/review/time-clips/lib/rate-length.test.ts > rateLength > rates a clip of 50.01 seconds against the 25–60 s preset as allowed 0ms
+ ✓ src/review/time-clips/lib/rate-length.test.ts > rateLength > rates a clip of 52.6 seconds against the 25–60 s preset as allowed 0ms
+ ✓ src/review/time-clips/lib/rate-length.test.ts > rateLength > rates a clip of 60 seconds against the 25–60 s preset as allowed 0ms
+ ✓ src/review/time-clips/lib/rate-length.test.ts > rateLength > rates a clip of 60.01 seconds against the 25–60 s preset as long 0ms
+ ✓ src/review/time-clips/lib/rate-length.test.ts > rateLength > rates a clip of 65.3 seconds against the 25–60 s preset as long 0ms
+ ✓ src/review/time-clips/lib/rate-length.test.ts > rateLength > has three readings for a preset without a preferred band: 14.99 seconds is short 0ms
+ ✓ src/review/time-clips/lib/rate-length.test.ts > rateLength > has three readings for a preset without a preferred band: 15 seconds is allowed 0ms
+ ✓ src/review/time-clips/lib/rate-length.test.ts > rateLength > has three readings for a preset without a preferred band: 22 seconds is allowed 0ms
+ ✓ src/review/time-clips/lib/rate-length.test.ts > rateLength > has three readings for a preset without a preferred band: 30 seconds is allowed 0ms
+ ✓ src/review/time-clips/lib/rate-length.test.ts > rateLength > has three readings for a preset without a preferred band: 30.01 seconds is long 0ms
+ ✓ src/review/time-clips/lib/rate-length.test.ts > describeLength > says of 32.76 seconds under the 25–60 s preset that it is “inside the preferred 25–50 s band” 0ms
+ ✓ src/review/time-clips/lib/rate-length.test.ts > describeLength > says of 52.6 seconds under the 25–60 s preset that it is “inside the 25–60 s limits” 0ms
+ ✓ src/review/time-clips/lib/rate-length.test.ts > describeLength > says of 4.7 seconds under the 25–60 s preset that it is “shorter than the 25 s minimum” 0ms
+ ✓ src/review/time-clips/lib/rate-length.test.ts > describeLength > says of 65.3 seconds under the 25–60 s preset that it is “longer than the 60 s maximum” 0ms
+ ✓ src/review/time-clips/lib/rate-length.test.ts > describeLength > words the limits with the numbers of the project’s own preset 0ms
+ ✓ src/review/time-clips/lib/rate-length.test.ts > measureBandScale > ends the drawn band at one and a quarter times the maximum 0ms
+ ✓ src/shared/lib/format-length.test.ts > formatLength > gives a length under a minute in seconds: 0.4 1ms
+ ✓ src/shared/lib/format-length.test.ts > formatLength > gives a length under a minute in seconds: 7 0ms
+ ✓ src/shared/lib/format-length.test.ts > formatLength > gives a length under a minute in seconds: 45.4 0ms
+ ✓ src/shared/lib/format-length.test.ts > formatLength > gives a length under a minute in seconds: 59.4 0ms
+ ✓ src/shared/lib/format-length.test.ts > formatLength > gives a length under an hour in minutes: 59.6 0ms
+ ✓ src/shared/lib/format-length.test.ts > formatLength > gives a length under an hour in minutes: 60 0ms
+ ✓ src/shared/lib/format-length.test.ts > formatLength > gives a length under an hour in minutes: 235.6 0ms
+ ✓ src/shared/lib/format-length.test.ts > formatLength > gives a length under an hour in minutes: 1930 0ms
+ ✓ src/shared/lib/format-length.test.ts > formatLength > gives a length under an hour in minutes: 3569 0ms
+ ✓ src/shared/lib/format-length.test.ts > formatLength > gives a length of an hour or more in hours and minutes: 3571 0ms
+ ✓ src/shared/lib/format-length.test.ts > formatLength > gives a length of an hour or more in hours and minutes: 3600 0ms
+ ✓ src/shared/lib/format-length.test.ts > formatLength > gives a length of an hour or more in hours and minutes: 4360 0ms
+ ✓ src/shared/lib/format-length.test.ts > formatLength > gives a length of an hour or more in hours and minutes: 10800 0ms
+ ✓ src/review/preview-clip/lib/frame-picture.test.ts > the speaker framing > draws nothing from the video, which fills the frame itself 1ms
+ ✓ src/review/preview-clip/lib/frame-picture.test.ts > the stacked framing > draws the left half of a wide picture and then its right half, each cut to half the frame 0ms
+ ✓ src/review/preview-clip/lib/frame-picture.test.ts > the stacked framing > draws the middle band of each half of an upright picture 0ms
+ ✓ src/review/preview-clip/lib/frame-picture.test.ts > the full frame > draws the middle of a wide picture behind the whole of it, as upright as the frame 0ms
+ ✓ src/review/preview-clip/lib/frame-picture.test.ts > the full frame > draws the whole of an upright picture behind itself, as wide as the frame 0ms
+ ✓ src/review/preview-clip/lib/frame-picture.test.ts > the full frame > draws the middle of a picture taller than the frame behind it, and shows it narrower than the frame 0ms
+ ✓ src/review/trim-clip/lib/nearest-sentence.test.ts > findNearestSentence > puts the in handle on the sentence that starts nearest the place it was dragged to 1ms
+ ✓ src/review/trim-clip/lib/nearest-sentence.test.ts > findNearestSentence > puts the out handle on the sentence that ends nearest the place it was dragged to 0ms
+ ✓ src/review/trim-clip/lib/nearest-sentence.test.ts > findNearestSentence > takes the first and the last sentence of the reach at the ends of the strip 0ms
+ ✓ src/review/trim-clip/lib/nearest-sentence.test.ts > findNearestSentence > keeps the in handle on or before the sentence of the out point 0ms
+ ✓ src/review/trim-clip/lib/nearest-sentence.test.ts > findNearestSentence > keeps the out handle on or after the sentence of the in point 0ms
+ ✓ src/review/trim-clip/lib/nearest-sentence.test.ts > findNearestSentence > passes over a sentence that would leave the clip shorter than one second 0ms
+ ✓ src/review/trim-clip/lib/nearest-sentence.test.ts > findNearestSentence > leaves the handle where it is when no sentence is allowed 0ms
+ ✓ src/shell/present-menu/lib/place-menu.test.ts > placeMenu > opens below a control in the top half, aligned to its right edge on the right side 1ms
+ ✓ src/shell/present-menu/lib/place-menu.test.ts > placeMenu > aligns to the left edge of a control on the left side 0ms
+ ✓ src/shell/present-menu/lib/place-menu.test.ts > placeMenu > opens above a control in the bottom half 0ms
+ ✓ src/shell/present-menu/lib/place-menu.test.ts > placeMenu > keeps a margin to the right edge of the window 0ms
+ ✓ src/shell/present-menu/lib/place-menu.test.ts > placeMenu > keeps a margin to the left edge of the window 0ms
+ ✓ src/export/open-export/lib/describe-output.test.ts > the sentence of the look > words the starting look as the prototype does 1ms
+ ✓ src/export/open-export/lib/describe-output.test.ts > the sentence of the look > names each caption style, each framing and the switch 0ms
+ ✓ src/export/open-export/lib/describe-output.test.ts > the format line > gives the size, the frame rate and the file format of every export 0ms
+ ✓ src/export/open-export/lib/describe-output.test.ts > the file line of a clip > gives the file inside the project and the length to a tenth of a second 0ms
+ ✓ src/export/open-export/lib/describe-output.test.ts > the file line of a clip > writes 33.18 seconds as 33.2 s 0ms
+ ✓ src/export/open-export/lib/describe-output.test.ts > the file line of a clip > writes 41.3 seconds as 41.3 s 0ms
+ ✓ src/export/open-export/lib/describe-output.test.ts > the file line of a clip > writes 30 seconds as 30.0 s 0ms
+ ✓ src/export/open-export/lib/describe-output.test.ts > the file line of a clip > writes 124.96 seconds as 125.0 s 0ms
+ ✓ src/shared/lib/read-problem.test.ts > readProblem > reads the section and the message the service refused with 1ms
+ ✓ src/shared/lib/read-problem.test.ts > readProblem > reads a problem that belongs to no section 0ms
+ ✓ src/shared/lib/read-problem.test.ts > readProblem > says the tool did not answer for an answer without a problem 0ms
+ ✓ src/shared/lib/read-problem.test.ts > readProblem > says the tool did not answer for a problem without a message 0ms
+ ✓ src/shared/lib/read-problem.test.ts > readProblem > says the tool did not answer for a tool that does not answer 0ms
+ ✓ src/shared/lib/read-problem.test.ts > readProblem > says the tool did not answer for an error of another kind 0ms
+ ✓ src/review/preview-clip/lib/find-caption.test.ts > the caption for a place of the playhead > is none before the first caption starts 1ms
+ ✓ src/review/preview-clip/lib/find-caption.test.ts > the caption for a place of the playhead > is the caption whose words are being spoken, from the start of its first word 0ms
+ ✓ src/review/preview-clip/lib/find-caption.test.ts > the caption for a place of the playhead > stays in a pause after its last word, until the next caption starts 0ms
+ ✓ src/review/preview-clip/lib/find-caption.test.ts > the caption for a place of the playhead > is the last caption at the end of the clip 0ms
+ ✓ src/review/preview-clip/lib/find-caption.test.ts > the caption for a place of the playhead > is the first caption from the in point when a nudge put the in point inside its first word 0ms
+ ✓ src/review/preview-clip/lib/find-caption.test.ts > the caption for a place of the playhead > is none for a clip without captions 0ms
+ ✓ src/review/trim-clip/lib/place-selection.test.ts > placeSelection > gives the shares of the strip before and after the clip, in hundredths of its stretch 1ms
+ ✓ src/review/trim-clip/lib/place-selection.test.ts > placeSelection > leaves nothing before a clip that starts with its reach and nothing after one that ends with it 0ms
+ ✓ src/review/trim-clip/lib/place-selection.test.ts > placeSelection > moves with a nudge of either point 0ms
+ ✓ src/review/trim-clip/lib/place-selection.test.ts > placeSelection > keeps a point nudged past the end of the stretch at the edge of the strip 0ms
+ ✓ src/review/trim-clip/lib/place-selection.test.ts > placeSelection > measures a reach that starts later in the video from its own first sentence 0ms
+ ✓ src/export/copy-text/lib/text-rows.test.ts > the text rows of a clip > gives a title and a description for each of three platforms, in the order TikTok, Reels, Shorts 1ms
+ ✓ src/export/copy-text/lib/text-rows.test.ts > the text rows of a clip > gives the two rows of the one platform chosen 0ms
+ ✓ src/export/copy-text/lib/text-rows.test.ts > the text rows of a clip > gives no row for a clip without texts 0ms
+ ✓ src/review/time-clips/lib/find-open-flag.test.ts > isFlagOpen > shows no flag for a clip that has none 1ms
+ ✓ src/review/time-clips/lib/find-open-flag.test.ts > isFlagOpen > shows “needs context” while the in point sits where selection put it 0ms
+ ✓ src/review/time-clips/lib/find-open-flag.test.ts > isFlagOpen > hides “needs context” while the in point sits on an earlier sentence 0ms
+ ✓ src/review/time-clips/lib/find-open-flag.test.ts > isFlagOpen > shows “needs context” again when the in point returns, or goes later 0ms
+ ✓ src/review/time-clips/lib/find-open-flag.test.ts > isFlagOpen > does not hide “needs context” for a nudge earlier on the same sentence 0ms
+ ✓ src/review/time-clips/lib/find-open-flag.test.ts > isFlagOpen > shows “not recommended” wherever the in point sits 0ms
+ ✓ src/settings/change-settings/lib/setting-options.test.ts > the setting options > offers the four Claude models for each pass, stored under their identifiers 1ms
+ ✓ src/settings/change-settings/lib/setting-options.test.ts > the setting options > offers the three Whisper models 0ms
+ ✓ src/settings/change-settings/lib/setting-options.test.ts > the setting options > offers the lengths, the clip counts and the retention periods of the prototype 0ms
+ ✓ src/settings/change-settings/lib/setting-options.test.ts > the setting options > labels every row as the prototype does 0ms
+ ✓ src/settings/change-settings/lib/setting-options.test.ts > the setting options > shows the defaults under the labels the prototype starts with 0ms
+ ✓ src/settings/change-settings/lib/setting-options.test.ts > the setting options > names the four reasons a clip can be rejected for 0ms
+ ✓ src/settings/change-settings/lib/setting-options.test.ts > describeSavedKey > reads "Saved · ends in" with the last four characters of the saved key 0ms
+ ✓ src/settings/change-settings/lib/setting-options.test.ts > describeSavedKey > reads "Saved" alone for a key too short to show an ending of 0ms
+ ✓ src/settings/change-settings/lib/setting-options.test.ts > describeDiskUse > gives the used share of the disk in percent 0ms
+ ✓ src/settings/change-settings/lib/setting-options.test.ts > describeDiskUse > is empty for a disk whose size is not known 0ms
+ ✓ src/project/follow-progress/lib/describe-status.test.ts > describeStatus > tells the browser that sends an upload to keep the page open 1ms
+ ✓ src/project/follow-progress/lib/describe-status.test.ts > describeStatus > tells a browser that does not send the upload what to do about it 0ms
+ ✓ src/project/follow-progress/lib/describe-status.test.ts > describeStatus > shows the step of a processing project and offers Stop 0ms
+ ✓ src/project/follow-progress/lib/describe-status.test.ts > describeStatus > names the project a waiting one waits for 1ms
+ ✓ src/project/follow-progress/lib/describe-status.test.ts > describeStatus > says a waiting project starts in a moment when nothing is processed 0ms
+ ✓ src/project/follow-progress/lib/describe-status.test.ts > describeStatus > gives the reason of a failed project and offers Retry alone 0ms
+ ✓ src/project/follow-progress/lib/describe-status.test.ts > describeStatus > offers Open Settings beside Retry on the card of a failure marked for Settings 0ms
+ ✓ src/project/follow-progress/lib/describe-status.test.ts > describeStatus > gives the reason of a stopped project and offers Resume without Open Settings 0ms
+ ✓ src/project/follow-progress/lib/describe-status.test.ts > describeStatus > names what has not started for a project that rests after its first step 1ms
+ ✓ src/project/follow-progress/lib/describe-status.test.ts > describeStatus > heads a transcribed project Transcribed and names the two steps that have not started 0ms
+ ✓ src/project/follow-progress/lib/describe-status.test.ts > describeStatus > counts a model download among the steps that are done 0ms
+ ✓ src/project/follow-progress/lib/describe-status.test.ts > describeStatus > shows a model download under the label the service sent, as step 2 of 5 0ms
+ ✓ src/project/follow-progress/lib/describe-status.test.ts > describeStatus > counts the transcription as step 3 of 5 after a model download 0ms
+ ✓ src/review/preview-clip/lib/measure-shown-share.test.ts > the share of the preview that shows between the top bar and the bottom of the window > is all of it when the preview lies inside 1ms
+ ✓ src/review/preview-clip/lib/measure-shown-share.test.ts > the share of the preview that shows between the top bar and the bottom of the window > is the part below the top bar when the screen is scrolled down 0ms
+ ✓ src/review/preview-clip/lib/measure-shown-share.test.ts > the share of the preview that shows between the top bar and the bottom of the window > is the part above the bottom of the window when the preview starts low 0ms
+ ✓ src/review/preview-clip/lib/measure-shown-share.test.ts > the share of the preview that shows between the top bar and the bottom of the window > is nothing when the preview is scrolled away, above or below 0ms
+ ✓ src/review/preview-clip/lib/measure-shown-share.test.ts > the share of the preview that shows between the top bar and the bottom of the window > counts a preview that has no height yet as shown 0ms
+ ✓ src/review/open-review/lib/review-addresses.test.ts > the addresses of the Review tab > gives the list the address of the Review tab 1ms
+ ✓ src/review/open-review/lib/review-addresses.test.ts > the addresses of the Review tab > gives every clip an address of its own under the Review tab 0ms
+ ✓ src/review/open-review/lib/review-addresses.test.ts > findShownClip > shows the first-ranked clip beside the list at the Review address, from 720 px 0ms
+ ✓ src/review/open-review/lib/review-addresses.test.ts > findShownClip > shows the list alone at the Review address on a phone 0ms
+ ✓ src/review/open-review/lib/review-addresses.test.ts > findShownClip > shows the clip its address names, at either width 0ms
+ ✓ src/review/open-review/lib/review-addresses.test.ts > findShownClip > shows no clip screen for an address that names no clip of the project 0ms
+ ✓ src/review/open-review/lib/review-addresses.test.ts > findShownClip > shows no clip of a project that has none 0ms
+ ✓ src/review/open-review/lib/review-addresses.test.ts > namesNoClip > is true of an address whose clip the project does not have, which leads to the list 0ms
+ ✓ src/review/open-review/lib/review-addresses.test.ts > namesNoClip > is false of the list’s address and of the address of a clip 0ms
+ ✓ src/review/open-review/lib/review-addresses.test.ts > findNextClip > goes to the next clip of the group 0ms
+ ✓ src/review/open-review/lib/review-addresses.test.ts > findNextClip > goes from the last clip of the group to its first 0ms
+ ✓ src/review/open-review/lib/review-addresses.test.ts > findNextClip > goes through the clips of a filter’s group alone 0ms
+ ✓ src/review/open-review/lib/review-addresses.test.ts > findNextClip > starts at the first clip of the group from a clip that is not in it, or from no clip 0ms
+ ✓ src/review/open-review/lib/review-addresses.test.ts > findNextClip > stays on the one clip of a group of one 0ms
+ ✓ src/review/open-review/lib/review-addresses.test.ts > findNextClip > has no next clip in an empty group 0ms
+ ✓ src/shell/frame-screens/lib/describe-transition.test.ts > describeTransition > does not animate the first screen 1ms
+ ✓ src/shell/frame-screens/lib/describe-transition.test.ts > describeTransition > does not animate a screen that stays 0ms
+ ✓ src/shell/frame-screens/lib/describe-transition.test.ts > describeTransition > swaps between screens of the same depth 0ms
+ ✓ src/shell/frame-screens/lib/describe-transition.test.ts > describeTransition > pushes a deeper screen 0ms
+ ✓ src/shell/frame-screens/lib/describe-transition.test.ts > describeTransition > pops back to a shallower screen 0ms
+
+ Test Files  34 passed (34)
+      Tests  362 passed (362)
+   Start at  22:04:12
+   Duration  934ms (transform 62%, import 24%, tests 9%, worker 5%)
+
+    Isolate  34 workers spawned · ~97ms startup each (spawn + environment, per file)
+             at least ~372ms faster with isolate: false — reuses workers across files instead of one per file
+
+exit code: 0
