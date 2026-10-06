@@ -554,9 +554,9 @@ What the spec's file list leaves out
   captures and `learning-requests.json` are saved with the commands of validation blocks V6 and
   V14 and committed. No video is committed.
 
-- [ ] T16 — Bring the README and the agents' instructions up to date, and follow the README
+- [x] T16 — Bring the README and the agents' instructions up to date, and follow the README
   from a fresh copy
-  Files: `README.md`, `AGENTS.md`, `fixtures/README.md`
+  Files: `README.md`, `AGENTS.md`, `fixtures/README.md`, `docs/missions/clipper-tool/spec.md`
   Done: `README.md` says what the Results tab does and when a clip is listed there; what the
   selector learns from rejections and views, that the next request for clips carries it as a
   short note beside the transcript, and what "Forget All of It" clears and leaves; what each

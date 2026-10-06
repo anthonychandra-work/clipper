@@ -1310,6 +1310,17 @@ From `intent.md`. Base `82df5ce`.
   once without a key and once with a key that ends in "4f2a". The empty Results tab is
   presented from the seeded talk with no clip. A148 names the screens and leaves these open.
   (executor, m6)
+- A153 — The README was followed from a clone at `4bf0c0b`. `pnpm install` and `pnpm bootstrap`
+  ended with code 0, the start printed its address, and the phone address Settings gave
+  answered. `pnpm test` passed all nine checks in about 2,960 seconds: 1,275 service tests in 9
+  minutes 25 seconds, 411 web unit tests and 200 browser tests in 39.3 minutes. The README
+  therefore reads "about 49 minutes, of which the browser tests take 39". The clone's README
+  gave 44 and 34 minutes, an estimate from earlier runs in the worktree, where the service
+  tests took under 8 minutes. The two figures are the one correction the clone's run led to,
+  and no second clone was run for them. `CLIPPER_WEB_PORT=3001 pnpm start`, the fixture
+  builder, the fixture server, the stand-in for the API, the test model's fetch and the Ruff
+  formatter were each run in the clone as the three files write them. The plan asks for the
+  measured time and leaves these open. (executor, m6)
 
 ## Milestones
 
