@@ -102,6 +102,23 @@ A recorded reply is one JSON file with these fields:
 
 The files of a scenario are tried in the order of their names, and the first that fits answers.
 
+## The seeded set
+
+The tests of the Results tab, of the note and of what Settings counts use one set of decisions
+and views on a talk cut with the `talk` scenario. The clips `c01`, `c02` and `c03` are kept and
+rendered. `c05` is rejected as not interesting and `c06` as cut off mid-thought. The views are
+1,200 for `c01`, 5,400 for `c02` and 48,000 for `c03`.
+
+| Where | What the set gives |
+| ----- | ------------------ |
+| The Results tab | The clips in the order `c03`, `c02`, `c01`, under "The best performer was the selector’s pick number 3. Ranks in order of views: 3, 2, 1." |
+| Settings | 1 under "Cut Off Mid-Thought", 1 under "Not Interesting" and 0 under the two other reasons. |
+| The first line of the note | "Of the last 5 clips this user decided on, 2 were rejected: 1 cut off mid-thought, 1 not interesting, 0 needing earlier context, 0 repeating another clip." |
+| The second line of the note | "Of 3 posted clips with views logged, the best third opened with these hooks: hot-take 1, and lasted 41 seconds. The worst third opened with: story 1, and lasted 33 seconds." |
+
+`c01` opens on a story and lasts 32.76 seconds, `c02` on a contrarian claim and lasts 33.18, and
+`c03` on a hot take and lasts 41.32, so the best third is `c03` and the worst third is `c01`.
+
 ## The stand-in for the API
 
 `node scripts/serve-recorded-claude.mjs fixtures/claude` serves the scenarios on a free loopback

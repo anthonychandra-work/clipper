@@ -20,7 +20,8 @@ Run every command from the repository root.
   is the same when one part ends by itself.
 - `pnpm test` runs every check: Ruff, mypy, pytest, ESLint, the web build, the TypeScript check,
   Vitest and Playwright. It runs them all, reports each as passed or failed, and exits 0 only when
-  all passed.
+  all passed. Run it with the Mac on mains power and awake: the browser tests time their steps on
+  the clock, and a Mac on battery sleeps when its charge runs low.
 - `pnpm test:browser <file>` runs the named browser tests alone, for example
   `pnpm test:browser e2e/start-command.spec.ts`. Paths are relative to `web`.
 - `service/.venv/bin/python -m ruff format service/clipper` formats the Python code. Format before
@@ -56,8 +57,9 @@ Commit messages read `<type>(<scope>): <summary>`.
 - The service's tests set `CLIPPER_MODEL_SOURCE` to a closed local port unless a test names a
   source, and `pnpm test` does the same for everything it starts. No test reaches Hugging Face.
 - `service/clipper/conftest.py` holds ten top-level functions and classes, the most the hooks
-  allow. A new fixture goes into a `conftest.py` inside its package. What every test needs is a
-  statement at the top of the root one.
+  allow, and so does `service/clipper/selection/conftest.py`. A new fixture goes into a
+  `conftest.py` inside its package. What every test needs is a statement at the top of the root
+  one.
 
 ## Selection in tests
 
@@ -112,8 +114,8 @@ folders.
   tab, each also import `project`, which gives them the project's frame and the open project,
   and nothing but `app/` imports any of the three. `export` and `results` each read their own
   address of the service and import nothing of the other tabs. `app/` joins capabilities that
-  would otherwise import each other: it hands the project screen the Review tab and the Export
-  tab.
+  would otherwise import each other: it hands the project screen the Review tab, the Export tab
+  and the Results tab.
 - `web/e2e/` holds the browser tests, with their shared code in `support/`.
 - `service/clipper/` holds one package per capability: `problems`, `settings`, `storage`,
   `learning`, `media`, `projects`, `pipeline`, `fetching`, `transcription`, `selection`,
@@ -267,6 +269,62 @@ folders.
 - `web/e2e/export-captures.spec.ts` saves the captures of the tab, and the tests of the
   rendering package save frames of rendered clips and what ffprobe reports for the talk's files,
   into the folder `CLIPPER_EVIDENCE_DIR` names.
+
+## The Results tab
+
+- `service/clipper/results` is the package behind the tab. It gives the clips of a project that
+  have a finished file, kept or not, each with its views, and it stores or clears the views of
+  one clip. `rendering` tells it which clips have a finished file.
+- `web/src/results/` is the capability, with three use cases. `open-results` holds a project's
+  results and draws the tab and its empty state. `log-views` reads a typed number as views and
+  draws the fields. `compare-outcome` orders the clips by their views, words the sentence and
+  draws the bars. `open-results` imports the other two, and neither imports it back.
+- The store of the results shows a typed number at once and sends the views of one clip one
+  after another, as the store of a review sends a clip's changes. From each answer it takes the
+  clip it sent views for, so a newer number of another clip stays on the screen. It drops a
+  fetch that overlaps a save.
+- A field saves half a second after the last keystroke and when it is left.
+
+## The history and the note
+
+- `service/clipper/learning` holds the history the selector learns from: two lists in the
+  database that name no project as their owner, so deleting a project leaves its entries. The
+  list of decisions holds each clip that stands kept or rejected, with the reason of a
+  rejection. The list of outcomes holds each clip with views, with its hook type and its length.
+- The review store writes the list of decisions, in the transaction that stores a clip's review,
+  when the decision or its reason changed. The store of `results` writes the list of outcomes,
+  in the transaction that stores or clears a clip's views. `learning` gives both the functions
+  that write into a transaction another store has open. `DELETE /api/settings/history` empties
+  both lists.
+- Each selection pass writes the note from the history when it starts, and every request of the
+  pass carries it in its task as `note`. A task without a note has no such field. The note stays
+  out of the instructions and the transcript part, which the requests of a pass share.
+
+## The cleanup of old sources
+
+- `service/clipper/retention` removes the source and the preview copy of a project that is ready
+  or exported, was imported more days before than the retention chosen in Settings, and has no
+  clip waiting or rendering. A project is imported at the moment it is created.
+- The cleaner runs one pass when the service starts, before it answers, and then one pass an
+  hour on a thread of its own, which ends when the service stops. A pass that cannot remove a
+  file is logged, and the next pass tries again.
+- The cleaner reads a clock of its own. `CLIPPER_CLOCK_AHEAD_DAYS` adds that many days to it, so
+  a test ages a project by starting the tool again.
+
+## Settings, the history and the tool's variables in tests
+
+- A browser test run uses one tool and one database from its first test file to its last, and
+  the files run in the order of their names. A choice left in Settings and an entry left in the
+  history reach every later test.
+- A browser test that changes a choice in Settings puts the defaults back when it ends, whatever
+  its result.
+- A test that reads the history, in Settings or in a selection request, forgets it first.
+- A test that starts the tool with other variables starts it again without them when it ends.
+- `fixtures/README.md` gives the seeded set of decisions and views. `web/e2e/learning.spec.ts`
+  makes it through the pages and saves the requests of the next talks as
+  `learning-requests.json`. `web/e2e/support/results-screens.ts` makes it through the service
+  for `web/e2e/results-fit.spec.ts`, which runs the three measures over the Results tab and
+  Settings, and for `web/e2e/results-captures.spec.ts`, which saves their captures.
 
 ## Rules every write passes through
 

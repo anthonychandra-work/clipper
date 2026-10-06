@@ -65,8 +65,10 @@ It never sends the key back to the browser and never writes it to a log.
 Without a saved key a project stops after its transcription with "No Anthropic API key is saved.
 Add one in Settings, then retry." Save the key, go back to the project and press Retry.
 
-Picking clips sends the transcript of the video to Anthropic, and no audio and no video. It is
-the one thing Clipper does that costs money: Anthropic bills the account of the key for it.
+Picking clips sends Anthropic the transcript of the video, what you asked the project to look
+for, and a short note on your earlier decisions once there is one. It sends no audio and no
+video. It is the one thing Clipper does that costs money: Anthropic bills the account of the key
+for it.
 
 Claude reads the transcript in two passes. Claude Sonnet 5.5 scores every stretch of about ninety
 seconds, and Claude Opus 5.5 cuts the clips from the best of them. Settings offers Claude Fable
@@ -160,6 +162,62 @@ there until you delete the project. In the Library a project with a finished cli
 When the fetched video is no longer in the project's folder, the tab says so and switches Render
 off. Finished clips still download.
 
+## Log the results
+
+The Results tab compares Clipper's ranking with how your clips did once they were posted. It
+lists every clip of the project that has a finished file on the Mac, in the order of their
+ranks. A clip you rejected after rendering it stays in the list. Before a clip is rendered the
+tab reads "No Results Yet" and links to the Review tab, or to the Export tab once a clip is kept.
+
+A week after you post a clip, type its views into its field under "Views After 7 Days". A number
+is stored half a second after you stop typing and when you leave the field. An empty field or a
+zero clears the clip's views.
+
+"Ranking Against Outcome" waits for the views of two clips. It then lists the clips with views,
+the most viewed first, each with a bar as long as its share of the highest views. The sentence
+above them says where the best performer stood in Clipper's ranking, as in "The best performer
+was the selector’s pick number 2. Ranks in order of views: 2, 1, 4." In the Library, a project
+with logged views reads "Exported · 4 clips exported, results logged".
+
+## What the selector learns
+
+Clipper keeps a history of what you did with your clips. It holds each clip that stands kept or
+rejected, with the reason of a rejection, and each clip with logged views, with its views, the
+kind of hook it opens on and its length.
+
+Before each of the two passes over a new video, Clipper writes a short note from that history
+and sends it to Claude beside the transcript. The note counts the rejections of each reason
+among your last 50 decisions, as in "Of the last 20 clips this user decided on, 6 were rejected:
+3 cut off mid-thought, 2 not interesting, 1 needing earlier context, 0 repeating another clip."
+Once three clips have views, a second line names the kinds of hook and the lengths of the best
+third and of the worst third. Claude is told to let the note tip a close call and to put the
+rules for a clip and what you asked the project to look for first. With no rejection and fewer
+than three clips with views, no note is sent.
+
+Settings shows the counted rejections under "What the Selector Has Learned". "Forget All of It"
+empties the history, so the next video is picked without a note. It changes no project: clips
+stay kept or rejected, and the Results tabs keep their views. A decision or a number of views
+you change afterwards enters the history again. Deleting a project leaves what it added to the
+history.
+
+## Settings
+
+A choice is stored when you make it and takes effect without a restart.
+
+| Choice | What it governs | Takes effect |
+| --- | --- | --- |
+| Anthropic API Key | The key the requests for clips are sent with | At the next request for clips |
+| Scoring Model | The Claude model that scores the stretches of the transcript | When the next video is scored |
+| Cutting Model | The Claude model that cuts the clips | When the next video's clips are cut |
+| Transcription Model | The Whisper model a video is transcribed with | When the next transcription starts |
+| Clip Length | The length a new project starts with: 15–30 s, 25–60 s or 60–180 s | When the new project sheet is next opened |
+| Clips per Video | How many clips a video should yield: Auto, 4, 8 or 12 | When the next video's clips are cut |
+| Delete Source Videos After | The days a finished project keeps its fetched video: 3, 7, 30 or Never | At the next cleanup, within an hour |
+
+"Storage" gives the free space of the disk that holds the data folder, as the Mac counts it for
+your account. It is the figure `df` prints, in gigabytes of 1024³ bytes, rounded down. Finder
+also counts space that macOS can purge, so its figure can be larger.
+
 ## Open it on a phone
 
 Put the phone on the same Wi-Fi as the Mac. In Clipper on the Mac, open Settings and read the
@@ -176,7 +234,11 @@ pnpm test
 
 This runs every check: the Python linter, type checker and tests, then the web linter, build, type
 check and unit tests, then the browser tests. It prints each as passed or failed and takes about
-28 minutes, of which the browser tests take 21.
+44 minutes, of which the browser tests take 34.
+
+Keep the Mac on mains power and awake until the run ends. The browser tests time their steps on
+the clock and wait for clips to render, and a Mac on battery goes to sleep when its charge runs
+low.
 
 ```bash
 pnpm test:browser e2e/start-command.spec.ts
@@ -199,17 +261,30 @@ on the Mac that answers in place of the Anthropic API with replies recorded for 
 ## Where the data lives
 
 Clipper keeps everything but the API key in the `data` folder inside the repository folder: one
-database file, which also holds the clip candidates of every project, what you decided about each
-and the project's look; one folder per project with the fetched video, its preview copy, its
-transcript, the filmstrip frames of its clips, its exported clips in `exports` and, for a link
-whose site gives one, the video's most-replayed graph; and a `models` folder with the
-transcription models. An exported clip is `data/projects/<project>/exports/<rank>-<clip>.mp4`,
-as in `exports/01-c01.mp4`, the path its row on the Export tab shows. Deleting a project in
-Clipper removes its folder with the exported clips, its candidates and your decisions about
-them. Git ignores `data`.
+database file, which also holds the clip candidates of every project, what you decided about
+each, the views you logged, the project's look and the history the selector learns from; one
+folder per project with the fetched video, its preview copy, its transcript, the filmstrip
+frames of its clips, its exported clips in `exports` and, for a link whose site gives one, the
+video's most-replayed graph; and a `models` folder with the transcription models. An exported
+clip is `data/projects/<project>/exports/<rank>-<clip>.mp4`, as in `exports/01-c01.mp4`, the
+path its row on the Export tab shows. Deleting a project in Clipper removes its folder with the
+exported clips, its candidates, your decisions about them and their logged views. Git ignores
+`data`.
 
 A new project needs 5 GB free on the disk that holds the data folder. An uploaded file can be up
 to 4 GB.
+
+The fetched video and its preview copy are the large files of a project. Both are deleted after
+the number of days chosen under "Delete Source Videos After" in Settings, counted from the day
+the project was created, once the project is ready or exported and has no clip waiting or
+rendering. The cleanup runs when Clipper starts and then once an hour. With "Never" it removes
+nothing. A project that failed, was stopped or is still being processed keeps its video
+whatever its age, because Retry and Resume need it. Delete such a project yourself.
+
+The transcript, the filmstrip frames, the clip candidates, your decisions, the logged views and
+the exported clips stay, and the project still opens. Its Review tab shows "Preview unavailable.
+The source video was deleted to free space." in place of the preview, and its Export tab says
+that new clips cannot be rendered and still offers the finished files.
 
 ## Transcription models
 
@@ -257,14 +332,11 @@ Four more variables serve test runs.
 | `CLIPPER_EVIDENCE_DIR` | The folder the tests save their evidence into | The test output folder |
 | `CLIPPER_CLOCK_AHEAD_DAYS` | Days added to the clock that the cleanup of old source videos reads | 0 |
 
-## What this version does not do yet
+## What Clipper leaves out
 
-A project ends with its exported clips. The results of posted clips are not recorded: the Results
-tab still shows its empty screen. The reason of a rejection is stored, and it does not steer which
-clips are picked from the next video yet.
-
-The clip length and the note given with a new project steer which clips are picked, and the
-platforms chosen with it decide which texts the Export tab shows. In Settings, the API key, the
-two Claude models, the transcription model and the clips per video take effect. The clip length
-chosen in Settings is not yet the one a new project starts with, the days before source videos
-are deleted are stored and nothing acts on them, and "Forget All of It" is switched off.
+- Accounts, billing and use by more than one person.
+- Posting or scheduling to TikTok, Instagram or YouTube.
+- B-roll, dubbing, sound effects and background music.
+- Gameplay, streams, live-chat signals and video without speech.
+- Hosting on a server and access from outside the local network.
+- Picking clips with a model that runs on the Mac.
