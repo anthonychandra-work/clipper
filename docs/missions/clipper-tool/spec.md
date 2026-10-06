@@ -878,6 +878,12 @@ From `intent.md`. Base `82df5ce`.
   rejected, each under a replay peak and with a title of 110 characters, over 180 windows of one
   minute, in a project presented as three hours long. A101 to A103 give the rules and leave
   these open. (executor, m4)
+- A110 — A title longer than its field ends in an ellipsis until the field is entered, so the
+  capture of a clip on a phone shows no text cut at an edge. The captures are taken of two of
+  the walked screens, the list and the flagged clip, with the first clip kept and the sixth
+  rejected as "Not Interesting". The capture test names the colours at five points across the
+  preview, three tenths of the way down, and asks for more than one. A103 names the captures
+  and leaves these open. (executor, m4)
 
 ## Milestones
 

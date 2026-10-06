@@ -54,6 +54,11 @@ a.segmented__option[aria-current="page"]:active {
   text-overflow: ellipsis;
 }
 
+/* So does a clip's title, until the field is entered. */
+.text-field {
+  text-overflow: ellipsis;
+}
+
 /* A choice shows its chosen option as text that can wrap, with the select lying over it unseen. */
 .menu-button__chosen {
   min-width: 0;

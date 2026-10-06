@@ -97,6 +97,7 @@ export {
   waitForStatus,
 } from './service-api';
 export { listLowDiskScreens, listSheetScreens } from './sheet-screens';
+export { showWholeScreen } from './show-whole-screen';
 export { readStatusCard, statusCard, type StatusCardText } from './status-screen';
 export { test } from './tool-test';
 export { waitForStepDone } from './wait-for-step';

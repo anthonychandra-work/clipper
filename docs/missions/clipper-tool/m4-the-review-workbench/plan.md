@@ -634,9 +634,10 @@ What the spec's file list leaves out
   they are. The test that every request of every screen goes to the tool also walks the Review
   screens of the talk at both widths, with the preview playing on one of them.
 
-- [ ] T18 — Save the captures and the talk's review as evidence
+- [x] T18 — Save the captures and the talk's review as evidence
   Files: `web/e2e/review-captures.spec.ts`, `web/e2e/support/review-screens.ts`,
-  `web/e2e/support/index.ts`,
+  `web/e2e/support/index.ts`, `web/src/shared/styles/app.css`,
+  `docs/missions/clipper-tool/spec.md`,
   `docs/missions/clipper-tool/m4-the-review-workbench/evidence/review-list-390-light.png`,
   `docs/missions/clipper-tool/m4-the-review-workbench/evidence/review-list-390-dark.png`,
   `docs/missions/clipper-tool/m4-the-review-workbench/evidence/review-list-1360-light.png`,
