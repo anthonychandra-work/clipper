@@ -11,7 +11,6 @@ import { EmptyResults } from './EmptyResults';
 import { EmptyReview } from './EmptyReview';
 
 const BACK_TO_LIBRARY = { label: 'Library', href: '/' };
-const KEPT_COUNT = 0;
 
 interface ProjectTabsProps {
   project: Project;
@@ -30,7 +29,7 @@ export function ProjectTabs({ project, tab, actions }: ProjectTabsProps) {
       titleStyle="title"
       hasLargeTitle
       back={BACK_TO_LIBRARY}
-      centre={<TabLinks projectId={project.id} current={tab} />}
+      centre={<TabLinks project={project} current={tab} />}
       actions={actions}
     >
       {tab === 'review' ? <EmptyReview /> : null}
@@ -40,7 +39,7 @@ export function ProjectTabs({ project, tab, actions }: ProjectTabsProps) {
   );
 }
 
-function TabLinks({ projectId, current }: { projectId: string; current: ProjectTab }) {
+function TabLinks({ project, current }: { project: Project; current: ProjectTab }) {
   return (
     <div className="segmented" role="group" aria-label="Project steps">
       {PROJECT_TABS.map((tab) => (
@@ -48,11 +47,11 @@ function TabLinks({ projectId, current }: { projectId: string; current: ProjectT
           key={tab.value}
           className="segmented__option"
           id={`tab-${tab.value}`}
-          href={tabAddress(projectId, tab.value)}
+          href={tabAddress(project.id, tab.value)}
           aria-current={tab.value === current ? 'page' : 'false'}
         >
           {tab.label}
-          {tab.value === 'export' ? <span className="segmented__count">{KEPT_COUNT}</span> : null}
+          {tab.value === 'export' ? <span className="segmented__count">{project.keptCount}</span> : null}
         </Link>
       ))}
     </div>

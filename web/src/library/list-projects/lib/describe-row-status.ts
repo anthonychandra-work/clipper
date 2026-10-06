@@ -36,7 +36,8 @@ export function describeRowStatus(project: Project): RowStatus {
 }
 
 function describeReadyRow(project: Project): RowNote {
-  const text = `Ready to review · ${describeCandidateCount(project.candidateCount)}`;
+  const candidates = describeCandidateCount(project.candidateCount);
+  const text = `Ready to review · ${candidates}, ${project.keptCount} kept, ${project.rejectedCount} rejected`;
   return { kind: 'note', status: project.status, text, hasWarning: false };
 }
 

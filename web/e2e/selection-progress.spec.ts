@@ -21,7 +21,7 @@ import {
 const PHONE = { width: 390, height: 844 };
 const SCORING = 'Scoring 4 windows';
 const CUTTING = 'Cutting clips';
-const READY_ROW = 'Ready to review · 6 candidates';
+const READY_ROW = 'Ready to review · 6 candidates, 0 kept, 0 rejected';
 const STOPPED_WHILE_SCORING = 'Stopped at “Scoring 4 windows”. The stages before it are kept.';
 const STEP_TIMEOUT_MS = 60_000;
 

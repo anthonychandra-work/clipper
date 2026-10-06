@@ -17,6 +17,8 @@ function describeProject(status: ProjectStatus): Project {
     halt: null,
     upload: null,
     candidateCount: 0,
+    keptCount: 0,
+    rejectedCount: 0,
   };
 }
 

@@ -286,7 +286,7 @@ What the spec's file list leaves out
   copy removed says so and still gives its clips. Through the whole app, the uploaded talk's
   review has six clips with twelve frame addresses each, and each address answers a JPEG.
 
-- [ ] T7 — Count kept and rejected clips in the Library row and on the Export tab
+- [x] T7 — Count kept and rejected clips in the Library row and on the Export tab
   Files: `web/src/library/library.types.ts`,
   `web/src/library/list-projects/lib/describe-row-status.ts`,
   `web/src/library/list-projects/lib/describe-row-status.test.ts`,

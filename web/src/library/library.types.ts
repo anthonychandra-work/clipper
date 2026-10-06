@@ -43,6 +43,8 @@ export interface Project {
   halt: ProjectHalt | null;
   upload: ProjectUpload | null;
   candidateCount: number;
+  keptCount: number;
+  rejectedCount: number;
 }
 
 export interface ProjectList {

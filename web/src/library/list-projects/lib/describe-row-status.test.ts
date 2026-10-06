@@ -30,12 +30,16 @@ function describeProject(status: ProjectStatus, steps: ProjectStep[]): Project {
     halt: null,
     upload: null,
     candidateCount: 0,
+    keptCount: 0,
+    rejectedCount: 0,
   };
 }
 
-function describeReadyProject(candidateCount: number): Project {
+type ClipCounts = Pick<Project, 'candidateCount' | 'keptCount' | 'rejectedCount'>;
+
+function describeReadyProject(counts: Partial<ClipCounts>): Project {
   const steps = planSteps('done', 'Fetching video').map((step) => ({ ...step, state: 'done' as const, percent: 100 }));
-  return { ...describeProject('ready', steps), candidateCount };
+  return { ...describeProject('ready', steps), ...counts };
 }
 
 describe('describeRowStatus', () => {
@@ -87,16 +91,25 @@ describe('describeRowStatus', () => {
   });
 
   it.each([
-    [0, 'Ready to review · 0 candidates'],
-    [1, 'Ready to review · 1 candidate'],
-    [6, 'Ready to review · 6 candidates'],
-  ])('reads the row of a ready project with %i candidates as a note with their number', (candidateCount, text) => {
-    expect(describeRowStatus(describeReadyProject(candidateCount))).toEqual({
+    [0, 'Ready to review · 0 candidates, 0 kept, 0 rejected'],
+    [1, 'Ready to review · 1 candidate, 0 kept, 0 rejected'],
+    [6, 'Ready to review · 6 candidates, 0 kept, 0 rejected'],
+  ])('reads the row of a ready project with %i candidates and no decision as a note', (candidateCount, text) => {
+    expect(describeRowStatus(describeReadyProject({ candidateCount }))).toEqual({
       kind: 'note',
       status: 'ready',
       text,
       hasWarning: false,
     });
+  });
+
+  it.each([
+    [{ candidateCount: 6, keptCount: 2, rejectedCount: 1 }, 'Ready to review · 6 candidates, 2 kept, 1 rejected'],
+    [{ candidateCount: 6, keptCount: 1, rejectedCount: 0 }, 'Ready to review · 6 candidates, 1 kept, 0 rejected'],
+    [{ candidateCount: 1, keptCount: 0, rejectedCount: 1 }, 'Ready to review · 1 candidate, 0 kept, 1 rejected'],
+    [{ candidateCount: 12, keptCount: 10, rejectedCount: 2 }, 'Ready to review · 12 candidates, 10 kept, 2 rejected'],
+  ])('counts the kept and the rejected clips of a ready project in its row', (counts, text) => {
+    expect(describeRowStatus(describeReadyProject(counts))).toMatchObject({ kind: 'note', status: 'ready', text });
   });
 });
 

@@ -97,7 +97,7 @@ test('with no key the uploaded talk points to Settings, and with the key saved t
   await expect(page.locator('.screen-head__subtitle')).toHaveText(SUBTITLE_WITH_SIX_CANDIDATES);
   await page.goto('/');
   const rowStatus = projectRow(page, projectId).locator('.project-row__status');
-  await expect(rowStatus).toHaveText('Ready to review · 6 candidates');
+  await expect(rowStatus).toHaveText('Ready to review · 6 candidates, 0 kept, 0 rejected');
   const sources = { request, dataDir: tool.settings.dataDir, recordedClaude };
   await saveEvidence(process.env.CLIPPER_EVIDENCE_DIR ?? testInfo.outputDir, sources, projectId);
 
