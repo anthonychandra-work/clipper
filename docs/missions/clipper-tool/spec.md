@@ -857,6 +857,11 @@ From `intent.md`. Base `82df5ce`.
   in the full frame, so all of it shows. The controls of the look are named after A96's values,
   as in `captions-word-by-word` and `framing-stack-two`, and the picture keeps the prototype's
   class names. A97 and A98 give the rules and leave these open. (executor, m4)
+- A108 — On a phone the list's position is the one it had when it was last on the screen. A
+  clip opened by its address, with no list before it, returns to the top of the list. The reject
+  menu opens the shell's usual gap above the Reject button, which puts its lower edge inside
+  the bar's own padding and clear of the bar's buttons; the test measures it against the
+  button. A99 gives the rule and leaves these open. (executor, m4)
 
 ## Milestones
 

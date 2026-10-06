@@ -6,6 +6,7 @@ import type { ScreenPlace } from './describe-transition';
 
 export type ShellLayout = 'compact' | 'overlaid' | 'docked';
 export type LargeTitleState = 'visible' | 'scrolled' | 'none';
+export type PreviewPlace = 'inline' | 'docked';
 
 export interface Shell {
   layout: ShellLayout;
@@ -14,6 +15,7 @@ export interface Shell {
   toggleSidebar: () => void;
   announceScreen: (screen: ScreenPlace) => void;
   reportLargeTitle: (state: LargeTitleState) => void;
+  reportPreviewPlace: (place: PreviewPlace) => void;
   sheetElement: HTMLDialogElement | null;
   menuLayer: HTMLDivElement | null;
   readOpenerId: () => string | null;

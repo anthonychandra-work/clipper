@@ -579,7 +579,7 @@ What the spec's file list leaves out
   of a point still work. That test moves the copy back when it ends, whatever its result, because
   the project is shared.
 
-- [ ] T16 — Finish the phone layout: the list where it was left and the pinned preview
+- [x] T16 — Finish the phone layout: the list where it was left and the pinned preview
   Files: `web/src/shell/frame-screens/lib/shell-context.ts`,
   `web/src/shell/frame-screens/components/AppShell.tsx`,
   `web/src/review/open-review/hooks/use-list-position.ts`,
@@ -590,7 +590,8 @@ What the spec's file list leaves out
   `web/src/review/preview-clip/lib/measure-shown-share.test.ts`,
   `web/src/review/preview-clip/components/ClipPreview.tsx`,
   `web/src/review/preview-clip/index.ts`, `AGENTS.md`, `web/e2e/support/review-page.ts`,
-  `web/e2e/support/index.ts`, `web/e2e/review-phone.spec.ts`
+  `web/e2e/support/index.ts`, `web/e2e/review-phone.spec.ts`, `web/e2e/support/review-phone.ts`,
+  `docs/missions/clipper-tool/spec.md`
   Done: on a phone a clip's screen opens at its top, also after Next, and the list returns where
   it was left (A99). The app element carries the preview's place as a fourth data attribute,
   which the copied player styles select on, and `AGENTS.md` names it with the three others. On a

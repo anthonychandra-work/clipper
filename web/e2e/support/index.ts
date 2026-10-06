@@ -55,6 +55,7 @@ export {
   readTimelinePins,
   type TimelinePinText,
 } from './review-page';
+export { type BottomBarText, type DockText, readBottomBar, readDock, readWindowTop, scrollWindowTo } from './review-phone';
 export {
   capturePlayer,
   changeLook,

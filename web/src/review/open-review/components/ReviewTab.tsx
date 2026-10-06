@@ -10,6 +10,7 @@ import { useShell } from '@/shell';
 import { DecisionControls } from '../../decide-clip';
 import { type ClipFilter, filterClips } from '../../list-candidates';
 import type { ClipChange, Review, ReviewClip } from '../../review.types';
+import { useListPosition } from '../hooks/use-list-position';
 import { useReview } from '../hooks/use-review';
 import { clipAddress, findNextClip, findShownClip, namesNoClip, reviewAddress } from '../lib/review-addresses';
 import type { ReviewStore } from '../lib/review-store';
@@ -45,6 +46,7 @@ function ReviewWorkbench({ project, review, store }: ReviewWorkbenchProps) {
   const shownClip = findShownClip({ clips: review.clips, clipId, isPhone });
   useListForUnknownClip(project.id, namesNoClip(review.clips, clipId));
   useShownRowInView(isPhone ? null : (shownClip?.id ?? null));
+  useListPosition(isPhone, shownClip?.id ?? null);
 
   if (shownClip === null) {
     return (

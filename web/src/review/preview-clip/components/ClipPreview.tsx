@@ -5,6 +5,7 @@ import { useRef } from 'react';
 import type { Look, ReviewClip } from '../../review.types';
 import { clipRange, readPoints } from '../../time-clips';
 import { usePlayback } from '../hooks/use-playback';
+import { usePreviewDock } from '../hooks/use-preview-dock';
 import { PlayerPicture } from './PlayerPicture';
 import { PlayerTransport } from './PlayerTransport';
 import { SourceGoneNotice } from './SourceGoneNotice';
@@ -22,10 +23,12 @@ export function ClipPreview({ clip, look, source }: ClipPreviewProps) {
 
 function PlayingPreview({ clip, look, source }: ClipPreviewProps & { source: string }) {
   const range = clipRange(readPoints(clip), clip.sentences);
+  const previewRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const playback = usePlayback(videoRef, range);
+  usePreviewDock(previewRef);
   return (
-    <section className="preview" aria-label="Clip preview">
+    <section className="preview" aria-label="Clip preview" ref={previewRef}>
       <div className={playback.isPlaying ? 'player-shell is-playing' : 'player-shell'}>
         <PlayerPicture source={source} clip={clip} look={look} videoRef={videoRef} playback={playback} />
         <PlayerTransport playback={playback} duration={range.duration} />

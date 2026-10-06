@@ -9,7 +9,13 @@ import { useOpenerMemory } from '../hooks/use-opener-memory';
 import { usePreviousAddress } from '../hooks/use-previous-address';
 import { useScreenTransition } from '../hooks/use-screen-transition';
 import { useSidebar } from '../hooks/use-sidebar';
-import { type LargeTitleState, type Shell, ShellContext, type ShellLayout } from '../lib/shell-context';
+import {
+  type LargeTitleState,
+  type PreviewPlace,
+  type Shell,
+  ShellContext,
+  type ShellLayout,
+} from '../lib/shell-context';
 import { SidebarFrame } from './SidebarFrame';
 
 interface AppShellProps {
@@ -58,6 +64,7 @@ function FramedApp(props: AppShellProps & { layout: ShellLayout; overlays: Overl
   const { isOpen, isOverlaid, toggle } = useSidebar(layout, pathname);
   const { enter, announceScreen } = useScreenTransition();
   const [largeTitle, reportLargeTitle] = useState<LargeTitleState>('none');
+  const [previewPlace, reportPreviewPlace] = useState<PreviewPlace>('inline');
   const shell: Shell = {
     layout,
     previousAddress,
@@ -65,6 +72,7 @@ function FramedApp(props: AppShellProps & { layout: ShellLayout; overlays: Overl
     toggleSidebar: toggle,
     announceScreen,
     reportLargeTitle,
+    reportPreviewPlace,
     ...overlays,
   };
   return (
@@ -75,6 +83,7 @@ function FramedApp(props: AppShellProps & { layout: ShellLayout; overlays: Overl
         data-layout={layout === 'compact' ? 'compact' : 'regular'}
         data-enter={enter}
         data-large-title={largeTitle}
+        data-preview={previewPlace}
       >
         {isOpen ? <SidebarFrame foot={sidebarFoot}>{sidebar}</SidebarFrame> : null}
         {isOverlaid ? <SidebarScrim onDismiss={toggle} /> : null}

@@ -176,8 +176,9 @@ progress, the app does the real thing.
 - A rule the app needs beyond them goes into `app.css` in the same folder, so every departure
   from the prototype sits in one file.
 - The copied rules select by class and by position: the sheet, the menu layer and the toast are
-  later siblings of the app element, which carries the layout, the screen transition and the
-  large-title state as data attributes. Keep that markup.
+  later siblings of the app element, which carries the layout, the screen transition, the
+  large-title state and the place of the clip preview as data attributes. The preview's place is
+  `inline` or, once a phone screen is scrolled past the preview, `docked`. Keep that markup.
 - The prototype's rows and tabs are buttons. Where the app needs an address, a link takes the
   same class.
 - The app loads nothing from `docs/`. Copy what it needs.
