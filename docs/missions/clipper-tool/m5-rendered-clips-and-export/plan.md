@@ -233,7 +233,7 @@ What the spec's file list leaves out
   same face; a plain grey picture gives none; a picture that holds the portrait at two sizes
   gives two faces, the larger first. `pnpm test` exits 0.
 
-- [ ] T2 — Build the portrait video with the fixtures
+- [x] T2 — Build the portrait video with the fixtures
   Files: `scripts/build-fixtures.mjs`, `fixtures/README.md`,
   `service/clipper/rendering/conftest.py`, `service/clipper/rendering/test_portrait_fixture.py`
   Done: the fixture builder also writes `portrait.mp4` by A121, with its length stated as the

@@ -11,15 +11,17 @@ short story or one piece of advice, between a housekeeping opening and a closing
 compared with it word for word.
 
 `node scripts/build-fixtures.mjs <folder>` speaks the script with the macOS voice Samantha and
-writes three videos into the folder, each H.264 with AAC sound. Each video lasts as long as its
+writes four videos into the folder, each H.264 with AAC sound. Each video lasts as long as its
 sound. To know that length, the builder measures the speech it has just written: the talk gets
-the speech's length and the long talk five times it. The build takes about fifteen seconds.
+the speech's length and the long talk five times it. The silent video and the portrait video
+get a length of their own. The build takes about fifteen seconds.
 
 | Video | What it holds |
 | ----- | ------------- |
 | `talk.mp4` | The speech over colour bars, about four minutes at 1280 × 720. |
 | `long-talk.mp4` | The speech five times over, about twenty minutes, over a 320 × 180 picture at 10 frames a second. It is long enough for a test to stop a transcription that is under way. |
 | `silence.mp4` | Twenty seconds of the colour bars over a silent sound track. |
+| `portrait.mp4` | The first twelve seconds of the speech at 1280 × 720, over the portrait twice on a plain ground: small and mirrored on the left, and large on the right, where it drifts 100 px further right over the twelve seconds. It holds a face that moves and two faces at once, for the tests of the framings. The talk's colour bars hold no face. |
 
 ## The portrait
 

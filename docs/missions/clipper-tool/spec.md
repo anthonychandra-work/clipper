@@ -1031,6 +1031,12 @@ From `intent.md`. Base `82df5ce`.
   portrait is reduced with an even height, which gives 774 px. Bootstrap prints the sentence
   about the OpenCV build at every run, since it speaks of the first setup. A111, A112 and A121
   give the rules and leave these open. (executor, m5)
+- A124 — In `portrait.mp4` the small portrait is 360 px high, 100 px from the left edge and
+  centred between top and bottom; the large one is 640 px high, 40 px from the top, and starts
+  660 px from the left edge. The ground is one dark grey-blue. At these places the large face
+  stays whole inside a 9:16 part that follows it, neither portrait reaches into the other's half
+  of the picture, and the small face is large enough to be found in a frame that shows the whole
+  picture. A121 gives what the video holds and leaves the sizes open. (executor, m5)
 
 ## Milestones
 
