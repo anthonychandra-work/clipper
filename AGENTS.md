@@ -167,10 +167,10 @@ The prototype in `docs/prototype/` is the reference for every screen, flow, word
 phone and desktop width, in light and in dark. Where it pretends, with sample projects or timed
 progress, the app does the real thing.
 
-- `web/src/shared/styles/` holds the prototype's five stylesheets, `base.css`, `controls.css`,
-  `lists.css`, `shell.css` and `pages.css`, copied byte for byte, and `tokens.css`, which holds the
-  design tokens of the prototype's page with their names and values unchanged. Do not edit these
-  six files. `review.css` and `player.css` are copied when the Review tab is built.
+- `web/src/shared/styles/` holds the prototype's seven stylesheets, `base.css`, `controls.css`,
+  `lists.css`, `shell.css`, `review.css`, `player.css` and `pages.css`, copied byte for byte, and
+  `tokens.css`, which holds the design tokens of the prototype's page with their names and values
+  unchanged. Do not edit these eight files. The page loads them in the prototype's order.
 - A rule the app needs beyond them goes into `app.css` in the same folder, so every departure
   from the prototype sits in one file.
 - The copied rules select by class and by position: the sheet, the menu layer and the toast are

@@ -1,5 +1,5 @@
 import { statSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 
 import type { APIRequestContext, APIResponse, Page } from '@playwright/test';
 
@@ -13,6 +13,14 @@ const PROBE_VIDEO = '#probe-video';
 const JUMP_TO_SECONDS = 120;
 const PLAYED_SECONDS = 0.5;
 const LENGTH_TOLERANCE_SECONDS = 0.2;
+const FONT_ADDRESS = '/fonts/inter/InterVariable.ttf';
+const COMMITTED_FONT = resolve(import.meta.dirname, '..', 'public', 'fonts', 'inter', 'InterVariable.ttf');
+const HEAVY_TEXT = '<p id="heavy-text" style="font-family: Inter; font-weight: 900">Heavy words</p>';
+
+interface DrawnFont {
+  familyName: string;
+  isCustomFont: boolean;
+}
 
 const test = toolTest.extend<{ fetchedTalk: Project }>({
   fetchedTalk: async ({ request, fixtureServer }, use) => {
@@ -55,7 +63,38 @@ async function jumpTo(page: Page, seconds: number): Promise<void> {
   }, seconds);
 }
 
+async function listFontsDrawn(page: Page, selector: string): Promise<DrawnFont[]> {
+  const session = await page.context().newCDPSession(page);
+  await session.send('DOM.enable');
+  await session.send('CSS.enable');
+  const { root } = await session.send('DOM.getDocument');
+  const { nodeId } = await session.send('DOM.querySelector', { nodeId: root.nodeId, selector });
+  const { fonts } = await session.send('CSS.getPlatformFontsForNode', { nodeId });
+  return fonts.map((font) => ({ familyName: font.familyName, isCustomFont: font.isCustomFont }));
+}
+
 test.use({ viewport: DESKTOP });
+
+test('the tool serves Inter from its own address at the committed size, and the page draws a heavy text in it', async ({
+  page,
+  request,
+  tool,
+}) => {
+  const served = await request.get(FONT_ADDRESS);
+  await page.goto('/settings');
+  const fontRequest = page.waitForResponse((answer) => answer.url().endsWith(FONT_ADDRESS));
+  await page.locator('body').evaluate((body, markup) => body.insertAdjacentHTML('beforeend', markup), HEAVY_TEXT);
+
+  const loaded = await page.evaluate(async () => (await document.fonts.load('900 20px Inter')).length);
+  const drawn = await listFontsDrawn(page, '#heavy-text');
+
+  expect(new URL(served.url()).origin).toBe(tool.address);
+  expect(served.status()).toBe(200);
+  expect((await served.body()).length).toBe(statSync(COMMITTED_FONT).size);
+  expect((await fontRequest).url()).toBe(`${tool.address}${FONT_ADDRESS}`);
+  expect(loaded).toBe(1);
+  expect(drawn).toEqual([{ familyName: 'Inter Variable', isCustomFont: true }]);
+});
 
 test('through the web port a byte range of the preview copy answers 206, and a video element plays it and plays on after a jump', async ({
   page,

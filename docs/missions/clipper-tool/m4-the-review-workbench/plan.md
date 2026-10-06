@@ -302,7 +302,7 @@ What the spec's file list leaves out
   and the ready row presented to the 200% walk reads "Ready to review · 12 candidates, 10 kept, 2
   rejected", the longest a project can have.
 
-- [ ] T8 — Copy the Review styles, and add Inter, three icons and three time formats
+- [x] T8 — Copy the Review styles, and add Inter, three icons and three time formats
   Files: `web/src/shared/styles/review.css`, `web/src/shared/styles/player.css`,
   `web/src/app/layout.tsx`, `web/src/shared/styles/app.css`,
   `web/public/fonts/inter/InterVariable.ttf`, `web/public/fonts/inter/LICENSE.txt`,

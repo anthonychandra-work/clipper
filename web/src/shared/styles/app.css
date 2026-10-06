@@ -87,3 +87,9 @@ label.row .menu-button {
     margin-left: auto;
   }
 }
+
+/* The caption and the hook title are drawn in Inter, the typeface of the exported file. */
+.player__caption,
+.player__hook {
+  font-family: Inter, var(--font);
+}

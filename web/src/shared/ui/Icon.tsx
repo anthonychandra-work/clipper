@@ -7,6 +7,8 @@ const SHAPES = {
   plus: <path d="M12 5v14M5 12h14" />,
   checkmark: <path d="M5 12.5l4.5 4.5L19 7.5" />,
   xmark: <path d="M6 6l12 12M18 6L6 18" />,
+  play: <path d="M8 5.5v13l11-6.5z" fill="currentColor" />,
+  pause: <path d="M8.5 6v12M15.5 6v12" strokeWidth="3.5" />,
   sidebar: (
     <>
       <rect x="3" y="5" width="18" height="14" rx="3.5" />
@@ -32,6 +34,12 @@ const SHAPES = {
       <path d="M12 4.5l8.5 14.5h-17z" />
       <path d="M12 10v4" />
       <path d="M12 16.6v.1" />
+    </>
+  ),
+  replay: (
+    <>
+      <path d="M5 12a7 7 0 1 0 2.2-5.1" />
+      <path d="M4.5 4.5v4h4" />
     </>
   ),
   ellipsis: <path d="M6 12h.01M12 12h.01M18 12h.01" strokeWidth="3.2" />,
