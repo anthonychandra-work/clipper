@@ -211,7 +211,7 @@ What the spec's file list leaves out
   a second save of a clip replaces the first; deleting the project leaves no review and no look;
   cutting again leaves no review and both counts 0.
 
-- [ ] T3 — Work out where a clip's points can go
+- [x] T3 — Work out where a clip's points can go
   Files: `service/clipper/review/trim_reach.py`, `service/clipper/review/test_trim_reach.py`,
   `service/clipper/review/clip_points.py`, `service/clipper/review/test_clip_points.py`,
   `service/clipper/review/__init__.py`
