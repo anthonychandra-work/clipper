@@ -1,7 +1,8 @@
-import { existsSync, readdirSync, renameSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, readdirSync, renameSync, rmSync, type Stats, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const SOURCE_START = 'source.';
+const PREVIEW_NAME = 'preview.mp4';
 const ASIDE_START = 'aside-';
 const NOT_A_VIDEO = 'These are notes and no video.';
 
@@ -41,6 +42,19 @@ export function listExportFiles(folder: ProjectFolder): string[] {
 
 export function listRenderWorkFolders(folder: ProjectFolder): string[] {
   return readdirSync(findProjectDir(folder)).filter((name) => name.startsWith('rendering-'));
+}
+
+export function measureProjectFiles(folder: ProjectFolder): Record<string, number> {
+  const projectDir = findProjectDir(folder);
+  if (!existsSync(projectDir)) return {};
+  const sizes = readdirSync(projectDir, { recursive: true, encoding: 'utf8' })
+    .sort()
+    .map((name): [string, Stats] => [name, statSync(join(projectDir, name))]);
+  return Object.fromEntries(sizes.filter(([, held]) => held.isFile()).map(([name, held]) => [name, held.size]));
+}
+
+export function isSourceOrPreview(fileName: string): boolean {
+  return fileName.startsWith(SOURCE_START) || fileName === PREVIEW_NAME;
 }
 
 function findProjectDir(folder: ProjectFolder): string {

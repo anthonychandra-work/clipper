@@ -140,8 +140,10 @@ export {
 export { listLowDiskScreens, listSheetScreens } from './sheet-screens';
 export { showWholeScreen } from './show-whole-screen';
 export {
+  isSourceOrPreview,
   listExportFiles,
   listRenderWorkFolders,
+  measureProjectFiles,
   moveSourceAside,
   type ProjectFolder,
   putNotesInPlaceOfSource,

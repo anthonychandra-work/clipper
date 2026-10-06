@@ -4,11 +4,16 @@ import { join } from 'node:path';
 import type { Page } from '@playwright/test';
 
 import {
+  changeClip,
   createLinkProject,
   deleteAllProjects,
   expect,
+  exportClips,
+  forgetHistory,
   KEYLESS_END,
+  listExportFiles,
   listProjects,
+  measureProjectFiles,
   projectRow,
   statusCard,
   test,
@@ -27,6 +32,7 @@ async function askToDelete(page: Page): Promise<void> {
 
 test.afterEach(async ({ request }) => {
   await deleteAllProjects(request);
+  await forgetHistory(request);
 });
 
 test.describe('at 390 px', () => {
@@ -131,5 +137,34 @@ test.describe('at 1360 px', () => {
     await expect(page).toHaveURL('/');
     await expect(projectRow(page, newer.id)).toHaveCount(0);
     await expect(projectRow(page, older.id)).toHaveAttribute('aria-current', 'true');
+  });
+
+  test('deleting a talk with an exported clip removes its folder with the export and leaves the Library empty, and Settings still counts its rejection', async ({
+    page,
+    request,
+    ownTalk,
+    tool,
+  }) => {
+    const projectId = ownTalk.project.id;
+    const folder = { dataDir: tool.settings.dataDir, projectId };
+    await forgetHistory(request);
+    await exportClips(request, projectId, ['c01']);
+    await changeClip(request, { projectId, clipId: 'c06' }, { decision: 'reject', rejectReason: 'cut-off' });
+    const exportsBefore = listExportFiles(folder);
+    await page.goto(`/projects/${projectId}/export`);
+
+    await askToDelete(page);
+    await expect(page.locator('dialog#sheet[open] .alert__message')).toHaveText(WHAT_IS_REMOVED);
+    await page.getByRole('button', { name: 'Delete', exact: true }).click();
+    await expect(page.locator('#toast')).toHaveText('Project deleted');
+    await expect(page).toHaveURL('/');
+    await expect(page.locator('h2.empty__title')).toHaveText('No Projects Yet');
+    await page.goto('/settings');
+
+    await expect(page.locator('.memory-count')).toHaveText(['1', '0', '0', '0']);
+    expect(exportsBefore).toEqual(['01-c01.mp4']);
+    expect(measureProjectFiles(folder)).toEqual({});
+    expect(existsSync(join(folder.dataDir, 'projects', projectId))).toBe(false);
+    expect(await listProjects(request)).toEqual([]);
   });
 });

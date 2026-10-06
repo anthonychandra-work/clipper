@@ -471,7 +471,7 @@ What the spec's file list leaves out
   ready project gone, the review without its preview copy and the export without its source,
   and with no variable the same project keeps both; the cleaner ends when the app stops.
 
-- [ ] T12 — Check in a browser the cleanup of an old source and the delete of a project with
+- [x] T12 — Check in a browser the cleanup of an old source and the delete of a project with
   exports
   Files: `web/e2e/retention.spec.ts`, `web/e2e/delete-project.spec.ts`,
   `web/e2e/support/source-file.ts`, `web/e2e/support/index.ts`
