@@ -484,7 +484,7 @@ What the spec's file list leaves out
   filters read 6, 4, 1 and 1, the Kept group holds the first clip alone, the Export tab reads 1,
   and the Library row reads "Ready to review · 6 candidates, 1 kept, 1 rejected".
 
-- [ ] T14 — Move the in and out points: steps, the length reading, the filmstrip and its handles
+- [x] T14 — Move the in and out points: steps, the length reading, the filmstrip and its handles
   Files: `web/src/review/trim-clip/index.ts`,
   `web/src/review/trim-clip/components/BoundaryEditor.tsx`,
   `web/src/review/trim-clip/components/LengthBand.tsx`,
@@ -497,8 +497,14 @@ What the spec's file list leaves out
   `web/src/review/trim-clip/lib/place-selection.ts`,
   `web/src/review/trim-clip/lib/place-selection.test.ts`,
   `web/src/review/inspect-clip/components/ClipFlag.tsx`,
-  `web/src/review/open-review/components/ClipDetail.tsx`, `web/src/shared/styles/app.css`,
-  `web/e2e/support/review-page.ts`, `web/e2e/support/index.ts`, `web/e2e/review-trim.spec.ts`
+  `web/src/review/open-review/components/ClipDetail.tsx`,
+  `web/src/review/open-review/components/ReviewSplit.tsx`,
+  `web/src/review/open-review/components/ReviewTab.tsx`,
+  `web/src/review/open-review/lib/measure-video.ts`, `web/src/review/time-clips/index.ts`,
+  `web/src/review/time-clips/lib/move-edge.ts`, `web/src/review/time-clips/lib/move-edge.test.ts`,
+  `web/src/shared/styles/app.css`, `web/e2e/support/review-page.ts`,
+  `web/e2e/support/review-trim.ts`, `web/e2e/support/read-picture.ts`, `web/e2e/support/index.ts`,
+  `web/e2e/review-trim.spec.ts`
   Done: "In and Out Points" and "Transcript" follow the prototype's markup. The length reading
   and its band follow A94 with the project's preset. Each point has its time to a tenth of a
   second and two pairs of steps, by a sentence and by 0.2 seconds, named as in the prototype; a

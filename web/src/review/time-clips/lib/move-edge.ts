@@ -17,6 +17,15 @@ export interface EdgeLimits {
   canNudgeLater: boolean;
 }
 
+export function readPoints(clip: ClipPoints): ClipPoints {
+  return {
+    startSentence: clip.startSentence,
+    startNudge: clip.startNudge,
+    endSentence: clip.endSentence,
+    endNudge: clip.endNudge,
+  };
+}
+
 export function moveEdgeTo(points: ClipPoints, edge: ClipEdge, sentence: number): ClipPoints {
   if (edge === 'start') return { ...points, startSentence: sentence, startNudge: 0 };
   return { ...points, endSentence: sentence, endNudge: 0 };

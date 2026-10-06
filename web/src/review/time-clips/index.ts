@@ -8,6 +8,7 @@ export {
   moveEdge,
   moveEdgeTo,
   nudgeEdge,
+  readPoints,
   type TrimLimits,
 } from './lib/move-edge';
 export { describeLength, type LengthRating, measureBandScale, rateLength } from './lib/rate-length';

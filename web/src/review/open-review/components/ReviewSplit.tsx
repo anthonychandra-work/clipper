@@ -8,6 +8,7 @@ import { useShell } from '@/shell';
 import { SourceTimeline } from '../../chart-source';
 import { CandidateList, type ClipFilter } from '../../list-candidates';
 import type { Review, ReviewClip } from '../../review.types';
+import { measureVideo } from '../lib/measure-video';
 import { clipAddress } from '../lib/review-addresses';
 
 interface ReviewSplitProps {
@@ -51,9 +52,4 @@ export function ReviewSplit({ project, review, shownClip, filter, onFilter, deta
       {detail}
     </div>
   );
-}
-
-function measureVideo(project: Project, review: Review): number {
-  const lastWindowEnd = Math.max(0, ...review.windows.map((scored) => scored.endSeconds));
-  return project.durationSeconds ?? lastWindowEnd;
 }

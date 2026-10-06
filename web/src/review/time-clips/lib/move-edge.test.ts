@@ -1,8 +1,16 @@
 import { describe, expect, it } from 'vitest';
 
-import { describeTalkReach, TALK_SECONDS } from '../../review.fixtures';
+import { describeTalkClip, describeTalkReach, TALK_SECONDS } from '../../review.fixtures';
 import type { ClipPoints } from '../../review.types';
-import { arePointsAllowed, edgeLimits, moveEdge, moveEdgeTo, nudgeEdge, type TrimLimits } from './move-edge';
+import {
+  arePointsAllowed,
+  edgeLimits,
+  moveEdge,
+  moveEdgeTo,
+  nudgeEdge,
+  readPoints,
+  type TrimLimits,
+} from './move-edge';
 
 const LIMITS: TrimLimits = { reach: describeTalkReach(), videoSeconds: TALK_SECONDS };
 const AS_CUT: ClipPoints = { startSentence: 4, startNudge: 0, endSentence: 12, endNudge: 0 };
@@ -13,6 +21,12 @@ function place(points: Partial<ClipPoints>): ClipPoints {
 }
 
 describe('moving a point', () => {
+  it('reads the two points of a clip as its two sentences and its two nudges, and nothing else of it', () => {
+    const clip = describeTalkClip({ startNudge: -2, endSentence: 13 });
+
+    expect(readPoints(clip)).toEqual({ startSentence: 4, startNudge: -2, endSentence: 13, endNudge: 0 });
+  });
+
   it('moves the in point by one sentence and leaves the out point', () => {
     expect(moveEdge(AS_CUT, 'start', -1)).toEqual(place({ startSentence: 3 }));
     expect(moveEdge(AS_CUT, 'start', 1)).toEqual(place({ startSentence: 5 }));

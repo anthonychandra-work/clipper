@@ -13,6 +13,13 @@ export {
   readShownProblem,
 } from './new-project-sheet';
 export { presentAsReady } from './present-as-ready';
+export {
+  listPointsAcross,
+  nameColoursOfCapture,
+  nameColoursOfPicture,
+  type PicturePoint,
+  TALK_COLOUR_BARS,
+} from './read-picture';
 export { changeClip, readReview, storeLook } from './read-review';
 export { readSelection, type Selection } from './read-selection';
 export { countWordsWrongInHundred, readTranscript, type StoredTranscript } from './read-transcript';
@@ -25,6 +32,16 @@ export {
   rejectAs,
   rejectMenu,
 } from './review-decision';
+export {
+  holdHandleAt,
+  pressStep,
+  readHandle,
+  readStripFrames,
+  readTranscriptLines,
+  readTrim,
+  type StepName,
+  type TrimText,
+} from './review-trim';
 export {
   candidateRow,
   type CandidateRowText,

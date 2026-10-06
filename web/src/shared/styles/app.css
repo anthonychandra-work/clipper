@@ -101,6 +101,26 @@ label.row .menu-button {
   }
 }
 
+/* A frame of the video takes the place of the figure the prototype draws in the filmstrip. */
+.filmstrip__frame:has(img)::before,
+.filmstrip__frame:has(img)::after,
+.filmstrip__frame--missing::before,
+.filmstrip__frame--missing::after {
+  content: none;
+}
+
+.filmstrip__frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.filmstrip__frame--missing,
+.filmstrip__frame--missing:nth-child(3n) {
+  background: var(--frame);
+}
+
 /* The caption and the hook title are drawn in Inter, the typeface of the exported file. */
 .player__caption,
 .player__hook {
