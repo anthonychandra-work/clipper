@@ -19,6 +19,16 @@ layout: |
       open-project/
       follow-progress/
       delete-project/
+    review/
+      open-review/
+      time-clips/
+      list-candidates/
+      chart-source/
+      inspect-clip/
+      decide-clip/
+      trim-clip/
+      preview-clip/
+      set-look/
     settings/
       change-settings/
   e2e/                    browser tests

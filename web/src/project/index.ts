@@ -1,1 +1,1 @@
-export { NewestProject, ProjectScreen, type ProjectTab } from './open-project';
+export { NewestProject, ProjectScreen, type ProjectTab, tabAddress } from './open-project';

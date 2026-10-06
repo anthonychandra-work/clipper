@@ -319,7 +319,7 @@ What the spec's file list leaves out
   from its own address at the committed size and that the page draws a heavy text in Inter with
   it. `pnpm test` exits 0, so no screen built before changed its fit.
 
-- [ ] T9 — Hold a project's review in the web app and work out a clip's times
+- [x] T9 — Hold a project's review in the web app and work out a clip's times
   Files: `web/.coding-standards-structure`, `web/src/review/index.ts`,
   `web/src/review/review.types.ts`, `web/src/review/time-clips/index.ts`,
   `web/src/review/time-clips/lib/clip-range.ts`,
@@ -335,7 +335,8 @@ What the spec's file list leaves out
   `web/src/review/open-review/lib/review-store.test.ts`,
   `web/src/review/open-review/lib/review-addresses.ts`,
   `web/src/review/open-review/lib/review-addresses.test.ts`,
-  `web/src/review/open-review/hooks/use-review.ts`
+  `web/src/review/open-review/hooks/use-review.ts`, `web/src/review/review.fixtures.ts`,
+  `web/src/project/index.ts`, `web/src/project/open-project/index.ts`
   Done: the web app's recorded layout lists the review capability with nine use cases: open the
   review, time clips, list candidates, chart the source, inspect a clip, decide a clip, trim a
   clip, preview a clip and set the look. The types describe A91's answer. From a clip's sentences
