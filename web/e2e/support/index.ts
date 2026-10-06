@@ -4,12 +4,16 @@ export { captureScreens } from './capture-screens';
 export {
   type ExportRowText,
   exportRows,
+  followRisingBar,
   openExport,
   type OutputText,
   readExportRows,
   readOutput,
+  readRenderActions,
+  type RenderActionsText,
   saveDownload,
   type SavedDownload,
+  waitForDownloads,
 } from './export-page';
 export { KEYLESS_END, type KeylessEnd, waitForKeylessEnd } from './keyless-end';
 export { followBarUntil, newProjectSheet, projectRow, readRow, type RowText } from './library-page';
@@ -110,6 +114,13 @@ export {
 } from './service-api';
 export { listLowDiskScreens, listSheetScreens } from './sheet-screens';
 export { showWholeScreen } from './show-whole-screen';
+export {
+  listExportFiles,
+  listRenderWorkFolders,
+  moveSourceAside,
+  type ProjectFolder,
+  putNotesInPlaceOfSource,
+} from './source-file';
 export { readStatusCard, statusCard, type StatusCardText } from './status-screen';
 export { test } from './tool-test';
 export { waitForStepDone } from './wait-for-step';

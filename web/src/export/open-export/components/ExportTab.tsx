@@ -7,6 +7,7 @@ import { ProjectFrame, useOpenProject } from '@/project';
 import { PagePane } from '@/shared/ui';
 
 import type { ProjectExport } from '../../export.types';
+import { RenderActions } from '../../render-clips';
 import { useExport } from '../hooks/use-export';
 import { EmptyExport } from './EmptyExport';
 import { ExportClip } from './ExportClip';
@@ -15,7 +16,7 @@ import { SourceGoneNotice } from './SourceGoneNotice';
 
 export function ExportTab() {
   const project = useOpenProject();
-  const { projectExport } = useExport(project.id);
+  const { projectExport, store } = useExport(project.id);
   useLibraryToldOfFinishedClips(projectExport);
 
   if (projectExport === null || projectExport.clips.length === 0) {
@@ -25,14 +26,26 @@ export function ExportTab() {
       </ProjectFrame>
     );
   }
+  const actions = (
+    <RenderActions
+      projectExport={projectExport}
+      onRender={() => void store.startRenders()}
+      onCancel={() => void store.cancelRenders()}
+    />
+  );
   return (
-    <ProjectFrame project={project} tab="export">
+    <ProjectFrame project={project} tab="export" actions={actions}>
       <PagePane name="export">
         {projectExport.hasSource ? null : <SourceGoneNotice />}
         <OutputSection look={projectExport.look} />
         <ol className="export-list">
           {projectExport.clips.map((clip) => (
-            <ExportClip key={clip.id} clip={clip} hasSource={projectExport.hasSource} />
+            <ExportClip
+              key={clip.id}
+              clip={clip}
+              hasSource={projectExport.hasSource}
+              onRetry={(clipId) => void store.retryRender(clipId)}
+            />
           ))}
         </ol>
       </PagePane>

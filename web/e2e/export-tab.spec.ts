@@ -1,4 +1,4 @@
-import { readdirSync, renameSync, statSync } from 'node:fs';
+import { statSync } from 'node:fs';
 import { join } from 'node:path';
 
 import type { APIRequestContext, Page } from '@playwright/test';
@@ -10,7 +10,9 @@ import {
   expect,
   type ExportRowText,
   exportRows,
+  followRisingBar,
   keepClips,
+  moveSourceAside,
   openExport,
   openPreview,
   probeSavedFile,
@@ -19,6 +21,7 @@ import {
   saveDownload,
   startRenders,
   test,
+  waitForDownloads,
 } from './support';
 
 const DESKTOP = { width: 1360, height: 900 };
@@ -29,7 +32,6 @@ const SOURCE_GONE =
   'The source video was deleted to free space. Finished exports are still here. New clips cannot be rendered.';
 const TWO_LONGEST_CLIPS = ['c03', 'c04'];
 const LONGEST_TITLE = 'Almost everyone gets price wrong';
-const RENDER_TIMEOUT_MS = 60_000;
 const NOT_RENDERED = { status: 'Not rendered', barLabel: null, barValue: null, download: null };
 
 function describeRows(shown: ProjectExport): ExportRowText[] {
@@ -57,23 +59,6 @@ async function keepAnswersOfTheExport(page: Page): Promise<ProjectExport[]> {
     await route.fulfill({ response });
   });
   return received;
-}
-
-async function readRisingBar(page: Page): Promise<ExportRowText[][]> {
-  await expect.poll(async () => (await readExportRows(page))[0].barLabel).toBe('Rendering');
-  const earlier = await readExportRows(page);
-  await expect
-    .poll(async () => (await readExportRows(page))[0].barValue, { timeout: RENDER_TIMEOUT_MS })
-    .toBeGreaterThan(earlier[0].barValue ?? 0);
-  return [earlier, await readExportRows(page)];
-}
-
-function moveSourceAside(dataDir: string, projectId: string): () => void {
-  const projectDir = join(dataDir, 'projects', projectId);
-  const source = readdirSync(projectDir).find((name) => name.startsWith('source.'));
-  if (source === undefined) throw new Error(`The project has no source in ${projectDir}.`);
-  renameSync(join(projectDir, source), join(projectDir, `aside-${source}`));
-  return () => renameSync(join(projectDir, `aside-${source}`), join(projectDir, source));
 }
 
 async function readAnswerOfTheFile(request: APIRequestContext, address: string | null) {
@@ -134,7 +119,7 @@ test('after the look is changed on the Review tab, the sentence of the look foll
   await changeLook(page, 'captions-plain');
   await changeLook(page, 'framing-whole-frame');
   await changeLook(page, 'look-showHookTitle');
-  await page.locator('#tab-export').click();
+  await page.getByRole('link', { name: /^Export/ }).click();
 
   expect(before).toBe(STARTING_LOOK);
   await expect(page.locator('.export-list')).toBeVisible();
@@ -151,12 +136,12 @@ test('two queued clips read Rendering and Waiting, keep their state over a reloa
   await startRenders(request, projectId);
   await openExport(page, projectId);
 
-  const [earlier, later] = await readRisingBar(page);
+  const [earlier, later] = await followRisingBar(page);
   const received = await keepAnswersOfTheExport(page);
   await page.reload();
   await expect(exportRows(page)).toHaveCount(2);
   const afterReload = await readExportRows(page);
-  await expect(exportRows(page).locator('a[download]')).toHaveCount(2, { timeout: RENDER_TIMEOUT_MS });
+  await waitForDownloads(page, 2);
 
   expect(earlier.map((row) => row.status)).toEqual(['Rendering', 'Waiting']);
   expect(earlier.map((row) => row.barLabel)).toEqual(['Rendering', 'Waiting']);
@@ -176,13 +161,13 @@ test('the download of a finished clip is an MP4 attachment named after the clip,
   await keepClips(request, projectId, TWO_LONGEST_CLIPS);
   await startRenders(request, projectId);
   await openExport(page, projectId);
-  await expect(exportRows(page).locator('a[download]')).toHaveCount(2, { timeout: RENDER_TIMEOUT_MS });
+  await waitForDownloads(page, 2);
   const [row] = await readExportRows(page);
 
   const saved = await saveDownload(page, 'c03', testInfo.outputDir);
   const answer = await readAnswerOfTheFile(request, row.download);
   const probed = probeSavedFile(saved.path);
-  const putSourceBack = moveSourceAside(tool.settings.dataDir, projectId);
+  const putSourceBack = moveSourceAside({ dataDir: tool.settings.dataDir, projectId });
   try {
     await page.reload();
     await expect(page.locator('.flag[role="note"] .flag__message')).toHaveText(SOURCE_GONE);
@@ -193,7 +178,7 @@ test('the download of a finished clip is an MP4 attachment named after the clip,
   }
 
   expect(saved.name).toBe(`03 ${LONGEST_TITLE}.mp4`);
-  await expect(page.locator('#download-c03')).toHaveAccessibleName(`Download MP4 of ${LONGEST_TITLE}`);
+  await expect(page.getByRole('link', { name: `Download MP4 of ${LONGEST_TITLE}` })).toHaveId('download-c03');
   expect(answer).toEqual({ status: 200, type: 'video/mp4', disposition: expect.stringMatching(/^attachment; filename/) });
   expect(probed).toMatchObject({ picture: 'h264 1080 x 1920 at 30/1', sound: 'aac', isMp4: true });
   expect(row.file).toBe('exports/03-c03.mp4 · 41.3 s');

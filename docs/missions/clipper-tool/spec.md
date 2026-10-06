@@ -1129,6 +1129,12 @@ From `intent.md`. Base `82df5ce`.
   project capability keeps the frame of the Results tab alone. With no kept clip the Export tab
   asks the service like any other and draws the empty state from its answer. A122 gives the
   talk and leaves these open. (executor, m5)
+- A135 — Retry is switched off with the source gone, as Render is. The refusal of a Render
+  pressed after the source left, on a page that still shows it, is the toast the browser test
+  reads. The tests of the Export tab move a project's source aside, or put notes in its place,
+  through one helper that also puts it back, and they list the files of a project's exports
+  from the test's data folder. On a phone the test renders the shortest clip, the sixth. A116
+  and A120 give the rules and leave these open. (executor, m5)
 
 ## Milestones
 

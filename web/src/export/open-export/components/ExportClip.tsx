@@ -5,9 +5,10 @@ import { describeFile } from '../lib/describe-output';
 interface ExportClipProps {
   clip: KeptClip;
   hasSource: boolean;
+  onRetry: (clipId: string) => void;
 }
 
-export function ExportClip({ clip, hasSource }: ExportClipProps) {
+export function ExportClip({ clip, hasSource, onRetry }: ExportClipProps) {
   return (
     <li className="group divided">
       <div className="export-clip__head">
@@ -16,7 +17,7 @@ export function ExportClip({ clip, hasSource }: ExportClipProps) {
           <p className="export-clip__path">{describeFile(clip)}</p>
         </div>
         <div className="export-clip__status">
-          <RenderStatus clip={clip} hasSource={hasSource} />
+          <RenderStatus clip={clip} hasSource={hasSource} onRetry={onRetry} />
         </div>
       </div>
     </li>

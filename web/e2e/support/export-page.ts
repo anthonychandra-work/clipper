@@ -2,6 +2,8 @@ import { join } from 'node:path';
 
 import { expect, type Locator, type Page } from '@playwright/test';
 
+const RENDER_TIMEOUT_MS = 60_000;
+
 export interface ExportRowText {
   title: string;
   file: string;
@@ -15,6 +17,14 @@ export interface OutputText {
   look: string;
   format: string;
   footer: string;
+}
+
+export interface RenderActionsText {
+  render: string;
+  isRenderOff: boolean;
+  hasSpinner: boolean;
+  hasCancel: boolean;
+  order: string[];
 }
 
 export interface SavedDownload {
@@ -55,9 +65,34 @@ export async function readOutput(page: Page): Promise<OutputText> {
   return { look, format, footer: await output.locator('.list-footer').innerText() };
 }
 
+export async function readRenderActions(page: Page): Promise<RenderActionsText> {
+  const trailing = page.locator('header.toolbar .toolbar__trailing');
+  const render = trailing.getByRole('button', { name: /^Render/ });
+  return {
+    render: (await render.innerText()).trim(),
+    isRenderOff: await render.isDisabled(),
+    hasSpinner: (await render.locator('.spinner').count()) > 0,
+    hasCancel: (await trailing.getByRole('button', { name: 'Cancel' }).count()) > 0,
+    order: await trailing.locator('> button').evaluateAll((controls) => controls.map((control) => control.id)),
+  };
+}
+
+export async function followRisingBar(page: Page): Promise<ExportRowText[][]> {
+  await expect.poll(async () => (await readExportRows(page))[0].barLabel).toBe('Rendering');
+  const earlier = await readExportRows(page);
+  await expect
+    .poll(async () => (await readExportRows(page))[0].barValue, { timeout: RENDER_TIMEOUT_MS })
+    .toBeGreaterThan(earlier[0].barValue ?? 0);
+  return [earlier, await readExportRows(page)];
+}
+
+export async function waitForDownloads(page: Page, count: number): Promise<void> {
+  await expect(exportRows(page).locator('a[download]')).toHaveCount(count, { timeout: RENDER_TIMEOUT_MS });
+}
+
 export async function saveDownload(page: Page, clipId: string, folder: string): Promise<SavedDownload> {
   const started = page.waitForEvent('download');
-  await page.locator(`#download-${clipId}`).click();
+  await page.locator(`a[id="download-${clipId}"]`).click();
   const download = await started;
   const path = join(folder, download.suggestedFilename());
   await download.saveAs(path);

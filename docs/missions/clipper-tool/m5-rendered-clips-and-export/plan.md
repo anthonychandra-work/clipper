@@ -519,14 +519,15 @@ What the spec's file list leaves out
   the row; with the source moved aside the notice shows and the finished clip still downloads.
   `pnpm test` exits 0.
 
-- [ ] T13 — Render, Cancel and Retry from the tab
+- [x] T13 — Render, Cancel and Retry from the tab
   Files: `web/src/export/render-clips/index.ts`,
   `web/src/export/render-clips/components/RenderActions.tsx`,
   `web/src/export/render-clips/components/RenderStatus.tsx`,
   `web/src/export/open-export/components/ExportTab.tsx`,
   `web/src/export/open-export/components/ExportClip.tsx`, `web/src/shared/styles/app.css`,
-  `web/e2e/support/export-page.ts`, `web/e2e/support/index.ts`, `web/e2e/export-render.spec.ts`,
-  `web/e2e/export-cancel.spec.ts`, `web/e2e/export-retry.spec.ts`
+  `web/e2e/support/export-page.ts`, `web/e2e/support/source-file.ts`,
+  `web/e2e/support/index.ts`, `web/e2e/export-render.spec.ts`,
+  `web/e2e/export-cancel.spec.ts`, `web/e2e/export-retry.spec.ts`, `web/e2e/export-tab.spec.ts`
   Done: the toolbar holds the prototype's actions after the More button, with its markup and
   ids: "Render 2 Clips", or "Render 1 Clip", which queues the kept clips; while clips wait or
   render, "Rendering…" with the spinner, switched off, and Cancel before it. With the source
