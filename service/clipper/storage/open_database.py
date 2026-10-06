@@ -150,6 +150,17 @@ WHERE decision IN ('keep', 'reject')
 ORDER BY rowid;
 """
 
+CREATE_VIEWS = """
+CREATE TABLE clip_views (
+    project_id TEXT NOT NULL,
+    clip_id TEXT NOT NULL,
+    views INTEGER NOT NULL,
+    PRIMARY KEY (project_id, clip_id),
+    FOREIGN KEY (project_id, clip_id) REFERENCES candidates (project_id, id) ON DELETE CASCADE
+);
+ALTER TABLE projects ADD COLUMN logged_count INTEGER NOT NULL DEFAULT 0;
+"""
+
 MIGRATIONS: tuple[str, ...] = (
     CREATE_PROJECTS,
     CREATE_PREFERENCES,
@@ -159,6 +170,7 @@ MIGRATIONS: tuple[str, ...] = (
     CREATE_REVIEW,
     CREATE_RENDERS,
     CREATE_HISTORY,
+    CREATE_VIEWS,
 )
 
 

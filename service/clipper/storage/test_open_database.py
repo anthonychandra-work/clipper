@@ -103,6 +103,7 @@ ADD_OUTCOME = """
 INSERT INTO outcome_history (project_id, clip_id, views, hook_type, seconds)
 VALUES ('d4e5f6', 'c01', 1200, 'story', 32.76)
 """
+ADD_VIEWS = "INSERT INTO clip_views (project_id, clip_id, views) VALUES ('d4e5f6', 'c01', 1200)"
 ROWS_OF_M5 = (
     ADD_M2_PROJECT,
     ADD_CANDIDATE,
@@ -318,12 +319,40 @@ def test_a_database_made_by_m5_keeps_its_rows_and_copies_its_decisions_into_the_
         kept = [[tuple(row) for row in connection.execute(read)] for read in READ_M5_ROWS]
         decisions = [tuple(row) for row in connection.execute(READ_DECISION_HISTORY)]
         outcomes = connection.execute("SELECT COUNT(*) FROM outcome_history").fetchone()[0]
-        assert read_schema_version(connection) == len(MIGRATIONS) == 8
+        assert read_schema_version(connection) == len(MIGRATIONS) == 9
     assert [tuple(project)[: len(projects_before[0])] for project in projects] == projects_before
+    assert [project["logged_count"] for project in projects] == [0]
     assert kept == kept_before
     assert [len(rows) for rows in kept] == [3, 3, 1, 1]
     assert decisions == [("d4e5f6", "c02", 0, None), ("d4e5f6", "c01", 1, "cut-off")]
     assert outcomes == 0
+
+
+def test_the_views_of_a_clip_go_with_its_candidate_and_the_count_starts_at_0(
+    tmp_path: Path,
+) -> None:
+    database = open_database(tmp_path / "clipper.sqlite3")
+    with database.transaction() as connection:
+        for added in (ADD_M2_PROJECT, ADD_CANDIDATE, ADD_VIEWS):
+            connection.execute(added)
+
+    with database.transaction() as connection:
+        stored = [tuple(row) for row in connection.execute("SELECT * FROM clip_views")]
+        logged = connection.execute("SELECT logged_count FROM projects").fetchone()[0]
+        connection.execute("DELETE FROM candidates WHERE project_id = 'd4e5f6'")
+        left = connection.execute("SELECT COUNT(*) FROM clip_views").fetchone()[0]
+
+    assert stored == [("d4e5f6", "c01", 1200)]
+    assert (logged, left) == (0, 0)
+
+
+def test_views_of_a_clip_that_is_not_a_candidate_cannot_be_stored(tmp_path: Path) -> None:
+    database = open_database(tmp_path / "clipper.sqlite3")
+    with database.transaction() as connection:
+        connection.execute(ADD_M2_PROJECT)
+
+    with pytest.raises(sqlite3.IntegrityError), database.transaction() as connection:
+        connection.execute(ADD_VIEWS)
 
 
 def test_a_new_database_has_an_empty_history(tmp_path: Path) -> None:

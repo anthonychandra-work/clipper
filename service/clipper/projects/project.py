@@ -91,6 +91,7 @@ class Project:
     kept_count: int = 0
     rejected_count: int = 0
     exported_count: int = 0
+    logged_count: int = 0
 
     def percent(self) -> float:
         shares = self._share_out_steps()

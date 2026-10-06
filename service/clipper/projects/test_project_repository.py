@@ -89,6 +89,22 @@ def test_a_new_project_has_no_export_and_a_stored_count_is_read_back(
     assert [project.exported_count for project in repository.list_newest_first()] == [2, 0]
 
 
+def test_a_new_project_has_no_clip_with_views_and_a_stored_count_is_read_back(
+    repository: ProjectRepository,
+) -> None:
+    new = plan_link_project("New")
+    logged = replace(
+        plan_link_project("Logged"), status=ProjectStatus.EXPORTED, exported_count=3, logged_count=2
+    )
+
+    repository.add(new)
+    repository.add(logged)
+
+    assert repository.get(new.id).logged_count == 0
+    assert repository.get(logged.id) == logged
+    assert [project.logged_count for project in repository.list_newest_first()] == [2, 0]
+
+
 def test_a_failure_that_points_to_settings_is_read_back_with_its_mark(
     repository: ProjectRepository,
 ) -> None:

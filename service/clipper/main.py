@@ -9,7 +9,7 @@ from fastapi import FastAPI
 from fastapi.concurrency import run_in_threadpool
 from fastapi.telemetry import TelemetryConfig
 
-from . import learning, pipeline, projects, rendering, review, selection, settings
+from . import learning, pipeline, projects, rendering, results, review, selection, settings
 from .fetching import FetchStage
 from .media import MediaTools, locate_media_tools
 from .problems import handle_app_errors
@@ -35,6 +35,7 @@ class Stores:
     review_store: review.ReviewStore
     render_store: rendering.RenderStore
     history: learning.HistoryStore
+    views: results.ResultsStore
 
     @classmethod
     def open(cls, database: Database, key_file: Path) -> Self:
@@ -47,6 +48,7 @@ class Stores:
             review_store=review.ReviewStore(database),
             render_store=rendering.RenderStore(database),
             history=learning.HistoryStore(database),
+            views=results.ResultsStore(database),
         )
 
 
@@ -93,7 +95,7 @@ def create_app(startup: StartupSettings) -> FastAPI:
     app = start_quiet_app(partial(run_workers_with_app, grounds, workers))
     share_dependencies(app, grounds, workers)
     handle_app_errors(app)
-    for feature in (projects, pipeline, settings, selection, review, rendering):
+    for feature in (projects, pipeline, settings, selection, review, rendering, results):
         app.include_router(feature.router)
     app.add_api_route("/api/health", report_health, methods=["GET"])
     return app
@@ -164,10 +166,15 @@ def share_dependencies(app: FastAPI, grounds: Grounds, workers: Workers) -> None
     app.state.review = review.ReviewDependencies(
         repository=stores.repository, sources=review_sources
     )
+    export_sources = rendering.ExportSources(review_sources, stores.render_store)
     app.state.export = rendering.ExportDependencies(
         repository=stores.repository,
-        sources=rendering.ExportSources(review_sources, stores.render_store),
+        sources=export_sources,
         stop_render=workers.renders.stop_project,
+    )
+    app.state.results = results.ResultsDependencies(
+        repository=stores.repository,
+        sources=results.ResultsSources(export_sources, stores.views),
     )
 
 

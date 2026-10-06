@@ -20,6 +20,7 @@ def describe_project(project: Project) -> ProjectResponse:
         kept_count=project.kept_count,
         rejected_count=project.rejected_count,
         exported_count=project.exported_count,
+        logged_count=project.logged_count,
     )
 
 

@@ -90,6 +90,18 @@ def test_the_export_of_a_new_project_is_answered_with_its_look_and_no_clips(app:
     }
 
 
+def test_the_results_of_a_new_project_are_answered_with_no_clips_and_it_counts_none_logged(
+    app: FastAPI,
+) -> None:
+    not_started = TestClient(app)
+    created = not_started.post("/api/projects", json=LINK_DRAFT).json()
+
+    results = not_started.get(f"/api/projects/{created['id']}/results")
+
+    assert (results.status_code, results.json()) == (200, {"clips": []})
+    assert created["loggedCount"] == 0
+
+
 def test_settings_count_the_rejections_of_the_tool_s_own_history_and_forget_them(
     client: TestClient, settings: StartupSettings
 ) -> None:

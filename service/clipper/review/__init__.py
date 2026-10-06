@@ -22,7 +22,13 @@ from .review_records import (
 )
 from .review_schemas import ClipResponse, LookBody, ReviewResponse
 from .review_store import ReviewStore
-from .router import FrameMissingError, PreviewMissingError, ReviewDependencies, router
+from .router import (
+    FrameMissingError,
+    PreviewMissingError,
+    ReviewDependencies,
+    RouteThatRefusesInOneSentence,
+    router,
+)
 from .trim_reach import TrimReach, find_trim_reach, list_reach
 
 __all__ = [
@@ -50,6 +56,7 @@ __all__ = [
     "ReviewResponse",
     "ReviewSources",
     "ReviewStore",
+    "RouteThatRefusesInOneSentence",
     "StandingClip",
     "StandingReview",
     "TrimLimits",

@@ -277,14 +277,16 @@ What the spec's file list leaves out
   two rejected clips with their reasons. The test of the five groups reads the control as
   switched on. `pnpm test` exits 0.
 
-- [ ] T6 — Store the views of exported clips and serve the Results tab
+- [x] T6 — Store the views of exported clips and serve the Results tab
   Files: `service/.coding-standards-structure`, `AGENTS.md`,
   `service/clipper/storage/open_database.py`, `service/clipper/storage/test_open_database.py`,
   `service/clipper/rendering/list_exported_clips.py`,
   `service/clipper/rendering/test_list_exported_clips.py`,
-  `service/clipper/rendering/__init__.py`, `service/clipper/results/__init__.py`,
+  `service/clipper/rendering/__init__.py`, `service/clipper/rendering/conftest.py`,
+  `service/clipper/review/__init__.py`, `service/clipper/results/__init__.py`,
   `service/clipper/results/results_store.py`, `service/clipper/results/test_results_store.py`,
   `service/clipper/results/results_schemas.py`, `service/clipper/results/describe_results.py`,
+  `service/clipper/results/log_views.py`,
   `service/clipper/results/test_describe_results.py`, `service/clipper/results/router.py`,
   `service/clipper/results/test_router.py`, `service/clipper/results/conftest.py`,
   `service/clipper/results/test_whole_app.py`, `service/clipper/projects/project.py`,

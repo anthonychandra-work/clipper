@@ -5,6 +5,7 @@ from .export_schemas import ExportClipResponse, ExportResponse, RenderResponse
 from .find_download import ExportMissingError, find_download
 from .find_faces import Face, FaceFinder, UnreadablePictureError
 from .frame_picture import PictureShape, choose_framing, frame_picture
+from .list_exported_clips import list_exported_clips
 from .overlay_timeline import Overlay, OverlayChange, time_overlays
 from .queue_renders import SourceDeletedError, cancel_renders, queue_kept_clips, queue_one_clip
 from .render_clip import ClipNotKeptError, ClipRender, RenderWork, SourceGoneError, render_clip
@@ -66,6 +67,7 @@ __all__ = [
     "encode_clip",
     "find_download",
     "frame_picture",
+    "list_exported_clips",
     "queue_kept_clips",
     "queue_one_clip",
     "render_clip",
