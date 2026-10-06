@@ -1,7 +1,7 @@
 # Mission: clipper-tool
 
-State: executing
-Milestone: m5-rendered-clips-and-export
+State: research-and-planning
+Milestone: m6-results-learning-settings-and-storage-care
 Attempt: 1
 Base: 82df5ce
 Branch: mission/clipper-tool
@@ -12,5 +12,5 @@ Branch: mission/clipper-tool
 | m2-transcripts-made-on-the-mac | passed |
 | m3-ranked-clip-candidates | passed |
 | m4-the-review-workbench | passed |
-| m5-rendered-clips-and-export | executing |
-| m6-results-learning-settings-and-storage-care | pending |
+| m5-rendered-clips-and-export | passed |
+| m6-results-learning-settings-and-storage-care | planning |
