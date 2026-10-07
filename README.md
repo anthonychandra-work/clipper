@@ -239,7 +239,7 @@ pnpm test
 
 This runs every check: the Python linter, type checker and tests, then the web linter, build, type
 check and unit tests, then the browser tests. It prints each as passed or failed and takes about
-49 minutes, of which the browser tests take 39.
+46 minutes, of which the browser tests take 38.
 
 Keep the Mac on mains power and awake until the run ends. The browser tests time their steps on
 the clock and wait for clips to render, and a Mac on battery goes to sleep when its charge runs

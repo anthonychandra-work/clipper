@@ -768,7 +768,7 @@ What the spec's file list leaves out
   must stay so; and that a browser's connection ends with each answer of the service too.
   `pnpm test` exits 0.
 
-- [ ] T19 — Print what the tool printed while a failed browser test ran
+- [x] T19 — Print what the tool printed while a failed browser test ran
   Files: `web/e2e/support/run-tool.ts`, `web/e2e/support/tool-test.ts`,
   `web/e2e/failure-output.spec.ts`, `AGENTS.md`, `README.md`,
   `docs/missions/clipper-tool/spec.md`

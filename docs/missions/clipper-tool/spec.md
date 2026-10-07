@@ -1383,6 +1383,20 @@ From `intent.md`. Base `82df5ce`.
   awake with `caffeinate`. `AGENTS.md` also says why the printed line and not the answer names
   the web app as the sender, and names the two test files. The plan names the three tests and
   what they prove, and leaves these open. (executor, m6)
+- A159 — The fixture every browser test gets is `readToolOutputOfTest`. It gives a test the
+  lines the tool printed since the test began, and the test of this printing reads its lines
+  through it, so it checks the text a failed test would print. The fixture leaves out the blank
+  lines at the end of what the tool printed and writes `nothing` when no other line is left.
+  With the runner as it was, the new test failed: after the restart it was given no line. Block
+  V25, run in the worktree, printed the heading with the planted test's title and
+  `WARNING:  Invalid HTTP request received.` under it, above that test's line, and ended with
+  code 1. A probe that was removed again showed a failed test with `nothing` under its heading,
+  and no heading for a passed and for a skipped test. `pnpm test` then passed all nine checks
+  in 46 minutes 20 seconds: 1,276 service tests in 7 minutes 42 seconds, 411 web unit tests and
+  203 browser tests in 38.2 minutes. The README therefore reads "about 46 minutes, of which the
+  browser tests take 38", where it gave 49 and 39 from the clone of A153. The Mac ran on
+  battery for this run too, from 68% to 21%, kept awake with `caffeinate`. A157 fixes the
+  heading and what stands under it, and leaves these open. (executor, m6)
 
 ## Milestones
 

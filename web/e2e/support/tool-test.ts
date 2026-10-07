@@ -19,6 +19,7 @@ interface TestFixtures {
   savedKey: string;
   readyTalk: ReadyTalk;
   ownTalk: ReadyTalk;
+  readToolOutputOfTest: () => string;
 }
 
 interface WorkerFixtures {
@@ -83,4 +84,19 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
   baseURL: async ({ tool }, use) => {
     await use(tool.address);
   },
+  readToolOutputOfTest: [
+    async ({ tool }, use, testInfo) => {
+      const printedBefore = tool.readOutput().length;
+      const readToolOutputOfTest = () => tool.readOutput().slice(printedBefore);
+      await use(readToolOutputOfTest);
+      if (testInfo.status === 'passed' || testInfo.status === 'skipped') return;
+      process.stderr.write(describeToolOutput(testInfo.title, readToolOutputOfTest()));
+    },
+    { auto: true },
+  ],
 });
+
+function describeToolOutput(title: string, printed: string): string {
+  const lines = printed.trimEnd() || 'nothing';
+  return `What the tool printed while "${title}" ran:\n${lines}\n`;
+}

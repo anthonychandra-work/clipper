@@ -32,6 +32,14 @@ A test run starts its own copy of the tool on ports 3100 and 8865, builds the we
 not touch a running tool or the `data` folder. Browser tests take the tool from the `tool`
 fixture in `web/e2e/support`, which can stop it and start it again inside a test.
 
+A browser test that does not pass prints what the tool printed while it ran. On the run's error
+output, above the test's own line, stands `What the tool printed while "<title>" ran:` with the
+test's title, and under it every line of the service and of the web app from the test's start
+to its end, or the word `nothing`. The tool runner keeps what the tool printed over every start
+of a run, and every test gets the `readToolOutputOfTest` fixture, which gives the lines printed
+since the test began. No test of the suite fails on purpose: `web/e2e/failure-output.spec.ts`
+checks what a test is given over a restart of the tool.
+
 Seven environment variables change where a run keeps its files, which ports it uses, where it
 downloads models from and where it sends its requests for clips: `CLIPPER_DATA_DIR`,
 `CLIPPER_FFMPEG_DIR`, `CLIPPER_KEY_FILE`, `CLIPPER_WEB_PORT`, `CLIPPER_SERVICE_PORT`,

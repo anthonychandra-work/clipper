@@ -67,6 +67,7 @@ export function isPortOpen(host: string, port: number): Promise<boolean> {
 export class ToolRun {
   address = '';
   private command: StartCommand | null = null;
+  private readonly everyStart: StartCommand[] = [];
 
   constructor(
     readonly settings: TestRunSettings,
@@ -83,11 +84,12 @@ export class ToolRun {
       ...changes,
     };
     this.command = launchStartCommand(environment);
+    this.everyStart.push(this.command);
     this.address = await readPrintedAddress(this.command);
   }
 
   readOutput(): string {
-    return this.command?.output() ?? '';
+    return this.everyStart.map((command) => command.output()).join('');
   }
 
   async stop(): Promise<void> {
