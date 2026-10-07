@@ -1,8 +1,105 @@
 # Plan: m6-results-learning-settings-and-storage-care
 
-Attempt: 2
+Attempt: 3
 
 ## Findings
+
+What attempt 2 got wrong
+
+- Attempt 2 failed on V2 alone. In the clone at `d2f88ae` the test command ended with code 1:
+  eight gates passed, and Playwright passed 199 of 200 browser tests. V1, with its corrected
+  wait, and every other check passed. (`issues.md`, `proof.md`)
+- The test that failed is the one of `e2e/learning.spec.ts`. While it waited for its second
+  talk to get ready, one read of that project through the web port was answered with a text
+  that begins `Internal S`, and the test reads every answer as JSON. The same test passed alone
+  in V6. (`issues.md`, `web/e2e/support/service-api.ts`, `web/e2e/support/learned-history.ts`)
+- No task of attempt 2 caused it: T17 changed two documents. The fault is in the tool and has
+  been there since M1. The web app loses a forwarded request when the service has just closed
+  the connection the request is sent on. Attempt 2 took the test command as proven by the one
+  run of attempt 1 that passed.
+- The rewrite of Next.js 16.3.8 forwards through a proxy library that Next.js carries inside
+  it. For a client that speaks HTTP/1.1 and asks for no upgrade, that library sends the request
+  through an agent of its own that keeps connections open, up to 64 idle ones, for as long as
+  the other side leaves them open. Next.js hands it no other agent. The `httpAgentOptions`
+  setting makes an agent for server-side `fetch`, which the rewrite never reads, and the
+  documentation names no setting for the connections of a rewrite.
+  (`web/node_modules/next/dist/compiled/httpxy/index.js`,
+  `web/node_modules/next/dist/server/lib/router-utils/proxy-request.js`,
+  `web/node_modules/next/dist/server/setup-http-agent-env.js`, the Next.js documentation through
+  Context7, `/vercel/next.js`)
+- uvicorn 0.54.0 closes a connection that has carried no request for five seconds, its default,
+  and the service is started with the defaults. (`service/clipper/__main__.py`,
+  `service/.venv/lib/python3.12/site-packages/uvicorn/config.py`,
+  `uvicorn/protocols/http/h11_impl.py` beside it, uvicorn's documentation through Context7,
+  `/kludex/uvicorn`)
+- A forward that fails is answered by the web app with status 500 and the text
+  `Internal Server Error`, and the web app prints a line that begins `Failed to proxy`. FastAPI
+  answers an error of its own with the same status and text, so the answer alone does not say
+  which part sent it. (`proxy-request.js`,
+  `service/.venv/lib/python3.12/site-packages/starlette/middleware/errors.py`)
+- Measured on this Mac on 2026-10-07 at `32947d3`, with the tool started from the worktree and
+  its data folder and key file in a temporary folder. One second after 20 requests sent
+  together through the web port, by a client that asks for a connection that stays open, as a
+  browser does, 20 connections from the web app to the service were open. All were gone six
+  seconds after the requests. Requests were then sent in rounds of 40, each round after a pause
+  without any request. With a pause of every whole millisecond from 4,960 to 4,995, 113 of
+  1,440 requests were answered 500 `Internal Server Error`, in 15 of the 36 rounds, and the web
+  app printed 113 lines `Failed to proxy http://127.0.0.1:8765/api/health`. In two earlier
+  sweeps with pauses chosen at random, 44 of 1,200 requests failed between 4,985 and 5,015 ms
+  and 180 of 1,600 between 4,960 and 4,995 ms. For 202 of those 224 the web app named
+  `read ECONNRESET`, and for 22 `socket hang up`.
+- The failed test's requests have that shape. It read the project every 200 ms through the web
+  port while the page it had left open on Settings asked for the projects once a second. Two
+  requests that overlap take a second connection, which then lies idle until the next overlap.
+  (`web/e2e/support/service-api.ts`, `web/src/library/list-projects/lib/projects-store.ts`,
+  `web/src/app/layout.tsx`)
+- What the tool printed during the failed run is lost. The tool runner of the browser tests
+  holds it in memory and shows it only when the start command ends, so the line that would name
+  the sender cannot be read. An error of the service's own was looked for and not found: five
+  threads made 144,351 reads beside 30,252 writes through the service's database opener, with
+  a connection for each as the service makes them, and none failed.
+  (`web/e2e/support/run-tool.ts`, `service/clipper/storage/open_database.py`)
+- The remedy was measured in a clone of `32947d3` in a temporary folder, with one change:
+  uvicorn is told to add `Connection: close` to every answer. It then closes the connection
+  once the answer is sent, and the web app's agent does not keep a connection whose answer says
+  so. One second after 20 requests sent together, no connection to the service was open, and
+  of 1,600 requests sent after pauses of 4,960 to 4,995 ms none was lost. Three trial tests
+  failed before the change and passed after it. A service test that reads an answer to the
+  connection's end ran into its two seconds. A browser test did not find the header. A browser
+  test of 320 requests in eight rounds had requests answered 500 after 4,975 and 4,985 ms.
+  With the change, the test command passed in that clone: all nine gates, with 1,276 service
+  tests, 411 unit tests and 202 browser tests, the trial tests among them, and the browser
+  tests in 40.3 minutes. Blocks V23 and V24, run in that clone as they are written, ended as
+  their expected cells say.
+- The web app passes the header on. An answer of the service that reaches a client through the
+  web port carries `Connection: close`, so a browser opens a connection for each request to
+  the service's interface. (block V24 in the clone)
+- Three other remedies were set aside. A longer idle time at the service moves the instant and
+  keeps it, because the web app's agent never closes an idle connection itself. No setting of
+  Next.js reaches the connections of a rewrite. A proxy file, which could change a forwarded
+  request, is ruled out by D64.
+- What a browser test writes to its error output reaches the output of the run as it is
+  written. A text attached to a failed test is cut after 300 characters. T19 therefore writes
+  and does not attach.
+  (`node_modules/.pnpm/playwright@1.63.0/node_modules/playwright/lib/runner/index.js`)
+- T19 was tried in the same clone, on Playwright 1.63.0. A fixture that every test gets sees a
+  failed test end as failed, and what it then writes stands in the run's output above that
+  test's line. A test planted by block V25 failed and printed the service's line
+  `WARNING:  Invalid HTTP request received.` under the heading. A test marked as expected to
+  fail is counted as passed, yet the list of the run shows it with the mark of a failed test.
+  T19 therefore puts no such test into the suite, and V25 plants its failing test and removes
+  it.
+- `service/clipper/__main__.py` has no test, and the service's tests reach the app without
+  uvicorn, so none of them sees how a connection ends. (`service/clipper/test_main.py`)
+- `service/clipper/conftest.py` holds ten top-level functions and classes, so the fixture of
+  the new service test stays in its test file, where the limit does not apply.
+  `web/e2e/support/run-tool.ts` holds eight; T19 adds to its class and not beside it. The
+  standards review, the TypeScript check and ESLint printed no finding for the trial files of
+  T18 and T19.
+- The new entries of `AGENTS.md` go before its entry about `next start`, which A155 records as
+  the last of what was measured on Next.js, and they leave out the words
+  `Clipper is running at`, which block V22 searches for. No hook refuses a write to a file
+  named in T18 or T19.
 
 What attempt 1 got wrong
 
@@ -210,6 +307,8 @@ What the spec's file list leaves out
   both recorded layouts and `fixtures/README.md`. In `web/src/review/` it changes the store
   alone (T2), and in `web/src/export/` nothing: both notices are built, and T12 checks them
   against a source the cleanup removed.
+- Attempt 3 also changes `service/clipper/__main__.py`, where the service is started, and adds
+  a test beside it (T18).
 
 ## Tasks
 
@@ -646,3 +745,43 @@ What the spec's file list leaves out
   one start of the worktree, run with its data folder and its key file in a temporary folder
   that is removed afterwards. No source file changes, so the gates stand as attempt 1 left
   them.
+
+- [ ] T18 — End each connection to the service with its answer
+  Files: `service/clipper/__main__.py`, `service/clipper/test_serve.py`,
+  `web/e2e/forwarding.spec.ts`, `AGENTS.md`, `docs/missions/clipper-tool/spec.md`
+  Done: the service is started so that every answer carries `Connection: close` and the
+  connection ends with the answer (A156). A service test starts the service as the start
+  command does, on a free port with its data in the test's folder, sends one request that asks
+  for the connection to stay open, and reads to the connection's end within two seconds: status
+  200, the header and the health. It stops the service when it ends, whatever its result. Two
+  browser tests open no page and ask as a browser does, for a connection that stays open, with
+  a new connection for each request. In the first, the answer to the health address carries
+  the header at the service's port and through the web port. In the second, 320 requests
+  through the web port, in eight rounds of 40 after pauses of 4,960, 4,965 and so on to
+  4,995 ms without a request, are each answered 200 with the health. All three tests fail
+  before the change and pass after it. `AGENTS.md` says, among what was measured on Next.js
+  16.3.8 and before its entry about `next start`: that a rewrite keeps its connections to the
+  service open and uses them again, and that no setting changes this; that uvicorn closes a
+  connection idle for five seconds, and that a request forwarded in that instant is answered
+  by the web app with 500 and `Internal Server Error`, beside a printed line that begins
+  `Failed to proxy`; that the service therefore ends every connection with its answer, which
+  must stay so; and that a browser's connection ends with each answer of the service too.
+  `pnpm test` exits 0.
+
+- [ ] T19 — Print what the tool printed while a failed browser test ran
+  Files: `web/e2e/support/run-tool.ts`, `web/e2e/support/tool-test.ts`,
+  `web/e2e/failure-output.spec.ts`, `AGENTS.md`, `README.md`,
+  `docs/missions/clipper-tool/spec.md`
+  Done: the tool runner of the browser tests gives what the tool printed over every start of a
+  run, and not over the last start alone. Every browser test gets one more fixture without
+  asking for it (A157). When the test ends in any way but passed or skipped, the fixture writes
+  to the run's error output the line `What the tool printed while "<title>" ran:`, with the
+  test's title, and under it what the tool printed from the test's start to its end, or
+  `nothing`. A test that passes prints what it printed before. One browser test makes the
+  service print a line, by sending its port bytes that are no request, stops and starts the
+  tool, and finds that line and the new start's line of the address in what the runner gives
+  for the test. The suite gets no test that fails on purpose. Block V25 plants one and removes
+  it, and the task runs that block once: its output is as V25's expected cell says. `AGENTS.md`
+  says what a failed browser test prints. The time the README gives for the test command is
+  held against this task's run and set to the measured minutes where they differ. `pnpm test`
+  exits 0.

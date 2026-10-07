@@ -1347,6 +1347,27 @@ From `intent.md`. Base `82df5ce`.
   section, under the sentence that says to open the address, and the passage of `AGENTS.md` is
   the last entry of what was measured on Next.js. The plan words the time from A154's ten
   starts, and leaves the slower starts and the place of both texts open. (executor, m6)
+- A156 — The service ends every connection with its answer: each answer carries
+  `Connection: close`. Measured on Next.js 16.3.8 and uvicorn 0.54.0: a rewrite keeps its
+  connections to the service open and uses them again, the service closed a connection that had
+  carried no request for five seconds, and a request the web app forwarded on a connection in
+  that instant was answered by the web app with status 500 and the text "Internal Server
+  Error". Of 1,440 requests forwarded after pauses of 4,960 to 4,995 ms, 113 were answered so.
+  With the header on every answer, none of 1,600 was. In attempt 2 of this milestone one such
+  answer failed a browser test, and with it the test command. Next.js has no setting for the
+  connections of a rewrite, D64 rules out a proxy file, and a longer idle time at the service
+  moves the instant and keeps it. The web app passes the header on, so a browser opens a
+  connection for each request to the service's interface. R2 and D64 fix the route and say
+  nothing of its connections. (planner, m6)
+- A157 — A browser test that does not pass prints what the tool printed while it ran: every
+  line of the service and of the web app from the test's start to its end, into the output of
+  the run, under the line `What the tool printed while "<title>" ran:` with the test's title.
+  When the tool printed nothing, the word `nothing` stands under that line. The tool runner of
+  the browser tests keeps what the tool printed over every start of a run. No test of the
+  suite fails on purpose: the check of this printing plants a failing test and removes it. In
+  attempt 2 a test failed on an answer with status 500, the tool's lines were gone with the
+  run, and nothing was left to say which part had sent the answer. The intent asks for the
+  tests and says nothing of what a failed one leaves behind. (planner, m6)
 
 ## Milestones
 

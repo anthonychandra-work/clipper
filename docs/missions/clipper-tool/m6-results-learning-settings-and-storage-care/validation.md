@@ -1,6 +1,6 @@
 # Validation: m6-results-learning-settings-and-storage-care
 
-Run every check from the worktree's root, in the order of the table. V22 stands before V21
+Run every check from the worktree's root, in the order of the table. V22 to V25 stand before V21
 there, so the check of the clean worktree is the last one run. A check written as "block"
 runs the commands under its heading below the table, with `bash`. Ports 3000, 8765, 3100 and 8865
 must be free before V1, and the Mac must be on a network. The Mac must be on mains power and stay
@@ -12,6 +12,14 @@ removes (A147). The clone is started on ports 3000 and 8765 with a data folder o
 the clone, and with its key file named in the temporary folder. V1 takes the tool as up once the
 start command has printed its own line, `Clipper is running at http://localhost:3000`, as the
 README does (A154). Every other check runs in the worktree.
+
+V24 starts the tool from the worktree on ports 3000 and 8765, which V3 has left free. Its data
+folder and its key file are in a temporary folder that the block makes and removes. The client
+of V23 and V24 asks for a connection that stays open, as a browser does, and takes a new
+connection for each request (A156).
+
+V25 writes one test file into `web/e2e`, runs it and removes it, also when the block is
+interrupted. That test fails on purpose, so its run ends with code 1 (A157).
 
 `pnpm test:browser <file>` prints one line per test. Such a check passes when the command exits 0
 and the passed tests show everything its `expected` cell lists.
@@ -44,6 +52,9 @@ not interesting, `c06` rejected as cut off mid-thought, and the views 1,200 for 
 | V19 | The code follows the standards the hooks enforce, and both recorded layouts name the new parts (A19) | block V19 | Every finding printed carries `[advisory]`; none appears without it. The service's layout lists `learning/`, `results/` and `retention/`. The web app's layout lists `results/` with three use cases under it. No line of either starts with `#`. |
 | V20 | Two changes of one clip made one after the other in the browser are both stored and shown (R40, A149) | `pnpm test:browser e2e/review-preview.spec.ts --repeat-each=20 -g "preview copy moved aside"` | 20 passed, with exit code 0. Each run presses Keep and moves the out point of the same clip at once, with the preview copy moved aside, and reads "Kept", the new out point, and both in what the service holds. Baseline: this test failed once in the planner's run of the test command, on a Mac busy after a wake from sleep, and passed 20 times of 20 on the Mac at rest before any change; the tests V11 and V12 name show the mended rule itself. |
 | V22 | The README and the agents' instructions say which line of the start's output means that the tool is up (R9, A18, A154) | block V22 | The README's Start section shows the line `Clipper is running at http://localhost:3000` and says after it that Next.js prints lines of its own before it, the same address and `http://0.0.0.0:3000` among them, that Clipper's line is the one that says the tool is up, and that the address for a phone is the one Settings gives. `AGENTS.md` says that a script or a check waits for the line `Clipper is running at` and not for the address alone, that Next.js prints the address about a tenth of a second earlier, and that `next start` has no option that leaves its lines out. |
+| V23 | A request the web app forwards is answered by the service, whatever the pause since the request before it; the service ends each connection with its answer, so "The test command passes" is not lost to a forward that failed (R2, R9, A156) | block V23 | The exit code of pytest is 0 with 1 passed: the service, started as the start command starts it, ended the connection after its answer to a request that asked for the connection to stay open. The exit code of the browser tests is 0 with 2 passed: the answer to the health address carries `Connection: close` at the service's port and through the web port, and 320 requests forwarded in eight rounds of 40, after pauses of 4,960 to 4,995 ms without a request, were each answered 200 with the health. Baseline: in the planner's clone of `32947d3`, before the change, trial versions of the three tests failed, the last with requests answered `500 Internal Server Error` after 4,975 and 4,985 ms. |
+| V24 | The same on the tool as the start command runs it: the web app keeps no connection to the service open, and no forwarded request is lost (R2, A156) | block V24 | The start prints `Clipper is running at http://localhost:3000`. The two lines about the service's answer each end in `connection: close`. The 20 requests sent together are answered 200 with the health, and the next line reads `connection ends open at the service port one second later: 0`. The 40 requests sent together are answered 200 with the health. No line begins with "after". The closing line of the pauses reads `requests sent after a pause: 1440; not answered 200 with the health: 0`, and the line under it `lines of the web app about a forward that failed: 0`. The start command ends with code 130 after the interrupt, and nothing is printed between that line and "end of listeners after the interrupt". Baseline: at `32947d3`, before the change, this block printed no header for the service's own answer and `connection: keep-alive` for the answer through the web port, 42 connection ends, 15 lines that begin with "after" and name `500 Internal Server Error`, 113 of the 1,440 requests not answered 200, and 113 lines about a forward that failed. |
+| V25 | A browser test that does not pass leaves what the tool printed while it ran in the output of the run (R9, A157) | block V25 | The planted test fails: its run reports 1 failed, and the line after it gives exit code 1. Above the line of that test the output holds `What the tool printed while "a test that a validation block planted, and that fails on purpose" ran:` and under it a line that ends in `Invalid HTTP request received.`, which the service prints for the bytes the test sent to its port. Nothing is printed between the exit code of the planted test and "end of the changes under web/e2e". The browser tests of `e2e/failure-output.spec.ts` end with exit code 0 and 1 passed: a test is given what the tool printed while it ran, the service's line from before a restart of the tool and the address line of the new start among it. |
 | V21 | The checks left the worktree clean | `git status --porcelain` | Every path listed is inside this milestone's folder. |
 
 ## Blocks
@@ -237,4 +248,110 @@ cat service/.coding-standards-structure web/.coding-standards-structure
 awk '/^## Start$/ {inside = 1} /^## The Anthropic API key$/ {inside = 0} inside' README.md
 echo "end of the README's Start section"
 grep -n -B6 -A10 "Clipper is running at" AGENTS.md
+```
+
+### V23
+
+```bash
+(cd service && .venv/bin/python -m pytest clipper/test_serve.py -v)
+echo "exit code of pytest: $?"
+pnpm test:browser e2e/forwarding.spec.ts
+echo "exit code of the browser tests: $?"
+```
+
+### V24
+
+```bash
+probe="$(mktemp -d "${TMPDIR:-/tmp}/clipper-m6-forwarding.XXXXXX")"
+printf 'import os, sys\ntry:\n    os.setsid()\nexcept OSError:\n    pass\nos.execvp(sys.argv[1], sys.argv[1:])\n' > "$probe/own-group.py"
+cat > "$probe/ask.mjs" <<'EOF'
+import http from 'node:http';
+import { setTimeout as delay } from 'node:timers/promises';
+
+const [address, atOnceText, firstPauseText, lastPauseText] = process.argv.slice(2);
+const atOnce = Number(atOnceText);
+
+// A browser asks for a connection that stays open, and each request here takes a connection of its own.
+function ask() {
+  return new Promise((settle) => {
+    const sent = http.get(address, { agent: false, headers: { Connection: 'keep-alive' } }, (answer) => {
+      const parts = [];
+      answer.on('data', (part) => parts.push(part));
+      answer.on('end', () => settle(`${answer.statusCode} ${Buffer.concat(parts).toString().slice(0, 40)}`));
+    });
+    sent.on('error', (error) => settle(`no answer, ${error.code}`));
+  });
+}
+
+function askTogether() {
+  return Promise.all(Array.from({ length: atOnce }, ask));
+}
+
+const first = await askTogether();
+process.stdout.write(`${first.length} requests sent together, answered 200 with the health: ${first.filter((answer) => answer === '200 {"status":"ok"}').length}\n`);
+let asked = 0;
+let lost = 0;
+for (let pause = Number(firstPauseText); pause <= Number(lastPauseText); pause += 1) {
+  await delay(pause);
+  const answers = await askTogether();
+  const others = answers.filter((answer) => answer !== '200 {"status":"ok"}');
+  asked += answers.length;
+  lost += others.length;
+  if (others.length > 0) process.stdout.write(`after ${pause} ms without a request: ${others.length} of ${answers.length} answered "${others[0]}"\n`);
+}
+if (asked > 0) process.stdout.write(`requests sent after a pause: ${asked}; not answered 200 with the health: ${lost}\n`);
+EOF
+CLIPPER_DATA_DIR="$probe/data" CLIPPER_KEY_FILE="$probe/no-key" python3 "$probe/own-group.py" pnpm start > "$probe/start.log" 2>&1 &
+tool=$!
+for i in $(seq 1 300); do grep -q "Clipper is running at http://localhost:3000" "$probe/start.log" && break; sleep 1; done
+grep "Clipper is running" "$probe/start.log"
+echo "the service's answer at its own port: $(curl -s -D - -o /dev/null http://127.0.0.1:8765/api/health | tr -d '\r' | grep -i '^connection:')"
+echo "the service's answer through the web port: $(curl -s -D - -o /dev/null http://127.0.0.1:3000/api/health | tr -d '\r' | grep -i '^connection:')"
+node "$probe/ask.mjs" http://127.0.0.1:3000/api/health 20 1 0
+sleep 1
+echo "connection ends open at the service port one second later: $(netstat -an -p tcp | grep -cE '127\.0\.0\.1\.8765 .*ESTABLISHED')"
+node "$probe/ask.mjs" http://127.0.0.1:3000/api/health 40 4960 4995
+echo "lines of the web app about a forward that failed: $(grep -c 'Failed to proxy' "$probe/start.log")"
+kill -INT -- "-$tool"
+wait "$tool"
+echo "exit code of the start command: $?"
+lsof -nP -iTCP:3000 -sTCP:LISTEN
+lsof -nP -iTCP:8765 -sTCP:LISTEN
+echo "end of listeners after the interrupt"
+rm -rf "$probe"
+```
+
+### V25
+
+```bash
+planted=web/e2e/zz-fails-on-purpose.spec.ts
+trap 'rm -f "$planted"' EXIT
+cat > "$planted" <<'EOF'
+import { connect } from 'node:net';
+import { setTimeout as delay } from 'node:timers/promises';
+
+import { expect, test } from './support';
+
+test('a test that a validation block planted, and that fails on purpose', async ({ tool }) => {
+  await new Promise<void>((settle, reject) => {
+    const socket = connect({ host: '127.0.0.1', port: tool.settings.servicePort }, () => {
+      socket.write('this is no request\r\n\r\n');
+    });
+    socket.on('data', () => undefined);
+    socket.once('close', () => settle());
+    socket.once('error', reject);
+  });
+  await delay(1000);
+
+  expect('this test').toBe('failed on purpose');
+});
+EOF
+pnpm test:browser e2e/zz-fails-on-purpose.spec.ts
+echo "exit code of the planted test: $?"
+rm -f "$planted"
+trap - EXIT
+git status --porcelain web/e2e
+echo "end of the changes under web/e2e"
+pnpm test:browser e2e/failure-output.spec.ts
+echo "exit code of the browser tests: $?"
 ```
