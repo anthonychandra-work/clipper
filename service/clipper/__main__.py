@@ -9,12 +9,20 @@ from .settings import StartupSettings
 
 LOOPBACK_HOST = "127.0.0.1"
 EXIT_CANNOT_START = 1
+# Left open, a connection can close just as the web app forwards on it, and that request is lost.
+END_CONNECTION_WITH_ANSWER = [("Connection", "close")]
 
 
 def serve() -> None:
     settings = StartupSettings()
     app = create_app_or_exit(settings)
-    uvicorn.run(app, host=LOOPBACK_HOST, port=settings.service_port, log_level="warning")
+    uvicorn.run(
+        app,
+        host=LOOPBACK_HOST,
+        port=settings.service_port,
+        log_level="warning",
+        headers=END_CONNECTION_WITH_ANSWER,
+    )
 
 
 def create_app_or_exit(settings: StartupSettings) -> FastAPI:

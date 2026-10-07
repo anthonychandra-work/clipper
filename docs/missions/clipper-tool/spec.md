@@ -1368,6 +1368,21 @@ From `intent.md`. Base `82df5ce`.
   attempt 2 a test failed on an answer with status 500, the tool's lines were gone with the
   run, and nothing was left to say which part had sent the answer. The intent asks for the
   tests and says nothing of what a failed one leaves behind. (planner, m6)
+- A158 — The browser test of the forwarded requests sends one round of 40 before its first
+  pause and leaves it out of the 320. A web app that kept its connections to the service open
+  would hold none when that pause begins, so without the round the requests after the first
+  pause could not be lost. A request that gets no answer counts as not answered 200, and each
+  such request is named with its pause. The service test gives the service thirty seconds to
+  listen and holds the whole answer against one deadline, two seconds after its request is sent.
+  Measured in the worktree at `ea1aa09`, before the change: the service test ran into its two
+  seconds, the answer at the service's port carried no `Connection` header, and 12 of the 320
+  requests were answered `500 Internal Server Error`, 8 after 4,970 ms and 4 after 4,975 ms.
+  After the change the three tests passed, and `pnpm test` passed all nine checks in 42 minutes
+  44 seconds: 1,276 service tests in 7 minutes 48 seconds, 411 web unit tests and 202 browser
+  tests in 34.5 minutes. The Mac ran on battery for these runs, from 99% to 69%, and was kept
+  awake with `caffeinate`. `AGENTS.md` also says why the printed line and not the answer names
+  the web app as the sender, and names the two test files. The plan names the three tests and
+  what they prove, and leaves these open. (executor, m6)
 
 ## Milestones
 

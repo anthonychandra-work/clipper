@@ -746,7 +746,7 @@ What the spec's file list leaves out
   that is removed afterwards. No source file changes, so the gates stand as attempt 1 left
   them.
 
-- [ ] T18 — End each connection to the service with its answer
+- [x] T18 — End each connection to the service with its answer
   Files: `service/clipper/__main__.py`, `service/clipper/test_serve.py`,
   `web/e2e/forwarding.spec.ts`, `AGENTS.md`, `docs/missions/clipper-tool/spec.md`
   Done: the service is started so that every answer carries `Connection: close` and the

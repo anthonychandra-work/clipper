@@ -395,6 +395,20 @@ Measured on Next.js 16.3.8:
   once, and long work runs in the queue worker.
 - Next.js sends usage data during a build unless `NEXT_TELEMETRY_DISABLED=1` is set. Every script
   that runs `next` sets it.
+- A rewrite keeps its connections to the service open and sends later requests on them. No
+  setting changes this: `httpAgentOptions` governs the `fetch` of server code, which a rewrite
+  does not use.
+- uvicorn closes a connection that has carried no request for five seconds. A request the web
+  app forwards on a connection in that instant is lost: the web app answers it with status 500
+  and the text `Internal Server Error`, and prints a line that begins `Failed to proxy`. FastAPI
+  answers an error of its own with the same status and text, so the printed line is what names
+  the web app as the sender.
+- The service therefore ends every connection with its answer: `service/clipper/__main__.py`
+  starts it so that each answer carries `Connection: close`. Keep it so. A longer idle time at
+  the service moves the instant and keeps it. The web app passes the header on, so a browser's
+  connection ends with each answer of the service too. `service/clipper/test_serve.py` checks
+  the started service, and `web/e2e/forwarding.spec.ts` checks the header at both ports and
+  320 requests forwarded after pauses of about five seconds.
 - `next start` prints lines of its own as soon as it listens, the tool's address among them, and
   has no option that leaves them out. The start command prints `Clipper is running at` about a
   tenth of a second later, in some starts two tenths, once the service has answered through the
