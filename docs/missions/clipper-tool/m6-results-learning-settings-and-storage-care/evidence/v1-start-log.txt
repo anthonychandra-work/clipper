@@ -3,18 +3,18 @@
 > node scripts/start-tool.mjs
 
 ▲ Next.js 16.3.8 (Turbopack)
-✓ Running next.config.ts took 1051ms
+✓ Running next.config.ts took 1080ms
 
   Creating an optimized production build ...
-✓ Compiled successfully in 2.7s
+✓ Compiled successfully in 2.5s
   Running TypeScript ...
-  Finished TypeScript in 3.2s ...
+  Finished TypeScript in 3.1s ...
   Collecting page data using 7 workers ...
   Generating static pages using 7 workers (0/5) ...
   Generating static pages using 7 workers (1/5) 
   Generating static pages using 7 workers (2/5) 
   Generating static pages using 7 workers (3/5) 
-✓ Generating static pages using 7 workers (5/5) in 109ms
+✓ Generating static pages using 7 workers (5/5) in 107ms
   Finalizing page optimization ...
 
 Route (app)
@@ -35,7 +35,7 @@ Route (app)
 ▲ Next.js 16.3.8
 - Local:         http://localhost:3000
 - Network:       http://0.0.0.0:3000
-✓ Ready in 116ms
-✓ Running next.config.ts took 23ms
+✓ Ready in 105ms
+✓ Running next.config.ts took 22ms
 Clipper is running at http://localhost:3000
  ELIFECYCLE  Command failed with exit code 130.

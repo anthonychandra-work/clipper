@@ -4,17 +4,17 @@
 
 
 --- Fixtures
-Built /var/folders/64/xznbj4n94qz_cxzl70mw82hr0000gp/T/clipper-test-JI4hiv/fixtures/silence.mp4
-Built /var/folders/64/xznbj4n94qz_cxzl70mw82hr0000gp/T/clipper-test-JI4hiv/fixtures/portrait.mp4
-Built /var/folders/64/xznbj4n94qz_cxzl70mw82hr0000gp/T/clipper-test-JI4hiv/fixtures/talk.mp4
-Built /var/folders/64/xznbj4n94qz_cxzl70mw82hr0000gp/T/clipper-test-JI4hiv/fixtures/long-talk.mp4
+Built /var/folders/64/xznbj4n94qz_cxzl70mw82hr0000gp/T/clipper-test-ztgYQj/fixtures/silence.mp4
+Built /var/folders/64/xznbj4n94qz_cxzl70mw82hr0000gp/T/clipper-test-ztgYQj/fixtures/portrait.mp4
+Built /var/folders/64/xznbj4n94qz_cxzl70mw82hr0000gp/T/clipper-test-ztgYQj/fixtures/talk.mp4
+Built /var/folders/64/xznbj4n94qz_cxzl70mw82hr0000gp/T/clipper-test-ztgYQj/fixtures/long-talk.mp4
 /private/var/folders/64/xznbj4n94qz_cxzl70mw82hr0000gp/T/clipper-m6-fresh-copy/clipper/.cache/whisper/tiny
 
 --- Ruff
 All checks passed!
 
 --- mypy
-Success: no issues found in 236 source files
+Success: no issues found in 237 source files
 
 --- pytest
 ============================= test session starts ==============================
@@ -22,7 +22,7 @@ platform darwin -- Python 3.12.13, pytest-9.1.1, pluggy-1.6.0
 rootdir: /private/var/folders/64/xznbj4n94qz_cxzl70mw82hr0000gp/T/clipper-m6-fresh-copy/clipper/service
 configfile: pyproject.toml
 plugins: anyio-4.15.1
-collected 1275 items
+collected 1276 items
 
 clipper/fetching/test_download_link.py ...........                       [  0%]
 clipper/fetching/test_fetch_stage.py ...........                         [  1%]
@@ -51,7 +51,7 @@ clipper/projects/test_project_repository.py ...............              [ 18%]
 clipper/projects/test_receive_upload.py ...............                  [ 19%]
 clipper/projects/test_router.py .........................                [ 21%]
 clipper/rendering/test_describe_export.py ..............                 [ 22%]
-clipper/rendering/test_draw_overlays.py ...................              [ 24%]
+clipper/rendering/test_draw_overlays.py ...................              [ 23%]
 clipper/rendering/test_encode_clip.py .....................              [ 25%]
 clipper/rendering/test_find_faces.py ......                              [ 26%]
 clipper/rendering/test_follow_faces.py ............                      [ 27%]
@@ -77,14 +77,14 @@ clipper/retention/test_remove_old_sources.py .....................       [ 45%]
 clipper/retention/test_source_cleaner.py .........                       [ 46%]
 clipper/review/test_caption_groups.py ................                   [ 47%]
 clipper/review/test_change_clip.py ...............................       [ 49%]
-clipper/review/test_clip_points.py ............................          [ 52%]
+clipper/review/test_clip_points.py ............................          [ 51%]
 clipper/review/test_describe_review.py .................                 [ 53%]
 clipper/review/test_filmstrip.py ........                                [ 53%]
 clipper/review/test_read_standing_review.py .......                      [ 54%]
-clipper/review/test_review_store.py ...................                  [ 56%]
+clipper/review/test_review_store.py ...................                  [ 55%]
 clipper/review/test_router.py .........................................  [ 59%]
 clipper/review/test_trim_reach.py ......                                 [ 59%]
-clipper/review/test_whole_app.py ....                                    [ 60%]
+clipper/review/test_whole_app.py ....                                    [ 59%]
 clipper/selection/test_ask_claude.py ...................                 [ 61%]
 clipper/selection/test_choose_candidates.py ............................ [ 63%]
                                                                          [ 63%]
@@ -117,6 +117,7 @@ clipper/storage/test_open_database.py ......................             [ 93%]
 clipper/storage/test_read_disk_space.py ....                             [ 93%]
 clipper/test_fixture_server.py ........                                  [ 94%]
 clipper/test_main.py ...................                                 [ 95%]
+clipper/test_serve.py .                                                  [ 95%]
 clipper/transcription/test_built_fixtures.py .....                       [ 96%]
 clipper/transcription/test_download_model.py .....                       [ 96%]
 clipper/transcription/test_model_stage.py ......                         [ 96%]
@@ -128,24 +129,24 @@ clipper/transcription/test_transcript_store.py ....                      [ 99%]
 clipper/transcription/test_whisper_models.py .....                       [ 99%]
 clipper/transcription/test_whole_app.py ...                              [100%]
 
-======================= 1275 passed in 579.52s (0:09:39) =======================
+======================= 1276 passed in 539.21s (0:08:59) =======================
 
 --- ESLint
 
 --- Web build
 ▲ Next.js 16.3.8 (Turbopack)
-✓ Running next.config.ts took 67ms
+✓ Running next.config.ts took 68ms
 
   Creating an optimized production build ...
-✓ Compiled successfully in 3.1s
+✓ Compiled successfully in 2.3s
   Running TypeScript ...
-  Finished TypeScript in 3.5s ...
+  Finished TypeScript in 3.4s ...
   Collecting page data using 7 workers ...
   Generating static pages using 7 workers (0/5) ...
   Generating static pages using 7 workers (1/5) 
   Generating static pages using 7 workers (2/5) 
   Generating static pages using 7 workers (3/5) 
-✓ Generating static pages using 7 workers (5/5) in 170ms
+✓ Generating static pages using 7 workers (5/5) in 117ms
   Finalizing page optimization ...
 
 Route (app)
@@ -173,250 +174,223 @@ Route (app)
 
  Test Files  38 passed (38)
       Tests  411 passed (411)
-   Start at  07:56:39
-   Duration  1.37s (transform 65%, import 20%, tests 10%, worker 5%)
+   Start at  16:41:46
+   Duration  1.27s (transform 62%, import 22%, tests 12%, worker 4%)
 
-  Transform  transforming modules took 2.83s · 65% of tracked time, re-done on every run
+  Transform  transforming modules took 2.27s · 62% of tracked time, re-done on every run
              persist transforms across runs with fsModuleCache: true
              learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
 
 
 --- Playwright
 
-Running 200 tests using 1 worker
+Running 203 tests using 1 worker
 
-  ✓    1 e2e/addresses.spec.ts:24:3 › at 390 px › a project opens at its own address, a reload shows it again, and Back returns to the Library (1.1s)
-  ✓    2 e2e/addresses.spec.ts:45:3 › at 390 px › a ready project opens on its Review tab, and each tab has an address that a reload keeps (14.5s)
-  ✓    3 e2e/addresses.spec.ts:70:3 › at 390 px › Back and Forward move between the tabs of a ready project (470ms)
+  ✓    1 e2e/addresses.spec.ts:24:3 › at 390 px › a project opens at its own address, a reload shows it again, and Back returns to the Library (1.3s)
+  ✓    2 e2e/addresses.spec.ts:45:3 › at 390 px › a ready project opens on its Review tab, and each tab has an address that a reload keeps (14.7s)
+  ✓    3 e2e/addresses.spec.ts:70:3 › at 390 px › Back and Forward move between the tabs of a ready project (530ms)
   ✓    4 e2e/addresses.spec.ts:93:3 › at 390 px › the tab address of a project that is not ready shows its status screen (449ms)
-  ✓    5 e2e/addresses.spec.ts:111:3 › at 1360 px › the tabs sit in the toolbar with the current one pressed (274ms)
-  ✓    6 e2e/api-key.spec.ts:110:1 › a key saved in Settings finds the clips of a link and is held by its file alone (25.1s)
-  ✓    7 e2e/captures.spec.ts:61:1 › six screens are captured whole at 390 and 1360 px, in light and in dark (20.6s)
-  ✓    8 e2e/delete-project.spec.ts:41:3 › at 390 px › the More menu offers Delete Project, and the confirmation names the project (611ms)
-  ✓    9 e2e/delete-project.spec.ts:66:3 › at 390 px › Cancel removes neither the row nor the folder, and Delete removes both (15.6s)
+  ✓    5 e2e/addresses.spec.ts:111:3 › at 1360 px › the tabs sit in the toolbar with the current one pressed (267ms)
+  ✓    6 e2e/api-key.spec.ts:110:1 › a key saved in Settings finds the clips of a link and is held by its file alone (24.9s)
+  ✓    7 e2e/captures.spec.ts:61:1 › six screens are captured whole at 390 and 1360 px, in light and in dark (21.3s)
+  ✓    8 e2e/delete-project.spec.ts:41:3 › at 390 px › the More menu offers Delete Project, and the confirmation names the project (681ms)
+  ✓    9 e2e/delete-project.spec.ts:66:3 › at 390 px › Cancel removes neither the row nor the folder, and Delete removes both (15.4s)
   ✓   10 e2e/delete-project.spec.ts:94:3 › at 390 px › deleting a project while it is being fetched stops it and leaves no folder (5.0s)
-  ✓   11 e2e/delete-project.spec.ts:120:3 › at 1360 px › the menu opens under the More control, and deleting shows the next project (1.4s)
-  ✓   12 e2e/delete-project.spec.ts:142:3 › at 1360 px › deleting a talk with an exported clip removes its folder with the export and leaves the Library empty, and Settings still counts its rejection (30.8s)
+  ✓   11 e2e/delete-project.spec.ts:120:3 › at 1360 px › the menu opens under the More control, and deleting shows the next project (6.5s)
+  ✓   12 e2e/delete-project.spec.ts:142:3 › at 1360 px › deleting a talk with an exported clip removes its folder with the export and leaves the Library empty, and Settings still counts its rejection (36.0s)
   ✓   13 e2e/empty-library.spec.ts:13:3 › at 390 px › with no projects the Library shows the empty state, and its control opens the sheet (233ms)
-  ✓   14 e2e/empty-library.spec.ts:29:3 › at 390 px › Cancel closes the sheet, returns to the Library and gives focus back to the control (781ms)
-  ✓   15 e2e/empty-library.spec.ts:41:3 › at 390 px › Escape and a click outside the sheet both return to the Library (651ms)
-  ✓   16 e2e/empty-library.spec.ts:57:3 › at 390 px › the sheet opened at its own address returns to the Library (745ms)
-  ✓   17 e2e/empty-library.spec.ts:71:3 › at 1360 px › the empty state fills the main area, and the sidebar control opens the sheet (214ms)
-  ✓   18 e2e/empty-library.spec.ts:81:3 › at 1360 px › closing the sheet returns to the screen the user was on (823ms)
-  ✓   19 e2e/export-cancel.spec.ts:18:1 › Cancel during the second clip leaves the first clip’s file and download, and the two others not rendered (34.4s)
+  ✓   14 e2e/empty-library.spec.ts:29:3 › at 390 px › Cancel closes the sheet, returns to the Library and gives focus back to the control (783ms)
+  ✓   15 e2e/empty-library.spec.ts:41:3 › at 390 px › Escape and a click outside the sheet both return to the Library (674ms)
+  ✓   16 e2e/empty-library.spec.ts:57:3 › at 390 px › the sheet opened at its own address returns to the Library (719ms)
+  ✓   17 e2e/empty-library.spec.ts:71:3 › at 1360 px › the empty state fills the main area, and the sidebar control opens the sheet (185ms)
+  ✓   18 e2e/empty-library.spec.ts:81:3 › at 1360 px › closing the sheet returns to the screen the user was on (799ms)
+  ✓   19 e2e/export-cancel.spec.ts:18:1 › Cancel during the second clip leaves the first clip’s file and download, and the two others not rendered (33.6s)
   ✓   20 e2e/export-captures.spec.ts:99:1 › the Export tab with one clip finished and one not rendered is captured whole at 390 and 1360 px, in light and in dark (30.7s)
-  ✓   21 e2e/export-copy.spec.ts:54:1 › a kept clip shows a title and a description for each of the three platforms, as selection stored them (21.6s)
-  ✓   22 e2e/export-copy.spec.ts:70:1 › each of the six Copy controls leaves its row’s text on the clipboard and shows Copied (704ms)
-  ✓   23 e2e/export-copy.spec.ts:90:1 › a project made for TikTok alone shows that platform’s two rows (21.2s)
-  ✓   24 e2e/export-copy.spec.ts:109:1 › with the clipboard interface taken from the page, Copy still leaves the text on the clipboard (679ms)
-  ✓   25 e2e/export-fit.spec.ts:74:3 › at 390 px › the export presented to the page holds twelve clips in every state, with long texts, under the notice (29.9s)
-  ✓   26 e2e/export-fit.spec.ts:95:3 › at 390 px › every Export screen fits at the normal size and at 200%, with tap areas of 44 px and its last line above the bar (31.2s)
-  ✓   27 e2e/export-fit.spec.ts:108:3 › at 390 px › no text of an Export screen measures under 4.5 to 1, in light and in dark (30.2s)
-  ✓   28 e2e/export-fit.spec.ts:125:3 › at 1360 px › the same Export screens hold no text under 4.5 to 1, in light and in dark (30.6s)
-  ✓   29 e2e/export-render.spec.ts:48:3 › at 1360 px › Render reads Rendering… beside Cancel while the rows show their bars, and both clips end in Download MP4 (45.6s)
-  ✓   30 e2e/export-render.spec.ts:80:3 › at 390 px › the same actions are in the top bar, Render queues the clip, and Download MP4 saves the file (33.7s)
-  ✓   31 e2e/export-retry.spec.ts:24:1 › a render that fails shows its reason with Retry, and Retry ends in Download MP4 once the source is back (35.4s)
-  ✓   32 e2e/export-retry.spec.ts:53:1 › with the source moved aside, Render is refused in a toast and is switched off under the notice (21.9s)
-  ✓   33 e2e/export-tab.spec.ts:72:1 › a talk with no kept clip shows No Kept Clips, and Go to Review leads to the Review tab (414ms)
-  ✓   34 e2e/export-tab.spec.ts:86:1 › with two clips kept, the tab shows the look, the format and a group for each clip in the order of the ranks (421ms)
+  ✓   21 e2e/export-copy.spec.ts:54:1 › a kept clip shows a title and a description for each of the three platforms, as selection stored them (21.5s)
+  ✓   22 e2e/export-copy.spec.ts:70:1 › each of the six Copy controls leaves its row’s text on the clipboard and shows Copied (655ms)
+  ✓   23 e2e/export-copy.spec.ts:90:1 › a project made for TikTok alone shows that platform’s two rows (19.5s)
+  ✓   24 e2e/export-copy.spec.ts:109:1 › with the clipboard interface taken from the page, Copy still leaves the text on the clipboard (438ms)
+  ✓   25 e2e/export-fit.spec.ts:74:3 › at 390 px › the export presented to the page holds twelve clips in every state, with long texts, under the notice (26.3s)
+  ✓   26 e2e/export-fit.spec.ts:95:3 › at 390 px › every Export screen fits at the normal size and at 200%, with tap areas of 44 px and its last line above the bar (26.7s)
+  ✓   27 e2e/export-fit.spec.ts:108:3 › at 390 px › no text of an Export screen measures under 4.5 to 1, in light and in dark (26.8s)
+  ✓   28 e2e/export-fit.spec.ts:125:3 › at 1360 px › the same Export screens hold no text under 4.5 to 1, in light and in dark (29.1s)
+  ✓   29 e2e/export-render.spec.ts:48:3 › at 1360 px › Render reads Rendering… beside Cancel while the rows show their bars, and both clips end in Download MP4 (38.8s)
+  ✓   30 e2e/export-render.spec.ts:80:3 › at 390 px › the same actions are in the top bar, Render queues the clip, and Download MP4 saves the file (26.7s)
+  ✓   31 e2e/export-retry.spec.ts:24:1 › a render that fails shows its reason with Retry, and Retry ends in Download MP4 once the source is back (31.4s)
+  ✓   32 e2e/export-retry.spec.ts:53:1 › with the source moved aside, Render is refused in a toast and is switched off under the notice (21.1s)
+  ✓   33 e2e/export-tab.spec.ts:72:1 › a talk with no kept clip shows No Kept Clips, and Go to Review leads to the Review tab (421ms)
+  ✓   34 e2e/export-tab.spec.ts:86:1 › with two clips kept, the tab shows the look, the format and a group for each clip in the order of the ranks (424ms)
   ✓   35 e2e/export-tab.spec.ts:108:1 › after the look is changed on the Review tab, the sentence of the look follows (1.1s)
-  ✓   36 e2e/export-tab.spec.ts:129:1 › two queued clips read Rendering and Waiting, keep their state over a reload and end in Download MP4 (49.6s)
-  ✓   37 e2e/export-tab.spec.ts:154:1 › the download of a finished clip is an MP4 attachment named after the clip, also once the source is gone (56.5s)
-  ✓   38 e2e/halt-project.spec.ts:21:1 › a link that answers "not found" shows the reason and Retry, and Retry finishes it once repaired (17.5s)
-  ✓   39 e2e/halt-project.spec.ts:49:1 › Stop during a fetch leaves the project stopped, and Resume finishes it (23.4s)
-  ✓   40 e2e/import-link.spec.ts:23:1 › a link to the fixture is fetched and transcribed: its bar never falls, then the row shows the real length (21.1s)
-  ✓   41 e2e/import-link.spec.ts:46:1 › Find Clips sends the link, the length, the platforms and the brief the user chose (699ms)
-  ✓   42 e2e/import-upload.spec.ts:30:1 › the uploaded fixture is prepared and transcribed: its bar never falls, then the row shows the real length (15.5s)
-  ✓   43 e2e/import-upload.spec.ts:53:1 › a browser that is not sending the file says so on the status screen (205ms)
-  ✓   44 e2e/layout.spec.ts:47:3 › at 390 px › the Library is a list above a tab bar at the bottom edge (687ms)
-  ✓   45 e2e/layout.spec.ts:65:3 › at 390 px › the new project sheet spans the width and rises from the bottom edge (485ms)
-  ✓   46 e2e/layout.spec.ts:78:3 › at 1360 px › the projects are in a sidebar beside the screen (440ms)
-  ✓   47 e2e/layout.spec.ts:94:3 › at 1360 px › the new project sheet is centred (490ms)
-  ✓   48 e2e/layout.spec.ts:105:1 › the phone layout ends at 719 px and the desktop layout begins at 720 px (911ms)
-  ✓   49 e2e/layout.spec.ts:123:1 › the sidebar lies over the content at 999 px and beside it at 1000 px (316ms)
-  ✘   50 e2e/learning.spec.ts:73:1 › two rejections with a reason and three clips with views reach the next talk’s four requests as a note, and Forget All of It ends it (1.1m)
-  ✓   51 e2e/library.spec.ts:26:3 › at 390 px › each row shows its title, its source and length, and its status (16.0s)
-  ✓   52 e2e/library.spec.ts:48:3 › at 390 px › the Library has a large title, the plus control, the Projects group and the free space (289ms)
-  ✓   53 e2e/library.spec.ts:68:3 › at 390 px › a row opens the screen of its project, and the back control returns to the Library (639ms)
-  ✓   54 e2e/library.spec.ts:89:3 › at 390 px › the address of a project that does not exist leads to the Library (180ms)
-  ✓   55 e2e/library.spec.ts:96:3 › at 390 px › a row follows the progress of its project without a reload (20.5s)
-  ✓   56 e2e/library.spec.ts:113:3 › at 1360 px › the projects are in the sidebar and the free space is in its foot (491ms)
-  ✓   57 e2e/library.spec.ts:127:3 › at 1360 px › the Library address shows the newest project beside the sidebar, marked in the list (1.6s)
-  ✓   58 e2e/low-disk.spec.ts:21:1 › with 3 GB reported free, Find Clips creates nothing and gives the reason under the source (4.8s)
-  ✓   59 e2e/missing-ffmpeg.spec.ts:20:1 › the start command stops with a sentence that names the missing media tools (1.3s)
-  ✓   60 e2e/model-download.spec.ts:73:1 › the first project to need a model that is not on the Mac downloads it as a step of its own, and the next does not (44.1s)
-  ✓   61 e2e/new-project-errors.spec.ts:20:1 › the sheet has the sections, the wording and the defaults of the prototype (246ms)
-  ✓   62 e2e/new-project-errors.spec.ts:51:1 › the hint follows the chosen length, and the file field names the chosen file (625ms)
-  ✓   63 e2e/new-project-errors.spec.ts:67:1 › a link that is not a link shows its error under Source and moves focus to the link field (595ms)
-  ✓   64 e2e/new-project-errors.spec.ts:89:1 › a missing file shows its error under Source and moves focus to the file field (597ms)
-  ✓   65 e2e/new-project-errors.spec.ts:102:1 › no platform shows its error under Platforms and moves focus to the first switch (752ms)
-  ✓   66 e2e/no-speech.spec.ts:44:1 › a silent video cannot finish for want of speech, and Retry runs the transcription again and nothing else (3.3s)
-  ✓   67 e2e/own-origin.spec.ts:78:1 › with projects, every request of every screen is addressed to the tool (47.8s)
-  ✓   68 e2e/own-origin.spec.ts:98:1 › the Review screens of the talk ask nothing outside the tool, with the preview playing on one of them (31.6s)
-  ✓   69 e2e/own-origin.spec.ts:117:1 › the Export tab of a talk with a finished clip asks nothing outside the tool, and saves its file from the tool (31.1s)
-  ✓   70 e2e/own-origin.spec.ts:141:1 › the Results tab of a talk with the seeded set asks nothing outside the tool, at both widths (50.6s)
-  ✓   71 e2e/own-origin.spec.ts:158:1 › the empty Library asks nothing outside the tool (1.1s)
-  ✓   72 e2e/own-origin.spec.ts:175:3 › with 3 GB reported free › the low disk error asks nothing outside the tool (6.2s)
-  ✓   73 e2e/queue-through-tool.spec.ts:19:1 › a second link project waits for the first and then finishes (33.9s)
-  ✓   74 e2e/queue-through-tool.spec.ts:36:1 › a project whose fetch is cut off by a stop finishes after the start (22.2s)
-  ✓   75 e2e/queue.spec.ts:28:1 › a second project waits while the first is processed, names it, and starts when it finishes (34.1s)
-  ✓   76 e2e/queue.spec.ts:54:1 › a file sent while another project is processed arrives in full and then waits its turn (33.6s)
-  ✓   77 e2e/restart.spec.ts:25:1 › the uploaded project and the link project are listed in the same state after a stop and a start (28.9s)
-  ✓   78 e2e/results-captures.spec.ts:139:1 › the Results tab and Settings of a talk with the seeded set are captured whole at 390 and 1360 px, in light and in dark (51.1s)
-  ✓   79 e2e/results-fit.spec.ts:79:3 › at 390 px › the results presented to the page hold twelve clips with titles of 110 characters and views of ten digits, and Settings counts of three digits (21.6s)
-  ✓   80 e2e/results-fit.spec.ts:101:3 › at 390 px › every Results and Settings screen fits at the normal size and at 200%, with tap areas of 44 px and its last line above the bar (49.7s)
-  ✓   81 e2e/results-fit.spec.ts:114:3 › at 390 px › no text of a Results or Settings screen measures under 4.5 to 1, in light and in dark (50.8s)
-  ✓   82 e2e/results-fit.spec.ts:131:3 › at 1360 px › the same Results and Settings screens hold no text under 4.5 to 1, in light and in dark (53.6s)
-  ✓   83 e2e/results-tab.spec.ts:92:3 › at 1360 px › a talk with no kept clip shows No Results Yet with Go to Review, and one with a kept clip that is not rendered shows Go to Export (21.6s)
-  ✓   84 e2e/results-tab.spec.ts:115:3 › at 1360 px › with three clips exported the tab lists their rows with empty fields, and the outcome follows a typed number at once and waits for two clips with views (49.5s)
-  ✓   85 e2e/results-tab.spec.ts:146:3 › at 1360 px › the seeded views are listed by their views under the sentence with the longest bar first, are all there after a reload, and the row in the sidebar reads results logged (53.9s)
-  ✓   86 e2e/results-tab.spec.ts:174:3 › at 1360 px › 90000 for the first pick names it best, and an emptied field and a typed 0 each take their clip out of the outcome, also after a reload (51.6s)
-  ✓   87 e2e/results-tab.spec.ts:206:3 › at 1360 px › a clip rejected after its export keeps its row and its views (32.3s)
-  ✓   88 e2e/results-tab.spec.ts:224:3 › at 390 px › on a phone the tab lists the same rows, and a number typed there is stored (50.3s)
-  ✓   89 e2e/retention.spec.ts:79:3 › at 1360 px › a talk with a clip exported keeps its source and its preview copy when the tool is started six days later by its clock (34.2s)
-  ✓   90 e2e/retention.spec.ts:95:3 › at 1360 px › started eight days later the talk has lost its source and its preview copy and nothing else, and its Review, Export and Results tabs still open (35.1s)
-  ✓   91 e2e/retention.spec.ts:122:3 › at 1360 px › with Never chosen in Settings the source stays 400 days later, and with 3 days it is removed four days later (38.8s)
-  ✓   92 e2e/retention.spec.ts:150:3 › at 390 px › on a phone the Review list of a talk without its source opens the clip with the notice in place of the preview (34.4s)
-  ✓   93 e2e/review-captures.spec.ts:118:1 › the Review list and the flagged clip are captured whole at 390 and 1360 px, in light and in dark, and the talk’s review is saved (25.0s)
-  ✓   94 e2e/review-decide.spec.ts:90:1 › Reject, Keep and Next sit in the toolbar after the More button (436ms)
-  ✓   95 e2e/review-decide.spec.ts:106:1 › Keep keeps the clip at once in the buttons, the row, the pin and the counts, and Keep again leaves it undecided (633ms)
-  ✓   96 e2e/review-decide.spec.ts:128:1 › Reject opens the menu of four reasons and No Reason under its heading, and a kept clip has no Undo Reject (664ms)
-  ✓   97 e2e/review-decide.spec.ts:149:1 › each of the five choices rejects the clip with it, and carries the tick when the menu is opened again (2.4s)
-  ✓   98 e2e/review-decide.spec.ts:173:1 › the menu of a rejected clip also offers Undo Reject, which leaves the clip undecided (1.2s)
-  ✓   99 e2e/review-decide.spec.ts:199:1 › Next goes through the six clips and back to the first, and through the two of a filter’s group (1.3s)
-  ✓  100 e2e/review-decide.spec.ts:222:1 › the menu opens with the keyboard on the reason that was chosen, moves with the arrows and closes with Escape (828ms)
-  ✓  101 e2e/review-decide.spec.ts:244:1 › a kept clip, a rejected clip with its reason and an edited title are still there after a reload, and the counts match (1.3s)
-  ✓  102 e2e/review-fit.spec.ts:93:3 › at 390 px › the tap measure finds a control made too small on purpose, and leaves out one that is switched off (372ms)
-  ✓  103 e2e/review-fit.spec.ts:110:3 › at 390 px › the contrast measure finds a text made too faint on purpose, on a plain colour and on a plain gradient (398ms)
-  ✓  104 e2e/review-fit.spec.ts:128:3 › at 390 px › on the talk, every Review screen fits at the normal size and at 200%, with tap areas of 44 px and its last line above the bar (4.3s)
-  ✓  105 e2e/review-fit.spec.ts:141:3 › at 390 px › on a review of twelve crowded clips, 180 windows and long titles, every Review screen fits the same way (4.4s)
-  ✓  106 e2e/review-fit.spec.ts:154:3 › at 390 px › no text of a Review screen measures under 4.5 to 1, in light and in dark, on the talk and on the crowded review (4.6s)
-  ✓  107 e2e/review-fit.spec.ts:174:3 › at 1360 px › the list beside a clip and beside the flagged clip holds no text under 4.5 to 1, in light and in dark (2.4s)
-  ✓  108 e2e/review-inspect.spec.ts:43:1 › choosing a candidate shows its reason, its four subscores, its total and its rank as the service holds them (606ms)
-  ✓  109 e2e/review-inspect.spec.ts:67:1 › each candidate shows its own reason and standing, the first without being chosen (731ms)
-  ✓  110 e2e/review-inspect.spec.ts:83:1 › the clip that needs context and the one that is not recommended each show their flag’s sentence (739ms)
-  ✓  111 e2e/review-inspect.spec.ts:105:1 › a title typed into the field is in the list at once, and in the field and the list after a reload (1.1s)
-  ✓  112 e2e/review-inspect.spec.ts:130:1 › a title is saved when the field is left, without waiting, and emptying the field brings back selection’s title (1.1s)
-  ✓  113 e2e/review-inspect.spec.ts:157:1 › a clip presented as lying under a replay peak shows the tag in the list and the note in the inspector (589ms)
-  ✓  114 e2e/review-list.spec.ts:77:3 › at 1360 px › the list holds the talk’s six clips in the order of their ranks under filters that read 6, 6, 0 and 0 (427ms)
-  ✓  115 e2e/review-list.spec.ts:98:3 › at 1360 px › the Review address shows the list beside the first-ranked clip, and the list pane beside the detail pane (553ms)
-  ✓  116 e2e/review-list.spec.ts:114:3 › at 1360 px › a row leads to its clip’s address and is marked there, a reload keeps both, and Back returns to the clip before (880ms)
-  ✓  117 e2e/review-list.spec.ts:137:3 › at 1360 px › an address that names no clip of the project leads to the list (469ms)
-  ✓  118 e2e/review-list.spec.ts:145:3 › at 1360 px › the Library address shows the Review tab of the newest project with its first clip marked (485ms)
-  ✓  119 e2e/review-list.spec.ts:161:5 › at 1360 px › in a short window › the list pane stays in place, where it was scrolled to, while the address moves from clip to clip (684ms)
-  ✓  120 e2e/review-list.spec.ts:183:3 › the source timeline at 1360 px › “Source Video” stands above the candidates with a bar for each window, as high as its score (517ms)
-  ✓  121 e2e/review-list.spec.ts:210:3 › the source timeline at 1360 px › six numbered pins stand in the order of the clips’ starts, over the middles of their clips (435ms)
-  ✓  122 e2e/review-list.spec.ts:232:3 › the source timeline at 1360 px › a pin leads to its clip’s address, where the pin and the row are marked (627ms)
-  ✓  123 e2e/review-list.spec.ts:247:3 › at 390 px › the Review address is the list under the project’s title and tabs, with no clip open (365ms)
-  ✓  124 e2e/review-list.spec.ts:261:3 › at 390 px › a row leads to a screen titled “Clip 3 of 6” whose back control returns to the list (547ms)
-  ✓  125 e2e/review-phone.spec.ts:61:1 › the Review address shows the candidate list first, above the source timeline, with no preview on the screen (415ms)
-  ✓  126 e2e/review-phone.spec.ts:78:1 › a row opens the clip’s screen at its top with the preview, the inspector and a bar of Reject, Keep and Next fixed to the bottom, and the back control returns to the list with the tab bar (588ms)
-  ✓  127 e2e/review-phone.spec.ts:101:1 › the list is where it was left after the back control and after the browser’s Back, and Forward returns to the clip (1.1s)
-  ✓  128 e2e/review-phone.spec.ts:125:1 › Next opens the next clip’s screen at its top (628ms)
-  ✓  129 e2e/review-phone.spec.ts:138:1 › each of the three tabs and a clip open at their own addresses, and a reload returns to each (771ms)
-  ✓  130 e2e/review-phone.spec.ts:161:1 › with the clip playing, scrolling past the preview pins a strip under the top bar that still plays, pauses and plays again, and scrolling back up puts the preview back in the page (2.8s)
-  ✓  131 e2e/review-phone.spec.ts:186:1 › Reject opens its menu above the buttons of the bar, and a reason chosen there leaves the button reading “Rejected” (904ms)
-  ✓  132 e2e/review-preview.spec.ts:163:1 › the tool serves Inter from its own address at the committed size, and the page draws a heavy text in it (286ms)
-  ✓  133 e2e/review-preview.spec.ts:184:1 › through the web port a byte range of the preview copy answers 206, and a video element plays it and plays on after a jump (9.8s)
-  ✓  134 e2e/review-preview.spec.ts:210:1 › Play moves the playhead forward from the in point, and Pause holds it (1.5s)
-  ✓  135 e2e/review-preview.spec.ts:231:1 › from two seconds before the end the clip stops at its out point, and Play at the end starts from the in point (3.8s)
-  ✓  136 e2e/review-preview.spec.ts:255:1 › with the slider on the middle of a word of the stored transcript, the caption holds that word in each style, in no more than three, one and six words (926ms)
-  ✓  137 e2e/review-preview.spec.ts:281:1 › while the clip plays, the caption read together with the video’s time holds the word spoken at that moment, in each style (25.4s)
-  ✓  138 e2e/review-preview.spec.ts:309:1 › the keyword style marks one word of a caption, and the two other styles mark none (756ms)
-  ✓  139 e2e/review-preview.spec.ts:328:1 › the hook title shows at one second and not at four, and never with its switch off (610ms)
-  ✓  140 e2e/review-preview.spec.ts:345:1 › the safe zones follow their switch, and the caption and the hook title are drawn in Inter (677ms)
-  ✓  141 e2e/review-preview.spec.ts:363:1 › each framing draws a different part of the talk’s colour bars, read from a capture of the frame (939ms)
-  ✓  142 e2e/review-preview.spec.ts:382:1 › a changed look is the same on another clip and after a reload, and is the one the service holds (1.1s)
-  ✓  143 e2e/review-preview.spec.ts:410:1 › a step of a point and Next each put the playhead back at the in point, paused (2.6s)
-  ✓  144 e2e/review-preview.spec.ts:433:1 › with the preview copy moved aside a reload shows the notice in place of the preview, and a decision and a step of a point still work (880ms)
-  ✓  145 e2e/review-trim.spec.ts:84:1 › each sentence step moves its point to the neighbouring sentence’s time as the service holds it, and the length is the difference of the two times (809ms)
-  ✓  146 e2e/review-trim.spec.ts:109:1 › a moved point is followed by the list’s time and length, the timeline’s pin and the transcript, and is still there after a reload (688ms)
-  ✓  147 e2e/review-trim.spec.ts:132:1 › five 0.2-second steps move a point by one second and switch the sixth off, earlier and later (1.7s)
-  ✓  148 e2e/review-trim.spec.ts:156:1 › the sentence steps are switched off at both ends of the reach and where the two points meet (1.0s)
-  ✓  149 e2e/review-trim.spec.ts:180:1 › the reading names the preferred band, the limits, the minimum and the maximum, each for a clip of that length (1.8s)
-  ✓  150 e2e/review-trim.spec.ts:206:1 › the “needs context” flag and its tag go when the in point moves one sentence earlier, by the button and by the step, and return when it moves back (1.1s)
-  ✓  151 e2e/review-trim.spec.ts:233:1 › every frame of the strip is a loaded picture 104 px high whose colours are the talk’s colour bars (561ms)
-  ✓  152 e2e/review-trim.spec.ts:253:1 › a handle dragged along the strip leaves its point on the sentence nearest the place it was let go, and its words change to match (1.1s)
-  ✓  153 e2e/review-trim.spec.ts:282:1 › a handle is a slider that the arrow keys move by a sentence, within what the rules allow (550ms)
-  ✓  154 e2e/selection-progress.spec.ts:57:1 › the row of a link reads its two selection steps over a bar that never falls and ends ready (52.7s)
-  ✓  155 e2e/selection-progress.spec.ts:77:1 › the status screen counts the two steps as 3 and 4, Stop names the score step, and Resume ends on the Review tab (56.1s)
-  ✓  156 e2e/selection-progress.spec.ts:99:1 › the tool stopped while clips are cut and started again lists one project, which reaches ready with its six candidates (53.1s)
-  ✓  157 e2e/selection.spec.ts:80:1 › with no key the uploaded talk points to Settings, and with the key saved there Retry ends on its Review tab (23.9s)
-  ✓  158 e2e/selection.spec.ts:109:1 › with a saved key a link to the talk reaches ready with six candidates and no replay peak (21.1s)
-  ✓  159 e2e/settings-effect.spec.ts:85:1 › with Claude Haiku 4.5 chosen for scoring and Claude Fable 5.1 for cutting, the next talk asks Haiku once without an effort setting and Fable three times (21.6s)
-  ✓  160 e2e/settings-effect.spec.ts:108:1 › with 4 chosen as the clips per video, the next talk ends ready with four candidates, and each cut task asks for 4 (19.8s)
-  ✓  161 e2e/settings-effect.spec.ts:128:1 › with 60–180 s chosen as the clip length, the new project sheet opens with it selected, also after a reload, and a project made from it has the limits 60 and 180 (1.1s)
-  ✓  162 e2e/settings-effect.spec.ts:153:1 › a length chosen in the sheet before Settings answers is kept, and the sheet opens at 25–60 s while it waits (889ms)
-  ✓  163 e2e/settings-effect.spec.ts:170:1 › the sheet keeps 25–60 s when Settings cannot be read (487ms)
-  ✓  164 e2e/settings-effect.spec.ts:188:3 › started without a reported figure › the tool gives the free space and the total of the data folder’s disk within 1 GB, and Settings and the sidebar show the free space rounded down to whole gigabytes (4.4s)
-  ✓  165 e2e/settings.spec.ts:87:3 › at 390 px › Settings has the five groups of the prototype with their rows and footers (313ms)
-  ✓  166 e2e/settings.spec.ts:123:3 › at 390 px › the choices start at the defaults, and each one is kept after a reload (401ms)
-  ✓  167 e2e/settings.spec.ts:149:3 › at 390 px › Save with nothing typed asks for the key and sends nothing (265ms)
-  ✓  168 e2e/settings.spec.ts:160:3 › at 390 px › a saved key is shown by its last four characters, also after a reload, and Remove brings the field back (493ms)
-  ✓  169 e2e/settings.spec.ts:186:3 › at 390 px › a key the service refuses is answered in the service’s words, and the field is emptied (326ms)
-  ✓  170 e2e/settings.spec.ts:197:3 › at 390 px › the storage row gives the free and the total space with a bar (228ms)
-  ✓  171 e2e/settings.spec.ts:205:3 › at 390 px › with nothing learned each of the four reasons reads 0, and Forget All of It is switched on (258ms)
-  ✓  172 e2e/settings.spec.ts:217:3 › at 390 px › two clips rejected with a reason on the Review tab are counted, and Forget All of It forgets them and leaves the clips rejected (24.4s)
-  ✓  173 e2e/settings.spec.ts:253:3 › at 390 px › a refusal to forget shows the service’s sentence and leaves the numbers (322ms)
-  ✓  174 e2e/settings.spec.ts:276:3 › at 1360 px › the phone row gives the address of this Mac with the web port, and Copy copies it (294ms)
-  ✓  175 e2e/settings.spec.ts:289:3 › at 1360 px › the tool answers at the phone address (219ms)
-  ✓  176 e2e/shell.spec.ts:9:1 › the page is the loading line before the width of the window is known (7ms)
-  ✓  177 e2e/shell.spec.ts:19:3 › at 1360 px › the sidebar is docked with the app name, its toggle, New Project and Settings (161ms)
-  ✓  178 e2e/shell.spec.ts:31:3 › at 1360 px › the toolbar carries the title of the screen (215ms)
-  ✓  179 e2e/shell.spec.ts:43:3 › at 1360 px › the toggle hides the sidebar and the toolbar offers to show it again (197ms)
-  ✓  180 e2e/shell.spec.ts:53:3 › at 1360 px › the sheet, the menu layer and the toast follow the app as its later siblings (137ms)
-  ✓  181 e2e/shell.spec.ts:65:3 › at 860 px › the sidebar lies over the content with its scrim, and Escape closes it (203ms)
-  ✓  182 e2e/shell.spec.ts:80:3 › at 860 px › a click on the scrim closes the sidebar, and so does going to another screen (293ms)
-  ✓  183 e2e/shell.spec.ts:97:3 › at 390 px › the tab bar holds Library and Settings with the current one marked (213ms)
-  ✓  184 e2e/shell.spec.ts:111:3 › at 390 px › the large title moves into the bar when the screen is scrolled (466ms)
-  ✓  185 e2e/shell.spec.ts:127:1 › light and dark follow the system (127ms)
-  ✓  186 e2e/start-command.spec.ts:14:1 › the tool opens at the address the start command prints (132ms)
-  ✓  187 e2e/start-command.spec.ts:23:1 › the service answers through the web port (5ms)
-  ✓  188 e2e/start-command.spec.ts:30:1 › the web port is open on the network address and the service port is closed there (6ms)
-  ✓  189 e2e/start-command.spec.ts:40:1 › every request of the page goes to the address of the tool (2.1s)
-  ✓  190 e2e/stop-order.spec.ts:11:1 › the service stops listening before the web app when the tool is stopped (2.3s)
-  ✓  191 e2e/text-size.spec.ts:75:1 › the measure finds a block that is too wide, a cut label, a spilled label and a cut choice (240ms)
-  ✓  192 e2e/text-size.spec.ts:93:1 › with projects, every screen fits at the normal size and at 200% (28.2s)
-  ✓  193 e2e/text-size.spec.ts:111:1 › the empty Library fits at the normal size and at 200% (256ms)
-  ✓  194 e2e/text-size.spec.ts:126:3 › with 3 GB reported free › the low disk error fits at the normal size and at 200% (5.5s)
-  ✓  195 e2e/transcribe-restart.spec.ts:30:1 › the tool stopped during a transcription and started again lists one project, which is transcribed (44.9s)
-  ✓  196 e2e/transcribe.spec.ts:54:1 › the uploaded talk is transcribed, and its stored words are timed in order and match the script (14.0s)
-  ✓  197 e2e/transcribe.spec.ts:77:1 › the long talk shows its transcription in the Library with a rising bar, stops without a transcript, and resumes (43.3s)
-  ✓  198 e2e/upload-parts.spec.ts:14:1 › a 50 MiB file sent in 8 MiB parts through the web port is stored whole (297ms)
-  ✓  199 e2e/upload-parts.spec.ts:33:1 › a part sent at another offset is answered with the count the service holds (25ms)
-  ✓  200 e2e/upload-size.spec.ts:31:1 › a 50 MiB upload shows its progress and arrives at the size and checksum it was sent with (6.9s)
+  ✓   36 e2e/export-tab.spec.ts:129:1 › two queued clips read Rendering and Waiting, keep their state over a reload and end in Download MP4 (46.3s)
+  ✓   37 e2e/export-tab.spec.ts:154:1 › the download of a finished clip is an MP4 attachment named after the clip, also once the source is gone (46.4s)
+  ✓   38 e2e/failure-output.spec.ts:18:1 › a test is given what the tool printed while it ran, with the line of the service from before a restart of the tool and the address line of the new start (2.5s)
+  ✓   39 e2e/forwarding.spec.ts:49:1 › the answer to the health address carries Connection: close at the service port and through the web port (7ms)
+  ✓   40 e2e/forwarding.spec.ts:59:1 › 320 requests forwarded in eight rounds of 40, after pauses of 4,960 to 4,995 ms without a request, are each answered 200 with the health (40.1s)
+  ✓   41 e2e/halt-project.spec.ts:21:1 › a link that answers "not found" shows the reason and Retry, and Retry finishes it once repaired (16.6s)
+  ✓   42 e2e/halt-project.spec.ts:49:1 › Stop during a fetch leaves the project stopped, and Resume finishes it (22.4s)
+  ✓   43 e2e/import-link.spec.ts:23:1 › a link to the fixture is fetched and transcribed: its bar never falls, then the row shows the real length (21.3s)
+  ✓   44 e2e/import-link.spec.ts:46:1 › Find Clips sends the link, the length, the platforms and the brief the user chose (703ms)
+  ✓   45 e2e/import-upload.spec.ts:30:1 › the uploaded fixture is prepared and transcribed: its bar never falls, then the row shows the real length (13.9s)
+  ✓   46 e2e/import-upload.spec.ts:53:1 › a browser that is not sending the file says so on the status screen (219ms)
+  ✓   47 e2e/layout.spec.ts:47:3 › at 390 px › the Library is a list above a tab bar at the bottom edge (682ms)
+  ✓   48 e2e/layout.spec.ts:65:3 › at 390 px › the new project sheet spans the width and rises from the bottom edge (491ms)
+  ✓   49 e2e/layout.spec.ts:78:3 › at 1360 px › the projects are in a sidebar beside the screen (470ms)
+  ✓   50 e2e/layout.spec.ts:94:3 › at 1360 px › the new project sheet is centred (510ms)
+  ✓   51 e2e/layout.spec.ts:105:1 › the phone layout ends at 719 px and the desktop layout begins at 720 px (902ms)
+  ✓   52 e2e/layout.spec.ts:123:1 › the sidebar lies over the content at 999 px and beside it at 1000 px (288ms)
+  ✓   53 e2e/learning.spec.ts:73:1 › two rejections with a reason and three clips with views reach the next talk’s four requests as a note, and Forget All of It ends it (1.6m)
+  ✓   54 e2e/library.spec.ts:26:3 › at 390 px › each row shows its title, its source and length, and its status (15.5s)
+  ✓   55 e2e/library.spec.ts:48:3 › at 390 px › the Library has a large title, the plus control, the Projects group and the free space (330ms)
+  ✓   56 e2e/library.spec.ts:68:3 › at 390 px › a row opens the screen of its project, and the back control returns to the Library (570ms)
+  ✓   57 e2e/library.spec.ts:89:3 › at 390 px › the address of a project that does not exist leads to the Library (157ms)
+  ✓   58 e2e/library.spec.ts:96:3 › at 390 px › a row follows the progress of its project without a reload (21.4s)
+  ✓   59 e2e/library.spec.ts:113:3 › at 1360 px › the projects are in the sidebar and the free space is in its foot (539ms)
+  ✓   60 e2e/library.spec.ts:127:3 › at 1360 px › the Library address shows the newest project beside the sidebar, marked in the list (1.6s)
+  ✓   61 e2e/low-disk.spec.ts:21:1 › with 3 GB reported free, Find Clips creates nothing and gives the reason under the source (4.8s)
+  ✓   62 e2e/missing-ffmpeg.spec.ts:20:1 › the start command stops with a sentence that names the missing media tools (1.3s)
+  ✓   63 e2e/model-download.spec.ts:73:1 › the first project to need a model that is not on the Mac downloads it as a step of its own, and the next does not (43.5s)
+  ✓   64 e2e/new-project-errors.spec.ts:20:1 › the sheet has the sections, the wording and the defaults of the prototype (214ms)
+  ✓   65 e2e/new-project-errors.spec.ts:51:1 › the hint follows the chosen length, and the file field names the chosen file (655ms)
+  ✓   66 e2e/new-project-errors.spec.ts:67:1 › a link that is not a link shows its error under Source and moves focus to the link field (5.6s)
+  ✓   67 e2e/new-project-errors.spec.ts:89:1 › a missing file shows its error under Source and moves focus to the file field (604ms)
+  ✓   68 e2e/new-project-errors.spec.ts:102:1 › no platform shows its error under Platforms and moves focus to the first switch (777ms)
+  ✓   69 e2e/no-speech.spec.ts:44:1 › a silent video cannot finish for want of speech, and Retry runs the transcription again and nothing else (3.3s)
+  ✓   70 e2e/own-origin.spec.ts:78:1 › with projects, every request of every screen is addressed to the tool (47.2s)
+  ✓   71 e2e/own-origin.spec.ts:98:1 › the Review screens of the talk ask nothing outside the tool, with the preview playing on one of them (29.8s)
+  ✓   72 e2e/own-origin.spec.ts:117:1 › the Export tab of a talk with a finished clip asks nothing outside the tool, and saves its file from the tool (34.3s)
+  ✓   73 e2e/own-origin.spec.ts:141:1 › the Results tab of a talk with the seeded set asks nothing outside the tool, at both widths (55.6s)
+  ✓   74 e2e/own-origin.spec.ts:158:1 › the empty Library asks nothing outside the tool (1.1s)
+  ✓   75 e2e/own-origin.spec.ts:175:3 › with 3 GB reported free › the low disk error asks nothing outside the tool (7.1s)
+  ✓   76 e2e/queue-through-tool.spec.ts:19:1 › a second link project waits for the first and then finishes (34.5s)
+  ✓   77 e2e/queue-through-tool.spec.ts:36:1 › a project whose fetch is cut off by a stop finishes after the start (21.3s)
+  ✓   78 e2e/queue.spec.ts:28:1 › a second project waits while the first is processed, names it, and starts when it finishes (36.0s)
+  ✓   79 e2e/queue.spec.ts:54:1 › a file sent while another project is processed arrives in full and then waits its turn (31.5s)
+  ✓   80 e2e/restart.spec.ts:25:1 › the uploaded project and the link project are listed in the same state after a stop and a start (27.6s)
+  ✓   81 e2e/results-captures.spec.ts:139:1 › the Results tab and Settings of a talk with the seeded set are captured whole at 390 and 1360 px, in light and in dark (49.5s)
+  ✓   82 e2e/results-fit.spec.ts:79:3 › at 390 px › the results presented to the page hold twelve clips with titles of 110 characters and views of ten digits, and Settings counts of three digits (21.9s)
+  ✓   83 e2e/results-fit.spec.ts:101:3 › at 390 px › every Results and Settings screen fits at the normal size and at 200%, with tap areas of 44 px and its last line above the bar (49.8s)
+  ✓   84 e2e/results-fit.spec.ts:114:3 › at 390 px › no text of a Results or Settings screen measures under 4.5 to 1, in light and in dark (48.2s)
+  ✓   85 e2e/results-fit.spec.ts:131:3 › at 1360 px › the same Results and Settings screens hold no text under 4.5 to 1, in light and in dark (45.0s)
+  ✓   86 e2e/results-tab.spec.ts:92:3 › at 1360 px › a talk with no kept clip shows No Results Yet with Go to Review, and one with a kept clip that is not rendered shows Go to Export (22.7s)
+  ✓   87 e2e/results-tab.spec.ts:115:3 › at 1360 px › with three clips exported the tab lists their rows with empty fields, and the outcome follows a typed number at once and waits for two clips with views (51.9s)
+  ✓   88 e2e/results-tab.spec.ts:146:3 › at 1360 px › the seeded views are listed by their views under the sentence with the longest bar first, are all there after a reload, and the row in the sidebar reads results logged (54.1s)
+  ✓   89 e2e/results-tab.spec.ts:174:3 › at 1360 px › 90000 for the first pick names it best, and an emptied field and a typed 0 each take their clip out of the outcome, also after a reload (55.9s)
+  ✓   90 e2e/results-tab.spec.ts:206:3 › at 1360 px › a clip rejected after its export keeps its row and its views (35.3s)
+  ✓   91 e2e/results-tab.spec.ts:224:3 › at 390 px › on a phone the tab lists the same rows, and a number typed there is stored (55.3s)
+  ✓   92 e2e/retention.spec.ts:79:3 › at 1360 px › a talk with a clip exported keeps its source and its preview copy when the tool is started six days later by its clock (36.8s)
+  ✓   93 e2e/retention.spec.ts:95:3 › at 1360 px › started eight days later the talk has lost its source and its preview copy and nothing else, and its Review, Export and Results tabs still open (38.8s)
+  ✓   94 e2e/retention.spec.ts:122:3 › at 1360 px › with Never chosen in Settings the source stays 400 days later, and with 3 days it is removed four days later (42.8s)
+  ✓   95 e2e/retention.spec.ts:150:3 › at 390 px › on a phone the Review list of a talk without its source opens the clip with the notice in place of the preview (38.4s)
+  ✓   96 e2e/review-captures.spec.ts:118:1 › the Review list and the flagged clip are captured whole at 390 and 1360 px, in light and in dark, and the talk’s review is saved (28.0s)
+  ✓   97 e2e/review-decide.spec.ts:90:1 › Reject, Keep and Next sit in the toolbar after the More button (617ms)
+  ✓   98 e2e/review-decide.spec.ts:106:1 › Keep keeps the clip at once in the buttons, the row, the pin and the counts, and Keep again leaves it undecided (749ms)
+  ✓   99 e2e/review-decide.spec.ts:128:1 › Reject opens the menu of four reasons and No Reason under its heading, and a kept clip has no Undo Reject (711ms)
+  ✓  100 e2e/review-decide.spec.ts:149:1 › each of the five choices rejects the clip with it, and carries the tick when the menu is opened again (2.8s)
+  ✓  101 e2e/review-decide.spec.ts:173:1 › the menu of a rejected clip also offers Undo Reject, which leaves the clip undecided (1.3s)
+  ✓  102 e2e/review-decide.spec.ts:199:1 › Next goes through the six clips and back to the first, and through the two of a filter’s group (1.5s)
+  ✓  103 e2e/review-decide.spec.ts:222:1 › the menu opens with the keyboard on the reason that was chosen, moves with the arrows and closes with Escape (976ms)
+  ✓  104 e2e/review-decide.spec.ts:244:1 › a kept clip, a rejected clip with its reason and an edited title are still there after a reload, and the counts match (1.5s)
+  ✓  105 e2e/review-fit.spec.ts:93:3 › at 390 px › the tap measure finds a control made too small on purpose, and leaves out one that is switched off (430ms)
+  ✓  106 e2e/review-fit.spec.ts:110:3 › at 390 px › the contrast measure finds a text made too faint on purpose, on a plain colour and on a plain gradient (467ms)
+  ✓  107 e2e/review-fit.spec.ts:128:3 › at 390 px › on the talk, every Review screen fits at the normal size and at 200%, with tap areas of 44 px and its last line above the bar (4.6s)
+  ✓  108 e2e/review-fit.spec.ts:141:3 › at 390 px › on a review of twelve crowded clips, 180 windows and long titles, every Review screen fits the same way (4.7s)
+  ✓  109 e2e/review-fit.spec.ts:154:3 › at 390 px › no text of a Review screen measures under 4.5 to 1, in light and in dark, on the talk and on the crowded review (5.2s)
+  ✓  110 e2e/review-fit.spec.ts:174:3 › at 1360 px › the list beside a clip and beside the flagged clip holds no text under 4.5 to 1, in light and in dark (2.8s)
+  ✓  111 e2e/review-inspect.spec.ts:43:1 › choosing a candidate shows its reason, its four subscores, its total and its rank as the service holds them (635ms)
+  ✓  112 e2e/review-inspect.spec.ts:67:1 › each candidate shows its own reason and standing, the first without being chosen (833ms)
+  ✓  113 e2e/review-inspect.spec.ts:83:1 › the clip that needs context and the one that is not recommended each show their flag’s sentence (816ms)
+  ✓  114 e2e/review-inspect.spec.ts:105:1 › a title typed into the field is in the list at once, and in the field and the list after a reload (1.2s)
+  ✓  115 e2e/review-inspect.spec.ts:130:1 › a title is saved when the field is left, without waiting, and emptying the field brings back selection’s title (1.2s)
+  ✓  116 e2e/review-inspect.spec.ts:157:1 › a clip presented as lying under a replay peak shows the tag in the list and the note in the inspector (684ms)
+  ✓  117 e2e/review-list.spec.ts:77:3 › at 1360 px › the list holds the talk’s six clips in the order of their ranks under filters that read 6, 6, 0 and 0 (544ms)
+  ✓  118 e2e/review-list.spec.ts:98:3 › at 1360 px › the Review address shows the list beside the first-ranked clip, and the list pane beside the detail pane (591ms)
+  ✓  119 e2e/review-list.spec.ts:114:3 › at 1360 px › a row leads to its clip’s address and is marked there, a reload keeps both, and Back returns to the clip before (963ms)
+  ✓  120 e2e/review-list.spec.ts:137:3 › at 1360 px › an address that names no clip of the project leads to the list (586ms)
+  ✓  121 e2e/review-list.spec.ts:145:3 › at 1360 px › the Library address shows the Review tab of the newest project with its first clip marked (509ms)
+  ✓  122 e2e/review-list.spec.ts:161:5 › at 1360 px › in a short window › the list pane stays in place, where it was scrolled to, while the address moves from clip to clip (890ms)
+  ✓  123 e2e/review-list.spec.ts:183:3 › the source timeline at 1360 px › “Source Video” stands above the candidates with a bar for each window, as high as its score (551ms)
+  ✓  124 e2e/review-list.spec.ts:210:3 › the source timeline at 1360 px › six numbered pins stand in the order of the clips’ starts, over the middles of their clips (526ms)
+  ✓  125 e2e/review-list.spec.ts:232:3 › the source timeline at 1360 px › a pin leads to its clip’s address, where the pin and the row are marked (835ms)
+  ✓  126 e2e/review-list.spec.ts:247:3 › at 390 px › the Review address is the list under the project’s title and tabs, with no clip open (446ms)
+  ✓  127 e2e/review-list.spec.ts:261:3 › at 390 px › a row leads to a screen titled “Clip 3 of 6” whose back control returns to the list (699ms)
+  ✓  128 e2e/review-phone.spec.ts:61:1 › the Review address shows the candidate list first, above the source timeline, with no preview on the screen (461ms)
+  ✓  129 e2e/review-phone.spec.ts:78:1 › a row opens the clip’s screen at its top with the preview, the inspector and a bar of Reject, Keep and Next fixed to the bottom, and the back control returns to the list with the tab bar (700ms)
+  ✓  130 e2e/review-phone.spec.ts:101:1 › the list is where it was left after the back control and after the browser’s Back, and Forward returns to the clip (1.1s)
+  ✓  131 e2e/review-phone.spec.ts:125:1 › Next opens the next clip’s screen at its top (809ms)
+  ✓  132 e2e/review-phone.spec.ts:138:1 › each of the three tabs and a clip open at their own addresses, and a reload returns to each (786ms)
+  ✓  133 e2e/review-phone.spec.ts:161:1 › with the clip playing, scrolling past the preview pins a strip under the top bar that still plays, pauses and plays again, and scrolling back up puts the preview back in the page (2.9s)
+  ✓  134 e2e/review-phone.spec.ts:186:1 › Reject opens its menu above the buttons of the bar, and a reason chosen there leaves the button reading “Rejected” (932ms)
+  ✓  135 e2e/review-preview.spec.ts:163:1 › the tool serves Inter from its own address at the committed size, and the page draws a heavy text in it (293ms)
+  ✓  136 e2e/review-preview.spec.ts:184:1 › through the web port a byte range of the preview copy answers 206, and a video element plays it and plays on after a jump (10.9s)
+  ✓  137 e2e/review-preview.spec.ts:210:1 › Play moves the playhead forward from the in point, and Pause holds it (1.7s)
+  ✓  138 e2e/review-preview.spec.ts:231:1 › from two seconds before the end the clip stops at its out point, and Play at the end starts from the in point (4.0s)
+  ✓  139 e2e/review-preview.spec.ts:255:1 › with the slider on the middle of a word of the stored transcript, the caption holds that word in each style, in no more than three, one and six words (1.2s)
+  ✓  140 e2e/review-preview.spec.ts:281:1 › while the clip plays, the caption read together with the video’s time holds the word spoken at that moment, in each style (25.5s)
+  ✓  141 e2e/review-preview.spec.ts:309:1 › the keyword style marks one word of a caption, and the two other styles mark none (650ms)
+  ✓  142 e2e/review-preview.spec.ts:328:1 › the hook title shows at one second and not at four, and never with its switch off (686ms)
+  ✓  143 e2e/review-preview.spec.ts:345:1 › the safe zones follow their switch, and the caption and the hook title are drawn in Inter (707ms)
+  ✓  144 e2e/review-preview.spec.ts:363:1 › each framing draws a different part of the talk’s colour bars, read from a capture of the frame (1.0s)
+  ✓  145 e2e/review-preview.spec.ts:382:1 › a changed look is the same on another clip and after a reload, and is the one the service holds (986ms)
+  ✓  146 e2e/review-preview.spec.ts:410:1 › a step of a point and Next each put the playhead back at the in point, paused (2.6s)
+  ✓  147 e2e/review-preview.spec.ts:433:1 › with the preview copy moved aside a reload shows the notice in place of the preview, and a decision and a step of a point still work (785ms)
+  ✓  148 e2e/review-trim.spec.ts:84:1 › each sentence step moves its point to the neighbouring sentence’s time as the service holds it, and the length is the difference of the two times (772ms)
+  ✓  149 e2e/review-trim.spec.ts:109:1 › a moved point is followed by the list’s time and length, the timeline’s pin and the transcript, and is still there after a reload (677ms)
+  ✓  150 e2e/review-trim.spec.ts:132:1 › five 0.2-second steps move a point by one second and switch the sixth off, earlier and later (1.8s)
+  ✓  151 e2e/review-trim.spec.ts:156:1 › the sentence steps are switched off at both ends of the reach and where the two points meet (1.1s)
+  ✓  152 e2e/review-trim.spec.ts:180:1 › the reading names the preferred band, the limits, the minimum and the maximum, each for a clip of that length (1.7s)
+  ✓  153 e2e/review-trim.spec.ts:206:1 › the “needs context” flag and its tag go when the in point moves one sentence earlier, by the button and by the step, and return when it moves back (1.0s)
+  ✓  154 e2e/review-trim.spec.ts:233:1 › every frame of the strip is a loaded picture 104 px high whose colours are the talk’s colour bars (539ms)
+  ✓  155 e2e/review-trim.spec.ts:253:1 › a handle dragged along the strip leaves its point on the sentence nearest the place it was let go, and its words change to match (1.0s)
+  ✓  156 e2e/review-trim.spec.ts:282:1 › a handle is a slider that the arrow keys move by a sentence, within what the rules allow (580ms)
+  ✓  157 e2e/selection-progress.spec.ts:57:1 › the row of a link reads its two selection steps over a bar that never falls and ends ready (54.6s)
+  ✓  158 e2e/selection-progress.spec.ts:77:1 › the status screen counts the two steps as 3 and 4, Stop names the score step, and Resume ends on the Review tab (52.9s)
+  ✓  159 e2e/selection-progress.spec.ts:99:1 › the tool stopped while clips are cut and started again lists one project, which reaches ready with its six candidates (52.3s)
+  ✓  160 e2e/selection.spec.ts:80:1 › with no key the uploaded talk points to Settings, and with the key saved there Retry ends on its Review tab (22.9s)
+  ✓  161 e2e/selection.spec.ts:109:1 › with a saved key a link to the talk reaches ready with six candidates and no replay peak (19.7s)
+  ✓  162 e2e/settings-effect.spec.ts:85:1 › with Claude Haiku 4.5 chosen for scoring and Claude Fable 5.1 for cutting, the next talk asks Haiku once without an effort setting and Fable three times (17.9s)
+  ✓  163 e2e/settings-effect.spec.ts:108:1 › with 4 chosen as the clips per video, the next talk ends ready with four candidates, and each cut task asks for 4 (15.9s)
+  ✓  164 e2e/settings-effect.spec.ts:128:1 › with 60–180 s chosen as the clip length, the new project sheet opens with it selected, also after a reload, and a project made from it has the limits 60 and 180 (906ms)
+  ✓  165 e2e/settings-effect.spec.ts:153:1 › a length chosen in the sheet before Settings answers is kept, and the sheet opens at 25–60 s while it waits (894ms)
+  ✓  166 e2e/settings-effect.spec.ts:170:1 › the sheet keeps 25–60 s when Settings cannot be read (446ms)
+  ✓  167 e2e/settings-effect.spec.ts:188:3 › started without a reported figure › the tool gives the free space and the total of the data folder’s disk within 1 GB, and Settings and the sidebar show the free space rounded down to whole gigabytes (4.0s)
+  ✓  168 e2e/settings.spec.ts:87:3 › at 390 px › Settings has the five groups of the prototype with their rows and footers (242ms)
+  ✓  169 e2e/settings.spec.ts:123:3 › at 390 px › the choices start at the defaults, and each one is kept after a reload (326ms)
+  ✓  170 e2e/settings.spec.ts:149:3 › at 390 px › Save with nothing typed asks for the key and sends nothing (242ms)
+  ✓  171 e2e/settings.spec.ts:160:3 › at 390 px › a saved key is shown by its last four characters, also after a reload, and Remove brings the field back (399ms)
+  ✓  172 e2e/settings.spec.ts:186:3 › at 390 px › a key the service refuses is answered in the service’s words, and the field is emptied (288ms)
+  ✓  173 e2e/settings.spec.ts:197:3 › at 390 px › the storage row gives the free and the total space with a bar (228ms)
+  ✓  174 e2e/settings.spec.ts:205:3 › at 390 px › with nothing learned each of the four reasons reads 0, and Forget All of It is switched on (236ms)
+  ✓  175 e2e/settings.spec.ts:217:3 › at 390 px › two clips rejected with a reason on the Review tab are counted, and Forget All of It forgets them and leaves the clips rejected (25.3s)
+  ✓  176 e2e/settings.spec.ts:253:3 › at 390 px › a refusal to forget shows the service’s sentence and leaves the numbers (372ms)
+  ✓  177 e2e/settings.spec.ts:276:3 › at 1360 px › the phone row gives the address of this Mac with the web port, and Copy copies it (331ms)
+  ✓  178 e2e/settings.spec.ts:289:3 › at 1360 px › the tool answers at the phone address (270ms)
+  ✓  179 e2e/shell.spec.ts:9:1 › the page is the loading line before the width of the window is known (10ms)
+  ✓  180 e2e/shell.spec.ts:19:3 › at 1360 px › the sidebar is docked with the app name, its toggle, New Project and Settings (146ms)
+  ✓  181 e2e/shell.spec.ts:31:3 › at 1360 px › the toolbar carries the title of the screen (211ms)
+  ✓  182 e2e/shell.spec.ts:43:3 › at 1360 px › the toggle hides the sidebar and the toolbar offers to show it again (380ms)
+  ✓  183 e2e/shell.spec.ts:53:3 › at 1360 px › the sheet, the menu layer and the toast follow the app as its later siblings (138ms)
+  ✓  184 e2e/shell.spec.ts:65:3 › at 860 px › the sidebar lies over the content with its scrim, and Escape closes it (253ms)
+  ✓  185 e2e/shell.spec.ts:80:3 › at 860 px › a click on the scrim closes the sidebar, and so does going to another screen (309ms)
+  ✓  186 e2e/shell.spec.ts:97:3 › at 390 px › the tab bar holds Library and Settings with the current one marked (212ms)
+  ✓  187 e2e/shell.spec.ts:111:3 › at 390 px › the large title moves into the bar when the screen is scrolled (471ms)
+  ✓  188 e2e/shell.spec.ts:127:1 › light and dark follow the system (122ms)
+  ✓  189 e2e/start-command.spec.ts:14:1 › the tool opens at the address the start command prints (121ms)
+  ✓  190 e2e/start-command.spec.ts:23:1 › the service answers through the web port (6ms)
+  ✓  191 e2e/start-command.spec.ts:30:1 › the web port is open on the network address and the service port is closed there (6ms)
+  ✓  192 e2e/start-command.spec.ts:40:1 › every request of the page goes to the address of the tool (2.1s)
+  ✓  193 e2e/stop-order.spec.ts:11:1 › the service stops listening before the web app when the tool is stopped (2.6s)
+  ✓  194 e2e/text-size.spec.ts:75:1 › the measure finds a block that is too wide, a cut label, a spilled label and a cut choice (5.3s)
+  ✓  195 e2e/text-size.spec.ts:93:1 › with projects, every screen fits at the normal size and at 200% (27.4s)
+  ✓  196 e2e/text-size.spec.ts:111:1 › the empty Library fits at the normal size and at 200% (247ms)
+  ✓  197 e2e/text-size.spec.ts:126:3 › with 3 GB reported free › the low disk error fits at the normal size and at 200% (5.3s)
+  ✓  198 e2e/transcribe-restart.spec.ts:30:1 › the tool stopped during a transcription and started again lists one project, which is transcribed (42.3s)
+  ✓  199 e2e/transcribe.spec.ts:54:1 › the uploaded talk is transcribed, and its stored words are timed in order and match the script (13.0s)
+  ✓  200 e2e/transcribe.spec.ts:77:1 › the long talk shows its transcription in the Library with a rising bar, stops without a transcript, and resumes (46.0s)
+  ✓  201 e2e/upload-parts.spec.ts:14:1 › a 50 MiB file sent in 8 MiB parts through the web port is stored whole (297ms)
+  ✓  202 e2e/upload-parts.spec.ts:33:1 › a part sent at another offset is answered with the count the service holds (23ms)
+  ✓  203 e2e/upload-size.spec.ts:31:1 › a 50 MiB upload shows its progress and arrives at the size and checksum it was sent with (7.0s)
 
-
-  1) e2e/learning.spec.ts:73:1 › two rejections with a reason and three clips with views reach the next talk’s four requests as a note, and Forget All of It ends it 
-
-    SyntaxError: Unexpected token 'I', "Internal S"... is not valid JSON
-
-       at support/service-api.ts:68
-
-      66 |   const deadline = Date.now() + STATUS_TIMEOUT_MS;
-      67 |   for (;;) {
-    > 68 |     const project = await readProject(request, projectId);
-         |                     ^
-      69 |     if (project.status === status) return project;
-      70 |     if (Date.now() > deadline) {
-      71 |       throw new Error(`The project did not become ${status}: ${JSON.stringify(project)}`);
-        at waitForStatus (/private/var/folders/64/xznbj4n94qz_cxzl70mw82hr0000gp/T/clipper-m6-fresh-copy/clipper/web/e2e/support/service-api.ts:68:21)
-        at cutTalkAndKeepRequests (/private/var/folders/64/xznbj4n94qz_cxzl70mw82hr0000gp/T/clipper-m6-fresh-copy/clipper/web/e2e/support/learned-history.ts:55:3)
-        at /private/var/folders/64/xznbj4n94qz_cxzl70mw82hr0000gp/T/clipper-m6-fresh-copy/clipper/web/e2e/learning.spec.ts:90:23
-
-    Error Context: test-results/learning-two-rejections-wi-1ad05-nd-Forget-All-of-It-ends-it/error-context.md
-
-    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
-    test-results/learning-two-rejections-wi-1ad05-nd-Forget-All-of-It-ends-it/trace.zip
-    Usage:
-
-        pnpm exec playwright show-trace test-results/learning-two-rejections-wi-1ad05-nd-Forget-All-of-It-ends-it/trace.zip
-
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-  1 failed
-    e2e/learning.spec.ts:73:1 › two rejections with a reason and three clips with views reach the next talk’s four requests as a note, and Forget All of It ends it 
-  199 passed (39.3m)
+  203 passed (40.3m)
 
 --- Results
 Fixtures: passed
@@ -427,8 +401,7 @@ ESLint: passed
 Web build: passed
 TypeScript check: passed
 Vitest: passed
-Playwright: failed
-Test data folder: /var/folders/64/xznbj4n94qz_cxzl70mw82hr0000gp/T/clipper-test-JI4hiv
+Playwright: passed
+Test data folder: /var/folders/64/xznbj4n94qz_cxzl70mw82hr0000gp/T/clipper-test-ztgYQj
 Test data size: 0.21 GB (210.6 MB)
 The test data folder was removed.
- ELIFECYCLE  Test failed. See above for more details.
