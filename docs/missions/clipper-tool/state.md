@@ -1,6 +1,6 @@
 # Mission: clipper-tool
 
-State: research-and-planning
+State: executing
 Milestone: m6-results-learning-settings-and-storage-care
 Attempt: 3
 Base: 82df5ce
@@ -13,4 +13,4 @@ Branch: mission/clipper-tool
 | m3-ranked-clip-candidates | passed |
 | m4-the-review-workbench | passed |
 | m5-rendered-clips-and-export | passed |
-| m6-results-learning-settings-and-storage-care | planning |
+| m6-results-learning-settings-and-storage-care | executing |
