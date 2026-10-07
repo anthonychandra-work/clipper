@@ -1,0 +1,191 @@
+import json
+import sqlite3
+from collections import defaultdict
+from collections.abc import Iterable
+
+from ..problems import NotFoundError
+from ..storage import Database
+from .project import (
+    ARRIVAL_SHARE_PERCENT,
+    ClipLength,
+    Platform,
+    Project,
+    ProjectStatus,
+    SourceKind,
+    Step,
+    StepKind,
+    StepState,
+    Upload,
+)
+
+INSERT_PROJECT = """
+INSERT INTO projects (
+    id, title, source_kind, source_label, link, file_name, file_size_bytes, received_bytes,
+    clip_length, platforms, brief, status, duration_seconds, halt_reason, halt_opens_settings,
+    candidate_count, kept_count, rejected_count, exported_count, logged_count, imported_at
+) VALUES (
+    :id, :title, :source_kind, :source_label, :link, :file_name, :file_size_bytes, :received_bytes,
+    :clip_length, :platforms, :brief, :status, :duration_seconds, :halt_reason,
+    :halt_opens_settings, :candidate_count, :kept_count, :rejected_count, :exported_count,
+    :logged_count, :imported_at
+)
+"""
+INSERT_STEP = """
+INSERT INTO project_steps (project_id, position, kind, state, percent, label)
+VALUES (?, ?, ?, ?, ?, ?)
+"""
+RECORD_RECEIVED_BYTES = "UPDATE projects SET received_bytes = ? WHERE id = ?"
+RAISE_UPLOAD_PERCENT = """
+UPDATE project_steps
+SET percent = ? * (
+    SELECT 1.0 * received_bytes / file_size_bytes FROM projects WHERE id = project_id
+)
+WHERE project_id = ? AND kind = 'fetch'
+"""
+QUEUE_UPLOADED = "UPDATE projects SET status = ? WHERE id = ? AND status = 'uploading'"
+SET_FETCH_STATE = "UPDATE project_steps SET state = ? WHERE project_id = ? AND kind = 'fetch'"
+RECORD_DURATION = "UPDATE projects SET duration_seconds = ? WHERE id = ?"
+RENAME = "UPDATE projects SET title = ? WHERE id = ?"
+
+
+class ProjectNotFoundError(NotFoundError):
+    def __init__(self) -> None:
+        super().__init__("This project does not exist.")
+
+
+class ProjectRepository:
+    def __init__(self, database: Database) -> None:
+        self._database = database
+
+    def add(self, project: Project) -> None:
+        with self._database.transaction() as connection:
+            connection.execute(INSERT_PROJECT, describe_project_row(project))
+            connection.executemany(INSERT_STEP, describe_step_rows(project))
+
+    def list_newest_first(self) -> list[Project]:
+        with self._database.transaction() as connection:
+            rows = connection.execute("SELECT * FROM projects ORDER BY created_order DESC")
+            steps = connection.execute("SELECT * FROM project_steps ORDER BY position")
+            steps_by_project = group_steps(steps)
+            return [read_project(row, steps_by_project[row["id"]]) for row in rows]
+
+    def find(self, project_id: str) -> Project | None:
+        with self._database.transaction() as connection:
+            row = connection.execute("SELECT * FROM projects WHERE id = ?", [project_id]).fetchone()
+            steps = connection.execute(
+                "SELECT * FROM project_steps WHERE project_id = ? ORDER BY position", [project_id]
+            )
+            return read_project(row, [read_step(step) for step in steps]) if row else None
+
+    def get(self, project_id: str) -> Project:
+        project = self.find(project_id)
+        if project is None:
+            raise ProjectNotFoundError()
+        return project
+
+    def delete(self, project_id: str) -> None:
+        with self._database.transaction() as connection:
+            connection.execute("DELETE FROM projects WHERE id = ?", [project_id])
+
+    def record_received_bytes(self, project_id: str, received_bytes: int) -> None:
+        with self._database.transaction() as connection:
+            connection.execute(RECORD_RECEIVED_BYTES, [received_bytes, project_id])
+            connection.execute(RAISE_UPLOAD_PERCENT, [ARRIVAL_SHARE_PERCENT, project_id])
+
+    def queue_uploaded(self, project_id: str) -> None:
+        with self._database.transaction() as connection:
+            connection.execute(QUEUE_UPLOADED, [ProjectStatus.QUEUED, project_id])
+            connection.execute(SET_FETCH_STATE, [StepState.PENDING, project_id])
+
+    def record_duration(self, project_id: str, duration_seconds: float) -> None:
+        with self._database.transaction() as connection:
+            connection.execute(RECORD_DURATION, [duration_seconds, project_id])
+
+    def rename(self, project_id: str, title: str) -> None:
+        with self._database.transaction() as connection:
+            connection.execute(RENAME, [title, project_id])
+
+
+def describe_project_row(project: Project) -> dict[str, str | int | float | None]:
+    upload = project.upload
+    return {
+        "id": project.id,
+        "title": project.title,
+        "source_kind": project.source_kind,
+        "source_label": project.source_label,
+        "link": project.link,
+        "file_name": upload.file_name if upload else None,
+        "file_size_bytes": upload.size_bytes if upload else None,
+        "received_bytes": upload.received_bytes if upload else 0,
+        "clip_length": project.clip_length,
+        "platforms": json.dumps(project.platforms),
+        "brief": project.brief,
+        "status": project.status,
+        "duration_seconds": project.duration_seconds,
+        "halt_reason": project.halt_reason,
+        "halt_opens_settings": project.halt_opens_settings,
+        "candidate_count": project.candidate_count,
+        "kept_count": project.kept_count,
+        "rejected_count": project.rejected_count,
+        "exported_count": project.exported_count,
+        "logged_count": project.logged_count,
+        "imported_at": project.imported_at,
+    }
+
+
+def describe_step_rows(project: Project) -> list[tuple[str, int, str, str, float, str | None]]:
+    return [
+        (project.id, position, step.kind, step.state, step.percent, step.label)
+        for position, step in enumerate(project.steps)
+    ]
+
+
+def group_steps(rows: Iterable[sqlite3.Row]) -> dict[str, list[Step]]:
+    steps_by_project: dict[str, list[Step]] = defaultdict(list)
+    for row in rows:
+        steps_by_project[row["project_id"]].append(read_step(row))
+    return steps_by_project
+
+
+def read_step(row: sqlite3.Row) -> Step:
+    return Step(
+        kind=StepKind(row["kind"]),
+        state=StepState(row["state"]),
+        percent=row["percent"],
+        label=row["label"],
+    )
+
+
+def read_project(row: sqlite3.Row, steps: list[Step]) -> Project:
+    return Project(
+        id=row["id"],
+        title=row["title"],
+        source_kind=SourceKind(row["source_kind"]),
+        source_label=row["source_label"],
+        link=row["link"],
+        clip_length=ClipLength(row["clip_length"]),
+        platforms=tuple(Platform(name) for name in json.loads(row["platforms"])),
+        brief=row["brief"],
+        status=ProjectStatus(row["status"]),
+        duration_seconds=row["duration_seconds"],
+        steps=tuple(steps),
+        halt_reason=row["halt_reason"],
+        upload=read_upload(row),
+        imported_at=row["imported_at"],
+        candidate_count=row["candidate_count"],
+        halt_opens_settings=bool(row["halt_opens_settings"]),
+        kept_count=row["kept_count"],
+        rejected_count=row["rejected_count"],
+        exported_count=row["exported_count"],
+        logged_count=row["logged_count"],
+    )
+
+
+def read_upload(row: sqlite3.Row) -> Upload | None:
+    if row["file_name"] is None:
+        return None
+    return Upload(
+        file_name=row["file_name"],
+        size_bytes=row["file_size_bytes"],
+        received_bytes=row["received_bytes"],
+    )

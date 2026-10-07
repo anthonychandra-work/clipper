@@ -1,0 +1,1524 @@
+{
+  "withHistory": {
+    "rejections": {
+      "cutOff": 1,
+      "notInteresting": 1,
+      "needsContext": 0,
+      "repeat": 0
+    },
+    "requests": [
+      {
+        "scenario": "talk",
+        "path": "/v1/messages?beta=true",
+        "beta": "server-side-fallback-2026-07-01",
+        "body": {
+          "max_tokens": 32000,
+          "messages": [
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "1 [0.00] Thank you all for coming tonight.\n2 [2.48] Before we start, a little housekeeping.\n3 [5.72] The coffee is at the back of the room, and the slides will be sent to everyone tomorrow morning.\n4 [11.94] I want to tell you about the worst day my bakery ever had.\n5 [16.30] It was a Saturday and winter, and the oven broke before sunrise.\n6 [21.18] We had a line of customers outside and nothing warm to sell.\n7 [25.60] I stood at the door and told every person the truth.\n8 [29.30] I said the oven is broken.\n9 [31.34] The bread is late, and I am sorry.\n10 [34.12] Nobody left angry.\n11 [35.94] Most of them came back the next day that morning taught me that customers forgive bad news.\n12 [42.56] What they do not forgive is silence.\n13 [45.22] Now let me talk about price, because almost everyone gets it wrong.\n14 [50.80] Most small shops set their price by looking at the shop across the street.\n15 [55.86] That is a mistake.\n16 [57.04] Your neighbor does not know your costs, and your neighbor is probably losing money too.\n17 [63.84] Start with what the bread costs you to make.\n18 [66.84] At the rent, the flower, the power, and your own time.\n19 [71.34] Then add enough so that a slow week does not close your doors.\n20 [75.58] If a customer says your bread is too expensive, do not argue.\n21 [80.64] Smile, and let them go.\n22 [83.02] The customers who stay are the ones who keep you open.\n23 [86.54] Here is something nobody told me about hiring.\n24 [90.34] The best baker I ever hired had never baked before.\n25 [94.22] She had worked in a hospital kitchen for many years.\n26 [98.10] She knew how to show up on time, how to keep a clean table, and how to stay calm when everything went wrong.\n27 [106.18] I could teach her bread in a month.\n28 [108.62] I could never have taught her that calm.\n29 [111.42] So when you hire, stop looking for skill.\n30 [114.72] Look for the habits that are hard to teach, and teach the rest yourself.\n31 [120.16] I also want to be honest about a mistake that almost ended the business.\n32 [125.30] A big hotel asked us to deliver bread every morning.\n33 [129.14] The order was huge, and I said yes before I finished reading the contract.\n34 [135.08] Within a few weeks, the hotel was most of our income.\n35 [138.94] Then they asked for a lower price, and I had no choice.\n36 [143.08] I had let a single customer become my boss.\n37 [146.92] It took a full year to get free.\n38 [149.38] My rule today is simple.\n39 [151.40] No customer is allowed to be more than a small slice of what we earn.\n40 [156.12] When one of them grows too large, I go and find others before I need them.\n41 [161.80] People often ask me how to know when it is time to grow.\n42 [165.96] My answer is that growth should feel boring.\n43 [169.04] If opening another shop feels like an adventure, you are not ready.\n44 [174.24] You are ready when the shop you have runs without you for a whole month, and nothing breaks.\n45 [180.40] Take a real holiday and turn off your phone.\n46 [183.58] If you come back and the bread is still good, you have built a business.\n47 [188.18] If you come back to a fire, you have only built a job for yourself.\n48 [193.40] Let me finish with the smallest lesson, which may be the most useful.\n49 [198.50] Write things down.\n50 [199.66] Every recipe, every supplier, every little trick that lives only in your head, the day you get sick, or tired, or simply want to leave early, that notebook is the difference between a shop that opens and a shop that stays dark.\n51 [217.08] I wrote ours on a rainy afternoon, and it has saved us more times than I can count.\n52 [223.14] That is everything I have for you tonight.\n53 [225.98] Thank you for listening, and thank you to the library for giving us this room.\n54 [231.30] Please stay for a coffee, and come and say hello.",
+                  "cache_control": {
+                    "type": "ephemeral"
+                  }
+                },
+                {
+                  "type": "text",
+                  "text": "{\"task\":\"score\",\"windows\":[{\"id\":\"w01\",\"firstSentence\":1,\"lastSentence\":23},{\"id\":\"w02\",\"firstSentence\":17,\"lastSentence\":38},{\"id\":\"w03\",\"firstSentence\":32,\"lastSentence\":49},{\"id\":\"w04\",\"firstSentence\":44,\"lastSentence\":54}],\"clipSeconds\":{\"min\":25,\"max\":60},\"language\":\"en\",\"brief\":\"\",\"note\":\"Of the last 5 clips this user decided on, 2 were rejected: 1 cut off mid-thought, 1 not interesting, 0 needing earlier context, 0 repeating another clip.\\nOf 3 posted clips with views logged, the best third opened with these hooks: hot-take 1, and lasted 41 seconds. The worst third opened with: story 1, and lasted 33 seconds.\"}"
+                }
+              ]
+            }
+          ],
+          "model": "claude-sonnet-5-5",
+          "output_config": {
+            "effort": "medium",
+            "format": {
+              "schema": {
+                "$defs": {
+                  "ScoredWindow": {
+                    "type": "object",
+                    "title": "ScoredWindow",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "title": "Id"
+                      },
+                      "score": {
+                        "type": "integer",
+                        "title": "Score",
+                        "description": "{maximum: 100, minimum: 0}"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "id",
+                      "score"
+                    ]
+                  }
+                },
+                "type": "object",
+                "title": "WindowScores",
+                "properties": {
+                  "windows": {
+                    "type": "array",
+                    "title": "Windows",
+                    "items": {
+                      "$ref": "#/$defs/ScoredWindow"
+                    }
+                  }
+                },
+                "additionalProperties": false,
+                "required": [
+                  "windows"
+                ]
+              },
+              "type": "json_schema"
+            }
+          },
+          "fallbacks": "default",
+          "system": "You help pick short vertical clips from a long spoken video. You receive its transcript as\nnumbered sentences. Each line holds the number of a sentence, the second it starts at in square\nbrackets, and its text. After the transcript comes one task as a JSON object.\n\nThe task lists windows of the transcript. Each window has an id and the numbers of its first and\nlast sentence. Score every window from 0 to 100 on one question:\nwould the opening two seconds hold a viewer who has no context?\nThink of someone scrolling who has seen nothing else of this video. Take the strongest line a clip\nfrom this window could open on, and judge whether that person stays to hear the next sentence.\n\nUse the whole range from 0 to 100. Most windows hold no clip, and their scores should say so.\nIntros, outros, sponsor reads, housekeeping and talk that leans on what was said before score low.\nKeep the high scores for windows where a line can open cold and the thought that follows it is\ncomplete.\n\nThe task also gives the shortest and longest length of a clip in seconds, the language of the\ntranscript and a brief. A brief that is not empty says what the user is looking for, and windows\nthat hold it deserve a higher score.\n\nThe task may carry a note. It tells what this user did with clips of earlier videos: how many\nthey rejected and for which reasons, and which hooks and lengths did best and worst once posted.\nLet the note tip a close call. The rules of this task and the brief come first.\n\nReply with a whole number for each window, named by its id. Score every window of the task once,\nand no window the task does not list.\n",
+          "stream": true
+        },
+        "hasKey": true
+      },
+      {
+        "scenario": "talk",
+        "path": "/v1/messages?beta=true",
+        "beta": "server-side-fallback-2026-07-01",
+        "body": {
+          "max_tokens": 32000,
+          "messages": [
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "1 [0.00] Thank you all for coming tonight.\n2 [2.48] Before we start, a little housekeeping.\n3 [5.72] The coffee is at the back of the room, and the slides will be sent to everyone tomorrow morning.\n4 [11.94] I want to tell you about the worst day my bakery ever had.\n5 [16.30] It was a Saturday and winter, and the oven broke before sunrise.\n6 [21.18] We had a line of customers outside and nothing warm to sell.\n7 [25.60] I stood at the door and told every person the truth.\n8 [29.30] I said the oven is broken.\n9 [31.34] The bread is late, and I am sorry.\n10 [34.12] Nobody left angry.\n11 [35.94] Most of them came back the next day that morning taught me that customers forgive bad news.\n12 [42.56] What they do not forgive is silence.\n13 [45.22] Now let me talk about price, because almost everyone gets it wrong.\n14 [50.80] Most small shops set their price by looking at the shop across the street.\n15 [55.86] That is a mistake.\n16 [57.04] Your neighbor does not know your costs, and your neighbor is probably losing money too.\n17 [63.84] Start with what the bread costs you to make.\n18 [66.84] At the rent, the flower, the power, and your own time.\n19 [71.34] Then add enough so that a slow week does not close your doors.\n20 [75.58] If a customer says your bread is too expensive, do not argue.\n21 [80.64] Smile, and let them go.\n22 [83.02] The customers who stay are the ones who keep you open.\n23 [86.54] Here is something nobody told me about hiring.\n24 [90.34] The best baker I ever hired had never baked before.\n25 [94.22] She had worked in a hospital kitchen for many years.\n26 [98.10] She knew how to show up on time, how to keep a clean table, and how to stay calm when everything went wrong.\n27 [106.18] I could teach her bread in a month.\n28 [108.62] I could never have taught her that calm.\n29 [111.42] So when you hire, stop looking for skill.\n30 [114.72] Look for the habits that are hard to teach, and teach the rest yourself.\n31 [120.16] I also want to be honest about a mistake that almost ended the business.\n32 [125.30] A big hotel asked us to deliver bread every morning.\n33 [129.14] The order was huge, and I said yes before I finished reading the contract.\n34 [135.08] Within a few weeks, the hotel was most of our income.\n35 [138.94] Then they asked for a lower price, and I had no choice.\n36 [143.08] I had let a single customer become my boss.\n37 [146.92] It took a full year to get free.\n38 [149.38] My rule today is simple.\n39 [151.40] No customer is allowed to be more than a small slice of what we earn.\n40 [156.12] When one of them grows too large, I go and find others before I need them.\n41 [161.80] People often ask me how to know when it is time to grow.\n42 [165.96] My answer is that growth should feel boring.\n43 [169.04] If opening another shop feels like an adventure, you are not ready.\n44 [174.24] You are ready when the shop you have runs without you for a whole month, and nothing breaks.\n45 [180.40] Take a real holiday and turn off your phone.\n46 [183.58] If you come back and the bread is still good, you have built a business.\n47 [188.18] If you come back to a fire, you have only built a job for yourself.\n48 [193.40] Let me finish with the smallest lesson, which may be the most useful.\n49 [198.50] Write things down.\n50 [199.66] Every recipe, every supplier, every little trick that lives only in your head, the day you get sick, or tired, or simply want to leave early, that notebook is the difference between a shop that opens and a shop that stays dark.\n51 [217.08] I wrote ours on a rainy afternoon, and it has saved us more times than I can count.\n52 [223.14] That is everything I have for you tonight.\n53 [225.98] Thank you for listening, and thank you to the library for giving us this room.\n54 [231.30] Please stay for a coffee, and come and say hello.",
+                  "cache_control": {
+                    "type": "ephemeral"
+                  }
+                },
+                {
+                  "type": "text",
+                  "text": "{\"task\":\"cut\",\"window\":{\"id\":\"w01\",\"firstSentence\":1,\"lastSentence\":23},\"clipCount\":2,\"clipSeconds\":{\"min\":25,\"max\":60},\"language\":\"en\",\"brief\":\"\",\"note\":\"Of the last 5 clips this user decided on, 2 were rejected: 1 cut off mid-thought, 1 not interesting, 0 needing earlier context, 0 repeating another clip.\\nOf 3 posted clips with views logged, the best third opened with these hooks: hot-take 1, and lasted 41 seconds. The worst third opened with: story 1, and lasted 33 seconds.\"}"
+                }
+              ]
+            }
+          ],
+          "model": "claude-opus-5-5",
+          "output_config": {
+            "effort": "high",
+            "format": {
+              "schema": {
+                "$defs": {
+                  "ClipFlag": {
+                    "type": "string",
+                    "enum": [
+                      "needs-context",
+                      "not-recommended"
+                    ],
+                    "title": "ClipFlag"
+                  },
+                  "HookType": {
+                    "type": "string",
+                    "enum": [
+                      "number",
+                      "story",
+                      "list",
+                      "hot-take",
+                      "confession",
+                      "contrarian",
+                      "none"
+                    ],
+                    "title": "HookType"
+                  },
+                  "PlatformText": {
+                    "type": "object",
+                    "title": "PlatformText",
+                    "properties": {
+                      "title": {
+                        "type": "string",
+                        "title": "Title"
+                      },
+                      "description": {
+                        "type": "string",
+                        "title": "Description"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "title",
+                      "description"
+                    ]
+                  },
+                  "PlatformTexts": {
+                    "type": "object",
+                    "title": "PlatformTexts",
+                    "properties": {
+                      "tiktok": {
+                        "$ref": "#/$defs/PlatformText"
+                      },
+                      "reels": {
+                        "$ref": "#/$defs/PlatformText"
+                      },
+                      "shorts": {
+                        "$ref": "#/$defs/PlatformText"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "tiktok",
+                      "reels",
+                      "shorts"
+                    ]
+                  },
+                  "ProposedClip": {
+                    "type": "object",
+                    "title": "ProposedClip",
+                    "properties": {
+                      "openingWords": {
+                        "type": "string",
+                        "title": "Openingwords"
+                      },
+                      "closingWords": {
+                        "type": "string",
+                        "title": "Closingwords"
+                      },
+                      "scores": {
+                        "$ref": "#/$defs/ProposedScores"
+                      },
+                      "reason": {
+                        "type": "string",
+                        "title": "Reason"
+                      },
+                      "title": {
+                        "type": "string",
+                        "title": "Title"
+                      },
+                      "hookTitle": {
+                        "type": "string",
+                        "title": "Hooktitle"
+                      },
+                      "hookType": {
+                        "$ref": "#/$defs/HookType"
+                      },
+                      "flag": {
+                        "anyOf": [
+                          {
+                            "$ref": "#/$defs/ProposedFlag"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "platforms": {
+                        "$ref": "#/$defs/PlatformTexts"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "openingWords",
+                      "closingWords",
+                      "scores",
+                      "reason",
+                      "title",
+                      "hookTitle",
+                      "hookType",
+                      "flag",
+                      "platforms"
+                    ]
+                  },
+                  "ProposedFlag": {
+                    "type": "object",
+                    "title": "ProposedFlag",
+                    "properties": {
+                      "kind": {
+                        "$ref": "#/$defs/ClipFlag"
+                      },
+                      "note": {
+                        "type": "string",
+                        "title": "Note"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "kind",
+                      "note"
+                    ]
+                  },
+                  "ProposedScores": {
+                    "type": "object",
+                    "title": "ProposedScores",
+                    "properties": {
+                      "hook": {
+                        "type": "integer",
+                        "title": "Hook",
+                        "description": "{maximum: 25, minimum: 0}"
+                      },
+                      "arc": {
+                        "type": "integer",
+                        "title": "Arc",
+                        "description": "{maximum: 25, minimum: 0}"
+                      },
+                      "value": {
+                        "type": "integer",
+                        "title": "Value",
+                        "description": "{maximum: 25, minimum: 0}"
+                      },
+                      "share": {
+                        "type": "integer",
+                        "title": "Share",
+                        "description": "{maximum: 25, minimum: 0}"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "hook",
+                      "arc",
+                      "value",
+                      "share"
+                    ]
+                  }
+                },
+                "type": "object",
+                "title": "ProposedClips",
+                "properties": {
+                  "clips": {
+                    "type": "array",
+                    "title": "Clips",
+                    "items": {
+                      "$ref": "#/$defs/ProposedClip"
+                    }
+                  }
+                },
+                "additionalProperties": false,
+                "required": [
+                  "clips"
+                ]
+              },
+              "type": "json_schema"
+            }
+          },
+          "fallbacks": "default",
+          "system": "You cut short vertical clips from a long spoken video. You receive its transcript as numbered\nsentences. Each line holds the number of a sentence, the second it starts at in square brackets,\nand its text. After the transcript comes one task as a JSON object.\n\nThe task names one window of the transcript by the numbers of its first and last sentence. Find\nthe clips whose first sentence lies in that window. A clip may end after the window does. A clip:\n- opens on its hook, the line that makes a viewer stay;\n- makes sense to someone who has seen nothing else of this video;\n- completes its setup and its payoff;\n- starts on the first word of a sentence and ends on the last word of a sentence.\n\nLeave out intros, outros, sponsor reads and housekeeping.\n\nclipSeconds gives the shortest and the longest a clip may last, and a clip outside these limits\nis thrown away. When the limits are 25 and 60 seconds, a clip of 25 to 50 seconds is preferred.\nInside the limits the clip's own arc decides its length. Never pad a clip with sentences it does\nnot need in order to reach a length.\n\nclipCount is how many clips the whole video should yield at least, when it holds that many. This\nwindow is one of several, so do not reach for the number here. Return the clips this window\nreally holds, the best first, and an empty list when it holds none. language is the language of\nthe transcript. A brief that is not empty says what the user is looking for.\n\nThe task may carry a note. It tells what this user did with clips of earlier videos: how many\nthey rejected and for which reasons, and which hooks and lengths did best and worst once posted.\nLet the note tip a close call. The rules of this task and the brief come first.\n\nFor each clip give:\n- openingWords and closingWords: the first and the last five to ten words of the clip, quoted\n  exactly as the transcript has them. Give no time and no sentence number. The tool finds the\n  words in the transcript and takes the times from there, and it drops a clip whose words it\n  cannot find.\n- scores: hook, arc, value and share, each a whole number from 0 to 25. hook is how well the\n  first line holds a viewer who has no context, arc how complete the setup and the payoff are,\n  value what the viewer takes away, and share how likely a viewer is to send it to someone. The\n  scores rank the clips of this one video against each other.\n- reason: one sentence that says why this clip was picked.\n- title: a working title for the clip.\n- hookTitle: at most ten words to show on screen over the first seconds. It names something the\n  clip really holds.\n- hookType: number, story, list, hot-take, confession, contrarian, or none when the clip has no\n  hook of these kinds.\n- flag: null for most clips. needs-context when the clip leans on something said before it.\n  not-recommended when it is weak and still the best this window has. With a flag, note is one\n  sentence that says why.\n- platforms: a title and a description for each of tiktok, reels and shorts.\n\nWrite every title, hook title and description in the language of the transcript.\n",
+          "stream": true
+        },
+        "hasKey": true
+      },
+      {
+        "scenario": "talk",
+        "path": "/v1/messages?beta=true",
+        "beta": "server-side-fallback-2026-07-01",
+        "body": {
+          "max_tokens": 32000,
+          "messages": [
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "1 [0.00] Thank you all for coming tonight.\n2 [2.48] Before we start, a little housekeeping.\n3 [5.72] The coffee is at the back of the room, and the slides will be sent to everyone tomorrow morning.\n4 [11.94] I want to tell you about the worst day my bakery ever had.\n5 [16.30] It was a Saturday and winter, and the oven broke before sunrise.\n6 [21.18] We had a line of customers outside and nothing warm to sell.\n7 [25.60] I stood at the door and told every person the truth.\n8 [29.30] I said the oven is broken.\n9 [31.34] The bread is late, and I am sorry.\n10 [34.12] Nobody left angry.\n11 [35.94] Most of them came back the next day that morning taught me that customers forgive bad news.\n12 [42.56] What they do not forgive is silence.\n13 [45.22] Now let me talk about price, because almost everyone gets it wrong.\n14 [50.80] Most small shops set their price by looking at the shop across the street.\n15 [55.86] That is a mistake.\n16 [57.04] Your neighbor does not know your costs, and your neighbor is probably losing money too.\n17 [63.84] Start with what the bread costs you to make.\n18 [66.84] At the rent, the flower, the power, and your own time.\n19 [71.34] Then add enough so that a slow week does not close your doors.\n20 [75.58] If a customer says your bread is too expensive, do not argue.\n21 [80.64] Smile, and let them go.\n22 [83.02] The customers who stay are the ones who keep you open.\n23 [86.54] Here is something nobody told me about hiring.\n24 [90.34] The best baker I ever hired had never baked before.\n25 [94.22] She had worked in a hospital kitchen for many years.\n26 [98.10] She knew how to show up on time, how to keep a clean table, and how to stay calm when everything went wrong.\n27 [106.18] I could teach her bread in a month.\n28 [108.62] I could never have taught her that calm.\n29 [111.42] So when you hire, stop looking for skill.\n30 [114.72] Look for the habits that are hard to teach, and teach the rest yourself.\n31 [120.16] I also want to be honest about a mistake that almost ended the business.\n32 [125.30] A big hotel asked us to deliver bread every morning.\n33 [129.14] The order was huge, and I said yes before I finished reading the contract.\n34 [135.08] Within a few weeks, the hotel was most of our income.\n35 [138.94] Then they asked for a lower price, and I had no choice.\n36 [143.08] I had let a single customer become my boss.\n37 [146.92] It took a full year to get free.\n38 [149.38] My rule today is simple.\n39 [151.40] No customer is allowed to be more than a small slice of what we earn.\n40 [156.12] When one of them grows too large, I go and find others before I need them.\n41 [161.80] People often ask me how to know when it is time to grow.\n42 [165.96] My answer is that growth should feel boring.\n43 [169.04] If opening another shop feels like an adventure, you are not ready.\n44 [174.24] You are ready when the shop you have runs without you for a whole month, and nothing breaks.\n45 [180.40] Take a real holiday and turn off your phone.\n46 [183.58] If you come back and the bread is still good, you have built a business.\n47 [188.18] If you come back to a fire, you have only built a job for yourself.\n48 [193.40] Let me finish with the smallest lesson, which may be the most useful.\n49 [198.50] Write things down.\n50 [199.66] Every recipe, every supplier, every little trick that lives only in your head, the day you get sick, or tired, or simply want to leave early, that notebook is the difference between a shop that opens and a shop that stays dark.\n51 [217.08] I wrote ours on a rainy afternoon, and it has saved us more times than I can count.\n52 [223.14] That is everything I have for you tonight.\n53 [225.98] Thank you for listening, and thank you to the library for giving us this room.\n54 [231.30] Please stay for a coffee, and come and say hello.",
+                  "cache_control": {
+                    "type": "ephemeral"
+                  }
+                },
+                {
+                  "type": "text",
+                  "text": "{\"task\":\"cut\",\"window\":{\"id\":\"w02\",\"firstSentence\":17,\"lastSentence\":38},\"clipCount\":2,\"clipSeconds\":{\"min\":25,\"max\":60},\"language\":\"en\",\"brief\":\"\",\"note\":\"Of the last 5 clips this user decided on, 2 were rejected: 1 cut off mid-thought, 1 not interesting, 0 needing earlier context, 0 repeating another clip.\\nOf 3 posted clips with views logged, the best third opened with these hooks: hot-take 1, and lasted 41 seconds. The worst third opened with: story 1, and lasted 33 seconds.\"}"
+                }
+              ]
+            }
+          ],
+          "model": "claude-opus-5-5",
+          "output_config": {
+            "effort": "high",
+            "format": {
+              "schema": {
+                "$defs": {
+                  "ClipFlag": {
+                    "type": "string",
+                    "enum": [
+                      "needs-context",
+                      "not-recommended"
+                    ],
+                    "title": "ClipFlag"
+                  },
+                  "HookType": {
+                    "type": "string",
+                    "enum": [
+                      "number",
+                      "story",
+                      "list",
+                      "hot-take",
+                      "confession",
+                      "contrarian",
+                      "none"
+                    ],
+                    "title": "HookType"
+                  },
+                  "PlatformText": {
+                    "type": "object",
+                    "title": "PlatformText",
+                    "properties": {
+                      "title": {
+                        "type": "string",
+                        "title": "Title"
+                      },
+                      "description": {
+                        "type": "string",
+                        "title": "Description"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "title",
+                      "description"
+                    ]
+                  },
+                  "PlatformTexts": {
+                    "type": "object",
+                    "title": "PlatformTexts",
+                    "properties": {
+                      "tiktok": {
+                        "$ref": "#/$defs/PlatformText"
+                      },
+                      "reels": {
+                        "$ref": "#/$defs/PlatformText"
+                      },
+                      "shorts": {
+                        "$ref": "#/$defs/PlatformText"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "tiktok",
+                      "reels",
+                      "shorts"
+                    ]
+                  },
+                  "ProposedClip": {
+                    "type": "object",
+                    "title": "ProposedClip",
+                    "properties": {
+                      "openingWords": {
+                        "type": "string",
+                        "title": "Openingwords"
+                      },
+                      "closingWords": {
+                        "type": "string",
+                        "title": "Closingwords"
+                      },
+                      "scores": {
+                        "$ref": "#/$defs/ProposedScores"
+                      },
+                      "reason": {
+                        "type": "string",
+                        "title": "Reason"
+                      },
+                      "title": {
+                        "type": "string",
+                        "title": "Title"
+                      },
+                      "hookTitle": {
+                        "type": "string",
+                        "title": "Hooktitle"
+                      },
+                      "hookType": {
+                        "$ref": "#/$defs/HookType"
+                      },
+                      "flag": {
+                        "anyOf": [
+                          {
+                            "$ref": "#/$defs/ProposedFlag"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "platforms": {
+                        "$ref": "#/$defs/PlatformTexts"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "openingWords",
+                      "closingWords",
+                      "scores",
+                      "reason",
+                      "title",
+                      "hookTitle",
+                      "hookType",
+                      "flag",
+                      "platforms"
+                    ]
+                  },
+                  "ProposedFlag": {
+                    "type": "object",
+                    "title": "ProposedFlag",
+                    "properties": {
+                      "kind": {
+                        "$ref": "#/$defs/ClipFlag"
+                      },
+                      "note": {
+                        "type": "string",
+                        "title": "Note"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "kind",
+                      "note"
+                    ]
+                  },
+                  "ProposedScores": {
+                    "type": "object",
+                    "title": "ProposedScores",
+                    "properties": {
+                      "hook": {
+                        "type": "integer",
+                        "title": "Hook",
+                        "description": "{maximum: 25, minimum: 0}"
+                      },
+                      "arc": {
+                        "type": "integer",
+                        "title": "Arc",
+                        "description": "{maximum: 25, minimum: 0}"
+                      },
+                      "value": {
+                        "type": "integer",
+                        "title": "Value",
+                        "description": "{maximum: 25, minimum: 0}"
+                      },
+                      "share": {
+                        "type": "integer",
+                        "title": "Share",
+                        "description": "{maximum: 25, minimum: 0}"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "hook",
+                      "arc",
+                      "value",
+                      "share"
+                    ]
+                  }
+                },
+                "type": "object",
+                "title": "ProposedClips",
+                "properties": {
+                  "clips": {
+                    "type": "array",
+                    "title": "Clips",
+                    "items": {
+                      "$ref": "#/$defs/ProposedClip"
+                    }
+                  }
+                },
+                "additionalProperties": false,
+                "required": [
+                  "clips"
+                ]
+              },
+              "type": "json_schema"
+            }
+          },
+          "fallbacks": "default",
+          "system": "You cut short vertical clips from a long spoken video. You receive its transcript as numbered\nsentences. Each line holds the number of a sentence, the second it starts at in square brackets,\nand its text. After the transcript comes one task as a JSON object.\n\nThe task names one window of the transcript by the numbers of its first and last sentence. Find\nthe clips whose first sentence lies in that window. A clip may end after the window does. A clip:\n- opens on its hook, the line that makes a viewer stay;\n- makes sense to someone who has seen nothing else of this video;\n- completes its setup and its payoff;\n- starts on the first word of a sentence and ends on the last word of a sentence.\n\nLeave out intros, outros, sponsor reads and housekeeping.\n\nclipSeconds gives the shortest and the longest a clip may last, and a clip outside these limits\nis thrown away. When the limits are 25 and 60 seconds, a clip of 25 to 50 seconds is preferred.\nInside the limits the clip's own arc decides its length. Never pad a clip with sentences it does\nnot need in order to reach a length.\n\nclipCount is how many clips the whole video should yield at least, when it holds that many. This\nwindow is one of several, so do not reach for the number here. Return the clips this window\nreally holds, the best first, and an empty list when it holds none. language is the language of\nthe transcript. A brief that is not empty says what the user is looking for.\n\nThe task may carry a note. It tells what this user did with clips of earlier videos: how many\nthey rejected and for which reasons, and which hooks and lengths did best and worst once posted.\nLet the note tip a close call. The rules of this task and the brief come first.\n\nFor each clip give:\n- openingWords and closingWords: the first and the last five to ten words of the clip, quoted\n  exactly as the transcript has them. Give no time and no sentence number. The tool finds the\n  words in the transcript and takes the times from there, and it drops a clip whose words it\n  cannot find.\n- scores: hook, arc, value and share, each a whole number from 0 to 25. hook is how well the\n  first line holds a viewer who has no context, arc how complete the setup and the payoff are,\n  value what the viewer takes away, and share how likely a viewer is to send it to someone. The\n  scores rank the clips of this one video against each other.\n- reason: one sentence that says why this clip was picked.\n- title: a working title for the clip.\n- hookTitle: at most ten words to show on screen over the first seconds. It names something the\n  clip really holds.\n- hookType: number, story, list, hot-take, confession, contrarian, or none when the clip has no\n  hook of these kinds.\n- flag: null for most clips. needs-context when the clip leans on something said before it.\n  not-recommended when it is weak and still the best this window has. With a flag, note is one\n  sentence that says why.\n- platforms: a title and a description for each of tiktok, reels and shorts.\n\nWrite every title, hook title and description in the language of the transcript.\n",
+          "stream": true
+        },
+        "hasKey": true
+      },
+      {
+        "scenario": "talk",
+        "path": "/v1/messages?beta=true",
+        "beta": "server-side-fallback-2026-07-01",
+        "body": {
+          "max_tokens": 32000,
+          "messages": [
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "1 [0.00] Thank you all for coming tonight.\n2 [2.48] Before we start, a little housekeeping.\n3 [5.72] The coffee is at the back of the room, and the slides will be sent to everyone tomorrow morning.\n4 [11.94] I want to tell you about the worst day my bakery ever had.\n5 [16.30] It was a Saturday and winter, and the oven broke before sunrise.\n6 [21.18] We had a line of customers outside and nothing warm to sell.\n7 [25.60] I stood at the door and told every person the truth.\n8 [29.30] I said the oven is broken.\n9 [31.34] The bread is late, and I am sorry.\n10 [34.12] Nobody left angry.\n11 [35.94] Most of them came back the next day that morning taught me that customers forgive bad news.\n12 [42.56] What they do not forgive is silence.\n13 [45.22] Now let me talk about price, because almost everyone gets it wrong.\n14 [50.80] Most small shops set their price by looking at the shop across the street.\n15 [55.86] That is a mistake.\n16 [57.04] Your neighbor does not know your costs, and your neighbor is probably losing money too.\n17 [63.84] Start with what the bread costs you to make.\n18 [66.84] At the rent, the flower, the power, and your own time.\n19 [71.34] Then add enough so that a slow week does not close your doors.\n20 [75.58] If a customer says your bread is too expensive, do not argue.\n21 [80.64] Smile, and let them go.\n22 [83.02] The customers who stay are the ones who keep you open.\n23 [86.54] Here is something nobody told me about hiring.\n24 [90.34] The best baker I ever hired had never baked before.\n25 [94.22] She had worked in a hospital kitchen for many years.\n26 [98.10] She knew how to show up on time, how to keep a clean table, and how to stay calm when everything went wrong.\n27 [106.18] I could teach her bread in a month.\n28 [108.62] I could never have taught her that calm.\n29 [111.42] So when you hire, stop looking for skill.\n30 [114.72] Look for the habits that are hard to teach, and teach the rest yourself.\n31 [120.16] I also want to be honest about a mistake that almost ended the business.\n32 [125.30] A big hotel asked us to deliver bread every morning.\n33 [129.14] The order was huge, and I said yes before I finished reading the contract.\n34 [135.08] Within a few weeks, the hotel was most of our income.\n35 [138.94] Then they asked for a lower price, and I had no choice.\n36 [143.08] I had let a single customer become my boss.\n37 [146.92] It took a full year to get free.\n38 [149.38] My rule today is simple.\n39 [151.40] No customer is allowed to be more than a small slice of what we earn.\n40 [156.12] When one of them grows too large, I go and find others before I need them.\n41 [161.80] People often ask me how to know when it is time to grow.\n42 [165.96] My answer is that growth should feel boring.\n43 [169.04] If opening another shop feels like an adventure, you are not ready.\n44 [174.24] You are ready when the shop you have runs without you for a whole month, and nothing breaks.\n45 [180.40] Take a real holiday and turn off your phone.\n46 [183.58] If you come back and the bread is still good, you have built a business.\n47 [188.18] If you come back to a fire, you have only built a job for yourself.\n48 [193.40] Let me finish with the smallest lesson, which may be the most useful.\n49 [198.50] Write things down.\n50 [199.66] Every recipe, every supplier, every little trick that lives only in your head, the day you get sick, or tired, or simply want to leave early, that notebook is the difference between a shop that opens and a shop that stays dark.\n51 [217.08] I wrote ours on a rainy afternoon, and it has saved us more times than I can count.\n52 [223.14] That is everything I have for you tonight.\n53 [225.98] Thank you for listening, and thank you to the library for giving us this room.\n54 [231.30] Please stay for a coffee, and come and say hello.",
+                  "cache_control": {
+                    "type": "ephemeral"
+                  }
+                },
+                {
+                  "type": "text",
+                  "text": "{\"task\":\"cut\",\"window\":{\"id\":\"w03\",\"firstSentence\":32,\"lastSentence\":49},\"clipCount\":2,\"clipSeconds\":{\"min\":25,\"max\":60},\"language\":\"en\",\"brief\":\"\",\"note\":\"Of the last 5 clips this user decided on, 2 were rejected: 1 cut off mid-thought, 1 not interesting, 0 needing earlier context, 0 repeating another clip.\\nOf 3 posted clips with views logged, the best third opened with these hooks: hot-take 1, and lasted 41 seconds. The worst third opened with: story 1, and lasted 33 seconds.\"}"
+                }
+              ]
+            }
+          ],
+          "model": "claude-opus-5-5",
+          "output_config": {
+            "effort": "high",
+            "format": {
+              "schema": {
+                "$defs": {
+                  "ClipFlag": {
+                    "type": "string",
+                    "enum": [
+                      "needs-context",
+                      "not-recommended"
+                    ],
+                    "title": "ClipFlag"
+                  },
+                  "HookType": {
+                    "type": "string",
+                    "enum": [
+                      "number",
+                      "story",
+                      "list",
+                      "hot-take",
+                      "confession",
+                      "contrarian",
+                      "none"
+                    ],
+                    "title": "HookType"
+                  },
+                  "PlatformText": {
+                    "type": "object",
+                    "title": "PlatformText",
+                    "properties": {
+                      "title": {
+                        "type": "string",
+                        "title": "Title"
+                      },
+                      "description": {
+                        "type": "string",
+                        "title": "Description"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "title",
+                      "description"
+                    ]
+                  },
+                  "PlatformTexts": {
+                    "type": "object",
+                    "title": "PlatformTexts",
+                    "properties": {
+                      "tiktok": {
+                        "$ref": "#/$defs/PlatformText"
+                      },
+                      "reels": {
+                        "$ref": "#/$defs/PlatformText"
+                      },
+                      "shorts": {
+                        "$ref": "#/$defs/PlatformText"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "tiktok",
+                      "reels",
+                      "shorts"
+                    ]
+                  },
+                  "ProposedClip": {
+                    "type": "object",
+                    "title": "ProposedClip",
+                    "properties": {
+                      "openingWords": {
+                        "type": "string",
+                        "title": "Openingwords"
+                      },
+                      "closingWords": {
+                        "type": "string",
+                        "title": "Closingwords"
+                      },
+                      "scores": {
+                        "$ref": "#/$defs/ProposedScores"
+                      },
+                      "reason": {
+                        "type": "string",
+                        "title": "Reason"
+                      },
+                      "title": {
+                        "type": "string",
+                        "title": "Title"
+                      },
+                      "hookTitle": {
+                        "type": "string",
+                        "title": "Hooktitle"
+                      },
+                      "hookType": {
+                        "$ref": "#/$defs/HookType"
+                      },
+                      "flag": {
+                        "anyOf": [
+                          {
+                            "$ref": "#/$defs/ProposedFlag"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "platforms": {
+                        "$ref": "#/$defs/PlatformTexts"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "openingWords",
+                      "closingWords",
+                      "scores",
+                      "reason",
+                      "title",
+                      "hookTitle",
+                      "hookType",
+                      "flag",
+                      "platforms"
+                    ]
+                  },
+                  "ProposedFlag": {
+                    "type": "object",
+                    "title": "ProposedFlag",
+                    "properties": {
+                      "kind": {
+                        "$ref": "#/$defs/ClipFlag"
+                      },
+                      "note": {
+                        "type": "string",
+                        "title": "Note"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "kind",
+                      "note"
+                    ]
+                  },
+                  "ProposedScores": {
+                    "type": "object",
+                    "title": "ProposedScores",
+                    "properties": {
+                      "hook": {
+                        "type": "integer",
+                        "title": "Hook",
+                        "description": "{maximum: 25, minimum: 0}"
+                      },
+                      "arc": {
+                        "type": "integer",
+                        "title": "Arc",
+                        "description": "{maximum: 25, minimum: 0}"
+                      },
+                      "value": {
+                        "type": "integer",
+                        "title": "Value",
+                        "description": "{maximum: 25, minimum: 0}"
+                      },
+                      "share": {
+                        "type": "integer",
+                        "title": "Share",
+                        "description": "{maximum: 25, minimum: 0}"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "hook",
+                      "arc",
+                      "value",
+                      "share"
+                    ]
+                  }
+                },
+                "type": "object",
+                "title": "ProposedClips",
+                "properties": {
+                  "clips": {
+                    "type": "array",
+                    "title": "Clips",
+                    "items": {
+                      "$ref": "#/$defs/ProposedClip"
+                    }
+                  }
+                },
+                "additionalProperties": false,
+                "required": [
+                  "clips"
+                ]
+              },
+              "type": "json_schema"
+            }
+          },
+          "fallbacks": "default",
+          "system": "You cut short vertical clips from a long spoken video. You receive its transcript as numbered\nsentences. Each line holds the number of a sentence, the second it starts at in square brackets,\nand its text. After the transcript comes one task as a JSON object.\n\nThe task names one window of the transcript by the numbers of its first and last sentence. Find\nthe clips whose first sentence lies in that window. A clip may end after the window does. A clip:\n- opens on its hook, the line that makes a viewer stay;\n- makes sense to someone who has seen nothing else of this video;\n- completes its setup and its payoff;\n- starts on the first word of a sentence and ends on the last word of a sentence.\n\nLeave out intros, outros, sponsor reads and housekeeping.\n\nclipSeconds gives the shortest and the longest a clip may last, and a clip outside these limits\nis thrown away. When the limits are 25 and 60 seconds, a clip of 25 to 50 seconds is preferred.\nInside the limits the clip's own arc decides its length. Never pad a clip with sentences it does\nnot need in order to reach a length.\n\nclipCount is how many clips the whole video should yield at least, when it holds that many. This\nwindow is one of several, so do not reach for the number here. Return the clips this window\nreally holds, the best first, and an empty list when it holds none. language is the language of\nthe transcript. A brief that is not empty says what the user is looking for.\n\nThe task may carry a note. It tells what this user did with clips of earlier videos: how many\nthey rejected and for which reasons, and which hooks and lengths did best and worst once posted.\nLet the note tip a close call. The rules of this task and the brief come first.\n\nFor each clip give:\n- openingWords and closingWords: the first and the last five to ten words of the clip, quoted\n  exactly as the transcript has them. Give no time and no sentence number. The tool finds the\n  words in the transcript and takes the times from there, and it drops a clip whose words it\n  cannot find.\n- scores: hook, arc, value and share, each a whole number from 0 to 25. hook is how well the\n  first line holds a viewer who has no context, arc how complete the setup and the payoff are,\n  value what the viewer takes away, and share how likely a viewer is to send it to someone. The\n  scores rank the clips of this one video against each other.\n- reason: one sentence that says why this clip was picked.\n- title: a working title for the clip.\n- hookTitle: at most ten words to show on screen over the first seconds. It names something the\n  clip really holds.\n- hookType: number, story, list, hot-take, confession, contrarian, or none when the clip has no\n  hook of these kinds.\n- flag: null for most clips. needs-context when the clip leans on something said before it.\n  not-recommended when it is weak and still the best this window has. With a flag, note is one\n  sentence that says why.\n- platforms: a title and a description for each of tiktok, reels and shorts.\n\nWrite every title, hook title and description in the language of the transcript.\n",
+          "stream": true
+        },
+        "hasKey": true
+      }
+    ]
+  },
+  "afterForgetting": {
+    "rejections": {
+      "cutOff": 0,
+      "notInteresting": 0,
+      "needsContext": 0,
+      "repeat": 0
+    },
+    "requests": [
+      {
+        "scenario": "talk",
+        "path": "/v1/messages?beta=true",
+        "beta": "server-side-fallback-2026-07-01",
+        "body": {
+          "max_tokens": 32000,
+          "messages": [
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "1 [0.00] Thank you all for coming tonight.\n2 [2.48] Before we start, a little housekeeping.\n3 [5.72] The coffee is at the back of the room, and the slides will be sent to everyone tomorrow morning.\n4 [11.94] I want to tell you about the worst day my bakery ever had.\n5 [16.30] It was a Saturday and winter, and the oven broke before sunrise.\n6 [21.18] We had a line of customers outside and nothing warm to sell.\n7 [25.60] I stood at the door and told every person the truth.\n8 [29.30] I said the oven is broken.\n9 [31.34] The bread is late, and I am sorry.\n10 [34.12] Nobody left angry.\n11 [35.94] Most of them came back the next day that morning taught me that customers forgive bad news.\n12 [42.56] What they do not forgive is silence.\n13 [45.22] Now let me talk about price, because almost everyone gets it wrong.\n14 [50.80] Most small shops set their price by looking at the shop across the street.\n15 [55.86] That is a mistake.\n16 [57.04] Your neighbor does not know your costs, and your neighbor is probably losing money too.\n17 [63.84] Start with what the bread costs you to make.\n18 [66.84] At the rent, the flower, the power, and your own time.\n19 [71.34] Then add enough so that a slow week does not close your doors.\n20 [75.58] If a customer says your bread is too expensive, do not argue.\n21 [80.64] Smile, and let them go.\n22 [83.02] The customers who stay are the ones who keep you open.\n23 [86.54] Here is something nobody told me about hiring.\n24 [90.34] The best baker I ever hired had never baked before.\n25 [94.22] She had worked in a hospital kitchen for many years.\n26 [98.10] She knew how to show up on time, how to keep a clean table, and how to stay calm when everything went wrong.\n27 [106.18] I could teach her bread in a month.\n28 [108.62] I could never have taught her that calm.\n29 [111.42] So when you hire, stop looking for skill.\n30 [114.72] Look for the habits that are hard to teach, and teach the rest yourself.\n31 [120.16] I also want to be honest about a mistake that almost ended the business.\n32 [125.30] A big hotel asked us to deliver bread every morning.\n33 [129.14] The order was huge, and I said yes before I finished reading the contract.\n34 [135.08] Within a few weeks, the hotel was most of our income.\n35 [138.94] Then they asked for a lower price, and I had no choice.\n36 [143.08] I had let a single customer become my boss.\n37 [146.92] It took a full year to get free.\n38 [149.38] My rule today is simple.\n39 [151.40] No customer is allowed to be more than a small slice of what we earn.\n40 [156.12] When one of them grows too large, I go and find others before I need them.\n41 [161.80] People often ask me how to know when it is time to grow.\n42 [165.96] My answer is that growth should feel boring.\n43 [169.04] If opening another shop feels like an adventure, you are not ready.\n44 [174.24] You are ready when the shop you have runs without you for a whole month, and nothing breaks.\n45 [180.40] Take a real holiday and turn off your phone.\n46 [183.58] If you come back and the bread is still good, you have built a business.\n47 [188.18] If you come back to a fire, you have only built a job for yourself.\n48 [193.40] Let me finish with the smallest lesson, which may be the most useful.\n49 [198.50] Write things down.\n50 [199.66] Every recipe, every supplier, every little trick that lives only in your head, the day you get sick, or tired, or simply want to leave early, that notebook is the difference between a shop that opens and a shop that stays dark.\n51 [217.08] I wrote ours on a rainy afternoon, and it has saved us more times than I can count.\n52 [223.14] That is everything I have for you tonight.\n53 [225.98] Thank you for listening, and thank you to the library for giving us this room.\n54 [231.30] Please stay for a coffee, and come and say hello.",
+                  "cache_control": {
+                    "type": "ephemeral"
+                  }
+                },
+                {
+                  "type": "text",
+                  "text": "{\"task\":\"score\",\"windows\":[{\"id\":\"w01\",\"firstSentence\":1,\"lastSentence\":23},{\"id\":\"w02\",\"firstSentence\":17,\"lastSentence\":38},{\"id\":\"w03\",\"firstSentence\":32,\"lastSentence\":49},{\"id\":\"w04\",\"firstSentence\":44,\"lastSentence\":54}],\"clipSeconds\":{\"min\":25,\"max\":60},\"language\":\"en\",\"brief\":\"\"}"
+                }
+              ]
+            }
+          ],
+          "model": "claude-sonnet-5-5",
+          "output_config": {
+            "effort": "medium",
+            "format": {
+              "schema": {
+                "$defs": {
+                  "ScoredWindow": {
+                    "type": "object",
+                    "title": "ScoredWindow",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "title": "Id"
+                      },
+                      "score": {
+                        "type": "integer",
+                        "title": "Score",
+                        "description": "{maximum: 100, minimum: 0}"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "id",
+                      "score"
+                    ]
+                  }
+                },
+                "type": "object",
+                "title": "WindowScores",
+                "properties": {
+                  "windows": {
+                    "type": "array",
+                    "title": "Windows",
+                    "items": {
+                      "$ref": "#/$defs/ScoredWindow"
+                    }
+                  }
+                },
+                "additionalProperties": false,
+                "required": [
+                  "windows"
+                ]
+              },
+              "type": "json_schema"
+            }
+          },
+          "fallbacks": "default",
+          "system": "You help pick short vertical clips from a long spoken video. You receive its transcript as\nnumbered sentences. Each line holds the number of a sentence, the second it starts at in square\nbrackets, and its text. After the transcript comes one task as a JSON object.\n\nThe task lists windows of the transcript. Each window has an id and the numbers of its first and\nlast sentence. Score every window from 0 to 100 on one question:\nwould the opening two seconds hold a viewer who has no context?\nThink of someone scrolling who has seen nothing else of this video. Take the strongest line a clip\nfrom this window could open on, and judge whether that person stays to hear the next sentence.\n\nUse the whole range from 0 to 100. Most windows hold no clip, and their scores should say so.\nIntros, outros, sponsor reads, housekeeping and talk that leans on what was said before score low.\nKeep the high scores for windows where a line can open cold and the thought that follows it is\ncomplete.\n\nThe task also gives the shortest and longest length of a clip in seconds, the language of the\ntranscript and a brief. A brief that is not empty says what the user is looking for, and windows\nthat hold it deserve a higher score.\n\nThe task may carry a note. It tells what this user did with clips of earlier videos: how many\nthey rejected and for which reasons, and which hooks and lengths did best and worst once posted.\nLet the note tip a close call. The rules of this task and the brief come first.\n\nReply with a whole number for each window, named by its id. Score every window of the task once,\nand no window the task does not list.\n",
+          "stream": true
+        },
+        "hasKey": true
+      },
+      {
+        "scenario": "talk",
+        "path": "/v1/messages?beta=true",
+        "beta": "server-side-fallback-2026-07-01",
+        "body": {
+          "max_tokens": 32000,
+          "messages": [
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "1 [0.00] Thank you all for coming tonight.\n2 [2.48] Before we start, a little housekeeping.\n3 [5.72] The coffee is at the back of the room, and the slides will be sent to everyone tomorrow morning.\n4 [11.94] I want to tell you about the worst day my bakery ever had.\n5 [16.30] It was a Saturday and winter, and the oven broke before sunrise.\n6 [21.18] We had a line of customers outside and nothing warm to sell.\n7 [25.60] I stood at the door and told every person the truth.\n8 [29.30] I said the oven is broken.\n9 [31.34] The bread is late, and I am sorry.\n10 [34.12] Nobody left angry.\n11 [35.94] Most of them came back the next day that morning taught me that customers forgive bad news.\n12 [42.56] What they do not forgive is silence.\n13 [45.22] Now let me talk about price, because almost everyone gets it wrong.\n14 [50.80] Most small shops set their price by looking at the shop across the street.\n15 [55.86] That is a mistake.\n16 [57.04] Your neighbor does not know your costs, and your neighbor is probably losing money too.\n17 [63.84] Start with what the bread costs you to make.\n18 [66.84] At the rent, the flower, the power, and your own time.\n19 [71.34] Then add enough so that a slow week does not close your doors.\n20 [75.58] If a customer says your bread is too expensive, do not argue.\n21 [80.64] Smile, and let them go.\n22 [83.02] The customers who stay are the ones who keep you open.\n23 [86.54] Here is something nobody told me about hiring.\n24 [90.34] The best baker I ever hired had never baked before.\n25 [94.22] She had worked in a hospital kitchen for many years.\n26 [98.10] She knew how to show up on time, how to keep a clean table, and how to stay calm when everything went wrong.\n27 [106.18] I could teach her bread in a month.\n28 [108.62] I could never have taught her that calm.\n29 [111.42] So when you hire, stop looking for skill.\n30 [114.72] Look for the habits that are hard to teach, and teach the rest yourself.\n31 [120.16] I also want to be honest about a mistake that almost ended the business.\n32 [125.30] A big hotel asked us to deliver bread every morning.\n33 [129.14] The order was huge, and I said yes before I finished reading the contract.\n34 [135.08] Within a few weeks, the hotel was most of our income.\n35 [138.94] Then they asked for a lower price, and I had no choice.\n36 [143.08] I had let a single customer become my boss.\n37 [146.92] It took a full year to get free.\n38 [149.38] My rule today is simple.\n39 [151.40] No customer is allowed to be more than a small slice of what we earn.\n40 [156.12] When one of them grows too large, I go and find others before I need them.\n41 [161.80] People often ask me how to know when it is time to grow.\n42 [165.96] My answer is that growth should feel boring.\n43 [169.04] If opening another shop feels like an adventure, you are not ready.\n44 [174.24] You are ready when the shop you have runs without you for a whole month, and nothing breaks.\n45 [180.40] Take a real holiday and turn off your phone.\n46 [183.58] If you come back and the bread is still good, you have built a business.\n47 [188.18] If you come back to a fire, you have only built a job for yourself.\n48 [193.40] Let me finish with the smallest lesson, which may be the most useful.\n49 [198.50] Write things down.\n50 [199.66] Every recipe, every supplier, every little trick that lives only in your head, the day you get sick, or tired, or simply want to leave early, that notebook is the difference between a shop that opens and a shop that stays dark.\n51 [217.08] I wrote ours on a rainy afternoon, and it has saved us more times than I can count.\n52 [223.14] That is everything I have for you tonight.\n53 [225.98] Thank you for listening, and thank you to the library for giving us this room.\n54 [231.30] Please stay for a coffee, and come and say hello.",
+                  "cache_control": {
+                    "type": "ephemeral"
+                  }
+                },
+                {
+                  "type": "text",
+                  "text": "{\"task\":\"cut\",\"window\":{\"id\":\"w01\",\"firstSentence\":1,\"lastSentence\":23},\"clipCount\":2,\"clipSeconds\":{\"min\":25,\"max\":60},\"language\":\"en\",\"brief\":\"\"}"
+                }
+              ]
+            }
+          ],
+          "model": "claude-opus-5-5",
+          "output_config": {
+            "effort": "high",
+            "format": {
+              "schema": {
+                "$defs": {
+                  "ClipFlag": {
+                    "type": "string",
+                    "enum": [
+                      "needs-context",
+                      "not-recommended"
+                    ],
+                    "title": "ClipFlag"
+                  },
+                  "HookType": {
+                    "type": "string",
+                    "enum": [
+                      "number",
+                      "story",
+                      "list",
+                      "hot-take",
+                      "confession",
+                      "contrarian",
+                      "none"
+                    ],
+                    "title": "HookType"
+                  },
+                  "PlatformText": {
+                    "type": "object",
+                    "title": "PlatformText",
+                    "properties": {
+                      "title": {
+                        "type": "string",
+                        "title": "Title"
+                      },
+                      "description": {
+                        "type": "string",
+                        "title": "Description"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "title",
+                      "description"
+                    ]
+                  },
+                  "PlatformTexts": {
+                    "type": "object",
+                    "title": "PlatformTexts",
+                    "properties": {
+                      "tiktok": {
+                        "$ref": "#/$defs/PlatformText"
+                      },
+                      "reels": {
+                        "$ref": "#/$defs/PlatformText"
+                      },
+                      "shorts": {
+                        "$ref": "#/$defs/PlatformText"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "tiktok",
+                      "reels",
+                      "shorts"
+                    ]
+                  },
+                  "ProposedClip": {
+                    "type": "object",
+                    "title": "ProposedClip",
+                    "properties": {
+                      "openingWords": {
+                        "type": "string",
+                        "title": "Openingwords"
+                      },
+                      "closingWords": {
+                        "type": "string",
+                        "title": "Closingwords"
+                      },
+                      "scores": {
+                        "$ref": "#/$defs/ProposedScores"
+                      },
+                      "reason": {
+                        "type": "string",
+                        "title": "Reason"
+                      },
+                      "title": {
+                        "type": "string",
+                        "title": "Title"
+                      },
+                      "hookTitle": {
+                        "type": "string",
+                        "title": "Hooktitle"
+                      },
+                      "hookType": {
+                        "$ref": "#/$defs/HookType"
+                      },
+                      "flag": {
+                        "anyOf": [
+                          {
+                            "$ref": "#/$defs/ProposedFlag"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "platforms": {
+                        "$ref": "#/$defs/PlatformTexts"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "openingWords",
+                      "closingWords",
+                      "scores",
+                      "reason",
+                      "title",
+                      "hookTitle",
+                      "hookType",
+                      "flag",
+                      "platforms"
+                    ]
+                  },
+                  "ProposedFlag": {
+                    "type": "object",
+                    "title": "ProposedFlag",
+                    "properties": {
+                      "kind": {
+                        "$ref": "#/$defs/ClipFlag"
+                      },
+                      "note": {
+                        "type": "string",
+                        "title": "Note"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "kind",
+                      "note"
+                    ]
+                  },
+                  "ProposedScores": {
+                    "type": "object",
+                    "title": "ProposedScores",
+                    "properties": {
+                      "hook": {
+                        "type": "integer",
+                        "title": "Hook",
+                        "description": "{maximum: 25, minimum: 0}"
+                      },
+                      "arc": {
+                        "type": "integer",
+                        "title": "Arc",
+                        "description": "{maximum: 25, minimum: 0}"
+                      },
+                      "value": {
+                        "type": "integer",
+                        "title": "Value",
+                        "description": "{maximum: 25, minimum: 0}"
+                      },
+                      "share": {
+                        "type": "integer",
+                        "title": "Share",
+                        "description": "{maximum: 25, minimum: 0}"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "hook",
+                      "arc",
+                      "value",
+                      "share"
+                    ]
+                  }
+                },
+                "type": "object",
+                "title": "ProposedClips",
+                "properties": {
+                  "clips": {
+                    "type": "array",
+                    "title": "Clips",
+                    "items": {
+                      "$ref": "#/$defs/ProposedClip"
+                    }
+                  }
+                },
+                "additionalProperties": false,
+                "required": [
+                  "clips"
+                ]
+              },
+              "type": "json_schema"
+            }
+          },
+          "fallbacks": "default",
+          "system": "You cut short vertical clips from a long spoken video. You receive its transcript as numbered\nsentences. Each line holds the number of a sentence, the second it starts at in square brackets,\nand its text. After the transcript comes one task as a JSON object.\n\nThe task names one window of the transcript by the numbers of its first and last sentence. Find\nthe clips whose first sentence lies in that window. A clip may end after the window does. A clip:\n- opens on its hook, the line that makes a viewer stay;\n- makes sense to someone who has seen nothing else of this video;\n- completes its setup and its payoff;\n- starts on the first word of a sentence and ends on the last word of a sentence.\n\nLeave out intros, outros, sponsor reads and housekeeping.\n\nclipSeconds gives the shortest and the longest a clip may last, and a clip outside these limits\nis thrown away. When the limits are 25 and 60 seconds, a clip of 25 to 50 seconds is preferred.\nInside the limits the clip's own arc decides its length. Never pad a clip with sentences it does\nnot need in order to reach a length.\n\nclipCount is how many clips the whole video should yield at least, when it holds that many. This\nwindow is one of several, so do not reach for the number here. Return the clips this window\nreally holds, the best first, and an empty list when it holds none. language is the language of\nthe transcript. A brief that is not empty says what the user is looking for.\n\nThe task may carry a note. It tells what this user did with clips of earlier videos: how many\nthey rejected and for which reasons, and which hooks and lengths did best and worst once posted.\nLet the note tip a close call. The rules of this task and the brief come first.\n\nFor each clip give:\n- openingWords and closingWords: the first and the last five to ten words of the clip, quoted\n  exactly as the transcript has them. Give no time and no sentence number. The tool finds the\n  words in the transcript and takes the times from there, and it drops a clip whose words it\n  cannot find.\n- scores: hook, arc, value and share, each a whole number from 0 to 25. hook is how well the\n  first line holds a viewer who has no context, arc how complete the setup and the payoff are,\n  value what the viewer takes away, and share how likely a viewer is to send it to someone. The\n  scores rank the clips of this one video against each other.\n- reason: one sentence that says why this clip was picked.\n- title: a working title for the clip.\n- hookTitle: at most ten words to show on screen over the first seconds. It names something the\n  clip really holds.\n- hookType: number, story, list, hot-take, confession, contrarian, or none when the clip has no\n  hook of these kinds.\n- flag: null for most clips. needs-context when the clip leans on something said before it.\n  not-recommended when it is weak and still the best this window has. With a flag, note is one\n  sentence that says why.\n- platforms: a title and a description for each of tiktok, reels and shorts.\n\nWrite every title, hook title and description in the language of the transcript.\n",
+          "stream": true
+        },
+        "hasKey": true
+      },
+      {
+        "scenario": "talk",
+        "path": "/v1/messages?beta=true",
+        "beta": "server-side-fallback-2026-07-01",
+        "body": {
+          "max_tokens": 32000,
+          "messages": [
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "1 [0.00] Thank you all for coming tonight.\n2 [2.48] Before we start, a little housekeeping.\n3 [5.72] The coffee is at the back of the room, and the slides will be sent to everyone tomorrow morning.\n4 [11.94] I want to tell you about the worst day my bakery ever had.\n5 [16.30] It was a Saturday and winter, and the oven broke before sunrise.\n6 [21.18] We had a line of customers outside and nothing warm to sell.\n7 [25.60] I stood at the door and told every person the truth.\n8 [29.30] I said the oven is broken.\n9 [31.34] The bread is late, and I am sorry.\n10 [34.12] Nobody left angry.\n11 [35.94] Most of them came back the next day that morning taught me that customers forgive bad news.\n12 [42.56] What they do not forgive is silence.\n13 [45.22] Now let me talk about price, because almost everyone gets it wrong.\n14 [50.80] Most small shops set their price by looking at the shop across the street.\n15 [55.86] That is a mistake.\n16 [57.04] Your neighbor does not know your costs, and your neighbor is probably losing money too.\n17 [63.84] Start with what the bread costs you to make.\n18 [66.84] At the rent, the flower, the power, and your own time.\n19 [71.34] Then add enough so that a slow week does not close your doors.\n20 [75.58] If a customer says your bread is too expensive, do not argue.\n21 [80.64] Smile, and let them go.\n22 [83.02] The customers who stay are the ones who keep you open.\n23 [86.54] Here is something nobody told me about hiring.\n24 [90.34] The best baker I ever hired had never baked before.\n25 [94.22] She had worked in a hospital kitchen for many years.\n26 [98.10] She knew how to show up on time, how to keep a clean table, and how to stay calm when everything went wrong.\n27 [106.18] I could teach her bread in a month.\n28 [108.62] I could never have taught her that calm.\n29 [111.42] So when you hire, stop looking for skill.\n30 [114.72] Look for the habits that are hard to teach, and teach the rest yourself.\n31 [120.16] I also want to be honest about a mistake that almost ended the business.\n32 [125.30] A big hotel asked us to deliver bread every morning.\n33 [129.14] The order was huge, and I said yes before I finished reading the contract.\n34 [135.08] Within a few weeks, the hotel was most of our income.\n35 [138.94] Then they asked for a lower price, and I had no choice.\n36 [143.08] I had let a single customer become my boss.\n37 [146.92] It took a full year to get free.\n38 [149.38] My rule today is simple.\n39 [151.40] No customer is allowed to be more than a small slice of what we earn.\n40 [156.12] When one of them grows too large, I go and find others before I need them.\n41 [161.80] People often ask me how to know when it is time to grow.\n42 [165.96] My answer is that growth should feel boring.\n43 [169.04] If opening another shop feels like an adventure, you are not ready.\n44 [174.24] You are ready when the shop you have runs without you for a whole month, and nothing breaks.\n45 [180.40] Take a real holiday and turn off your phone.\n46 [183.58] If you come back and the bread is still good, you have built a business.\n47 [188.18] If you come back to a fire, you have only built a job for yourself.\n48 [193.40] Let me finish with the smallest lesson, which may be the most useful.\n49 [198.50] Write things down.\n50 [199.66] Every recipe, every supplier, every little trick that lives only in your head, the day you get sick, or tired, or simply want to leave early, that notebook is the difference between a shop that opens and a shop that stays dark.\n51 [217.08] I wrote ours on a rainy afternoon, and it has saved us more times than I can count.\n52 [223.14] That is everything I have for you tonight.\n53 [225.98] Thank you for listening, and thank you to the library for giving us this room.\n54 [231.30] Please stay for a coffee, and come and say hello.",
+                  "cache_control": {
+                    "type": "ephemeral"
+                  }
+                },
+                {
+                  "type": "text",
+                  "text": "{\"task\":\"cut\",\"window\":{\"id\":\"w02\",\"firstSentence\":17,\"lastSentence\":38},\"clipCount\":2,\"clipSeconds\":{\"min\":25,\"max\":60},\"language\":\"en\",\"brief\":\"\"}"
+                }
+              ]
+            }
+          ],
+          "model": "claude-opus-5-5",
+          "output_config": {
+            "effort": "high",
+            "format": {
+              "schema": {
+                "$defs": {
+                  "ClipFlag": {
+                    "type": "string",
+                    "enum": [
+                      "needs-context",
+                      "not-recommended"
+                    ],
+                    "title": "ClipFlag"
+                  },
+                  "HookType": {
+                    "type": "string",
+                    "enum": [
+                      "number",
+                      "story",
+                      "list",
+                      "hot-take",
+                      "confession",
+                      "contrarian",
+                      "none"
+                    ],
+                    "title": "HookType"
+                  },
+                  "PlatformText": {
+                    "type": "object",
+                    "title": "PlatformText",
+                    "properties": {
+                      "title": {
+                        "type": "string",
+                        "title": "Title"
+                      },
+                      "description": {
+                        "type": "string",
+                        "title": "Description"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "title",
+                      "description"
+                    ]
+                  },
+                  "PlatformTexts": {
+                    "type": "object",
+                    "title": "PlatformTexts",
+                    "properties": {
+                      "tiktok": {
+                        "$ref": "#/$defs/PlatformText"
+                      },
+                      "reels": {
+                        "$ref": "#/$defs/PlatformText"
+                      },
+                      "shorts": {
+                        "$ref": "#/$defs/PlatformText"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "tiktok",
+                      "reels",
+                      "shorts"
+                    ]
+                  },
+                  "ProposedClip": {
+                    "type": "object",
+                    "title": "ProposedClip",
+                    "properties": {
+                      "openingWords": {
+                        "type": "string",
+                        "title": "Openingwords"
+                      },
+                      "closingWords": {
+                        "type": "string",
+                        "title": "Closingwords"
+                      },
+                      "scores": {
+                        "$ref": "#/$defs/ProposedScores"
+                      },
+                      "reason": {
+                        "type": "string",
+                        "title": "Reason"
+                      },
+                      "title": {
+                        "type": "string",
+                        "title": "Title"
+                      },
+                      "hookTitle": {
+                        "type": "string",
+                        "title": "Hooktitle"
+                      },
+                      "hookType": {
+                        "$ref": "#/$defs/HookType"
+                      },
+                      "flag": {
+                        "anyOf": [
+                          {
+                            "$ref": "#/$defs/ProposedFlag"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "platforms": {
+                        "$ref": "#/$defs/PlatformTexts"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "openingWords",
+                      "closingWords",
+                      "scores",
+                      "reason",
+                      "title",
+                      "hookTitle",
+                      "hookType",
+                      "flag",
+                      "platforms"
+                    ]
+                  },
+                  "ProposedFlag": {
+                    "type": "object",
+                    "title": "ProposedFlag",
+                    "properties": {
+                      "kind": {
+                        "$ref": "#/$defs/ClipFlag"
+                      },
+                      "note": {
+                        "type": "string",
+                        "title": "Note"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "kind",
+                      "note"
+                    ]
+                  },
+                  "ProposedScores": {
+                    "type": "object",
+                    "title": "ProposedScores",
+                    "properties": {
+                      "hook": {
+                        "type": "integer",
+                        "title": "Hook",
+                        "description": "{maximum: 25, minimum: 0}"
+                      },
+                      "arc": {
+                        "type": "integer",
+                        "title": "Arc",
+                        "description": "{maximum: 25, minimum: 0}"
+                      },
+                      "value": {
+                        "type": "integer",
+                        "title": "Value",
+                        "description": "{maximum: 25, minimum: 0}"
+                      },
+                      "share": {
+                        "type": "integer",
+                        "title": "Share",
+                        "description": "{maximum: 25, minimum: 0}"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "hook",
+                      "arc",
+                      "value",
+                      "share"
+                    ]
+                  }
+                },
+                "type": "object",
+                "title": "ProposedClips",
+                "properties": {
+                  "clips": {
+                    "type": "array",
+                    "title": "Clips",
+                    "items": {
+                      "$ref": "#/$defs/ProposedClip"
+                    }
+                  }
+                },
+                "additionalProperties": false,
+                "required": [
+                  "clips"
+                ]
+              },
+              "type": "json_schema"
+            }
+          },
+          "fallbacks": "default",
+          "system": "You cut short vertical clips from a long spoken video. You receive its transcript as numbered\nsentences. Each line holds the number of a sentence, the second it starts at in square brackets,\nand its text. After the transcript comes one task as a JSON object.\n\nThe task names one window of the transcript by the numbers of its first and last sentence. Find\nthe clips whose first sentence lies in that window. A clip may end after the window does. A clip:\n- opens on its hook, the line that makes a viewer stay;\n- makes sense to someone who has seen nothing else of this video;\n- completes its setup and its payoff;\n- starts on the first word of a sentence and ends on the last word of a sentence.\n\nLeave out intros, outros, sponsor reads and housekeeping.\n\nclipSeconds gives the shortest and the longest a clip may last, and a clip outside these limits\nis thrown away. When the limits are 25 and 60 seconds, a clip of 25 to 50 seconds is preferred.\nInside the limits the clip's own arc decides its length. Never pad a clip with sentences it does\nnot need in order to reach a length.\n\nclipCount is how many clips the whole video should yield at least, when it holds that many. This\nwindow is one of several, so do not reach for the number here. Return the clips this window\nreally holds, the best first, and an empty list when it holds none. language is the language of\nthe transcript. A brief that is not empty says what the user is looking for.\n\nThe task may carry a note. It tells what this user did with clips of earlier videos: how many\nthey rejected and for which reasons, and which hooks and lengths did best and worst once posted.\nLet the note tip a close call. The rules of this task and the brief come first.\n\nFor each clip give:\n- openingWords and closingWords: the first and the last five to ten words of the clip, quoted\n  exactly as the transcript has them. Give no time and no sentence number. The tool finds the\n  words in the transcript and takes the times from there, and it drops a clip whose words it\n  cannot find.\n- scores: hook, arc, value and share, each a whole number from 0 to 25. hook is how well the\n  first line holds a viewer who has no context, arc how complete the setup and the payoff are,\n  value what the viewer takes away, and share how likely a viewer is to send it to someone. The\n  scores rank the clips of this one video against each other.\n- reason: one sentence that says why this clip was picked.\n- title: a working title for the clip.\n- hookTitle: at most ten words to show on screen over the first seconds. It names something the\n  clip really holds.\n- hookType: number, story, list, hot-take, confession, contrarian, or none when the clip has no\n  hook of these kinds.\n- flag: null for most clips. needs-context when the clip leans on something said before it.\n  not-recommended when it is weak and still the best this window has. With a flag, note is one\n  sentence that says why.\n- platforms: a title and a description for each of tiktok, reels and shorts.\n\nWrite every title, hook title and description in the language of the transcript.\n",
+          "stream": true
+        },
+        "hasKey": true
+      },
+      {
+        "scenario": "talk",
+        "path": "/v1/messages?beta=true",
+        "beta": "server-side-fallback-2026-07-01",
+        "body": {
+          "max_tokens": 32000,
+          "messages": [
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "1 [0.00] Thank you all for coming tonight.\n2 [2.48] Before we start, a little housekeeping.\n3 [5.72] The coffee is at the back of the room, and the slides will be sent to everyone tomorrow morning.\n4 [11.94] I want to tell you about the worst day my bakery ever had.\n5 [16.30] It was a Saturday and winter, and the oven broke before sunrise.\n6 [21.18] We had a line of customers outside and nothing warm to sell.\n7 [25.60] I stood at the door and told every person the truth.\n8 [29.30] I said the oven is broken.\n9 [31.34] The bread is late, and I am sorry.\n10 [34.12] Nobody left angry.\n11 [35.94] Most of them came back the next day that morning taught me that customers forgive bad news.\n12 [42.56] What they do not forgive is silence.\n13 [45.22] Now let me talk about price, because almost everyone gets it wrong.\n14 [50.80] Most small shops set their price by looking at the shop across the street.\n15 [55.86] That is a mistake.\n16 [57.04] Your neighbor does not know your costs, and your neighbor is probably losing money too.\n17 [63.84] Start with what the bread costs you to make.\n18 [66.84] At the rent, the flower, the power, and your own time.\n19 [71.34] Then add enough so that a slow week does not close your doors.\n20 [75.58] If a customer says your bread is too expensive, do not argue.\n21 [80.64] Smile, and let them go.\n22 [83.02] The customers who stay are the ones who keep you open.\n23 [86.54] Here is something nobody told me about hiring.\n24 [90.34] The best baker I ever hired had never baked before.\n25 [94.22] She had worked in a hospital kitchen for many years.\n26 [98.10] She knew how to show up on time, how to keep a clean table, and how to stay calm when everything went wrong.\n27 [106.18] I could teach her bread in a month.\n28 [108.62] I could never have taught her that calm.\n29 [111.42] So when you hire, stop looking for skill.\n30 [114.72] Look for the habits that are hard to teach, and teach the rest yourself.\n31 [120.16] I also want to be honest about a mistake that almost ended the business.\n32 [125.30] A big hotel asked us to deliver bread every morning.\n33 [129.14] The order was huge, and I said yes before I finished reading the contract.\n34 [135.08] Within a few weeks, the hotel was most of our income.\n35 [138.94] Then they asked for a lower price, and I had no choice.\n36 [143.08] I had let a single customer become my boss.\n37 [146.92] It took a full year to get free.\n38 [149.38] My rule today is simple.\n39 [151.40] No customer is allowed to be more than a small slice of what we earn.\n40 [156.12] When one of them grows too large, I go and find others before I need them.\n41 [161.80] People often ask me how to know when it is time to grow.\n42 [165.96] My answer is that growth should feel boring.\n43 [169.04] If opening another shop feels like an adventure, you are not ready.\n44 [174.24] You are ready when the shop you have runs without you for a whole month, and nothing breaks.\n45 [180.40] Take a real holiday and turn off your phone.\n46 [183.58] If you come back and the bread is still good, you have built a business.\n47 [188.18] If you come back to a fire, you have only built a job for yourself.\n48 [193.40] Let me finish with the smallest lesson, which may be the most useful.\n49 [198.50] Write things down.\n50 [199.66] Every recipe, every supplier, every little trick that lives only in your head, the day you get sick, or tired, or simply want to leave early, that notebook is the difference between a shop that opens and a shop that stays dark.\n51 [217.08] I wrote ours on a rainy afternoon, and it has saved us more times than I can count.\n52 [223.14] That is everything I have for you tonight.\n53 [225.98] Thank you for listening, and thank you to the library for giving us this room.\n54 [231.30] Please stay for a coffee, and come and say hello.",
+                  "cache_control": {
+                    "type": "ephemeral"
+                  }
+                },
+                {
+                  "type": "text",
+                  "text": "{\"task\":\"cut\",\"window\":{\"id\":\"w03\",\"firstSentence\":32,\"lastSentence\":49},\"clipCount\":2,\"clipSeconds\":{\"min\":25,\"max\":60},\"language\":\"en\",\"brief\":\"\"}"
+                }
+              ]
+            }
+          ],
+          "model": "claude-opus-5-5",
+          "output_config": {
+            "effort": "high",
+            "format": {
+              "schema": {
+                "$defs": {
+                  "ClipFlag": {
+                    "type": "string",
+                    "enum": [
+                      "needs-context",
+                      "not-recommended"
+                    ],
+                    "title": "ClipFlag"
+                  },
+                  "HookType": {
+                    "type": "string",
+                    "enum": [
+                      "number",
+                      "story",
+                      "list",
+                      "hot-take",
+                      "confession",
+                      "contrarian",
+                      "none"
+                    ],
+                    "title": "HookType"
+                  },
+                  "PlatformText": {
+                    "type": "object",
+                    "title": "PlatformText",
+                    "properties": {
+                      "title": {
+                        "type": "string",
+                        "title": "Title"
+                      },
+                      "description": {
+                        "type": "string",
+                        "title": "Description"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "title",
+                      "description"
+                    ]
+                  },
+                  "PlatformTexts": {
+                    "type": "object",
+                    "title": "PlatformTexts",
+                    "properties": {
+                      "tiktok": {
+                        "$ref": "#/$defs/PlatformText"
+                      },
+                      "reels": {
+                        "$ref": "#/$defs/PlatformText"
+                      },
+                      "shorts": {
+                        "$ref": "#/$defs/PlatformText"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "tiktok",
+                      "reels",
+                      "shorts"
+                    ]
+                  },
+                  "ProposedClip": {
+                    "type": "object",
+                    "title": "ProposedClip",
+                    "properties": {
+                      "openingWords": {
+                        "type": "string",
+                        "title": "Openingwords"
+                      },
+                      "closingWords": {
+                        "type": "string",
+                        "title": "Closingwords"
+                      },
+                      "scores": {
+                        "$ref": "#/$defs/ProposedScores"
+                      },
+                      "reason": {
+                        "type": "string",
+                        "title": "Reason"
+                      },
+                      "title": {
+                        "type": "string",
+                        "title": "Title"
+                      },
+                      "hookTitle": {
+                        "type": "string",
+                        "title": "Hooktitle"
+                      },
+                      "hookType": {
+                        "$ref": "#/$defs/HookType"
+                      },
+                      "flag": {
+                        "anyOf": [
+                          {
+                            "$ref": "#/$defs/ProposedFlag"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "platforms": {
+                        "$ref": "#/$defs/PlatformTexts"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "openingWords",
+                      "closingWords",
+                      "scores",
+                      "reason",
+                      "title",
+                      "hookTitle",
+                      "hookType",
+                      "flag",
+                      "platforms"
+                    ]
+                  },
+                  "ProposedFlag": {
+                    "type": "object",
+                    "title": "ProposedFlag",
+                    "properties": {
+                      "kind": {
+                        "$ref": "#/$defs/ClipFlag"
+                      },
+                      "note": {
+                        "type": "string",
+                        "title": "Note"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "kind",
+                      "note"
+                    ]
+                  },
+                  "ProposedScores": {
+                    "type": "object",
+                    "title": "ProposedScores",
+                    "properties": {
+                      "hook": {
+                        "type": "integer",
+                        "title": "Hook",
+                        "description": "{maximum: 25, minimum: 0}"
+                      },
+                      "arc": {
+                        "type": "integer",
+                        "title": "Arc",
+                        "description": "{maximum: 25, minimum: 0}"
+                      },
+                      "value": {
+                        "type": "integer",
+                        "title": "Value",
+                        "description": "{maximum: 25, minimum: 0}"
+                      },
+                      "share": {
+                        "type": "integer",
+                        "title": "Share",
+                        "description": "{maximum: 25, minimum: 0}"
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "hook",
+                      "arc",
+                      "value",
+                      "share"
+                    ]
+                  }
+                },
+                "type": "object",
+                "title": "ProposedClips",
+                "properties": {
+                  "clips": {
+                    "type": "array",
+                    "title": "Clips",
+                    "items": {
+                      "$ref": "#/$defs/ProposedClip"
+                    }
+                  }
+                },
+                "additionalProperties": false,
+                "required": [
+                  "clips"
+                ]
+              },
+              "type": "json_schema"
+            }
+          },
+          "fallbacks": "default",
+          "system": "You cut short vertical clips from a long spoken video. You receive its transcript as numbered\nsentences. Each line holds the number of a sentence, the second it starts at in square brackets,\nand its text. After the transcript comes one task as a JSON object.\n\nThe task names one window of the transcript by the numbers of its first and last sentence. Find\nthe clips whose first sentence lies in that window. A clip may end after the window does. A clip:\n- opens on its hook, the line that makes a viewer stay;\n- makes sense to someone who has seen nothing else of this video;\n- completes its setup and its payoff;\n- starts on the first word of a sentence and ends on the last word of a sentence.\n\nLeave out intros, outros, sponsor reads and housekeeping.\n\nclipSeconds gives the shortest and the longest a clip may last, and a clip outside these limits\nis thrown away. When the limits are 25 and 60 seconds, a clip of 25 to 50 seconds is preferred.\nInside the limits the clip's own arc decides its length. Never pad a clip with sentences it does\nnot need in order to reach a length.\n\nclipCount is how many clips the whole video should yield at least, when it holds that many. This\nwindow is one of several, so do not reach for the number here. Return the clips this window\nreally holds, the best first, and an empty list when it holds none. language is the language of\nthe transcript. A brief that is not empty says what the user is looking for.\n\nThe task may carry a note. It tells what this user did with clips of earlier videos: how many\nthey rejected and for which reasons, and which hooks and lengths did best and worst once posted.\nLet the note tip a close call. The rules of this task and the brief come first.\n\nFor each clip give:\n- openingWords and closingWords: the first and the last five to ten words of the clip, quoted\n  exactly as the transcript has them. Give no time and no sentence number. The tool finds the\n  words in the transcript and takes the times from there, and it drops a clip whose words it\n  cannot find.\n- scores: hook, arc, value and share, each a whole number from 0 to 25. hook is how well the\n  first line holds a viewer who has no context, arc how complete the setup and the payoff are,\n  value what the viewer takes away, and share how likely a viewer is to send it to someone. The\n  scores rank the clips of this one video against each other.\n- reason: one sentence that says why this clip was picked.\n- title: a working title for the clip.\n- hookTitle: at most ten words to show on screen over the first seconds. It names something the\n  clip really holds.\n- hookType: number, story, list, hot-take, confession, contrarian, or none when the clip has no\n  hook of these kinds.\n- flag: null for most clips. needs-context when the clip leans on something said before it.\n  not-recommended when it is weak and still the best this window has. With a flag, note is one\n  sentence that says why.\n- platforms: a title and a description for each of tiktok, reels and shorts.\n\nWrite every title, hook title and description in the language of the transcript.\n",
+          "stream": true
+        },
+        "hasKey": true
+      }
+    ]
+  }
+}

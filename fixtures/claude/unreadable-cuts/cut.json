@@ -1,0 +1,41 @@
+{
+  "task": "cut",
+  "reply": {
+    "type": "message",
+    "role": "assistant",
+    "content": [
+      {
+        "type": "text",
+        "text": {
+          "clips": [
+            {
+              "openingWords": "I want to tell you about the worst day",
+              "closingWords": "What they do not forgive is silence.",
+              "scores": { "hook": 23, "arc": 23, "value": 20, "share": 22 },
+              "reason": "A whole story that ends on a line worth quoting.",
+              "title": "The worst day my bakery ever had",
+              "hookTitle": "The oven broke before sunrise and nobody at all left angry",
+              "hookType": "story",
+              "flag": null,
+              "platforms": {
+                "tiktok": {
+                  "title": "The oven broke before sunrise",
+                  "description": "What a bad morning taught a baker. #smallbusiness #bakery"
+                },
+                "reels": {
+                  "title": "The worst day my bakery ever had",
+                  "description": "Customers forgive a bad day. #shopowner"
+                },
+                "shorts": {
+                  "title": "The worst day my bakery ever had",
+                  "description": "What they do not forgive is silence."
+                }
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}

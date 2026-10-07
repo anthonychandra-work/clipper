@@ -1,0 +1,244 @@
+/* The rules the real app needs beyond the prototype's stylesheets. */
+
+/* A button that is switched off. */
+.button:disabled {
+  color: var(--label-3);
+  cursor: default;
+}
+
+/* Links that wear the classes of the prototype's buttons. */
+a.bar-button,
+a.button,
+a.tab-bar__tab,
+a.sidebar__new,
+a.sidebar__link,
+a.project-row,
+a.segmented__option,
+a.candidate__open,
+a.timeline__pin {
+  text-decoration: none;
+}
+
+a.sidebar__link,
+a.project-row,
+a.candidate__open {
+  color: inherit;
+}
+
+a.timeline__pin {
+  display: grid;
+  place-items: center;
+}
+
+/* With more windows than the card has room to space, the bars stand side by side. */
+.timeline__bars--tight {
+  gap: 0;
+}
+
+a.segmented__option {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+a.segmented__option[aria-current="page"],
+a.segmented__option[aria-current="page"]:hover,
+a.segmented__option[aria-current="page"]:active {
+  background: var(--segment);
+  box-shadow: 0 0 0 0.5px var(--glass-rim), 0 1px 4px var(--shadow);
+  font-weight: 600;
+}
+
+/* A hint longer than its field ends in an ellipsis. */
+.row__field:placeholder-shown {
+  text-overflow: ellipsis;
+}
+
+/* So does a clip's title, until the field is entered. */
+.text-field {
+  text-overflow: ellipsis;
+}
+
+/* A choice shows its chosen option as text that can wrap, with the select lying over it unseen. */
+.menu-button__chosen {
+  min-width: 0;
+  padding: 6px max(20px, 1.2em) 6px 6px;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.menu-button__chosen ~ select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  opacity: 0;
+}
+
+.menu-button:has(select:focus-visible) {
+  border-radius: 8px;
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* A choice moves under its label when the two do not fit side by side. */
+label.row {
+  flex-wrap: wrap;
+}
+
+label.row .menu-button {
+  margin-left: auto;
+}
+
+/* With large text, every control that does not fit beside its label moves under it. */
+.group {
+  container-type: inline-size;
+}
+
+@container (max-width: 18rem) {
+  .row {
+    flex-wrap: wrap;
+  }
+
+  .row > .row__label ~ :last-child {
+    margin-left: auto;
+  }
+}
+
+/* A frame of the video takes the place of the figure the prototype draws in the filmstrip. */
+.filmstrip__frame:has(img)::before,
+.filmstrip__frame:has(img)::after,
+.filmstrip__frame--missing::before,
+.filmstrip__frame--missing::after {
+  content: none;
+}
+
+.filmstrip__frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.filmstrip__frame--missing,
+.filmstrip__frame--missing:nth-child(3n) {
+  background: var(--frame);
+}
+
+/* The video, and the pictures drawn from it, take the place of the figures the prototype draws in the preview. */
+.scene__picture,
+.scene__backdrop {
+  position: absolute;
+  inset: 0;
+}
+
+.scene video,
+.scene canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* The copy behind the whole picture is blurred by a layer over it, so its edges do not fade into the frame. */
+.scene__backdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  -webkit-backdrop-filter: blur(5cqw);
+  backdrop-filter: blur(5cqw);
+}
+
+/* A pin's reach counts from inside its border, so two more pixels bring its tap area to 44 px. */
+.timeline__pin::after {
+  inset: calc(var(--pin-reach) - 2px);
+}
+
+/* The rows of a control that wraps at a large text size stand a tap area apart. */
+.segmented {
+  row-gap: 14px;
+}
+
+.edge__steppers {
+  row-gap: 10px;
+}
+
+/* A long word of a clip's title breaks where its row ends. */
+.candidate__title {
+  overflow-wrap: anywhere;
+}
+
+/* Five texts that the prototype's colours leave under 4.5 to 1 take the label colour. */
+.app[data-layout="regular"] .candidate.is-selected .tag:not(.tag--warn, .tag--keep, .tag--reject),
+.flag .button,
+.empty .button:not(.button--prominent),
+.segmented__option[aria-pressed="true"] .segmented__count,
+.segmented__option[aria-current="page"] .segmented__count {
+  color: var(--label);
+}
+
+/* The name of a row keeps its width beside a long value, which wraps. */
+dt.row__label {
+  flex: none;
+}
+
+/* On a phone the actions of a screen wrap onto lines of their own at a large text size. */
+.app[data-layout="compact"] .toolbar__trailing {
+  flex: 0 1 auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* The caption and the hook title are drawn in Inter, the typeface of the exported file. */
+.player__caption,
+.player__hook {
+  font-family: Inter, var(--font);
+}
+
+/* The field a text is selected in for the older copy command stays out of sight and out of the layout. */
+.copy-field {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  pointer-events: none;
+  font-size: 16px;
+}
+
+/* On a phone a field in a row is as tall as a tap area, and the row of a clip's views keeps its height. */
+.app[data-layout="compact"] .number-field,
+.app[data-layout="compact"] .row__field {
+  min-height: var(--control);
+}
+
+.app[data-layout="compact"] .views-row {
+  padding-block: 2px;
+}
+
+/* A long word of a clip's title breaks where its row ends, on the Results tab too. */
+.views-row label,
+.outcome__head > :first-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* With large text the views of a clip move under its title, in the list and beside its bar. */
+@container (max-width: 18rem) {
+  .views-row {
+    grid-template-columns: 2rem minmax(0, 1fr);
+  }
+
+  .views-row .number-field {
+    grid-column: 2;
+  }
+
+  .outcome__head {
+    flex-wrap: wrap;
+  }
+}

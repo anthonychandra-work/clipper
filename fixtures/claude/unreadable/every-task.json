@@ -1,0 +1,8 @@
+{
+  "reply": {
+    "type": "message",
+    "role": "assistant",
+    "content": [{ "type": "text", "text": "Here is what I found: the middle of the talk is the strongest part." }],
+    "stop_reason": "end_turn"
+  }
+}

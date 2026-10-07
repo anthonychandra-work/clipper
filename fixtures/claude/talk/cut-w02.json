@@ -1,0 +1,93 @@
+{
+  "task": "cut",
+  "window": "w02",
+  "reply": {
+    "type": "message",
+    "role": "assistant",
+    "content": [
+      {
+        "type": "text",
+        "text": {
+          "clips": [
+            {
+              "openingWords": "Here is something nobody told me about hiring.",
+              "closingWords": "and teach the rest yourself.",
+              "scores": { "hook": 22, "arc": 21, "value": 21, "share": 20 },
+              "reason": "Opens on a surprise about the best hire, explains it with one person, and ends on a rule a viewer can use.",
+              "title": "Hire for the habits you cannot teach",
+              "hookTitle": "My best baker had never baked",
+              "hookType": "contrarian",
+              "flag": null,
+              "platforms": {
+                "tiktok": {
+                  "title": "My best baker had never baked",
+                  "description": "She came from a hospital kitchen. #hiring #smallbusiness #bakery"
+                },
+                "reels": {
+                  "title": "Stop looking for skill when you hire",
+                  "description": "Look for the habits that are hard to teach. #hiring #shopowner"
+                },
+                "shorts": {
+                  "title": "Hire for the habits you cannot teach",
+                  "description": "I could teach her bread in a month. I could never have taught her that calm."
+                }
+              }
+            },
+            {
+              "openingWords": "I also want to be honest about a mistake",
+              "closingWords": "I go and find others before I need them.",
+              "scores": { "hook": 20, "arc": 22, "value": 21, "share": 19 },
+              "reason": "A confession with a cost and a way out, closed by the rule it left behind.",
+              "title": "The hotel order that almost ended the business",
+              "hookTitle": "I let one customer become my boss",
+              "hookType": "confession",
+              "flag": {
+                "kind": "needs-context",
+                "note": "Opens on “also” and never says what the business is, so a viewer who starts here lacks the setting."
+              },
+              "platforms": {
+                "tiktok": {
+                  "title": "I let one customer become my boss",
+                  "description": "A huge hotel order, and a contract nobody finished reading. #smallbusiness #bakery #mistakes"
+                },
+                "reels": {
+                  "title": "The order that almost ended us",
+                  "description": "Why no customer is allowed to be more than a small slice. #shopowner #smallbusiness"
+                },
+                "shorts": {
+                  "title": "The hotel order that almost ended the business",
+                  "description": "It took a full year to get free."
+                }
+              }
+            },
+            {
+              "openingWords": "The secret to pricing bread is simple.",
+              "closingWords": "teach the rest yourself.",
+              "scores": { "hook": 18, "arc": 17, "value": 18, "share": 17 },
+              "reason": "A short lesson on price that leads into hiring.",
+              "title": "The secret to pricing bread",
+              "hookTitle": "The secret to pricing bread",
+              "hookType": "list",
+              "flag": null,
+              "platforms": {
+                "tiktok": {
+                  "title": "The secret to pricing bread",
+                  "description": "What goes into the price of a loaf. #pricing #bakery"
+                },
+                "reels": {
+                  "title": "How a baker sets a price",
+                  "description": "The rent, the flour, the power and your own time. #pricing"
+                },
+                "shorts": {
+                  "title": "The secret to pricing bread",
+                  "description": "Add enough so that a slow week does not close your doors."
+                }
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}

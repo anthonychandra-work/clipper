@@ -1,0 +1,136 @@
+{
+  "clips": [
+    {
+      "id": "c01",
+      "rank": 1,
+      "title": "The worst day my bakery ever had",
+      "seconds": 32.76,
+      "file": "exports/01-c01.mp4",
+      "render": {
+        "state": "done",
+        "percent": 100.0,
+        "reason": null
+      },
+      "download": "/api/projects/566601bed9df/clips/c01/export",
+      "texts": [
+        {
+          "platform": "reels",
+          "title": "Nobody left angry",
+          "description": "What a broken oven taught one baker about bad news. #bakery #shopowner"
+        }
+      ],
+      "probe": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "codec_name": "h264",
+            "width": 1080,
+            "height": 1920,
+            "r_frame_rate": "30/1",
+            "avg_frame_rate": "30/1"
+          },
+          {
+            "codec_type": "audio",
+            "codec_name": "aac",
+            "width": null,
+            "height": null,
+            "r_frame_rate": "0/0",
+            "avg_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+          "duration": 32.766667
+        }
+      }
+    },
+    {
+      "id": "c02",
+      "rank": 2,
+      "title": "Hire for the habits you cannot teach",
+      "seconds": 33.18,
+      "file": "exports/02-c02.mp4",
+      "render": {
+        "state": "done",
+        "percent": 100.0,
+        "reason": null
+      },
+      "download": "/api/projects/566601bed9df/clips/c02/export",
+      "texts": [
+        {
+          "platform": "reels",
+          "title": "Stop looking for skill when you hire",
+          "description": "Look for the habits that are hard to teach. #hiring #shopowner"
+        }
+      ],
+      "probe": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "codec_name": "h264",
+            "width": 1080,
+            "height": 1920,
+            "r_frame_rate": "30/1",
+            "avg_frame_rate": "30/1"
+          },
+          {
+            "codec_type": "audio",
+            "codec_name": "aac",
+            "width": null,
+            "height": null,
+            "r_frame_rate": "0/0",
+            "avg_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+          "duration": 33.2
+        }
+      }
+    },
+    {
+      "id": "c03",
+      "rank": 3,
+      "title": "Almost everyone gets price wrong",
+      "seconds": 41.32,
+      "file": "exports/03-c03.mp4",
+      "render": {
+        "state": "done",
+        "percent": 100.0,
+        "reason": null
+      },
+      "download": "/api/projects/566601bed9df/clips/c03/export",
+      "texts": [
+        {
+          "platform": "reels",
+          "title": "Stop copying the price across the street",
+          "description": "A baker's way to set a price that survives a slow week. #pricing #shopowner"
+        }
+      ],
+      "probe": {
+        "streams": [
+          {
+            "codec_type": "video",
+            "codec_name": "h264",
+            "width": 1080,
+            "height": 1920,
+            "r_frame_rate": "30/1",
+            "avg_frame_rate": "30/1"
+          },
+          {
+            "codec_type": "audio",
+            "codec_name": "aac",
+            "width": null,
+            "height": null,
+            "r_frame_rate": "0/0",
+            "avg_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+          "duration": 41.333333
+        }
+      }
+    }
+  ]
+}

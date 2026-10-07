@@ -1,0 +1,9 @@
+{
+  "task": "cut",
+  "reply": {
+    "type": "message",
+    "role": "assistant",
+    "content": [{ "type": "text", "text": { "clips": [] } }],
+    "stop_reason": "end_turn"
+  }
+}

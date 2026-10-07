@@ -1,0 +1,9 @@
+{
+  "uses": 1,
+  "reply": {
+    "type": "message",
+    "role": "assistant",
+    "content": [{ "type": "text", "text": "{\"windows\": [{\"id\": \"w01\", \"sco" }],
+    "stop_reason": "max_tokens"
+  }
+}

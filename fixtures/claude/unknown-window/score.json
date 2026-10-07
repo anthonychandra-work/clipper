@@ -1,0 +1,22 @@
+{
+  "task": "score",
+  "reply": {
+    "type": "message",
+    "role": "assistant",
+    "content": [
+      {
+        "type": "text",
+        "text": {
+          "windows": [
+            { "id": "w01", "score": 72 },
+            { "id": "w02", "score": 81 },
+            { "id": "w03", "score": 64 },
+            { "id": "w04", "score": 23 },
+            { "id": "w09", "score": 55 }
+          ]
+        }
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}
