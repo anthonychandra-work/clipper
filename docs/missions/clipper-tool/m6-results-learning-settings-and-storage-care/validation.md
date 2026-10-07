@@ -1,6 +1,7 @@
 # Validation: m6-results-learning-settings-and-storage-care
 
-Run every check from the worktree's root, in the order of the table. A check written as "block"
+Run every check from the worktree's root, in the order of the table. V22 stands before V21
+there, so the check of the clean worktree is the last one run. A check written as "block"
 runs the commands under its heading below the table, with `bash`. Ports 3000, 8765, 3100 and 8865
 must be free before V1, and the Mac must be on a network. The Mac must be on mains power and stay
 awake until the last check ends, because the browser tests time their steps on the clock and wait
@@ -8,8 +9,9 @@ for renders. On battery it sleeps when the charge runs low, whatever keeps it aw
 
 V1, V2 and V3 work in a clone of the repository, which V1 makes in a temporary folder and V3
 removes (A147). The clone is started on ports 3000 and 8765 with a data folder of its own, inside
-the clone, and with its key file named in the temporary folder. Every other check runs in the
-worktree.
+the clone, and with its key file named in the temporary folder. V1 takes the tool as up once the
+start command has printed its own line, `Clipper is running at http://localhost:3000`, as the
+README does (A154). Every other check runs in the worktree.
 
 `pnpm test:browser <file>` prints one line per test. Such a check passes when the command exits 0
 and the passed tests show everything its `expected` cell lists.
@@ -21,7 +23,7 @@ not interesting, `c06` rejected as cut off mid-thought, and the views 1,200 for 
 
 | id | proves | check | expected |
 | -- | ------ | ----- | -------- |
-| V1 | "The README's setup, start, test and phone instructions work when followed from a fresh copy of the repository", for setup, start and phone; "Settings shows an address made of the Mac's local network address and port 3000, and the tool answers a request sent to that address"; "The free disk figure is within 1 GB of what the system reports"; a first start shows no project (R2, R9, R21, R54, A145, A147) | block V1 | The two commit lines are equal. `pnpm install` and `pnpm bootstrap` each end with exit code 0, and the last line of the bootstrap is `Clipper is set up. Start it with "pnpm start".` The start prints `Clipper is running at http://localhost:3000`. The Library answers 200 with the title Clipper, and the answer of the projects holds no project. The phone address Settings gives is `http://`, then the address of this Mac on its network as the line above prints it, then `:3000`. The three answers of the phone address are 200. The free space Settings gives differs from the one `df` gives by less than 1.0 GB, and so do the two totals. The start command ends with code 130 after the interrupt, and nothing is printed between that line and "end of listeners after the interrupt". |
+| V1 | "The README's setup, start, test and phone instructions work when followed from a fresh copy of the repository", for setup, start and phone; "Settings shows an address made of the Mac's local network address and port 3000, and the tool answers a request sent to that address"; "The free disk figure is within 1 GB of what the system reports"; a first start shows no project (R2, R9, R21, R54, A145, A147, A154) | block V1 | The two commit lines are equal. `pnpm install` and `pnpm bootstrap` each end with exit code 0, and the last line of the bootstrap is `Clipper is set up. Start it with "pnpm start".` The start prints `Clipper is running at http://localhost:3000`. The Library answers 200 with the title Clipper, and the answer of the projects holds no project. The phone address Settings gives is `http://`, then the address of this Mac on its network as the line above prints it, then `:3000`. The three answers of the phone address are 200. The free space Settings gives differs from the one `df` gives by less than 1.0 GB, and so do the two totals. The start command ends with code 130 after the interrupt, and nothing is printed between that line and "end of listeners after the interrupt". |
 | V2 | "The test command passes"; the README's test instructions from a fresh copy; one command runs every check (R9, R12, A147) | block V2 | The line after the run gives exit code 0. The output reports Fixtures, Ruff, mypy, pytest, ESLint, Web build, TypeScript check, Vitest and Playwright, each passed. The Fixtures lines name four built videos. The closing lines name the folder that held the run's data, give its size as under 2 GB and say it was removed. Baseline: all nine gates passed at `0ec8f3d`, with 1,123 service tests, 362 unit tests and 173 browser tests (M5's `proof.md`, V1), and only mission documents changed up to `5ab7552`, where this milestone starts. In the planner's clone of `5ab7552` eight gates passed and Playwright failed with 171 of 173: the Mac slept for eight minutes on an empty battery during one test, and one test met the lost change of A149. Both files passed when run again in the clone. No gate may fail. The named browser tests end with exit code 0 and 4 passed. Nothing is printed between the exit code of the named browser tests and "end of the clone's changes". |
 | V3 | Test data and the clone are removed, nothing of the tool is left listening, and no tracked file of the worktree changed (R56, R57) | block V3 | Each of the three `ls` reports that its folder does not exist. Nothing is printed before "end of listeners". Every path `git status` lists is inside this milestone's folder. |
 | V4 | What M1 to M5 built still holds beside this milestone (R6, R13 to R50) | block V4 | The count is 173 or more. The closing line says that no test of these files failed. |
@@ -41,6 +43,7 @@ not interesting, `c06` rejected as cut off mid-thought, and the views 1,200 for 
 | V18 | The README and the agents' instructions cover what this milestone adds (R9, A18) | block V18 | The README says what the Results tab does, what the selector learns and what "Forget All of It" clears, what each choice in Settings governs, and when the source of a project is removed and what stays. It has no section on what this version does not do yet. Both files name `CLIPPER_CLOCK_AHEAD_DAYS`. `AGENTS.md` names the `learning`, `results` and `retention` packages, the results capability and the direction of their imports. |
 | V19 | The code follows the standards the hooks enforce, and both recorded layouts name the new parts (A19) | block V19 | Every finding printed carries `[advisory]`; none appears without it. The service's layout lists `learning/`, `results/` and `retention/`. The web app's layout lists `results/` with three use cases under it. No line of either starts with `#`. |
 | V20 | Two changes of one clip made one after the other in the browser are both stored and shown (R40, A149) | `pnpm test:browser e2e/review-preview.spec.ts --repeat-each=20 -g "preview copy moved aside"` | 20 passed, with exit code 0. Each run presses Keep and moves the out point of the same clip at once, with the preview copy moved aside, and reads "Kept", the new out point, and both in what the service holds. Baseline: this test failed once in the planner's run of the test command, on a Mac busy after a wake from sleep, and passed 20 times of 20 on the Mac at rest before any change; the tests V11 and V12 name show the mended rule itself. |
+| V22 | The README and the agents' instructions say which line of the start's output means that the tool is up (R9, A18, A154) | block V22 | The README's Start section shows the line `Clipper is running at http://localhost:3000` and says after it that Next.js prints lines of its own before it, the same address and `http://0.0.0.0:3000` among them, that Clipper's line is the one that says the tool is up, and that the address for a phone is the one Settings gives. `AGENTS.md` says that a script or a check waits for the line `Clipper is running at` and not for the address alone, that Next.js prints the address about a tenth of a second earlier, and that `next start` has no option that leaves its lines out. |
 | V21 | The checks left the worktree clean | `git status --porcelain` | Every path listed is inside this milestone's folder. |
 
 ## Blocks
@@ -64,7 +67,7 @@ tail -1 "$fresh/bootstrap.log"
 printf 'import os, sys\ntry:\n    os.setsid()\nexcept OSError:\n    pass\nos.execvp(sys.argv[1], sys.argv[1:])\n' > "$fresh/own-group.py"
 CLIPPER_KEY_FILE="$fresh/no-key" python3 "$fresh/own-group.py" pnpm start > "$fresh/start.log" 2>&1 &
 tool=$!
-for i in $(seq 1 300); do grep -q "http://localhost:3000" "$fresh/start.log" && break; sleep 1; done
+for i in $(seq 1 300); do grep -q "Clipper is running at http://localhost:3000" "$fresh/start.log" && break; sleep 1; done
 grep "Clipper is running" "$fresh/start.log"
 curl -s -o "$fresh/library.html" -w "library at localhost: %{http_code}\n" http://localhost:3000/
 grep -o "<title>Clipper</title>" "$fresh/library.html"
@@ -226,4 +229,12 @@ grep -niE "learning|results|retention|history|cleaner|CLIPPER_CLOCK_AHEAD_DAYS" 
 ```bash
 git diff --name-only --diff-filter=AM 5ab7552 HEAD -- '*.ts' '*.tsx' '*.mjs' '*.py' | python3 /Users/work/.claude/skills/coding-standards/hooks/review-files.py --stdin | grep -vE -- '— clean|^$'
 cat service/.coding-standards-structure web/.coding-standards-structure
+```
+
+### V22
+
+```bash
+awk '/^## Start$/ {inside = 1} /^## The Anthropic API key$/ {inside = 0} inside' README.md
+echo "end of the README's Start section"
+grep -n -B6 -A10 "Clipper is running at" AGENTS.md
 ```

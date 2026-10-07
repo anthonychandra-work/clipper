@@ -1321,6 +1321,19 @@ From `intent.md`. Base `82df5ce`.
   builder, the fixture server, the stand-in for the API, the test model's fetch and the Ruff
   formatter were each run in the clone as the three files write them. The plan asks for the
   measured time and leaves these open. (executor, m6)
+- A154 — The start command's own line, `Clipper is running at http://localhost:3000`, is the one
+  sign that the tool is up. The command prints it once the service has answered through the web
+  port. Next.js prints lines of its own earlier, as soon as it listens: the same address under
+  "Local", and `http://0.0.0.0:3000` under "Network", the address the web app was told to listen
+  on, which stands for every interface and opens nothing on a phone. `next start` has no option
+  that leaves these lines out, in 16.3.8 as in its current documentation, and the start command
+  hands the web app's output to the terminal unchanged, because that output also carries the web
+  app's errors. Measured on this Mac in ten starts: the tool's line follows the line of Next.js
+  by 107 to 124 ms. A script or a check that follows the README therefore waits for the tool's
+  line and not for the address. The README and `AGENTS.md` say so, and the README says that the
+  phone's address is the one Settings gives (D43). M1 fixes that the Library opens at the address
+  the start prints, and A147 that the check follows the README, which shows this line. Neither
+  says in so many words which line a check waits for. (planner, m6)
 
 ## Milestones
 

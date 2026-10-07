@@ -1,8 +1,58 @@
 # Plan: m6-results-learning-settings-and-storage-care
 
-Attempt: 1
+Attempt: 2
 
 ## Findings
+
+What attempt 1 got wrong
+
+- Attempt 1 failed on V1 alone. V2 to V21 passed at `8e8382e`, the test command in a fresh clone
+  among them: nine gates, with 1,275 service tests, 411 unit tests and 200 browser tests.
+  (`issues.md`, `proof.md`, `evidence/v2-test-command.txt`)
+- The tool did what V1 expects. The start's output that the validator saved holds
+  `Clipper is running at http://localhost:3000` as its line 40, and every request the block sent
+  after it was answered. (`evidence/v1-start-log.txt`)
+- The fault is in the block the planner wrote for V1. It waited until the start's output held
+  the text `http://localhost:3000`, then printed the lines that hold "Clipper is running".
+  Next.js prints that text first, in the lines it writes as soon as it listens. The start
+  command prints its own line later, once the service has answered through the web port. A
+  block that reaches its `grep` between the two prints nothing, and that is the one line the
+  proof lacks. (`validation.md` at `8e8382e`, `scripts/start-tool.mjs`,
+  `scripts/wait-until-answering.mjs`)
+- The lines of Next.js reach the start's output because the start command gives each part it
+  starts the terminal it was started from. (`scripts/run-program.mjs`)
+- Measured on this Mac on 2026-10-07, in the worktree, with the data folder and the key file in
+  a temporary folder: in ten starts the tool's line came 107 to 124 ms after the line of
+  Next.js. A wait that looks once a second lands in a gap of that length in about one start of
+  nine, so most runs of the block show the line, as the executor's did for T16 (A153). Against
+  six more starts, ten copies of attempt 1's wait begun a tenth of a second apart printed the
+  tool's line in 7, 9, 9, 9, 9 and 9 of ten. Ten copies of a wait for the tool's own line
+  printed it in ten of ten at every start. All sixteen starts ended with code 130 after the
+  interrupt and left no listener on ports 3000 and 8765.
+- `next start` has no option that leaves its lines out. The help of the installed 16.3.8 lists
+  the port, the hostname, the inspector, the keep-alive time and two experimental switches, and
+  the current CLI reference names none that does. Its "Network" line shows the hostname it was
+  given, and the start command gives `0.0.0.0`, so the line reads `http://0.0.0.0:3000`.
+  (`web/node_modules/next/dist/bin/next start --help`,
+  `web/node_modules/next/dist/server/lib/app-info-log.js`, the Next.js documentation through
+  Context7, `/vercel/next.js`)
+- The start command stays as it is (A154). The lines of Next.js break no requirement. Leaving
+  them out would mean passing the web app's output through the start command, which today only
+  starts and stops its parts, and how those parts stop is fixed by A36 and A53.
+- V1's block is changed, because it contradicted the spec. A147 has the check follow the README,
+  and the README gives the tool's line as what the command prints when the tool is up. The block
+  now waits for that line. Its expected cell is word for word the one of attempt 1, and the
+  check is no looser: a start that never prints the line ends the wait after 300 seconds with
+  nothing printed. The corrected block, run once from a clone of `feb89db` in a temporary
+  folder, ended as its expected cell says, with the tool's line in its place. No other check of
+  attempt 1 is changed. V22 is new and proves T17.
+- The browser tests wait for the tool's line already. (`web/e2e/support/run-tool.ts`)
+- The README's Start section shows the tool's line alone, and `AGENTS.md` says that the start
+  "prints the address to open". Neither says that Next.js prints the address first, or that its
+  "Network" address is not the phone's. Whoever waits for the address reads the output too
+  early, as the planner of attempt 1 did. T17 adds both. (`README.md`, `AGENTS.md`)
+- No hook refuses a write to `README.md` or `AGENTS.md`: the hooks that refuse check source
+  files and scan for keys, and T16 wrote both files. (`~/.claude/settings.json`)
 
 The code as M5 left it
 
@@ -126,7 +176,8 @@ Measured on this Mac on 2026-10-06
 - The SQLite of the service's Python is 3.51.2 and gives the present time in seconds as a
   function of its own. Node 22.13 reads a folder's free space with `statfsSync`.
 
-No library is added and none is updated, so no library's documentation decides anything here.
+No library is added and none is updated. The one question a library's documentation decides is
+whether `next start` can leave its lines out, answered in the first group.
 
 The rules every write passes through
 
@@ -576,3 +627,22 @@ What the spec's file list leaves out
   clone until both end as their `expected` cells say. The clone is removed afterwards with
   block V3. The output V2 writes into the evidence folder is the validator's to save and is
   not committed. Each command in the three files was run as written.
+
+- [ ] T17 — Say in the README and in the agents' instructions which line means that the tool is
+  up
+  Files: `README.md`, `AGENTS.md`
+  Done: the README's Start section says, after the line the command prints, that Next.js, which
+  serves the web app, prints lines of its own just before it, the same address and a "Network"
+  address, `http://0.0.0.0:3000`, among them; that Clipper's line is the one that says the tool
+  is up; and that the "Network" address is not the one for a phone, which Settings gives. The
+  sentences stand inside that section, above the heading of the API key. `AGENTS.md` says,
+  among what was measured on Next.js 16.3.8, that `next start` prints its lines as soon as it
+  listens and has no option that leaves them out, that the start command prints
+  `Clipper is running at` about a tenth of a second later, once the service has answered
+  through the web port, and that a script or a check that waits for the tool waits for that
+  line and never for the address alone, as the tool runner of the browser tests does. The words
+  `Clipper is running at` stand on one line of `AGENTS.md`, in the first lines of that passage,
+  so validation block V22 prints the passage whole. Both texts are held against the output of
+  one start of the worktree, run with its data folder and its key file in a temporary folder
+  that is removed afterwards. No source file changes, so the gates stand as attempt 1 left
+  them.
