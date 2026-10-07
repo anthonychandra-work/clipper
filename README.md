@@ -51,6 +51,11 @@ Clipper is running at http://localhost:3000
 Open that address in a browser on the Mac. Ctrl-C stops the tool. A project that was waiting or
 being processed carries on at the next start.
 
+Next.js, which serves the web app, prints lines of its own just before Clipper's line. The same
+address is among them, and so is a "Network" address, `http://0.0.0.0:3000`. Clipper's line is
+the one that says the tool is up. The "Network" address is not the address for a phone.
+Settings gives that address under "Open on Your Phone".
+
 ## The Anthropic API key
 
 Clipper picks the clips with Claude through the Anthropic API, and for that it needs an API key

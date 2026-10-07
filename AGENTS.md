@@ -395,6 +395,11 @@ Measured on Next.js 16.3.8:
   once, and long work runs in the queue worker.
 - Next.js sends usage data during a build unless `NEXT_TELEMETRY_DISABLED=1` is set. Every script
   that runs `next` sets it.
+- `next start` prints lines of its own as soon as it listens, the tool's address among them, and
+  has no option that leaves them out. The start command prints `Clipper is running at` about a
+  tenth of a second later, in some starts two tenths, once the service has answered through the
+  web port. A script or a check that waits for the tool waits for that line and never for the
+  address alone, as the tool runner of the browser tests does.
 
 ## ffmpeg
 

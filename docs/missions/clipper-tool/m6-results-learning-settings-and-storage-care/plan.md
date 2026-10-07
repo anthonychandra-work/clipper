@@ -628,9 +628,9 @@ What the spec's file list leaves out
   block V3. The output V2 writes into the evidence folder is the validator's to save and is
   not committed. Each command in the three files was run as written.
 
-- [ ] T17 — Say in the README and in the agents' instructions which line means that the tool is
+- [x] T17 — Say in the README and in the agents' instructions which line means that the tool is
   up
-  Files: `README.md`, `AGENTS.md`
+  Files: `README.md`, `AGENTS.md`, `docs/missions/clipper-tool/spec.md`
   Done: the README's Start section says, after the line the command prints, that Next.js, which
   serves the web app, prints lines of its own just before it, the same address and a "Network"
   address, `http://0.0.0.0:3000`, among them; that Clipper's line is the one that says the tool

@@ -1334,6 +1334,19 @@ From `intent.md`. Base `82df5ce`.
   phone's address is the one Settings gives (D43). M1 fixes that the Library opens at the address
   the start prints, and A147 that the check follows the README, which shows this line. Neither
   says in so many words which line a check waits for. (planner, m6)
+- A155 — `AGENTS.md` gives the time from the lines of Next.js to the tool's line as "about a
+  tenth of a second later, in some starts two tenths". Measured in twelve starts of the worktree
+  at `b0a769e`, with the data folder and the key file in a temporary folder: the tool's line
+  was read 108 to 118 ms after the "Local" line of Next.js in eight starts, and 213 to 231 ms
+  after it in four: the first start after each of three pauses, and one more. The start command
+  asks the web port again a fifth of a second after each request that got no answer, so its
+  line comes up to a fifth of a second after the moment the service could first be reached
+  through that port. Every start printed the lines of Next.js above the tool's line, ended with
+  code 130 after the interrupt and left no listener on ports 3000 and 8765, and the help of the
+  installed `next start` names no option for its lines. The README's sentences close its Start
+  section, under the sentence that says to open the address, and the passage of `AGENTS.md` is
+  the last entry of what was measured on Next.js. The plan words the time from A154's ten
+  starts, and leaves the slower starts and the place of both texts open. (executor, m6)
 
 ## Milestones
 
