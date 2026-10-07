@@ -1282,4 +1282,4 @@ clipper/transcription/test_whole_app.py::test_an_uploaded_talk_is_transcribed_in
 clipper/transcription/test_whole_app.py::test_a_project_that_rested_fetched_under_an_earlier_version_is_transcribed_after_the_start PASSED [ 99%]
 clipper/transcription/test_whole_app.py::test_the_model_chosen_in_settings_is_downloaded_and_used_for_the_next_project PASSED [100%]
 
-======================= 1275 passed in 552.05s (0:09:12) =======================
+======================= 1275 passed in 560.34s (0:09:20) =======================
